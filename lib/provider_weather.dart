@@ -6,7 +6,7 @@
  */
 
 // import 'package:flutter/material.dart';
-import 'package:location/location.dart';
+// import 'package:location/location.dart';
 import 'package:weather/weather_library.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/action.dart';
@@ -83,16 +83,6 @@ void provideWeather() async {
       infoList.add(customInfoWidget(title: e.toString()));
       return;
     }
-    // location info widget
-    infoList.add(customInfoWidget(
-        title: weather.areaName +
-            ", " +
-            "(lat, lon) = (" +
-            latitude.toString() +
-            ", " +
-            longitude.toString() +
-            ")",
-        subtitle: "Here is your location."));
     // weather info widget
     infoList.add(
       customInfoWidget(
@@ -100,7 +90,13 @@ void provideWeather() async {
               "°C" +
               ", " +
               weather.weatherMain,
-          subtitle: "Here is the weather now."),
+          subtitle: weather.areaName +
+            ", " +
+            "(lat, lon) = (" +
+            latitude.toString() +
+            ", " +
+            longitude.toString() +
+            ")"),
     );
   }
 }

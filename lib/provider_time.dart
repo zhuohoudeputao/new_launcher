@@ -47,7 +47,7 @@ class TimeWidget extends StatefulWidget {
 
 class _TimeWidgetState extends State<TimeWidget> {
   Timer timer;
-  Duration duration = Duration(minutes: 1);
+  Duration duration = Duration(seconds: 1);
   @override
   void initState() {
     super.initState();

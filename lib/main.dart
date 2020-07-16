@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
+import 'package:new_launcher/provider_sys.dart';
 import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/provider_time.dart';
 import 'package:new_launcher/provider_app.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(
         title: "New Launcher",
       ),
+      navigatorKey: navigatorKey,
     );
   }
 }
@@ -69,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<Widget, MyAction> _suggestWidgetToAction = <Widget, MyAction>{};
 
   // Map<MyProvider, List<MyAction>> _ac
-  List<MyProvider> _providerList = [providerTime, providerWeather, providerApp];
+  List<MyProvider> _providerList = [providerTime, providerWeather, providerApp, providerSys];
   List<MyAction> _actionList = <MyAction>[];
 
   // ui controller
@@ -153,8 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Container(
       decoration: BoxDecoration(
           image: DecorationImage(
-        image: NetworkImage(
-            'http://www.005.tv/uploads/allimg/171017/14033330Y-27.jpg'),
+        image: backgroundImage,
         fit: BoxFit.cover,
       )),
       child: Scaffold(
@@ -194,7 +195,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   // infomation displayer
                   itemCount: infoList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return infoList[infoList.length - index - 1]; // reverse index
+                    return infoList[
+                        infoList.length - index - 1]; // reverse index
                   },
                   scrollDirection: Axis.vertical,
                   reverse: true, // reverse the entire infoList and the index
