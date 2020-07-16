@@ -1,10 +1,10 @@
 /*
  * @Author: zhuohoudeputao
  * @LastEditors: zhuohoudeputao
- * @LastEditTime: 2020-07-12 18:05:45
+ * @LastEditTime: 2020-07-16 11:42:42
  * @Description: a provider for time and greeting
  */
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:new_launcher/data.dart';
 
@@ -37,57 +37,84 @@ List<MyAction> initTime() {
 }
 
 void provideTime() {
-  infoList.addAll(<Widget>[customTimeWidget()]);
+  infoList.add(TimeWidget());
 }
 
-Widget customTimeWidget() {
-  // get info
-  DateTime now = DateTime.now();
+class TimeWidget extends StatefulWidget {
+  @override
+  _TimeWidgetState createState() => _TimeWidgetState();
+}
 
-  String greeting;
-  int hour = now.hour;
-  // greeting
-  if (hour >= 22 || (hour >= 0 && hour < 6)) {
-    greeting =
-        "It's too late now. Don't strain yourself too much. Good night 🌙";
-  }
-  if (hour >= 6 && hour < 9) {
-    greeting = "Good morning! It's beautiful outside ☀";
-  }
-  if (hour >= 9 && hour < 12) {
-    greeting = "Good morning ☀";
-  }
-  if (hour >= 12 && hour < 18) {
-    greeting = "Good afternoon! Take a cup of coffee ☕";
-  }
-  if (hour >= 18 && hour < 22) {
-    greeting = "Have a good night 🌙";
+class _TimeWidgetState extends State<TimeWidget> {
+  Timer timer;
+  Duration duration = Duration(minutes: 1);
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(duration, (Timer timer) {
+      setState(() {});
+    });
   }
 
-  List<String> months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ];
-  String month = months[now.month - 1];
+  @override
+  Widget build(BuildContext context) {
+    return customTimeWidget();
+  }
 
-  // create widget
-  return customInfoWidget(
-      title: month +
-          " " +
-          now.day.toString() +
-          ", " +
-          now.hour.toString() +
-          ":" +
-          now.minute.toString(),
-      subtitle: greeting);
+  @override
+  void dispose() {
+    super.dispose();
+    timer.cancel();
+  }
+
+  Widget customTimeWidget() {
+    // get info
+    DateTime now = DateTime.now();
+
+    String greeting;
+    int hour = now.hour;
+    // greeting
+    if (hour >= 22 || (hour >= 0 && hour < 6)) {
+      greeting = "Don't strain yourself too much. Good night 🌙";
+    }
+    if (hour >= 6 && hour < 9) {
+      greeting = "Good morning! It's beautiful outside ☀";
+    }
+    if (hour >= 9 && hour < 12) {
+      greeting = "Good morning ☀";
+    }
+    if (hour >= 12 && hour < 18) {
+      greeting = "Good afternoon! Take a cup of coffee ☕";
+    }
+    if (hour >= 18 && hour < 22) {
+      greeting = "Have a good night 🌙";
+    }
+
+    List<String> months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+    String month = months[now.month - 1];
+
+    // create widget
+    return customInfoWidget(
+        title: month +
+            " " +
+            now.day.toString() +
+            ", " +
+            now.hour.toString() +
+            ":" +
+            now.minute.toString(),
+        subtitle: greeting);
+  }
 }

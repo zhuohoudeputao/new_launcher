@@ -1,12 +1,12 @@
 /*
  * @Author: zhuohoudeputao
  * @LastEditors: zhuohoudeputao
- * @LastEditTime: 2020-07-12 18:07:02
+ * @LastEditTime: 2020-07-16 12:16:08
  * @Description: file content
  */
 
 // import 'package:flutter/material.dart';
-// import 'package:location/location.dart';
+import 'package:location/location.dart';
 import 'package:weather/weather_library.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/action.dart';
@@ -66,7 +66,7 @@ void provideWeather() async {
   try {
     // currently unworkable, I have try location and geolocation
     // amap_location requires an api key, so I will try later
-    // position = await location.getLocation();
+    // LocationData position = await location.getLocation();
     // latitude = position.latitude;
     // longitude = position.longitude;
   } catch (e) {
