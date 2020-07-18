@@ -15,4 +15,6 @@ var backgroundImage =
 
 class InfoData {}
 
-class SettingData {}
+class SettingData {
+  //TODO: add setting function storing in sqlite database
+}

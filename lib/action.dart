@@ -8,18 +8,21 @@
 import 'package:flutter/material.dart';
 import 'ui.dart';
 
+/// [MyAction] class is representing the actions can be done by user.
 class MyAction {
-  String name; // the name or key of the action
-  String
-      keywords; // use for search, combine as one string with blank between them
-  // Core action, what this action does
-  // This action will influence infoWidgets
-  // So infoList must be global
-  Function action;
-  List<int> times; // 24 hours, every num means times in an hour
+  /// the name or key of the action
+  String name;
+
+  /// use for search, combine as one string with blank between them
+  String _keywords;
+
+  /// Core action, what this action actually does.
+  /// This action will influence infoWidgets, So infoList will be global.
+  Function _action;
+  List<int> _times; // 24 hours, every num means times in an hour
   Widget suggestWidget; // Widget show in suggestList
 
-  // initialization
+  /// Initialization
   MyAction({
     String name,
     String keywords,
@@ -28,9 +31,9 @@ class MyAction {
     Widget suggestWidget, // define how to generate suggestWidget
   }) {
     this.name = name;
-    this.keywords = keywords.toLowerCase();
-    this.action = action;
-    this.times = times;
+    this._keywords = keywords.toLowerCase();
+    this._action = action;
+    this._times = times;
     if (suggestWidget == null) {
       this.suggestWidget = _suggestWidget();
     } else {
@@ -40,15 +43,25 @@ class MyAction {
 
   // add '_' before the func to make it 'private'
 
-  // get the frequency of this action in this hour
-  int timesInHour(double hour) {
-    return times[hour.floor()];
+  /// call for action
+  void action() {
+    _action.call();
   }
 
-  // whether search string is in keywords
-  // remember that keywords is lowercased
-  bool strInKeywords(String input) {
-    return keywords.contains(input.toLowerCase());
+  /// get the frequency of this action in this hour
+  int frequency(double hour) {
+    return _times[hour.floor()];
+  }
+
+  /// when this action is taken, add frequency by 1
+  void frequencyAdd() {
+    _times[DateTime.now().hour - 1] += 1;
+  }
+
+  /// whether search string is in keywords
+  /// remember that keywords is lowercased
+  bool canIdentifyBy(String searchStr) {
+    return this._keywords.contains(searchStr.toLowerCase());
   }
 
   Widget _suggestWidget() {

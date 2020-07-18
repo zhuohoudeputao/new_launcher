@@ -5,22 +5,27 @@
  * @Description: 
  */
 
-class MyProvider {
-  bool updated;
-  // a provider means a service
-  // func to generate actions without args
-  Function initContent;
+import 'package:new_launcher/action.dart';
 
-  // initialization
+/// A provider means a service.
+/// It should provide actions when it initializes.
+class MyProvider {
+  /// A mark to check whether this provider needs update.
+  bool _updated;
+
+  /// Function to generate actions, returning a list of [MyAction].
+  Function _initContent;
+
+  /// Initialization
   MyProvider({
     initContent,
   }) {
-    this.updated = false;
-    this.initContent = initContent;
+    this._updated = false;
+    this._initContent = initContent;
   }
 
   bool needUpdate() {
-    if (this.updated == false) {
+    if (this._updated == false) {
       return true;
     } else {
       return false;
@@ -28,6 +33,10 @@ class MyProvider {
   }
 
   void setUpdated() {
-    this.updated = true;
+    this._updated = true;
+  }
+
+  List<MyAction> initContent() {
+    return this._initContent.call();
   }
 }

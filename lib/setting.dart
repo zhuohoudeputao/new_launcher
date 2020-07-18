@@ -10,7 +10,6 @@ class Setting extends StatefulWidget {
 class SettingState extends State<Setting> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
         decoration: BoxDecoration(
             image: DecorationImage(
@@ -19,6 +18,7 @@ class SettingState extends State<Setting> {
         )),
         child: Scaffold(
           backgroundColor: Colors.transparent,
+          // TODO: add a body
         ));
   }
 }

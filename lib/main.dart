@@ -10,11 +10,12 @@ import 'package:flutter/services.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
-import 'package:new_launcher/provider_sys.dart';
+import 'package:new_launcher/providers/provider_sys.dart';
 import 'package:new_launcher/ui.dart';
-import 'package:new_launcher/provider_time.dart';
-import 'package:new_launcher/provider_app.dart';
-import 'package:new_launcher/provider_weather.dart';
+import 'package:new_launcher/providers/provider_time.dart';
+import 'package:new_launcher/providers/provider_app.dart';
+import 'package:new_launcher/providers/provider_weather.dart';
+import 'package:new_launcher/providers/provider_translate.dart';
 
 void main() {
   // SystemUiOverlayStyle systemUiOverlayStyle =
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         // This is the theme of your application.
         primarySwatch: Colors.deepPurple,
         // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
+        // the ap p on. For desktop platforms, the controls will be smaller and
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -71,7 +72,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<Widget, MyAction> _suggestWidgetToAction = <Widget, MyAction>{};
 
   // Map<MyProvider, List<MyAction>> _ac
-  List<MyProvider> _providerList = [providerTime, providerWeather, providerApp, providerSys];
+  List<MyProvider> _providerList = [
+    providerTime,
+    providerWeather,
+    providerApp,
+    providerSys
+  ];
   List<MyAction> _actionList = <MyAction>[];
 
   // ui controller
@@ -91,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initSuggestion() {
     for (MyProvider provider in _providerList) {
-      List<MyAction> actions = provider.initContent.call();
+      List<MyAction> actions = provider.initContent();
       _actionList.addAll(actions);
       for (MyAction action in actions) {
         _suggestWidgetToAction[action.suggestWidget] = action;
@@ -131,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _suggestList.clear();
       // generate suggestList
       for (MyAction action in _actionList) {
-        if (action.keywords.contains(input.toLowerCase())) {
+        if (action.canIdentifyBy(input)) {
           _suggestList.add(action.suggestWidget);
         }
       }
@@ -180,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               Container(
-                height: 40.0,
+                height: 50.0,
                 child: ListView.builder(
                   // suggestion displayer
                   itemCount: _suggestList.length,

@@ -10,8 +10,8 @@ import 'package:new_launcher/data.dart';
 import 'dart:async';
 
 import 'package:new_launcher/action.dart';
-import 'ui.dart';
-import 'provider.dart';
+import '../ui.dart';
+import '../provider.dart';
 
 // a provider provides some actions
 MyProvider providerApp = MyProvider(initContent: initApp);

@@ -8,14 +8,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:new_launcher/data.dart';
 
-import 'action.dart';
-import 'ui.dart';
-import 'provider.dart';
+import '../action.dart';
+import '../ui.dart';
+import '../provider.dart';
 
-// a provider provides some actions
-
+/// a provider provides some actions about time
 MyProvider providerTime = MyProvider(initContent: initTime);
 
+/// The funciton [initTime] makes actions about time
+/// Each action can be done when the user chooses it
+/// And the suggestWidget will be shown in suggestList
 List<MyAction> initTime() {
   List<MyAction> actions = <MyAction>[];
   if (providerTime.needUpdate()) {
@@ -23,7 +25,7 @@ List<MyAction> initTime() {
       name: "Time now",
       keywords: "time now when",
       action:
-          provideTime, // this Action only show time info and do nothing in the background
+          provideTime,
       times: List.generate(
           24, (index) => 100), // let the frequency big enough to prioritize it
       suggestWidget: null,
@@ -36,6 +38,8 @@ List<MyAction> initTime() {
   return actions;
 }
 
+/// [provideTime] is the core action of the [MyAction] object
+/// which produces some widgets into the infoList showing useful information.
 void provideTime() {
   infoList.add(TimeWidget());
 }
