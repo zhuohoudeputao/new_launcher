@@ -114,6 +114,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.6.2"
+  launcher_helper:
+    dependency: "direct main"
+    description:
+      name: launcher_helper
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.4.6+hotfix.1"
   location:
     dependency: "direct main"
     description:
@@ -149,6 +156,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.1.8"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.4"
+  palette_generator:
+    dependency: transitive
+    description:
+      name: palette_generator
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.3"
   path:
     dependency: transitive
     description:
@@ -163,6 +184,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.9.0"
+  permission_handler:
+    dependency: "direct main"
+    description:
+      name: permission_handler
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "5.0.1+1"
+  permission_handler_platform_interface:
+    dependency: transitive
+    description:
+      name: permission_handler_platform_interface
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.1"
   petitparser:
     dependency: transitive
     description:
@@ -184,6 +219,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.2"
+  provider:
+    dependency: transitive
+    description:
+      name: provider
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.3.1"
   pub_semver:
     dependency: transitive
     description:
@@ -331,4 +373,4 @@ packages:
     version: "3.6.1"
 sdks:
   dart: ">=2.8.0 <3.0.0"
-  flutter: ">=1.12.13+hotfix.5 <2.0.0"
+  flutter: ">=1.16.0 <2.0.0"

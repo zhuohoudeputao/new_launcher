@@ -11,11 +11,11 @@ import 'package:new_launcher/data.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/providers/provider_sys.dart';
+import 'package:new_launcher/providers/provider_wallpaper.dart';
 import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/providers/provider_time.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
-import 'package:new_launcher/providers/provider_translate.dart';
 
 void main() {
   // SystemUiOverlayStyle systemUiOverlayStyle =
@@ -29,18 +29,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'New Launcher',
       theme: ThemeData(
-        // This is the theme of your application.
         primarySwatch: Colors.deepPurple,
-        // This makes the visual density adapt to the platform that you run
-        // the ap p on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(
-        title: "New Launcher",
-      ),
+      home: MyHomePage(),
       navigatorKey: navigatorKey,
     );
   }
@@ -73,21 +66,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Map<MyProvider, List<MyAction>> _ac
   List<MyProvider> _providerList = [
+    providerWallpaper,
     providerTime,
     providerWeather,
     providerApp,
-    providerSys
+    providerSys,
   ];
   List<MyAction> _actionList = <MyAction>[];
 
   // ui controller
   TextEditingController _editingController = TextEditingController();
   ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     // initialize actionList
-    initSuggestion();
+    initServices();
     // initialize suggestList
     // Todo: sort by times in an hour
     // _suggestList = _suggestWidgetToAction.keys;
@@ -95,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // initialize infoList
   }
 
-  void initSuggestion() {
+  void initServices() {
     for (MyProvider provider in _providerList) {
       List<MyAction> actions = provider.initContent();
       _actionList.addAll(actions);
@@ -106,9 +101,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _handleInput(String input) {
-    /** when input is submitted
-     * Divide and conquer
-     */
+    ///when input is submitted
+    // Divide and conquer
     input = input.toLowerCase();
     switch (input) {
       default:
@@ -129,10 +123,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String inputBefore = "";
   void _provideSuggestion(String input) {
-    /**
-     * generate suggestList when inputting
-     */
-    initSuggestion();
+    ///generate suggestList when inputting
+    initServices();
     setState(() {
       _suggestList.clear();
       // generate suggestList
@@ -158,59 +150,62 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-        image: backgroundImage,
-        fit: BoxFit.cover,
-      )),
-      child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            verticalDirection: VerticalDirection.up,
-            children: <Widget>[
-              Card(
-                child: TextField(
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                      hintText: ">_ Input something here.",
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.deepPurple, width: 10.0),
-                      )),
-                  controller: _editingController,
-                  onSubmitted: _handleInput,
-                  onChanged: _provideSuggestion,
-                ),
+    // return Container(
+    //   // decoration: BoxDecoration(
+    //   //     image: DecorationImage(
+    //   //   image: backgroundImage,
+    //   //   fit: BoxFit.cover,
+    //   // )),
+    //   child:
+    return Stack(children: <Widget>[
+      Image(image: backgroundImage, fit: BoxFit.cover),
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          verticalDirection: VerticalDirection.up,
+          children: <Widget>[
+            Card(
+              child: TextField(
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                    hintText: ">_ Input something here.",
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.deepPurple, width: 10.0),
+                    )),
+                controller: _editingController,
+                onSubmitted: _handleInput,
+                onChanged: _provideSuggestion,
               ),
-              Container(
-                height: 50.0,
-                child: ListView.builder(
-                  // suggestion displayer
-                  itemCount: _suggestList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return _suggestList[index];
-                  },
-                  scrollDirection: Axis.horizontal,
-                ),
+            ),
+            Container(
+              height: 50.0,
+              child: ListView.builder(
+                // suggestion displayer
+                itemCount: _suggestList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _suggestList[index];
+                },
+                scrollDirection: Axis.horizontal,
               ),
-              Expanded(
-                child: ListView.builder(
-                  // infomation displayer
-                  itemCount: infoList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return infoList[
-                        infoList.length - index - 1]; // reverse index
-                  },
-                  scrollDirection: Axis.vertical,
-                  reverse: true, // reverse the entire infoList and the index
-                  controller: _scrollController,
-                ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                // infomation displayer
+                itemCount: infoList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return infoList[infoList.length - index - 1]; // reverse index
+                },
+                scrollDirection: Axis.vertical,
+                reverse: true, // reverse the entire infoList and the index
+                controller: _scrollController,
               ),
-            ],
-          )),
-    );
+            ),
+          ],
+        ),
+      ),
+    ]);
   }
 }

@@ -24,11 +24,11 @@ Future getInstallApps() async {
       onlyAppsWithLaunchIntent: true);
 }
 
-bool call = false;
+bool called = false;
 List<MyAction> initApp() {
-  if (call == false) {
+  if (called == false) {
     getInstallApps();
-    call = true;
+    called = true;
   }
   List<MyAction> actions = <MyAction>[];
   // wait for getInstallApps
