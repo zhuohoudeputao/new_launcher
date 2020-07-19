@@ -70,10 +70,11 @@ void provideWeather() async {
     // latitude = position.latitude;
     // longitude = position.longitude;
   } catch (e) {
-    infoList.add(
-        customInfoWidget(title:"Obtain position error, use default position."));
+    infoList.add(customInfoWidget(
+        title: "Obtain position error, use default position."));
   } finally {
     // make a weather station to query
+    /// openWeatherApiKey should be reset
     String openWeatherApiKey = "775c57286ee370cf78079b37d408b4e5";
     WeatherStation weatherStation = new WeatherStation(openWeatherApiKey);
     Weather weather;
@@ -87,16 +88,14 @@ void provideWeather() async {
     infoList.add(
       customInfoWidget(
           title: weather.temperature.celsius.toString() +
-              "°C" +
-              ", " +
+              "°C, " +
               weather.weatherMain,
           subtitle: weather.areaName +
-            ", " +
-            "(lat, lon) = (" +
-            latitude.toString() +
-            ", " +
-            longitude.toString() +
-            ")"),
+              ", (lat, lon) = (" +
+              latitude.toString() +
+              ", " +
+              longitude.toString() +
+              ")"),
     );
   }
 }

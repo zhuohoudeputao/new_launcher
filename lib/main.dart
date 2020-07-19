@@ -5,6 +5,8 @@
  * @Description: file content
  */
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:new_launcher/data.dart';
@@ -61,8 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
   // The list for displaying infomations
   // List<Widget> _infoList = <Widget>[];
   // The list for displaying action suggestions
-  List<Widget> _suggestList = <Widget>[];
-  Map<Widget, MyAction> _suggestWidgetToAction = <Widget, MyAction>{};
 
   // Map<MyProvider, List<MyAction>> _ac
   List<MyProvider> _providerList = [
@@ -78,16 +78,29 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController _editingController = TextEditingController();
   ScrollController _scrollController = ScrollController();
 
+  /// Data binding is too difficult to achieve, so I refresh UI by timer.
+  /// Though it is not perfect.
+  Timer refreshTimer;
+
   @override
   void initState() {
     super.initState();
+    refreshTimer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+      setState(() {});
+    });
     // initialize actionList
     initServices();
     // initialize suggestList
-    // Todo: sort by times in an hour
+    // TODO: sort by times in an hour
     // _suggestList = _suggestWidgetToAction.keys;
 
     // initialize infoList
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    refreshTimer.cancel();
   }
 
   void initServices() {
@@ -95,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
       List<MyAction> actions = provider.initContent();
       _actionList.addAll(actions);
       for (MyAction action in actions) {
-        _suggestWidgetToAction[action.suggestWidget] = action;
+        suggestWidgetToAction[action.suggestWidget] = action;
       }
     }
   }
@@ -106,11 +119,9 @@ class _MyHomePageState extends State<MyHomePage> {
     input = input.toLowerCase();
     switch (input) {
       default:
-        if (_suggestList.isNotEmpty) {
-          setState(() {
-            MyAction actionNow = _suggestWidgetToAction[_suggestList[0]];
-            actionNow.action.call();
-          });
+        if (suggestList.isNotEmpty) {
+          MyAction actionNow = suggestWidgetToAction[suggestList[0]];
+          actionNow.action.call();
         } else {
           _dontKnow();
         }
@@ -122,24 +133,21 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String inputBefore = "";
+
+  /// generate suggestList when inputting
   void _provideSuggestion(String input) {
-    ///generate suggestList when inputting
     initServices();
-    setState(() {
-      _suggestList.clear();
-      // generate suggestList
-      for (MyAction action in _actionList) {
-        if (action.canIdentifyBy(input)) {
-          _suggestList.add(action.suggestWidget);
-        }
+    suggestList.clear();
+    // generate suggestList
+    for (MyAction action in _actionList) {
+      if (action.canIdentifyBy(input)) {
+        suggestList.add(action.suggestWidget);
       }
-    });
+    }
   }
 
   void _dontKnow() {
-    setState(() {
-      infoList.add(customInfoWidget(title: "I don't know what to do 😂"));
-    });
+    infoList.add(customInfoWidget(title: "I don't know what to do 😂"));
   }
 
   @override
@@ -150,13 +158,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    // return Container(
-    //   // decoration: BoxDecoration(
-    //   //     image: DecorationImage(
-    //   //   image: backgroundImage,
-    //   //   fit: BoxFit.cover,
-    //   // )),
-    //   child:
     return Stack(children: <Widget>[
       Image(image: backgroundImage, fit: BoxFit.cover),
       Scaffold(
@@ -184,9 +185,9 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 50.0,
               child: ListView.builder(
                 // suggestion displayer
-                itemCount: _suggestList.length,
+                itemCount: suggestList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return _suggestList[index];
+                  return suggestList[index];
                 },
                 scrollDirection: Axis.horizontal,
               ),

@@ -43,10 +43,9 @@ List<MyAction> initApp() {
             app.packageName.toLowerCase(),
         action: () {
           DeviceApps.openApp(app.packageName); // launch this app
-          infoList.add(customInfoWidget(title: app.appName ,subtitle: "is launched."));
+          // infoList.add(customInfoWidget(title: app.appName ,subtitle: "is launched."));
         },
         times: List.generate(24, (index) => 0),
-        // infoWidgets: [customInfoWidget(app.appName + " is launched.")],
         suggestWidget: null,
       ));
     }

@@ -6,32 +6,32 @@
  */
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
+import 'package:new_launcher/provider.dart';
+import 'package:new_launcher/ui.dart';
 
-import '../action.dart';
-import '../ui.dart';
-import '../provider.dart';
 
 /// a provider provides some actions about time
-MyProvider providerTime = MyProvider(initContent: initTime);
+MyProvider providerTime = MyProvider(initContent: _initTime);
 
 /// The funciton [initTime] makes actions about time
 /// Each action can be done when the user chooses it
 /// And the suggestWidget will be shown in suggestList
-List<MyAction> initTime() {
+List<MyAction> _initTime() {
   List<MyAction> actions = <MyAction>[];
   if (providerTime.needUpdate()) {
     actions.add(MyAction(
       name: "Time now",
-      keywords: "time now when",
+      keywords: "time now when is it",
       action:
-          provideTime,
+          _provideTime,
       times: List.generate(
-          24, (index) => 100), // let the frequency big enough to prioritize it
+          24, (index) => 0), // let the frequency big enough to prioritize it
       suggestWidget: null,
     ));
     // do at the beginning
-    provideTime();
+    _provideTime();
     // set updated
     providerTime.setUpdated();
   }
@@ -40,16 +40,16 @@ List<MyAction> initTime() {
 
 /// [provideTime] is the core action of the [MyAction] object
 /// which produces some widgets into the infoList showing useful information.
-void provideTime() {
-  infoList.add(TimeWidget());
+void _provideTime() {
+  infoList.add(_TimeWidget());
 }
 
-class TimeWidget extends StatefulWidget {
+class _TimeWidget extends StatefulWidget {
   @override
   _TimeWidgetState createState() => _TimeWidgetState();
 }
 
-class _TimeWidgetState extends State<TimeWidget> {
+class _TimeWidgetState extends State<_TimeWidget> {
   Timer timer;
   Duration duration = Duration(seconds: 1);
   @override
