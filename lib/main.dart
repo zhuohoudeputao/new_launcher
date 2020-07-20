@@ -34,11 +34,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark,
         // primaryColor: Colors.blue[100],
-        // accentColor: Colors.blue[100],
+        accentColor: Colors.blue[100],
         // cardColor: Colors.grey[900],
         // primaryColor: Colors.black87,
         // cardColor: Colors.white24,
-        cardColor: Colors.black26,
+        cardColor: Colors.transparent,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(),
@@ -180,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     hintText: ">_ Input something here.",
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
-                          color: Theme.of(context).primaryColor, width: 10.0),
+                          color: Theme.of(context).accentColor, width: 10.0),
                     )),
                 controller: _editingController,
                 onSubmitted: _handleInput,

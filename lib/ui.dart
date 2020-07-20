@@ -6,10 +6,14 @@
  */
 
 import 'package:flutter/material.dart';
+// Contains some custom widgets here
 
-Widget customInfoWidget({String title, String subtitle=""}) {
-  // custom Text Widget
-  // String head = ">_ "; // shell style information
+/// ``customInfoWidget`` is designed for displaying a message
+/// with informations. The most important part of a "info" should be
+/// displayed on title area. And the second important part is displayed
+/// on subtitle. Icons will be added soon.
+// TODO: add icon ability for info widget.
+Widget customInfoWidget({String title, String subtitle = ""}) {
   return Card(
     child: ListTile(
       // leading: icon,
@@ -23,10 +27,32 @@ Widget customInfoWidget({String title, String subtitle=""}) {
   );
 }
 
+/// ``customSuggestWidget`` is designed for displaying a suggest action
+/// above the input box.
 Widget customSuggestWidget({String name, Function onPressed}) {
   return FlatButton(
     onPressed: onPressed,
     child: Text(name),
-    textColor: Colors.white,
+  );
+}
+
+Widget customTextSettingWidget(
+    {String key, var value, void Function(String) onSubmitted}) {
+  return Card(
+    child: ListTile(
+      // leading: icon,
+      title: TextField(
+        textAlign: TextAlign.left,
+        style: TextStyle(fontWeight: FontWeight.bold),
+        decoration: InputDecoration(
+          hintText: value.toString(),
+          labelText: key,
+          // helperText: key,
+          border: InputBorder.none,
+        ),
+        onSubmitted: onSubmitted,
+        // controller: TextEditingController()..text=value.toString(),
+      ),
+    ),
   );
 }

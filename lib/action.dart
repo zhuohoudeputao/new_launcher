@@ -20,7 +20,10 @@ class MyAction {
   /// This action will influence infoWidgets, So infoList will be global.
   Function _action;
   List<int> _times; // 24 hours, every num means times in an hour
-  Widget suggestWidget; // Widget show in suggestList
+  Widget _suggestWidget; // Widget show in suggestList
+  Widget get suggestWidget {
+    return _suggestWidget;
+  }
 
   /// Initialization
   MyAction({
@@ -35,9 +38,9 @@ class MyAction {
     this._action = action;
     this._times = times;
     if (suggestWidget == null) {
-      this.suggestWidget = _suggestWidget();
+      this._suggestWidget = customSuggestWidget(name: name, onPressed: action);
     } else {
-      this.suggestWidget = suggestWidget;
+      this._suggestWidget = suggestWidget;
     }
   }
 
@@ -64,7 +67,4 @@ class MyAction {
     return this._keywords.contains(searchStr.toLowerCase());
   }
 
-  Widget _suggestWidget() {
-    return customSuggestWidget(name: this.name, onPressed: this.action);
-  }
 }
