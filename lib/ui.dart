@@ -11,25 +11,26 @@ import 'package:flutter/material.dart';
 /// ``customInfoWidget`` is designed for displaying a message
 /// with informations. The most important part of a "info" should be
 /// displayed on title area. And the second important part is displayed
-/// on subtitle. Icons will be added soon.
-// TODO: add icon ability for info widget.
-Widget customInfoWidget({String title, String subtitle = ""}) {
+/// on subtitle.
+Widget customInfoWidget(
+    {String title, String subtitle = "", Widget icon, void Function() onTap}) {
   return Card(
     child: ListTile(
-      // leading: icon,
       title: Text(
         title,
         textAlign: TextAlign.left,
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Text(subtitle),
+      onTap: onTap,
+      trailing: icon,
     ),
   );
 }
 
 /// ``customSuggestWidget`` is designed for displaying a suggest action
 /// above the input box.
-Widget customSuggestWidget({String name, Function onPressed}) {
+Widget customSuggestWidget({String name, void Function() onPressed}) {
   return FlatButton(
     onPressed: onPressed,
     child: Text(name),

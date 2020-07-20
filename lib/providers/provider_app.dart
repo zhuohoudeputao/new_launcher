@@ -5,13 +5,14 @@
  * @Description: file content
  */
 
-import 'package:device_apps/device_apps.dart';
-import 'package:new_launcher/data.dart';
 import 'dart:async';
 
+import 'package:device_apps/device_apps.dart';
+import 'package:flutter/material.dart';
 import 'package:new_launcher/action.dart';
-import '../ui.dart';
-import '../provider.dart';
+import 'package:new_launcher/data.dart';
+import 'package:new_launcher/provider.dart';
+import 'package:new_launcher/ui.dart';
 
 // a provider provides some actions
 MyProvider providerApp = MyProvider(initContent: initApp);
@@ -43,14 +44,19 @@ List<MyAction> initApp() {
             app.packageName.toLowerCase(),
         action: () {
           DeviceApps.openApp(app.packageName); // launch this app
-          // infoList.add(customInfoWidget(title: app.appName ,subtitle: "is launched."));
+          infoList.add(customInfoWidget(
+              title: app.appName,
+              subtitle: "is launched.",
+              onTap: () {
+                DeviceApps.openApp(app.packageName);
+              }));
         },
         times: List.generate(24, (index) => 0),
-        suggestWidget: null,
+        // suggestWidget: null,
       ));
     }
     //do at the beginning
-
+    // TODO: show most frequent used apps in infoList
     // set updated
     providerApp.setUpdated();
   }

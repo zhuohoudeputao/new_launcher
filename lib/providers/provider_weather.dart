@@ -5,9 +5,6 @@
  * @Description: file content
  */
 
-// import 'package:flutter/material.dart';
-// import 'package:location/location.dart';
-import 'package:flutter/material.dart';
 import 'package:weather/weather_library.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/action.dart';
