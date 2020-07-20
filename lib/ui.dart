@@ -11,7 +11,6 @@ Widget customInfoWidget({String title, String subtitle=""}) {
   // custom Text Widget
   // String head = ">_ "; // shell style information
   return Card(
-    color: Colors.white70,
     child: ListTile(
       // leading: icon,
       title: Text(

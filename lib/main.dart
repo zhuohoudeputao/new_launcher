@@ -32,7 +32,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        brightness: Brightness.dark,
+        // primaryColor: Colors.blue[100],
+        // accentColor: Colors.blue[100],
+        // cardColor: Colors.grey[900],
+        // primaryColor: Colors.black87,
+        // cardColor: Colors.white24,
+        cardColor: Colors.black26,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(),
@@ -158,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Stack(children: <Widget>[
+    return Stack(fit: StackFit.expand, children: <Widget>[
       Image(image: backgroundImage, fit: BoxFit.cover),
       Scaffold(
         backgroundColor: Colors.transparent,
@@ -173,8 +179,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 decoration: InputDecoration(
                     hintText: ">_ Input something here.",
                     focusedBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.deepPurple, width: 10.0),
+                      borderSide: BorderSide(
+                          color: Theme.of(context).primaryColor, width: 10.0),
                     )),
                 controller: _editingController,
                 onSubmitted: _handleInput,
