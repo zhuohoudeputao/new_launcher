@@ -1,7 +1,7 @@
 /*
  * @Author: zhuohoudeputao
  * @LastEditors: zhuohoudeputao
- * @LastEditTime: 2020-07-12 18:37:29
+ * @LastEditTime: 2020-07-22 00:45:33
  * @Description: file content
  */
 
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         // cardColor: Colors.grey[900],
         // primaryColor: Colors.black87,
         // cardColor: Colors.white24,
-        cardColor: Colors.transparent,
+        // cardColor: Colors.transparent,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(),

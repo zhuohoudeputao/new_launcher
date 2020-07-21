@@ -1,7 +1,7 @@
 /*
  * @Author: zhuohoudeputao
  * @LastEditors: zhuohoudeputao
- * @LastEditTime: 2020-07-16 12:16:08
+ * @LastEditTime: 2020-07-22 01:34:53
  * @Description: file content
  */
 
@@ -76,10 +76,10 @@ void _provideWeather() async {
         title: "Obtain position error, use default position."));
   } finally {
     // make a weather station to query
-    WeatherStation weatherStation = new WeatherStation(_openWeatherApiKey);
+    WeatherFactory weatherFactory = new WeatherFactory(_openWeatherApiKey);
     Weather weather;
     try {
-      weather = await weatherStation.currentWeather(_latitude, _longitude);
+      weather = await weatherFactory.currentWeatherByLocation(_latitude, _longitude);
     } catch (e) {
       infoList.add(customInfoWidget(title: e.toString()));
       return;
