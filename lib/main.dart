@@ -65,24 +65,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // The list for displaying infomations
-  // List<Widget> _infoList = <Widget>[];
-  // The list for displaying action suggestions
-
-  // Map<MyProvider, List<MyAction>> _ac
-  List<MyProvider> _providerList = [
-    providerWallpaper,
-    providerTime,
-    providerWeather,
-    providerApp,
-    providerSys,
-  ];
-  List<MyAction> _actionList = <MyAction>[];
-
-  // ui controller
-  TextEditingController _editingController = TextEditingController();
-  ScrollController _scrollController = ScrollController();
-
   /// Data binding is too difficult to achieve, so I refresh UI by timer.
   /// Though it is not perfect.
   Timer refreshTimer;
@@ -93,67 +75,13 @@ class _MyHomePageState extends State<MyHomePage> {
     refreshTimer = Timer.periodic(Duration(milliseconds: 500), (timer) {
       setState(() {});
     });
-    // initialize actionList
-    initServices();
-    // initialize suggestList
-    // TODO: sort by times in an hour
-    // _suggestList = _suggestWidgetToAction.keys;
-
-    // initialize infoList
+    myData.initServices();
   }
 
   @override
   void dispose() {
     super.dispose();
     refreshTimer.cancel();
-  }
-
-  void initServices() {
-    for (MyProvider provider in _providerList) {
-      List<MyAction> actions = provider.initContent();
-      _actionList.addAll(actions);
-      for (MyAction action in actions) {
-        suggestWidgetToAction[action.suggestWidget] = action;
-      }
-    }
-  }
-
-  void _handleInput(String input) {
-    ///when input is submitted
-    // Divide and conquer
-    input = input.toLowerCase();
-    switch (input) {
-      default:
-        if (suggestList.isNotEmpty) {
-          MyAction actionNow = suggestWidgetToAction[suggestList[0]];
-          actionNow.action.call();
-        } else {
-          _dontKnow();
-        }
-    }
-    // Record
-
-    // Clear the input field
-    _editingController.text = "";
-  }
-
-  String inputBefore = "";
-
-  /// generate suggestList when inputting
-  void _provideSuggestion(String input) {
-    initServices();
-    suggestList.clear();
-    // generate suggestList
-    for (MyAction action in _actionList) {
-      if (action.canIdentifyBy(input)) {
-        suggestList.add(action.suggestWidget);
-      }
-    }
-  }
-
-  void _dontKnow() {
-    myData.addInfo("I don't know what to do",
-        subtitle: "Try type something else.", icon: Icon(Icons.help));
   }
 
   @override
@@ -182,18 +110,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderSide: BorderSide(
                           color: Theme.of(context).accentColor, width: 10.0),
                     )),
-                controller: _editingController,
-                onSubmitted: _handleInput,
-                onChanged: _provideSuggestion,
+                controller: myData.inputBoxController,
+                onEditingComplete: myData.runFirstAction,
+                onChanged: myData.generateSuggestList,
               ),
             ),
             Container(
               height: 50.0,
               child: ListView.builder(
                 // suggestion displayer
-                itemCount: suggestList.length,
+                itemCount: myData.suggestList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return suggestList[index];
+                  return myData.suggestList[index];
                 },
                 scrollDirection: Axis.horizontal,
               ),
@@ -203,11 +131,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 // infomation displayer
                 itemCount: myData.infoList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return myData.infoList[myData.infoList.length - index - 1]; // reverse index
+                  return myData.infoList[
+                      myData.infoList.length - index - 1]; // reverse index
                 },
                 scrollDirection: Axis.vertical,
                 reverse: true, // reverse the entire infoList and the index
-                controller: _scrollController,
               ),
             ),
           ],

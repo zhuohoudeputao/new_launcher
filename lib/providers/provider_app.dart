@@ -19,11 +19,6 @@ bool _returned = false;
 bool _success = false;
 bool _called = false;
 List<MyAction> _initApp() {
-  // if (called == false) {
-  //   getInstallApps();
-  //   called = true;
-  // }
-
   // wait for getInstallApps
   if (!_called && providerApp.needUpdate()) {
     _called = true;
@@ -57,32 +52,8 @@ List<MyAction> _initApp() {
     });
     providerApp.setUpdated();
   }
-
-  // if (apps != null && providerApp.needUpdate()) {
-  //   //generate a widget for every app
-  //   for (Application app in apps) {
-  //     actions.add(MyAction(
-  //       name: app.appName,
-  //       keywords: "launch " +
-  //           app.appName.toLowerCase() +
-  //           " " +
-  //           app.packageName.toLowerCase(),
-  //       action: () {
-  //         DeviceApps.openApp(app.packageName); // launch this app
-  //         infoList.add(customInfoWidget(
-  //             title: app.appName,
-  //             subtitle: "is launched.",
-  //             onTap: () {
-  //               DeviceApps.openApp(app.packageName);
-  //             }));
-  //       },
-  //       times: List.generate(24, (index) => 0),
-  //       // suggestWidget: null,
-  //     ));
-  //   }
   // do at the beginning
   // TODO: show most frequent used apps in infoList
-  // set updated
 
   if (!_returned && _success) {
     _returned = true;
