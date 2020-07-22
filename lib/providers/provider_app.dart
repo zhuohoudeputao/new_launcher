@@ -5,14 +5,11 @@
  * @Description: file content
  */
 
-import 'dart:async';
-
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
-import 'package:new_launcher/ui.dart';
 
 // a provider provides some actions
 MyProvider providerApp = MyProvider(initContent: _initApp);
@@ -46,13 +43,11 @@ List<MyAction> _initApp() {
               app.packageName.toLowerCase(),
           action: () {
             DeviceApps.openApp(app.packageName); // launch this app
-            infoList.add(customInfoWidget(
-                icon: Image.memory(app.icon),
-                title: app.appName,
+            myData.addInfo(app.appName,
                 subtitle: "is launched.",
-                onTap: () {
-                  DeviceApps.openApp(app.packageName);
-                }));
+                icon: Image.memory(app.icon), onTap: () {
+              DeviceApps.openApp(app.packageName);
+            });
           },
           times: List.generate(24, (index) => 0),
           // suggestWidget: null,

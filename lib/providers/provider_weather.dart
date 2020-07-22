@@ -8,7 +8,6 @@
 import 'package:weather/weather_library.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/action.dart';
-import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/provider.dart';
 
 // a provider provides some actions
@@ -72,30 +71,24 @@ void _provideWeather() async {
     // latitude = position.latitude;
     // longitude = position.longitude;
   } catch (e) {
-    infoList.add(customInfoWidget(
-        title: "Obtain position error, use default position."));
+    myData.addInfo("Obtain position error, use default position.");
   } finally {
     // make a weather station to query
     WeatherFactory weatherFactory = new WeatherFactory(_openWeatherApiKey);
     Weather weather;
     try {
-      weather = await weatherFactory.currentWeatherByLocation(_latitude, _longitude);
+      weather =
+          await weatherFactory.currentWeatherByLocation(_latitude, _longitude);
     } catch (e) {
-      infoList.add(customInfoWidget(title: e.toString()));
+      myData.addInfo(e.toString());
       return;
     }
     // weather info widget
-    infoList.add(
-      customInfoWidget(
-          title: weather.temperature.celsius.toStringAsFixed(1) +
-              "°C, " +
-              weather.weatherMain,
-          subtitle: weather.areaName +
-              ", (lat, lon) = (" +
-              _latitude.toString() +
-              ", " +
-              _longitude.toString() +
-              ")"),
-    );
+    myData.addInfo(
+        weather.weatherMain +
+            ", " +
+            weather.temperature.celsius.toStringAsFixed(1) +
+            "°C",
+        subtitle: weather.areaName);
   }
 }

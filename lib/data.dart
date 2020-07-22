@@ -11,7 +11,7 @@ import 'package:new_launcher/ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey();
-List<Widget> infoList = <Widget>[];
+// List<Widget> infoList = <Widget>[];
 List<Widget> suggestList = <Widget>[];
 
 Map<Widget, MyAction> suggestWidgetToAction = <Widget, MyAction>{};
@@ -119,7 +119,7 @@ class MyData {
     // check if there is a info widget with the same key
     for (int i = 0; i < this._infoList.length; i++) {
       if (this._infoList[i].key == key) {
-        this._infoList.removeAt(i);
+        this._infoList.removeAt(i); // remove the widget with the same key
       }
     }
     // add at the end
@@ -146,11 +146,4 @@ class InfoWidget {
     this.infoWidget = infoWidget;
     this.timeStamp = DateTime.now();
   }
-  bool operator ==(dynamic other) {
-    return this.key == other.key;
-  }
-
-  @override
-  // TODO: implement hashCode
-  int get hashCode => super.hashCode;
 }

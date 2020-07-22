@@ -11,7 +11,6 @@ import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/ui.dart';
 
-
 /// a provider provides some actions about time
 MyProvider providerTime = MyProvider(initContent: _initTime);
 
@@ -24,8 +23,7 @@ List<MyAction> _initTime() {
     actions.add(MyAction(
       name: "Time now",
       keywords: "time now when is it",
-      action:
-          _provideTime,
+      action: _provideTime,
       times: List.generate(
           24, (index) => 0), // let the frequency big enough to prioritize it
       suggestWidget: null,
@@ -41,7 +39,7 @@ List<MyAction> _initTime() {
 /// [provideTime] is the core action of the [MyAction] object
 /// which produces some widgets into the infoList showing useful information.
 void _provideTime() {
-  infoList.add(_TimeWidget());
+  myData.addInfoWidget("time", _TimeWidget());
 }
 
 class _TimeWidget extends StatefulWidget {

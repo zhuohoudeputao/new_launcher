@@ -14,7 +14,6 @@ import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/providers/provider_sys.dart';
 import 'package:new_launcher/providers/provider_wallpaper.dart';
-import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/providers/provider_time.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
@@ -153,7 +152,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _dontKnow() {
-    infoList.add(customInfoWidget(title: "I don't know what to do 😂"));
+    myData.addInfo("I don't know what to do",
+        subtitle: "Try type something else.", icon: Icon(Icons.help));
   }
 
   @override
@@ -201,9 +201,9 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: ListView.builder(
                 // infomation displayer
-                itemCount: infoList.length,
+                itemCount: myData.infoList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return infoList[infoList.length - index - 1]; // reverse index
+                  return myData.infoList[myData.infoList.length - index - 1]; // reverse index
                 },
                 scrollDirection: Axis.vertical,
                 reverse: true, // reverse the entire infoList and the index

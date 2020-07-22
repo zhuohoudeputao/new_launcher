@@ -10,7 +10,6 @@ import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:launcher_helper/launcher_helper.dart';
-import 'package:new_launcher/ui.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 MyProvider providerWallpaper = MyProvider(initContent: initWallpaper);
@@ -42,8 +41,7 @@ Future<void> readBackground() async {
   if (status.isGranted) {
     backgroundImage = MemoryImage(await LauncherHelper.getWallpaper);
   } else {
-    infoList.add(customInfoWidget(
-        title: "Read local backround fail.",
-        subtitle: "Using default background. Check the storage permission."));
+    myData.addInfo("Read local backround fail.",
+        subtitle: "Using default background. Check the storage permission.");
   }
 }
