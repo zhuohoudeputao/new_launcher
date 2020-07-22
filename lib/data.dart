@@ -101,4 +101,56 @@ class MyData {
       return null;
     }
   }
+
+  /// A list for storing info widgets
+  List<InfoWidget> _infoList = <InfoWidget>[];
+
+  /// This method use title as key and add a [customInfoWidget] to infoList
+  void addInfo(String title,
+      {String subtitle, Widget icon, void Function() onTap}) {
+    this.addInfoWidget(
+        title,
+        customInfoWidget(
+            title: title, subtitle: subtitle, icon: icon, onTap: onTap));
+  }
+
+  /// This method is more flexible for providers
+  void addInfoWidget(String key, Widget infoWidget) {
+    // check if there is a info widget with the same key
+    for (int i = 0; i < this._infoList.length; i++) {
+      if (this._infoList[i].key == key) {
+        this._infoList.removeAt(i);
+      }
+    }
+    // add at the end
+    this._infoList.add(InfoWidget(key, infoWidget));
+  }
+
+  /// get the infoList
+  List<Widget> get infoList {
+    List<Widget> infoList = <Widget>[];
+    for (int i = 0; i < this._infoList.length; i++) {
+      infoList.add(this._infoList[i].infoWidget);
+    }
+    return infoList;
+  }
+}
+
+class InfoWidget {
+  String key;
+  Widget infoWidget;
+  DateTime timeStamp;
+
+  InfoWidget(String key, Widget infoWidget) {
+    this.key = key;
+    this.infoWidget = infoWidget;
+    this.timeStamp = DateTime.now();
+  }
+  bool operator ==(dynamic other) {
+    return this.key == other.key;
+  }
+
+  @override
+  // TODO: implement hashCode
+  int get hashCode => super.hashCode;
 }
