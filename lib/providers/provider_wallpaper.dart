@@ -41,7 +41,7 @@ Future<void> readBackground() async {
   if (status.isGranted) {
     backgroundImage = MemoryImage(await LauncherHelper.getWallpaper);
   } else {
-    myData.addInfo("Read local backround fail.",
+    myData.addInfo("ReadBackgroundFail","Read local background fail.",
         subtitle: "Using default background. Check the storage permission.");
   }
 }

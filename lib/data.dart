@@ -73,6 +73,14 @@ class MyData {
               _prefs.setDouble(key, double.parse(value));
             }));
       }
+      if (value is bool) {
+        _settingList.add(CustomBoolSettingWidget(
+            settingKey: key,
+            value: value,
+            onChanged: (value) {
+              _prefs.setBool(key, value);
+            }));
+      }
     }
     return _settingList;
   }
@@ -109,10 +117,10 @@ class MyData {
   List<InfoWidget> _infoList = <InfoWidget>[];
 
   /// This method use title as key and add a [customInfoWidget] to infoList
-  void addInfo(String title,
+  void addInfo(String key, String title,
       {String subtitle, Widget icon, void Function() onTap}) {
     this.addInfoWidget(
-        title,
+        key,
         customInfoWidget(
             title: title, subtitle: subtitle, icon: icon, onTap: onTap));
   }
@@ -192,7 +200,7 @@ class MyData {
       FlatButton suggest = _suggestList[0] as FlatButton;
       suggest.onPressed.call();
     } else {
-      this.addInfo("I don't know what to do",
+      this.addInfo("Help", "I don't know what to do",
           subtitle: "Try type something else.", icon: Icon(Icons.help));
     }
     // some special care

@@ -39,21 +39,46 @@ List<MyAction> _initTime() {
 /// [provideTime] is the core action of the [MyAction] object
 /// which produces some widgets into the infoList showing useful information.
 void _provideTime() {
-  myData.addInfoWidget("Time", _TimeWidget());
+  _showGreeting().then((value) {
+    myData.addInfoWidget("Time", _TimeWidget(showGreeting: value));
+  });
+}
+
+Future<bool> _showGreeting() async {
+  String greetingKey = "Time.ShowGreeting";
+  // obtain greeting state from myData
+  bool showGreeting = await myData.getValue(greetingKey);
+  if (showGreeting == null) {
+    showGreeting = true; // default value
+    myData.saveValue(greetingKey, showGreeting);
+  }
+  return showGreeting;
 }
 
 class _TimeWidget extends StatefulWidget {
+  final bool showGreeting;
+
+  const _TimeWidget({Key key, this.showGreeting}) : super(key: key);
+
   @override
-  _TimeWidgetState createState() => _TimeWidgetState();
+  _TimeWidgetState createState() =>
+      _TimeWidgetState(showGreeting: showGreeting);
 }
 
 class _TimeWidgetState extends State<_TimeWidget> {
+  _TimeWidgetState({bool showGreeting}) {
+    this.showGreeting = showGreeting;
+  }
+
   Timer timer;
+  bool showGreeting;
   @override
   void initState() {
     super.initState();
     timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
-      setState(() {});
+      if (DateTime.now().second == 0) {
+        setState(() {});
+      }
     });
   }
 
@@ -72,25 +97,28 @@ class _TimeWidgetState extends State<_TimeWidget> {
     // get info
     DateTime now = DateTime.now();
 
-    String greeting;
-    int hour = now.hour;
-    // greeting
-    if (hour >= 22 || (hour >= 0 && hour < 6)) {
-      greeting = "Don't strain yourself too much. Good night 🌙";
-    }
-    if (hour >= 6 && hour < 9) {
-      greeting = "Good morning! It's beautiful outside ☀";
-    }
-    if (hour >= 9 && hour < 12) {
-      greeting = "Good morning ☀";
-    }
-    if (hour >= 12 && hour < 18) {
-      greeting = "Good afternoon! Take a cup of coffee ☕";
-    }
-    if (hour >= 18 && hour < 22) {
-      greeting = "Have a good night 🌙";
+    String greeting = "";
+    if (showGreeting) {
+      int hour = now.hour;
+      // greeting
+      if (hour >= 22 || (hour >= 0 && hour < 6)) {
+        greeting = "Don't strain yourself too much. Good night 🌙";
+      }
+      if (hour >= 6 && hour < 9) {
+        greeting = "Good morning! It's beautiful outside ☀";
+      }
+      if (hour >= 9 && hour < 12) {
+        greeting = "Good morning ☀";
+      }
+      if (hour >= 12 && hour < 18) {
+        greeting = "Good afternoon! Take a cup of coffee ☕";
+      }
+      if (hour >= 18 && hour < 22) {
+        greeting = "Have a good night 🌙";
+      }
     }
 
+    // month
     List<String> months = [
       'January',
       'February',
@@ -107,15 +135,27 @@ class _TimeWidgetState extends State<_TimeWidget> {
     ];
     String month = months[now.month - 1];
 
+    int day = now.day;
+    String dayString = now.day.toString();
+    if (day < 10) {
+      dayString = "0" + dayString;
+    }
+
+    int hour = now.hour;
+    String hourString = now.hour.toString();
+    if (hour < 10) {
+      hourString = "0" + hourString;
+    }
+
+    int minute = now.minute;
+    String minuteString = now.minute.toString();
+    if (minute < 10) {
+      minuteString = "0" + minuteString;
+    }
+
     // create widget
     return customInfoWidget(
-        title: month +
-            " " +
-            now.day.toString() +
-            ", " +
-            now.hour.toString() +
-            ":" +
-            now.minute.toString(),
+        title: month + " " + dayString + ", " + hourString + ":" + minuteString,
         subtitle: greeting);
   }
 }

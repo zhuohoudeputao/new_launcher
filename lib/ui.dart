@@ -57,3 +57,78 @@ Widget customTextSettingWidget(
     ),
   );
 }
+
+// Widget customBoolSettingWidget(
+//     {String key, bool value, void Function(bool) onChanged}) {
+//   return Card(
+//     child: ListTile(
+//       // leading: icon,
+//       title: Text(
+//         key,
+//         textAlign: TextAlign.left,
+//         style: TextStyle(fontWeight: FontWeight.bold),
+//       ),
+//       subtitle: Text("is " + value.toString()),
+//       trailing: Switch(value: value, onChanged: onChanged),
+//     ),
+//   );
+// }
+
+class CustomBoolSettingWidget extends StatefulWidget {
+  final String settingKey;
+  final bool value;
+  final void Function(bool) onChanged;
+
+  const CustomBoolSettingWidget(
+      {Key key, this.settingKey, this.value, this.onChanged})
+      : super(key: key);
+
+  @override
+  State<CustomBoolSettingWidget> createState() => CustomBoolSettingWidgetState(
+      key: settingKey, value: value, onChanged: onChanged);
+}
+
+class CustomBoolSettingWidgetState extends State<CustomBoolSettingWidget> {
+  String key;
+  bool value;
+  void Function(bool) onChanged;
+
+  CustomBoolSettingWidgetState(
+      {String key, bool value, void Function(bool) onChanged}) {
+    this.key = key;
+    this.value = value;
+    this.onChanged = onChanged;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    subtitle = "is " + value.toString();
+  }
+
+  void updateUI(bool value) {
+    setState(() {
+      this.value = value;
+      subtitle = "is " + value.toString();
+      onChanged.call(value);
+    });
+  }
+
+  String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        // leading: icon,
+        title: Text(
+          key,
+          textAlign: TextAlign.left,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(subtitle),
+        trailing: Switch(value: value, onChanged: updateUI),
+      ),
+    );
+  }
+}

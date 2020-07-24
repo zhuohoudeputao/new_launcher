@@ -38,7 +38,7 @@ List<MyAction> _initApp() {
               app.packageName.toLowerCase(),
           action: () {
             DeviceApps.openApp(app.packageName); // launch this app
-            myData.addInfo(app.appName,
+            myData.addInfo(app.appName, app.appName,
                 subtitle: "is launched.",
                 icon: Image.memory(app.icon), onTap: () {
               DeviceApps.openApp(app.packageName);

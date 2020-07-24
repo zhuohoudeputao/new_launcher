@@ -26,7 +26,7 @@ List<MyAction> initSys() {
         },
         times: List.generate(24, (index) => 0),
         suggestWidget: null,
-      )
+      ),
     ];
     // do at the beginning
 

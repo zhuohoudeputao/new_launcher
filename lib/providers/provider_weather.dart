@@ -89,7 +89,7 @@ Future<void> _provideWeatherByCity() async {
   // obtain weather icon
   Icon weatherIcon;
   DateTime now = DateTime.now();
-  if (now.isAfter(weather.sunset)) {
+  if (now.isAfter(weather.sunset)||now.isBefore(weather.sunrise)) {
     // nighttime icons
     switch (weather.weatherMain) {
       case "Clouds":
