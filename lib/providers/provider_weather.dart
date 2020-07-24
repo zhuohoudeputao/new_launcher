@@ -5,6 +5,7 @@
  * @Description: file content
  */
 
+import 'package:new_launcher/ui.dart';
 import 'package:weather/weather_library.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:flutter/material.dart';
@@ -51,48 +52,6 @@ void _provideWeather() async {
       _provideWeatherByCity();
     }
   });
-
-  // // if fail, use default location
-  // _latitude = await myData.getValue("latitude");
-  // _longitude = await myData.getValue("longitude");
-  // _openWeatherApiKey = await myData.getValue("openWeatherApiKey");
-
-  // // if null, store the system default values
-  // if (_latitude is! double) {
-  //   myData.saveValue("latitude", 23.046786);
-  // }
-  // if (_longitude is! double) {
-  //   myData.saveValue("longitude", 116.296786);
-  // }
-  // if (_openWeatherApiKey is! String) {
-  //   myData.saveValue("openWeatherApiKey", "775c57286ee370cf78079b37d408b4e5");
-  // }
-  // // re-get
-  // _latitude = await myData.getValue("latitude");
-  // _longitude = await myData.getValue("longitude");
-  // _openWeatherApiKey = await myData.getValue("openWeatherApiKey");
-
-  // try {} catch (e) {
-  //   myData.addInfo("Obtain position error, use default position.");
-  // } finally {
-  //   // make a weather station to query
-  //   WeatherFactory weatherFactory = new WeatherFactory(_openWeatherApiKey);
-  //   Weather weather;
-  //   try {
-  //     weather =
-  //         await weatherFactory.currentWeatherByLocation(_latitude, _longitude);
-  //   } catch (e) {
-  //     myData.addInfo(e.toString());
-  //     return;
-  //   }
-  //   // weather info widget
-  //   myData.addInfo(
-  //       weather.weatherMain +
-  //           ", " +
-  //           weather.temperature.celsius.toStringAsFixed(1) +
-  //           "°C",
-  //       subtitle: weather.areaName);
-  // }
 }
 
 double _latitude;
@@ -129,18 +88,39 @@ Future<void> _provideWeatherByCity() async {
 
   // obtain weather icon
   Icon weatherIcon;
-  switch (weather.weatherMain) {
-    case "Clouds":
-      weatherIcon = Icon(WeatherIcons.cloudy);
-      break;
-    default:
-      weatherIcon = Icon(Icons.wb_sunny);
+  DateTime now = DateTime.now();
+  if (now.isAfter(weather.sunset)) {
+    // nighttime icons
+    switch (weather.weatherMain) {
+      case "Clouds":
+        weatherIcon = Icon(WeatherIcons.night_alt_cloudy);
+        break;
+      case "Clear":
+        weatherIcon = Icon(WeatherIcons.night_clear);
+        break;
+      case "Rain":
+        weatherIcon = Icon(WeatherIcons.night_alt_rain);
+        break;
+      default:
+        weatherIcon = Icon(WeatherIcons.stars);
+    }
+  } else {
+    // daytime icons
+    switch (weather.weatherMain) {
+      case "Clouds":
+        weatherIcon = Icon(WeatherIcons.day_cloudy);
+        break;
+      default:
+        weatherIcon = Icon(WeatherIcons.day_sunny);
+    }
   }
-  myData.addInfo(
-      weather.weatherMain +
-          ", " +
-          weather.temperature.celsius.toStringAsFixed(1) +
-          "°C",
-      subtitle: weather.areaName,
-      icon: weatherIcon);
+  myData.addInfoWidget(
+      "Weather",
+      customInfoWidget(
+          title: weather.weatherMain +
+              ", " +
+              weather.temperature.celsius.toStringAsFixed(1) +
+              "°C",
+          subtitle: "City: " + weather.areaName + ", FeelsLike: "+weather.tempFeelsLike.celsius.toStringAsFixed(1)+"°C",
+          icon: weatherIcon));
 }
