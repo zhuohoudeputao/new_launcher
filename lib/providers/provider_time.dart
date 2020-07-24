@@ -1,7 +1,7 @@
 /*
  * @Author: zhuohoudeputao
  * @LastEditors: zhuohoudeputao
- * @LastEditTime: 2020-07-16 11:42:42
+ * @LastEditTime: 2020-07-24 22:41:27
  * @Description: a provider for time and greeting
  */
 import 'dart:async';
@@ -39,7 +39,7 @@ List<MyAction> _initTime() {
 /// [provideTime] is the core action of the [MyAction] object
 /// which produces some widgets into the infoList showing useful information.
 void _provideTime() {
-  myData.addInfoWidget("time", _TimeWidget());
+  myData.addInfoWidget("Time", _TimeWidget());
 }
 
 class _TimeWidget extends StatefulWidget {
@@ -49,11 +49,10 @@ class _TimeWidget extends StatefulWidget {
 
 class _TimeWidgetState extends State<_TimeWidget> {
   Timer timer;
-  Duration duration = Duration(seconds: 1);
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(duration, (Timer timer) {
+    timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
       setState(() {});
     });
   }

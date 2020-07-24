@@ -1,7 +1,7 @@
 /*
  * @Author: zhuohoudeputao
  * @LastEditors: zhuohoudeputao
- * @LastEditTime: 2020-07-22 00:45:33
+ * @LastEditTime: 2020-07-24 21:40:17
  * @Description: file content
  */
 
@@ -10,13 +10,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:new_launcher/data.dart';
-import 'package:new_launcher/action.dart';
-import 'package:new_launcher/provider.dart';
-import 'package:new_launcher/providers/provider_sys.dart';
-import 'package:new_launcher/providers/provider_wallpaper.dart';
-import 'package:new_launcher/providers/provider_time.dart';
-import 'package:new_launcher/providers/provider_app.dart';
-import 'package:new_launcher/providers/provider_weather.dart';
 
 void main() {
   // SystemUiOverlayStyle systemUiOverlayStyle =
