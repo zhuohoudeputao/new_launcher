@@ -126,7 +126,16 @@ Future<void> _provideWeatherByCity() async {
   // obtain weather by city name
   WeatherFactory weatherFactory = new WeatherFactory(_openWeatherApiKey);
   Weather weather = await weatherFactory.currentWeatherByCityName(city);
-  Icon weatherIcon = Icon(WeatherIcons.night_cloudy);
+
+  // obtain weather icon
+  Icon weatherIcon;
+  switch (weather.weatherMain) {
+    case "Clouds":
+      weatherIcon = Icon(WeatherIcons.cloudy);
+      break;
+    default:
+      weatherIcon = Icon(Icons.wb_sunny);
+  }
   myData.addInfo(
       weather.weatherMain +
           ", " +
