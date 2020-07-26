@@ -47,11 +47,7 @@ void _provideTime() {
 Future<bool> _showGreeting() async {
   String greetingKey = "Time.ShowGreeting";
   // obtain greeting state from myData
-  bool showGreeting = await myData.getValue(greetingKey);
-  if (showGreeting == null) {
-    showGreeting = true; // default value
-    myData.saveValue(greetingKey, showGreeting);
-  }
+  bool showGreeting = await Global.getValue(greetingKey, true);
   return showGreeting;
 }
 

@@ -64,11 +64,7 @@ Future<bool> _getLocation() async {
 Future<void> _getApiKey() async {
   String apiKey = "Weather.ApiKey";
   // obtain api key from myData
-  _openWeatherApiKey = await myData.getValue(apiKey);
-  if (_openWeatherApiKey == null) {
-    _openWeatherApiKey = "775c57286ee370cf78079b37d408b4e5"; // default value
-    myData.saveValue(apiKey, _openWeatherApiKey);
-  }
+  _openWeatherApiKey = await Global.getValue(apiKey, "775c57286ee370cf78079b37d408b4e5");
 }
 
 void _provideWeatherByLocation() {}
@@ -76,12 +72,7 @@ void _provideWeatherByLocation() {}
 Future<void> _provideWeatherByCity() async {
   String cityKey = "Weather.City";
   // obtain city name from myData
-  String city = await myData.getValue(cityKey);
-  // check if the value is obtained
-  if (city == null) {
-    city = "Guangzhou";
-    myData.saveValue(cityKey, "Guangzhou"); // default value
-  }
+  String city = await Global.getValue(cityKey, "Guangzhou");
   // obtain weather by city name
   WeatherFactory weatherFactory = new WeatherFactory(_openWeatherApiKey);
   Weather weather = await weatherFactory.currentWeatherByCityName(city);

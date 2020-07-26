@@ -6,10 +6,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/providers/provider_sys.dart';
+import 'package:new_launcher/providers/provider_theme.dart';
 import 'package:new_launcher/providers/provider_time.dart';
 import 'package:new_launcher/providers/provider_wallpaper.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
@@ -17,9 +19,6 @@ import 'package:new_launcher/ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey();
-
-ImageProvider backgroundImage;
-// NetworkImage('http://www.005.tv/uploads/allimg/171017/14033330Y-27.jpg');
 
 /// Use this [myData] to read or write data.
 MyData myData = MyData();
@@ -29,90 +28,7 @@ MyData myData = MyData();
 /// - getting a list with manipulation
 /// - etc.
 class MyData {
-  // Data manipulator
-  /// Support for shared_preferences
-  SharedPreferences _prefs;
-
-  // Data
-  /// A widget list generated for changing settings.
-  List<Widget> _settingList = <Widget>[];
-
-  // Initialize
-  /// Initialize all data manipulators
-  MyData() {
-    _getSPInstance();
-  }
-
-  /// initialize the SharedPreferences instance
-  void _getSPInstance() async {
-    _prefs = await SharedPreferences.getInstance();
-  }
-
-  /// [settingList] is generated for all the settings in shared preferences.
-  /// Providers just need to save and use key-value pairs,
-  /// don't need to design the widget of setting items.
-  List<Widget> get settingList {
-    _settingList.clear();
-    // generate settingList
-    Set<String> keys = _prefs.getKeys();
-    for (String key in keys) {
-      var value = _prefs.get(key);
-      if (value is String) {
-        _settingList.add(customTextSettingWidget(
-            key: key,
-            value: value,
-            onSubmitted: (value) {
-              _prefs.setString(key, value);
-            }));
-      }
-      if (value is double) {
-        _settingList.add(customTextSettingWidget(
-            key: key,
-            value: value,
-            onSubmitted: (value) {
-              _prefs.setDouble(key, double.parse(value));
-            }));
-      }
-      if (value is bool) {
-        _settingList.add(CustomBoolSettingWidget(
-            settingKey: key,
-            value: value,
-            onChanged: (value) {
-              _prefs.setBool(key, value);
-            }));
-      }
-    }
-    return _settingList;
-  }
-
-  /// Save key-value pair for providers.
-  /// [value] can be a string, bool, double, int or string list.
-  /// If the type of [value] is not support, nothing will be store.
-  void saveValue(String key, var value) {
-    if (value is String) {
-      _prefs.setString(key, value);
-    } else if (value is bool) {
-      _prefs.setBool(key, value);
-    } else if (value is double) {
-      _prefs.setDouble(key, value);
-    } else if (value is int) {
-      _prefs.setInt(key, value);
-    } else if (value is List<String>) {
-      _prefs.setStringList(key, value);
-    }
-  }
-
-  /// Get value for providers.
-  /// If the [key] is not contained in preferences, [null] is returned.
-  dynamic getValue(String key) async {
-    _prefs = await SharedPreferences.getInstance();
-    if (_prefs.containsKey(key)) {
-      return _prefs.get(key);
-    } else {
-      return null;
-    }
-  }
-
+  ////////////////////////////////////////////////////////////////////////////////////
   /// A list for storing info widgets
   List<InfoWidget> _infoList = <InfoWidget>[];
 
@@ -146,9 +62,11 @@ class MyData {
     return infoList;
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////
   /// A list for storing providers
   List<MyProvider> _providerList = [
     providerWallpaper,
+    providerTheme,
     providerTime,
     providerWeather,
     providerApp,
@@ -218,5 +136,172 @@ class InfoWidget {
     this.key = key;
     this.infoWidget = infoWidget;
     this.timeStamp = DateTime.now();
+  }
+}
+
+/// Now use [Global] to read or write data. 
+/// [Global] contains models to save and change data, which are accessible for providers. 
+/// Frequently used methods can be writed here as static. 
+class Global {
+  //_____________________________________________________________Initialize
+  /// Initialize. Call this before run [MyApp].
+  static Future init() async {
+    await settingsModel.init();
+  }
+
+  //________________________________________________________BackgroundImage
+  /// A model for storing background image.
+  static BackgroundImageModel backgroundImageModel = BackgroundImageModel();
+  // Frequently used methods can be writed as static
+  /// Set background image
+  static setBackgroundImage(ImageProvider value) {
+    backgroundImageModel.backgroundImage = value;
+  }
+
+  //_______________________________________________________________Settings
+  /// A model for storing settings
+  static SettingsModel settingsModel = SettingsModel();
+
+  static dynamic getValue(String key, var defaultValue) {
+    return settingsModel.getValue(key, defaultValue);
+  }
+
+  //__________________________________________________________________Theme
+  /// A model for theme management
+  static ThemeModel themeModel = ThemeModel();
+
+  static setTheme(ThemeData themeData) {
+    themeModel.themeData = themeData;
+  }
+  //_____________________________________________________________Suggestion
+
+
+  //_______________________________________________________________________
+}
+
+class InfoModel with ChangeNotifier{
+
+}
+
+class SuggestModel with ChangeNotifier{
+
+}
+
+class ThemeModel with ChangeNotifier {
+  ThemeData _themeData;
+  ThemeData get themeData => _themeData;
+
+  set themeData(ThemeData value) {
+    _themeData = value;
+    notifyListeners();
+  }
+}
+
+class SettingsModel with ChangeNotifier {
+  Future init() async {
+    _prefs = await SharedPreferences.getInstance();
+    // Initialize settingList
+    Set<String> keys = _prefs.getKeys();
+    for (String key in keys) {
+      var value = _prefs.get(key);
+      _addSettingWidget(key, value);
+    }
+  }
+
+  // data
+  /// A widget list generated for changing settings.
+  static Map<String, Widget> _settingMap = <String, Widget>{};
+  static SharedPreferences _prefs;
+  // getter or setter
+  /// [settingList] is generated for all the settings in shared preferences.
+  /// Providers just need to save and use key-value pairs,
+  /// don't need to design the widget of setting items.
+  List<Widget> get settingList {
+    return _settingMap.values.toList();
+  }
+
+  // manipulators
+  /// Save key-value pair for providers.
+  /// [value] can be a string, bool, double, int or string list.
+  /// If the type of [value] is not support, nothing will be store.
+  void saveValue(String key, var value) {
+    if (value is String) {
+      _prefs.setString(key, value);
+    } else if (value is bool) {
+      _prefs.setBool(key, value);
+    } else if (value is double) {
+      _prefs.setDouble(key, value);
+    } else if (value is int) {
+      _prefs.setInt(key, value);
+    } else if (value is List<String>) {
+      _prefs.setStringList(key, value);
+    }
+    _addSettingWidget(key, value);
+  }
+
+  /// Get value for providers.
+  /// If the [key] is not contained in preferences, [null] is returned.
+  dynamic getValue(String key, var defaultValue) async {
+    _prefs = await SharedPreferences.getInstance();
+    if (_prefs.containsKey(key)) {
+      return _prefs.get(key);
+    } else {
+      saveValue(key, defaultValue);
+      return defaultValue;
+    }
+  }
+
+  void _addSettingWidget(String key, var value) {
+    if (value is String) {
+      _settingMap[key] = customTextSettingWidget(
+          key: key,
+          value: value,
+          onSubmitted: (value) {
+            _prefs.setString(key, value);
+            _addSettingWidget(key, value);
+          });
+    } else if (value is bool) {
+      _settingMap[key] = CustomBoolSettingWidget(
+          settingKey: key,
+          value: value,
+          onChanged: (value) {
+            _prefs.setBool(key, value);
+            _addSettingWidget(key, value);
+          });
+    } else if (value is double) {
+      _settingMap[key] = customTextSettingWidget(
+          key: key,
+          value: value,
+          onSubmitted: (value) {
+            _prefs.setDouble(key, double.parse(value));
+            _addSettingWidget(key, double.parse(value));
+          });
+    } else if (value is int) {
+      _settingMap[key] = customTextSettingWidget(
+          key: key,
+          value: value,
+          onSubmitted: (value) {
+            _prefs.setInt(key, int.parse(value));
+            _addSettingWidget(key, int.parse(value));
+          });
+    } else if (value is List<String>) {
+      // coming soon
+    }
+    notifyListeners();
+  }
+}
+
+class BackgroundImageModel with ChangeNotifier {
+  // data
+  ImageProvider _backgroundImage = NetworkImage(
+      "http://bizhi.bcoderss.com/wp-content/uploads/2019/05/pixel-3a-wallpaper-droidviews.jpg");
+  // getter or setter
+  ImageProvider get backgroundImage {
+    return _backgroundImage;
+  }
+
+  set backgroundImage(ImageProvider value) {
+    _backgroundImage = value;
+    notifyListeners();
   }
 }
