@@ -11,7 +11,7 @@ class Setting extends StatefulWidget {
 class SettingState extends State<Setting> {
   @override
   Widget build(BuildContext context) {
-    final settingList = context.watch<SettingsModel>().settingList;
+    List<Widget> settingList = context.watch<SettingsModel>().settingList;
     return Stack(fit: StackFit.expand, children: <Widget>[
       // Image(image: backgroundImage, fit: BoxFit.cover),
       Consumer<BackgroundImageModel>(
@@ -26,10 +26,8 @@ class SettingState extends State<Setting> {
           itemCount: settingList.length,
           itemBuilder: (BuildContext context, int index) {
             return Selector<SettingsModel, Widget>(
-              selector: (context, provider) =>
-                  settingList[index],
-              builder: (context, value, child) =>
-                  settingList[index],
+              selector: (context, provider) => settingList[index],
+              builder: (context, value, child) => settingList[index],
             );
           },
           scrollDirection: Axis.vertical,

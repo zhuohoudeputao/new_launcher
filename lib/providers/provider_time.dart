@@ -40,7 +40,8 @@ List<MyAction> _initTime() {
 /// which produces some widgets into the infoList showing useful information.
 void _provideTime() {
   _showGreeting().then((value) {
-    myData.addInfoWidget("Time", _TimeWidget(showGreeting: value));
+    Global.infoModel.addInfoWidget("Time", _TimeWidget(showGreeting: value));
+    // myData.addInfoWidget("Time", _TimeWidget(showGreeting: value));
   });
 }
 

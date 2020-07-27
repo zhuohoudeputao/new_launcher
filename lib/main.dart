@@ -5,28 +5,30 @@
  * @Description: file content
  */
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:new_launcher/data.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  // SystemUiOverlayStyle systemUiOverlayStyle =
-  //     SystemUiOverlayStyle(statusBarColor: Colors.transparent);
-  // SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+  // remove the shadow of status bar
+  SystemUiOverlayStyle systemUiOverlayStyle =
+      SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+  SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+  // ensure data bindings
   WidgetsFlutterBinding.ensureInitialized();
+  // initialize global values then run app
   Global.init().then((value) => runApp(MultiProvider(
-        // add providers here to make it be an ancestor
+        // add providers here to make them accessible
         providers: [
           ChangeNotifierProvider.value(value: Global.themeModel),
           ChangeNotifierProvider.value(value: Global.backgroundImageModel),
-          ChangeNotifierProvider.value(value: Global.settingsModel)
+          ChangeNotifierProvider.value(value: Global.settingsModel),
+          ChangeNotifierProvider.value(value: Global.infoModel),
+          ChangeNotifierProvider.value(value: Global.actionModel),
         ],
         child: MyApp(),
       )));
-  // runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -47,36 +49,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  /// Data binding is too difficult to achieve, so I refresh UI by timer.
-  /// Though it is not perfect.
-  Timer refreshTimer;
-
-  @override
-  void initState() {
-    super.initState();
-    refreshTimer = Timer.periodic(Duration(milliseconds: 500), (timer) {
-      setState(() {});
-    });
-    myData.initServices();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    refreshTimer.cancel();
-  }
-
   @override
   Widget build(BuildContext context) {
+    List<Widget> infoList = context.watch<InfoModel>().infoList;
+    List<Widget> suggestList = context.watch<ActionModel>().suggestList;
     return Stack(fit: StackFit.expand, children: <Widget>[
-      // Image(image: backgroundImage, fit: BoxFit.cover),
-      // This consumer is to consume the value of
+      // Background Image
       Consumer<BackgroundImageModel>(
           builder: (context, BackgroundImageModel background, child) {
         return Image(
             image: context.watch<BackgroundImageModel>().backgroundImage,
             fit: BoxFit.cover);
       }),
+      // Main Scaffold
       Scaffold(
         backgroundColor: Colors.transparent,
         body: Column(
@@ -84,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           verticalDirection: VerticalDirection.up,
           children: <Widget>[
+            // Input Box
             Card(
               child: TextField(
                 keyboardType: TextInputType.text,
@@ -93,29 +79,38 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderSide: BorderSide(
                           color: Theme.of(context).accentColor, width: 10.0),
                     )),
-                controller: myData.inputBoxController,
-                onEditingComplete: myData.runFirstAction,
-                onChanged: myData.generateSuggestList,
+                controller: context.watch<ActionModel>().inputBoxController,
+                onEditingComplete: context.watch<ActionModel>().runFirstAction,
+                onChanged: context.watch<ActionModel>().generateSuggestList,
               ),
             ),
+            // Suggestion Area
             Container(
               height: 50.0,
               child: ListView.builder(
                 // suggestion displayer
-                itemCount: myData.suggestList.length,
+                itemCount: suggestList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return myData.suggestList[index];
+                  return Selector<ActionModel, Widget>(
+                    selector: (context, provider) => suggestList[index],
+                    builder: (context, value, child) => suggestList[index],
+                  );
                 },
                 scrollDirection: Axis.horizontal,
               ),
             ),
+            // Information Area
             Expanded(
               child: ListView.builder(
                 // infomation displayer
-                itemCount: myData.infoList.length,
+                itemCount: infoList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return myData.infoList[
-                      myData.infoList.length - index - 1]; // reverse index
+                  return Selector<InfoModel, Widget>(
+                    selector: (context, provider) =>
+                        infoList[infoList.length - index - 1],
+                    builder: (context, value, child) =>
+                        infoList[infoList.length - index - 1],
+                  );
                 },
                 scrollDirection: Axis.vertical,
                 reverse: true, // reverse the entire infoList and the index

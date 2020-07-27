@@ -54,8 +54,8 @@ void _provideWeather() async {
   });
 }
 
-double _latitude;
-double _longitude;
+// double _latitude;
+// double _longitude;
 Future<bool> _getLocation() async {
   // get location by sensors (now is unavailable)
   return false;
@@ -64,7 +64,8 @@ Future<bool> _getLocation() async {
 Future<void> _getApiKey() async {
   String apiKey = "Weather.ApiKey";
   // obtain api key from myData
-  _openWeatherApiKey = await Global.getValue(apiKey, "775c57286ee370cf78079b37d408b4e5");
+  _openWeatherApiKey =
+      await Global.getValue(apiKey, "775c57286ee370cf78079b37d408b4e5");
 }
 
 void _provideWeatherByLocation() {}
@@ -80,7 +81,7 @@ Future<void> _provideWeatherByCity() async {
   // obtain weather icon
   Icon weatherIcon;
   DateTime now = DateTime.now();
-  if (now.isAfter(weather.sunset)||now.isBefore(weather.sunrise)) {
+  if (now.isAfter(weather.sunset) || now.isBefore(weather.sunrise)) {
     // nighttime icons
     switch (weather.weatherMain) {
       case "Clouds":
@@ -105,13 +106,24 @@ Future<void> _provideWeatherByCity() async {
         weatherIcon = Icon(WeatherIcons.day_sunny);
     }
   }
-  myData.addInfoWidget(
+  Global.infoModel.addInfoWidget(
       "Weather",
       customInfoWidget(
           title: weather.weatherMain +
               ", " +
               weather.temperature.celsius.toStringAsFixed(1) +
+              "°C, " +
+              weather.humidity.toString() +
+              "%",
+          subtitle: weather.areaName +
+              // ", " +
+              // weather.tempMin.celsius.toString() +
+              // "°C" +
+              // "-" +
+              // weather.tempMax.celsius.toString() +
+              // "°C" +
+              ", FeelsLike: " +
+              weather.tempFeelsLike.celsius.toStringAsFixed(1) +
               "°C",
-          subtitle: "City: " + weather.areaName + ", FeelsLike: "+weather.tempFeelsLike.celsius.toStringAsFixed(1)+"°C",
           icon: weatherIcon));
 }

@@ -17,14 +17,13 @@ MyProvider providerWallpaper = MyProvider(initContent: initWallpaper);
 List<MyAction> initWallpaper() {
   List<MyAction> actions = <MyAction>[];
   if (providerWallpaper.needUpdate()) {
-    // actions.add(MyAction(
-    //   name: "Time now",
-    //   keywords: "time now when",
-    //   action: null,
-    //   times: List.generate(
-    //       24, (index) => 0),
-    //   suggestWidget: null,
-    // ));
+    actions.add(MyAction(
+      name: "Refresh Wallpaper",
+      keywords: "refresh background wallpaper",
+      action: readBackground,
+      times: List.generate(24, (index) => 0),
+      suggestWidget: null,
+    ));
     // do at the beginning
     readBackground();
     // set updated
@@ -41,7 +40,8 @@ Future<void> readBackground() async {
   if (status.isGranted) {
     Global.setBackgroundImage(MemoryImage(await LauncherHelper.getWallpaper));
   } else {
-    myData.addInfo("ReadBackgroundFail", "Read local background fail.",
+    Global.infoModel.addInfo(
+        "ReadBackgroundFail", "Read local background fail.",
         subtitle: "Using default background. Check the storage permission.");
   }
 }
