@@ -18,7 +18,7 @@ class MyAction {
 
   /// Core action, what this action actually does.
   /// This action will influence infoWidgets, So infoList will be global.
-  Function _action;
+  void Function() _action;
   List<int> _times; // 24 hours, every num means times in an hour
   Widget _suggestWidget; // Widget show in suggestList
   Widget get suggestWidget {
@@ -29,31 +29,31 @@ class MyAction {
   MyAction({
     String name,
     String keywords,
-    Function action,
+    void Function() action,
     List<int> times,
-    Widget suggestWidget, // define how to generate suggestWidget
   }) {
     this.name = name;
     this._keywords = keywords.toLowerCase();
     this._action = action;
     this._times = times;
-    if (suggestWidget == null) {
-      this._suggestWidget = customSuggestWidget(name: name, onPressed: action);
-    } else {
-      this._suggestWidget = suggestWidget;
-    }
+    this._suggestWidget = customSuggestWidget(name: name, onPressed: action);
   }
 
   // add '_' before the func to make it 'private'
 
   /// call for action
   void action() {
+    // _action(args: args);
     _action.call();
+    frequencyAdd();
   }
 
   /// get the frequency of this action in this hour
-  int frequency(double hour) {
-    return _times[hour.floor()];
+  int frequency({double hour}) {
+    if (hour != null) {
+      return _times[hour.floor()];
+    }
+    return _times[DateTime.now().hour];
   }
 
   /// when this action is taken, add frequency by 1
@@ -66,5 +66,4 @@ class MyAction {
   bool canIdentifyBy(String searchStr) {
     return this._keywords.contains(searchStr.toLowerCase());
   }
-
 }

@@ -90,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: Theme.of(context).accentColor, width: 10.0),
                       )),
                   controller: context.watch<ActionModel>().inputBoxController,
-                  onEditingComplete:
+                  onSubmitted:
                       context.watch<ActionModel>().runFirstAction,
                   onChanged: context.watch<ActionModel>().generateSuggestList,
                 ),

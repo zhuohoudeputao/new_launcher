@@ -3,25 +3,28 @@ import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
 
-MyProvider providerTheme = MyProvider(initContent: _initTheme);
+MyProvider providerTheme = MyProvider(
+    name: "Theme",
+    provideActions: _provideActions,
+    initActions: _initActions,
+    update: _update);
 
-List<MyAction> _initTheme() {
-  List<MyAction> actions = <MyAction>[];
-  if (providerTheme.needUpdate()) {
-    actions.add(MyAction(
+Future<void> _provideActions() async {
+  Global.addActions([
+    MyAction(
       name: "Refresh theme",
       keywords: "refresh theme",
       action: _provideTheme,
       times: List.generate(24, (index) => 0),
-      suggestWidget: null,
-    ));
-    // do at the beginning
-    _provideTheme();
-    // set updated
-    providerTheme.setUpdated();
-  }
-  return actions;
+    )
+  ]);
 }
+
+Future<void> _initActions() async {
+  _provideTheme();
+}
+
+Future<void> _update() async {}
 
 void _provideTheme() async {
   Brightness brightness = Brightness.light;

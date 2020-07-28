@@ -12,27 +12,32 @@ import 'package:new_launcher/provider.dart';
 import 'package:launcher_helper/launcher_helper.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-MyProvider providerWallpaper = MyProvider(initContent: initWallpaper);
+MyProvider providerWallpaper = MyProvider(
+    name: "Wallpaper",
+    provideActions: _provideActions,
+    initActions: _initActions,
+    update: _update);
 
-List<MyAction> initWallpaper() {
-  List<MyAction> actions = <MyAction>[];
-  if (providerWallpaper.needUpdate()) {
-    actions.add(MyAction(
+Future<void> _provideActions() async {
+  Global.addActions([
+    MyAction(
       name: "Refresh Wallpaper",
       keywords: "refresh background wallpaper",
-      action: readBackground,
+      action: _readBackground,
       times: List.generate(24, (index) => 0),
-      suggestWidget: null,
-    ));
-    // do at the beginning
-    readBackground();
-    // set updated
-    providerWallpaper.setUpdated();
-  }
-  return actions;
+    )
+  ]);
 }
 
-Future<void> readBackground() async {
+Future<void> _initActions() async {
+  _readBackground();
+}
+
+Future<void> _update() async {
+  _readBackground();
+}
+
+Future<void> _readBackground() async {
   var status = await Permission.storage.status;
   if (status.isUndetermined || status.isDenied) {
     status = await Permission.storage.request();

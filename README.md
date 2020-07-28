@@ -18,3 +18,13 @@ The ability new launcher can do:
 - [ ] Launch useful intents
 - [ ] Translate
 - [ ] etc
+
+# For Developers
+You can make your own [provider] to provide a service in this app. What [provider] can do:
+- Produce infomation into the infoList
+- Provide some actions for users
+
+Settings will be managed automatically, and when it changes, [provider] will update. So, here are some function to implement:
+- provideActions
+- initActions
+- update

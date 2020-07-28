@@ -11,13 +11,15 @@ import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/setting.dart';
 
-MyProvider providerSys = MyProvider(initContent: initSys);
+MyProvider providerSystem = MyProvider(
+    name: "System",
+    provideActions: _provideActions,
+    initActions: _initActions,
+    update: _update);
 
-List<MyAction> initSys() {
-  List<MyAction> actions = <MyAction>[];
-  if (providerSys.needUpdate()) {
-    actions = [
-      MyAction(
+Future<void> _provideActions() async {
+  Global.addActions([
+    MyAction(
         name: 'Open launcher settings',
         keywords: 'launcher settings',
         action: () {
@@ -25,13 +27,10 @@ List<MyAction> initSys() {
               MaterialPageRoute(builder: (BuildContext context) => Setting()));
         },
         times: List.generate(24, (index) => 0),
-        suggestWidget: null,
       ),
-    ];
-    // do at the beginning
-
-    // set updated
-    providerSys.setUpdated();
-  }
-  return actions;
+  ]);
 }
+
+Future<void> _initActions() async {}
+Future<void> _update() async {}
+

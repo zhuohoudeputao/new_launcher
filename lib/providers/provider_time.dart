@@ -12,29 +12,30 @@ import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/ui.dart';
 
 /// a provider provides some actions about time
-MyProvider providerTime = MyProvider(initContent: _initTime);
+MyProvider providerTime = MyProvider(
+    name: "Time",
+    provideActions: _provideActions,
+    initActions: _initActions,
+    update: _update);
 
-/// The funciton [initTime] makes actions about time
-/// Each action can be done when the user chooses it
-/// And the suggestWidget will be shown in suggestList
-List<MyAction> _initTime() {
-  List<MyAction> actions = <MyAction>[];
-  if (providerTime.needUpdate()) {
-    actions.add(MyAction(
+Future<void> _provideActions() async {
+  Global.addActions([
+    MyAction(
       name: "Time now",
       keywords: "time now when is it",
       action: _provideTime,
       times: List.generate(
           24, (index) => 0), // let the frequency big enough to prioritize it
-      suggestWidget: null,
-    ));
-    // do at the beginning
-    _provideTime();
-    // set updated
-    providerTime.setUpdated();
-  }
-  return actions;
+    )
+  ]);
 }
+
+Future<void> _initActions() async {
+  _provideTime();
+}
+
+Future<void> _update() async {}
+
 
 /// [provideTime] is the core action of the [MyAction] object
 /// which produces some widgets into the infoList showing useful information.
@@ -100,52 +101,48 @@ class _TimeWidgetState extends State<_TimeWidget> {
       // greeting
       if (hour >= 22 || (hour >= 0 && hour < 6)) {
         greeting = "Don't strain yourself too much. Good night 🌙";
-      }
-      if (hour >= 6 && hour < 9) {
+      } else if (hour >= 6 && hour < 9) {
         greeting = "Good morning! It's beautiful outside ☀";
-      }
-      if (hour >= 9 && hour < 12) {
+      } else if (hour >= 9 && hour < 12) {
         greeting = "Good morning ☀";
-      }
-      if (hour >= 12 && hour < 18) {
+      } else if (hour >= 12 && hour < 18) {
         greeting = "Good afternoon! Take a cup of coffee ☕";
-      }
-      if (hour >= 18 && hour < 22) {
+      } else if (hour >= 18 && hour < 22) {
         greeting = "Have a good night 🌙";
       }
     }
 
     // month
-    List<String> months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
-    String month = months[now.month - 1];
+    Map<int, String> months = {
+      1: 'January',
+      2: 'February',
+      3: 'March',
+      4: 'April',
+      5: 'May',
+      6: 'June',
+      7: 'July',
+      8: 'August',
+      9: 'September',
+      10: 'October',
+      11: 'November',
+      12: 'December'
+    };
+    String month = months[now.month];
 
     int day = now.day;
-    String dayString = now.day.toString();
+    String dayString = day.toString();
     if (day < 10) {
       dayString = "0" + dayString;
     }
 
     int hour = now.hour;
-    String hourString = now.hour.toString();
+    String hourString = hour.toString();
     if (hour < 10) {
       hourString = "0" + hourString;
     }
 
     int minute = now.minute;
-    String minuteString = now.minute.toString();
+    String minuteString = minute.toString();
     if (minute < 10) {
       minuteString = "0" + minuteString;
     }

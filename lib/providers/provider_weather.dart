@@ -13,32 +13,33 @@ import 'package:new_launcher/data.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 
-// a provider provides some actions
-MyProvider providerWeather = MyProvider(initContent: _initWeather);
+//____________________________________Data
 String _openWeatherApiKey;
+//________________________________________
 
-List<MyAction> _initWeather() {
-  // obtain [OpenWeather] api key
-  _getApiKey();
-  // build and return actions
-  List<MyAction> actions = <MyAction>[];
-  if (providerWeather.needUpdate()) {
-    actions = [
-      MyAction(
-        name: 'Weather',
-        keywords: 'weather now',
-        action: _provideWeather,
-        times: List.generate(24, (index) => 0),
-        suggestWidget: null,
-      ),
-    ];
-    // do at the beginning
-    _provideWeather();
-    // set updated
-    providerWeather.setUpdated();
-  }
-  return actions;
+/// A provider managing weather information
+MyProvider providerWeather = MyProvider(
+    name: "Weather",
+    provideActions: _provideActions,
+    initActions: _initActions,
+    update: _update);
+
+Future<void> _provideActions() async {
+  Global.addActions([
+    MyAction(
+      name: 'Weather',
+      keywords: 'weather now',
+      action: _provideWeather,
+      times: List.generate(24, (index) => 0),
+    ),
+  ]);
 }
+
+Future<void> _initActions() async {
+  _getApiKey().then((value) => _provideWeather());
+}
+
+Future<void> _update() async {}
 
 /// [providerWeather] will try to obtain your location by sensors first.
 /// If it fails, default city in settings will be used to obtain weather.
