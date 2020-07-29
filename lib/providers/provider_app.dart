@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
+import 'package:provider/provider.dart';
 
 // a provider provides some actions
 MyProvider providerApp = MyProvider(
@@ -34,22 +35,75 @@ Future<void> _provideActions() async {
             app.appName.toLowerCase() +
             " " +
             app.packageName.toLowerCase(),
-        action: () {
+        action: () async {
           DeviceApps.openApp(app.packageName); // launch this app
-          Global.infoModel.addInfo(app.appName, app.appName,
-              subtitle: "is launched.",
-              icon: Image.memory(app.icon), onTap: () {
+          appModel.addApp(_customButton(
+              Image.memory(
+                app.icon,
+                width: 40,
+                height: 40,
+              ), () {
             DeviceApps.openApp(app.packageName);
-          });
+          }));
         },
         times: List.generate(24, (index) => 0),
-        // suggestWidget: null,
       ));
     }
     Global.addActions(actions);
   });
 }
 
-Future<void> _initActions() async {}
+Future<void> _initActions() async {
+  Global.infoModel.addInfoWidget(
+      "RecentApp",
+      ChangeNotifierProvider.value(
+          value: appModel,
+          builder: (context, child) => RecentlyUsedAppsCard()));
+}
 
 Future<void> _update() async {}
+
+AppModel appModel = AppModel();
+
+class AppModel with ChangeNotifier {
+  List<Widget> recentlyUsedApps = <Widget>[];
+
+  void addApp(Widget app) {
+    recentlyUsedApps.add(app);
+    notifyListeners();
+  }
+}
+
+class RecentlyUsedAppsCard extends StatefulWidget {
+  @override
+  State<RecentlyUsedAppsCard> createState() => RecentlyUsedAppsCardState();
+}
+
+class RecentlyUsedAppsCardState extends State<RecentlyUsedAppsCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Container(
+        height: 60,
+        child: ListView.builder(
+          itemCount: context.watch<AppModel>().recentlyUsedApps.length,
+          itemBuilder: (context, index) =>
+              context.watch<AppModel>().recentlyUsedApps[index],
+          scrollDirection: Axis.horizontal,
+        ),
+      ),
+    );
+  }
+}
+
+Widget _customButton(Widget icon, void Function() onPressed) {
+  return FlatButton(
+    onPressed: onPressed,
+    child: icon,
+    highlightColor: Colors.transparent,
+  );
+}
+
+// TODO: Frequently used apps
+
+// TODO: Recently used apps

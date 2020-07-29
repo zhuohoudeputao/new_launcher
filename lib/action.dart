@@ -42,28 +42,22 @@ class MyAction {
   // add '_' before the func to make it 'private'
 
   /// call for action
-  void action() {
-    // _action(args: args);
+  Future<void> action() async {
     _action.call();
-    frequencyAdd();
+    _frequencyIncre();
   }
 
   /// get the frequency of this action in this hour
-  int frequency({double hour}) {
-    if (hour != null) {
-      return _times[hour.floor()];
-    }
-    return _times[DateTime.now().hour];
-  }
+  int get frequency => _times[DateTime.now().hour];
 
   /// when this action is taken, add frequency by 1
-  void frequencyAdd() {
+  Future<void> _frequencyIncre() async {
     _times[DateTime.now().hour - 1] += 1;
   }
 
   /// whether search string is in keywords
   /// remember that keywords is lowercased
   bool canIdentifyBy(String searchStr) {
-    return this._keywords.contains(searchStr.toLowerCase());
+    return _keywords.contains(searchStr.toLowerCase());
   }
 }

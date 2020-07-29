@@ -4,6 +4,7 @@
  * @LastEditTime: 2020-07-12 00:46:55
  * @Description: 
  */
+import 'package:new_launcher/data.dart';
 
 /// A provider means a service which provides actions.
 /// An action actually contains a real action (a function to manipulate data and produce info widgets to the [infoList])
@@ -22,15 +23,17 @@ class MyProvider {
   String name;
 
   /// A provider provide services when it's enabled. Default is true.
-  bool isEnabled = true;
+  Future<bool> isEnabled() async {
+    return await Global.getValue(name + ".Enabled", true);
+  }
 
   /// A provider generate actions to actionList, and this must be done when this provider is initializing if it's enabled.
   /// This should be asynchronous.
   void Function() provideActions;
 
-  /// Some actions will be taken when it's initializing.
+  /// Some actions will be taken when it's initializing,
+  /// such as checking if this provider is enabled.
   void Function() initActions;
-  bool initialized = false;
 
   /// Some actions will be taken when settings changed.
   void Function() update;
@@ -40,10 +43,19 @@ class MyProvider {
       void Function() provideActions,
       void Function() initActions,
       void Function() update}) {
-    // obtain settings from share_preferences
     this.name = name;
     this.provideActions = provideActions;
     this.initActions = initActions;
     this.update = update;
+  }
+
+  /// Initialization logic
+  Future<void> init() async {
+    isEnabled().then((enabled) {
+      if (enabled) {
+        initActions();
+        provideActions();
+      }
+    });
   }
 }

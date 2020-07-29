@@ -118,12 +118,10 @@ class ActionModel with ChangeNotifier {
   // ui controller
   TextEditingController inputBoxController = TextEditingController();
 
+  /// Initialize all providers
   Future<void> init() async {
     for (MyProvider provider in Global.providerList) {
-      // gather all actions from all providers
-      provider.provideActions();
-      // do what providers will do at the beginning
-      provider.initActions();
+      provider.init();
     }
   }
 
@@ -218,6 +216,7 @@ class SettingsModel with ChangeNotifier {
   /// A widget list generated for changing settings.
   static Map<String, Widget> _settingMap = <String, Widget>{};
   static SharedPreferences _prefs;
+
   // getter or setter
   /// [settingList] is generated for all the settings in shared preferences.
   /// Providers just need to save and use key-value pairs,
@@ -246,9 +245,11 @@ class SettingsModel with ChangeNotifier {
   }
 
   /// Get value for providers.
-  /// If the [key] is not contained in preferences, [null] is returned.
+  /// If the [key] is not contained in preferences, [defaultValue] will be saved and return.
   dynamic getValue(String key, var defaultValue) async {
-    _prefs = await SharedPreferences.getInstance();
+    if (_prefs == null) {
+      _prefs = await SharedPreferences.getInstance();
+    }
     if (_prefs.containsKey(key)) {
       return _prefs.get(key);
     } else {
@@ -262,33 +263,29 @@ class SettingsModel with ChangeNotifier {
       _settingMap[key] = customTextSettingWidget(
           key: key,
           value: value,
-          onSubmitted: (value) {
-            _prefs.setString(key, value);
-            _addSettingWidget(key, value);
+          onSubmitted: (newValue) {
+            saveValue(key, newValue);
           });
     } else if (value is bool) {
       _settingMap[key] = CustomBoolSettingWidget(
           settingKey: key,
           value: value,
-          onChanged: (value) {
-            _prefs.setBool(key, value);
-            _addSettingWidget(key, value);
+          onChanged: (newValue) {
+            saveValue(key, newValue);
           });
     } else if (value is double) {
       _settingMap[key] = customTextSettingWidget(
           key: key,
           value: value,
-          onSubmitted: (value) {
-            _prefs.setDouble(key, double.parse(value));
-            _addSettingWidget(key, double.parse(value));
+          onSubmitted: (newValue) {
+            saveValue(key, double.parse(newValue));
           });
     } else if (value is int) {
       _settingMap[key] = customTextSettingWidget(
           key: key,
           value: value,
-          onSubmitted: (value) {
-            _prefs.setInt(key, int.parse(value));
-            _addSettingWidget(key, int.parse(value));
+          onSubmitted: (newValue) {
+            saveValue(key, int.parse(newValue));
           });
     } else if (value is List<String>) {
       // coming soon
