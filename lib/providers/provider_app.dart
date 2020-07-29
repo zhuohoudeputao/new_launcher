@@ -88,7 +88,6 @@ class RecentlyUsedAppsCardState extends State<RecentlyUsedAppsCard> {
   @override
   Widget build(BuildContext context) {
     int length = context.watch<AppModel>().length;
-    print(length);
     return Card(
       child: Container(
         height: 80,
