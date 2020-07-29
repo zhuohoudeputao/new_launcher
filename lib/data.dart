@@ -20,18 +20,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
-class InfoWidget {
-  String key;
-  Widget infoWidget;
-  DateTime timeStamp;
-
-  InfoWidget(String key, Widget infoWidget) {
-    this.key = key;
-    this.infoWidget = infoWidget;
-    this.timeStamp = DateTime.now();
-  }
-}
-
 /// Now use [Global] to read or write data.
 /// [Global] contains models to save and change data, which are accessible for providers.
 /// Frequently used methods can be writed here as static.
@@ -154,7 +142,9 @@ class ActionModel with ChangeNotifier {
 
 class InfoModel with ChangeNotifier {
   /// A list for storing info widgets
-  List<InfoWidget> _infoList = <InfoWidget>[];
+  Map<String, Widget> _infoList = Map<String, Widget>();
+  List<Widget> get infoList => _infoList.values.toList();
+  int get length => _infoList.length;
 
   /// This method use title as key and add a [customInfoWidget] to infoList
   void addInfo(String key, String title,
@@ -167,28 +157,11 @@ class InfoModel with ChangeNotifier {
 
   /// This method is more flexible for providers
   void addInfoWidget(String key, Widget infoWidget) {
-    // check if there is a info widget with the same key
-    for (int i = 0; i < this._infoList.length; i++) {
-      if (this._infoList[i].key == key) {
-        this._infoList.removeAt(i); // remove the widget with the same key
-      }
-    }
-    // add at the end
-    this._infoList.add(InfoWidget(key, infoWidget));
+    _infoList.remove(key);
+    _infoList[key] = infoWidget;
     notifyListeners();
   }
 
-  /// get the infoList
-  List<Widget> get infoList {
-    List<Widget> infoList = <Widget>[];
-    for (int i = 0; i < this._infoList.length; i++) {
-      infoList.add(this._infoList[i].infoWidget);
-    }
-    return infoList;
-  }
-
-  /// get length
-  int get length => _infoList.length;
 }
 
 class ThemeModel with ChangeNotifier {
