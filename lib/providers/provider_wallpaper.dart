@@ -5,9 +5,11 @@
  * @Description: file content
  */
 
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
@@ -43,6 +45,22 @@ Future<void> _initActions() async {
 
 Future<void> _update() async {
   await _readBackground();
+}
+
+Future<void> pickWallpaperFromGallery() async {
+  final ImagePicker picker = ImagePicker();
+  final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+  if (image != null) {
+    Global.backgroundImageModel.backgroundImage = FileImage(
+      await _cacheImage(image),
+    );
+    Global.infoModel
+        .addInfo("Wallpaper", "Wallpaper updated", subtitle: "From gallery");
+  }
+}
+
+Future<dynamic> _cacheImage(XFile image) async {
+  return await image.readAsBytes();
 }
 
 Future<void> _readBackground() async {

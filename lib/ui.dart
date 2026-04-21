@@ -190,3 +190,31 @@ class _CardOpacitySliderState extends State<CardOpacitySlider> {
     );
   }
 }
+
+class WallpaperPickerButton extends StatelessWidget {
+  final VoidCallback onTap;
+  final String label;
+
+  const WallpaperPickerButton({
+    Key? key,
+    required this.onTap,
+    required this.label,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(
+          label,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text("Tap to select from gallery"),
+        trailing: IconButton(
+          icon: Icon(Icons.photo_library),
+          onPressed: onTap,
+        ),
+      ),
+    );
+  }
+}

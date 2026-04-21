@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/setting.dart';
 import 'package:new_launcher/action.dart';
@@ -33,6 +34,7 @@ class Global {
     actionModel.init();
     final opacity = await settingsModel.getValue("CardOpacity", 0.7);
     cardOpacityValue = opacity is double ? opacity : 0.7;
+    await settingsModel.getValue("WallpaperPicker", true);
     _addSettingsToInfo();
   }
 
@@ -254,7 +256,12 @@ class SettingsModel with ChangeNotifier {
   }
 
   void _addSettingWidget(String key, var value) {
-    if (key == "CardOpacity" && value is double) {
+    if (key == "WallpaperPicker") {
+      _settingMap[key] = WallpaperPickerButton(
+        label: "Change Wallpaper",
+        onTap: () {},
+      );
+    } else if (key == "CardOpacity" && value is double) {
       _settingMap[key] = CardOpacitySlider(
           value: value,
           onChanged: (newValue) {
