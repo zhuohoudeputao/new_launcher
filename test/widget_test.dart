@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:new_launcher/ui.dart';
+import 'package:new_launcher/data.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
 
 void main() {
@@ -176,6 +177,45 @@ void main() {
     test('getWeatherIcon returns default for unknown', () {
       final icon = getWeatherIcon("Unknown condition");
       expect(icon, Icons.cloud);
+    });
+  });
+
+  group('CardOpacitySlider tests', () {
+    testWidgets('renders slider with value', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CardOpacitySlider(
+              value: 0.5,
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text("Card Opacity"), findsOneWidget);
+      expect(find.text("Opacity: 50%"), findsOneWidget);
+      expect(find.byType(Slider), findsOneWidget);
+    });
+
+    testWidgets('calls onChanged when slider moves',
+        (WidgetTester tester) async {
+      double newValue = 0.5;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CardOpacitySlider(
+              value: 0.5,
+              onChanged: (value) => newValue = value,
+            ),
+          ),
+        ),
+      );
+
+      await tester.drag(find.byType(Slider), Offset(50, 0));
+      await tester.pump();
+
+      expect(newValue, isNot(0.5));
     });
   });
 }

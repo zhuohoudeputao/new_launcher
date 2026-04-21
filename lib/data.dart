@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/providers/provider_app.dart';
@@ -29,7 +30,13 @@ class Global {
   static Future init() async {
     await settingsModel.init();
     actionModel.init();
+    final opacity = await settingsModel.getValue("CardOpacity", 0.7);
+    cardOpacityValue = opacity is double ? opacity : 0.7;
   }
+
+  //_____________________________________________________________Opacity
+  static double cardOpacityValue = 0.7;
+  static double get cardOpacity => cardOpacityValue;
 
   //________________________________________________________BackgroundImage
   /// A model for storing background image.
@@ -231,7 +238,13 @@ class SettingsModel with ChangeNotifier {
   }
 
   void _addSettingWidget(String key, var value) {
-    if (value is String) {
+    if (key == "CardOpacity" && value is double) {
+      _settingMap[key] = CardOpacitySlider(
+          value: value,
+          onChanged: (newValue) {
+            saveValue(key, newValue);
+          });
+    } else if (value is String) {
       _settingMap[key] = customTextSettingWidget(
           key: key,
           value: value,

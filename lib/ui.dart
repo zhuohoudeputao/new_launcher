@@ -6,6 +6,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:new_launcher/data.dart';
 // Contains some custom widgets here
 
 /// ``customInfoWidget`` is designed for displaying a message
@@ -18,6 +19,7 @@ Widget customInfoWidget(
     Widget? icon,
     void Function()? onTap}) {
   return Card(
+    color: Colors.white.withOpacity(Global.cardOpacity),
     child: ListTile(
       title: Text(
         title,
@@ -132,6 +134,58 @@ class CustomBoolSettingWidgetState extends State<CustomBoolSettingWidget> {
         ),
         subtitle: Text(subtitle),
         trailing: Switch(value: value, onChanged: updateUI),
+      ),
+    );
+  }
+}
+
+class CardOpacitySlider extends StatefulWidget {
+  final double value;
+  final void Function(double) onChanged;
+
+  const CardOpacitySlider({
+    Key? key,
+    required this.value,
+    required this.onChanged,
+  }) : super(key: key);
+
+  @override
+  State<CardOpacitySlider> createState() => _CardOpacitySliderState();
+}
+
+class _CardOpacitySliderState extends State<CardOpacitySlider> {
+  late double _value;
+
+  @override
+  void initState() {
+    super.initState();
+    _value = widget.value;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(
+          "Card Opacity",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text("Opacity: ${(_value * 100).toInt()}%"),
+        trailing: SizedBox(
+          width: 150,
+          child: Slider(
+            value: _value,
+            min: 0.1,
+            max: 1.0,
+            divisions: 9,
+            onChanged: (newValue) {
+              setState(() {
+                _value = newValue;
+              });
+              widget.onChanged(newValue);
+            },
+          ),
+        ),
       ),
     );
   }
