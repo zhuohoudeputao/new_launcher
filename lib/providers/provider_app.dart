@@ -64,10 +64,13 @@ Future<void> _initActions() async {
       ChangeNotifierProvider.value(
           value: _appModel,
           builder: (context, child) => RecentlyUsedAppsCard()));
-  Global.infoModel.addInfoWidget(
-      "AllApps",
-      ChangeNotifierProvider.value(
-          value: _allAppsModel, builder: (context, child) => AllAppsCard()));
+
+  for (final app in _allAppsModel.apps) {
+    Global.infoModel.addInfoWidget(
+      "app_${app.packageName}",
+      _buildAppCard(app),
+    );
+  }
 }
 
 Future<void> _update() async {}
@@ -184,6 +187,21 @@ Widget _customButton(Widget icon, void Function() onPressed) {
           padding: EdgeInsets.zero,
         ),
       )));
+}
+
+Widget _buildAppCard(ApplicationWithIcon app) {
+  return Card(
+    child: ListTile(
+      leading: Image.memory(
+        app.icon,
+        width: 40,
+        height: 40,
+      ),
+      title: Text(app.appName),
+      subtitle: Text(app.packageName),
+      onTap: () => DeviceApps.openApp(app.packageName),
+    ),
+  );
 }
 
 // TODO: Frequently used apps
