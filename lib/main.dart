@@ -119,18 +119,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   FocusScope.of(context).requestFocus(FocusNode());
                 },
                 child: ListView.builder(
-                  // infomation displayer
+                  cacheExtent: 500,
                   itemCount: infoList.length,
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
                   itemBuilder: (BuildContext context, int index) {
-                    return Selector<InfoModel, Widget>(
-                      selector: (context, provider) =>
-                          infoList[infoList.length - index - 1],
-                      builder: (context, value, child) =>
-                          infoList[infoList.length - index - 1],
-                    );
+                    final widget = infoList[infoList.length - index - 1];
+                    return widget;
                   },
                   scrollDirection: Axis.vertical,
-                  reverse: true, // reverse the entire infoList and the index
+                  reverse: true,
+                  physics: BouncingScrollPhysics(),
                 ),
               )),
             ],
