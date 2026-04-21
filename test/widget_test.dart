@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/data.dart';
+import 'package:new_launcher/setting.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
 
 void main() {
@@ -177,6 +178,18 @@ void main() {
     test('getWeatherIcon returns default for unknown', () {
       final icon = getWeatherIcon("Unknown condition");
       expect(icon, Icons.cloud);
+    });
+  });
+
+  group('Setting page tests', () {
+    testWidgets('has back button', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Setting(),
+        ),
+      );
+
+      expect(find.byIcon(Icons.arrow_back), findsOneWidget);
     });
   });
 
