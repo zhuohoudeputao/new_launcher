@@ -337,9 +337,12 @@ class SettingsModel with ChangeNotifier {
     } else if (key == "CardOpacity" && value is double) {
       _settingMap[key] = CardOpacitySlider(
           value: value,
-          onChanged: (newValue) {
+          onChanged: (newValue) async {
             Global.cardOpacityValue = newValue;
             saveValue(key, newValue);
+            final provider = Global.providerList.firstWhere((p) => p.name == "Theme");
+            await provider.init();
+            Global.themeModel.notifyListeners();
             notifyListeners();
           });
     } else if (value is String) {
