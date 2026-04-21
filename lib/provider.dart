@@ -51,11 +51,10 @@ class MyProvider {
 
   /// Initialization logic
   Future<void> init() async {
-    isEnabled().then((enabled) {
-      if (enabled) {
-        initActions();
-        provideActions();
-      }
-    });
+    final enabled = await isEnabled();
+    if (enabled) {
+      initActions();
+      provideActions();
+    }
   }
 }

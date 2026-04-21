@@ -22,40 +22,46 @@ MyProvider providerApp = MyProvider(
 Future<void> _provideActions() async {
   List<MyAction> actions = <MyAction>[];
   List<ApplicationWithIcon> allAppsWithIcons = [];
-  DeviceApps.getInstalledApplications(
-          includeSystemApps: true,
-          includeAppIcons: true,
-          onlyAppsWithLaunchIntent: true)
-      .then((apps) {
-    for (var app in apps) {
-      if (app is! ApplicationWithIcon) continue;
-      final appWithIcon = app as ApplicationWithIcon;
-      allAppsWithIcons.add(appWithIcon);
-      actions.add(MyAction(
-        name: appWithIcon.appName,
-        keywords: "launch " +
-            appWithIcon.appName.toLowerCase() +
-            " " +
-            appWithIcon.packageName.toLowerCase(),
-        action: () async {
-          DeviceApps.openApp(appWithIcon.packageName);
-          _appModel.addApp(
-              appWithIcon.appName,
-              _customButton(
-                  Image.memory(
-                    appWithIcon.icon,
-                    width: 60,
-                    height: 60,
-                  ), () {
-                DeviceApps.openApp(appWithIcon.packageName);
-              }));
-        },
-        times: List.generate(24, (index) => 0),
-      ));
-    }
-    _allAppsModel.setApps(allAppsWithIcons);
-    Global.addActions(actions);
-  });
+  final apps = await DeviceApps.getInstalledApplications(
+      includeSystemApps: true,
+      includeAppIcons: true,
+      onlyAppsWithLaunchIntent: true);
+  for (var app in apps) {
+    if (app is! ApplicationWithIcon) continue;
+    final appWithIcon = app as ApplicationWithIcon;
+    allAppsWithIcons.add(appWithIcon);
+    actions.add(MyAction(
+      name: appWithIcon.appName,
+      keywords: "launch " +
+          appWithIcon.appName.toLowerCase() +
+          " " +
+          appWithIcon.packageName.toLowerCase(),
+      action: () async {
+        DeviceApps.openApp(appWithIcon.packageName);
+        _appModel.addApp(
+            appWithIcon.appName,
+            _customButton(
+                Image.memory(
+                  appWithIcon.icon,
+                  width: 60,
+                  height: 60,
+                ), () {
+              DeviceApps.openApp(appWithIcon.packageName);
+            }));
+      },
+      times: List.generate(24, (index) => 0),
+    ));
+  }
+  _allAppsModel.setApps(allAppsWithIcons);
+
+  for (final app in allAppsWithIcons) {
+    Global.infoModel.addInfoWidget(
+      "app_${app.packageName}",
+      _buildAppCard(app),
+    );
+  }
+
+  Global.addActions(actions);
 }
 
 Future<void> _initActions() async {
@@ -64,13 +70,6 @@ Future<void> _initActions() async {
       ChangeNotifierProvider.value(
           value: _appModel,
           builder: (context, child) => RecentlyUsedAppsCard()));
-
-  for (final app in _allAppsModel.apps) {
-    Global.infoModel.addInfoWidget(
-      "app_${app.packageName}",
-      _buildAppCard(app),
-    );
-  }
 }
 
 Future<void> _update() async {}
