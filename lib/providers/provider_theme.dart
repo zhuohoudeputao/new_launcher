@@ -21,18 +21,17 @@ Future<void> _provideActions() async {
 }
 
 Future<void> _initActions() async {
-  _provideTheme();
+  await _provideTheme();
 }
 
 Future<void> _update() async {}
 
-void _provideTheme() async {
+Future<void> _provideTheme() async {
   Brightness brightness = Brightness.light;
-  Color cardColor = Colors.white;
+  Color cardColor = Colors.white.withOpacity(Global.cardOpacity);
+  Color textColor = Colors.black87;
 
-  // for obtain dark or white
   String darkKey = "Theme.Dark";
-  // obtain dark state from myData
   bool dark = await Global.getValue(darkKey, false);
 
   String transparentKey = "Theme.Transparent";
@@ -40,16 +39,23 @@ void _provideTheme() async {
 
   if (dark) {
     brightness = Brightness.dark;
-    cardColor = Colors.grey[850] ?? Colors.grey;
+    cardColor =
+        Colors.grey[850]?.withOpacity(Global.cardOpacity) ?? Colors.grey;
+    textColor = Colors.white;
   }
 
   if (transparent) {
-    cardColor = Colors.transparent;
+    cardColor = Colors.white.withOpacity(Global.cardOpacity);
   }
 
   Global.setTheme(ThemeData(
     brightness: brightness,
     cardColor: cardColor,
     visualDensity: VisualDensity.adaptivePlatformDensity,
+    textTheme: TextTheme(
+      bodyMedium: TextStyle(color: textColor),
+      bodyLarge: TextStyle(color: textColor),
+      titleMedium: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+    ),
   ));
 }
