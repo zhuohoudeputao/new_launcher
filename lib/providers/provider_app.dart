@@ -26,7 +26,7 @@ Future<void> _provideActions() async {
   final apps = await DeviceApps.getInstalledApplications(
       includeSystemApps: true,
       includeAppIcons: true,
-      onlyAppsWithLaunchIntent: true);
+      onlyAppsWithLaunchIntent: false);
   for (var app in apps) {
     if (app is! ApplicationWithIcon) continue;
     final appWithIcon = app as ApplicationWithIcon;
