@@ -77,6 +77,14 @@ Future<void> _provideActions() async {
 }
 
 Future<void> _initActions() async {
+  Global.infoModel.addInfoWidget(
+    "Weather",
+    customInfoWidget(
+      title: "Weather",
+      subtitle: "Loading...",
+      icon: Icon(Icons.cloud),
+    ),
+  );
   await _provideWeather();
 }
 
