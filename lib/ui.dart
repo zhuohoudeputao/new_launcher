@@ -13,7 +13,10 @@ import 'package:flutter/material.dart';
 /// displayed on title area. And the second important part is displayed
 /// on subtitle.
 Widget customInfoWidget(
-    {String title, String subtitle = "", Widget icon, void Function() onTap}) {
+    {required String title,
+    String subtitle = "",
+    Widget? icon,
+    void Function()? onTap}) {
   return Card(
     child: ListTile(
       title: Text(
@@ -30,15 +33,18 @@ Widget customInfoWidget(
 
 /// ``customSuggestWidget`` is designed for displaying a suggest action
 /// above the input box.
-Widget customSuggestWidget({String name, void Function() onPressed}) {
-  return FlatButton(
+Widget customSuggestWidget(
+    {required String name, required void Function() onPressed}) {
+  return TextButton(
     onPressed: onPressed,
     child: Text(name),
   );
 }
 
 Widget customTextSettingWidget(
-    {String key, var value, void Function(String) onSubmitted}) {
+    {required String key,
+    required var value,
+    required void Function(String) onSubmitted}) {
   return Card(
     child: ListTile(
       // leading: icon,
@@ -79,42 +85,40 @@ class CustomBoolSettingWidget extends StatefulWidget {
   final bool value;
   final void Function(bool) onChanged;
 
-  const CustomBoolSettingWidget(
-      {Key key, this.settingKey, this.value, this.onChanged})
-      : super(key: key);
+  const CustomBoolSettingWidget({
+    Key? key,
+    required this.settingKey,
+    required this.value,
+    required this.onChanged,
+  }) : super(key: key);
 
   @override
-  State<CustomBoolSettingWidget> createState() => CustomBoolSettingWidgetState(
-      key: settingKey, value: value, onChanged: onChanged);
+  State<CustomBoolSettingWidget> createState() =>
+      CustomBoolSettingWidgetState();
 }
 
 class CustomBoolSettingWidgetState extends State<CustomBoolSettingWidget> {
-  String key;
-  bool value;
-  void Function(bool) onChanged;
-
-  CustomBoolSettingWidgetState(
-      {String key, bool value, void Function(bool) onChanged}) {
-    this.key = key;
-    this.value = value;
-    this.onChanged = onChanged;
-  }
+  late String key;
+  late bool value;
+  late void Function(bool) onChanged;
+  late String subtitle;
 
   @override
   void initState() {
     super.initState();
+    key = widget.settingKey;
+    value = widget.value;
+    onChanged = widget.onChanged;
     subtitle = "is " + value.toString();
   }
 
-  void updateUI(bool value) {
+  void updateUI(bool newValue) {
     setState(() {
-      this.value = value;
-      subtitle = "is " + value.toString();
-      onChanged.call(value);
+      value = newValue;
+      subtitle = "is " + newValue.toString();
+      onChanged.call(newValue);
     });
   }
-
-  String subtitle;
 
   @override
   Widget build(BuildContext context) {

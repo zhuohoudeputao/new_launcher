@@ -36,7 +36,6 @@ Future<void> _initActions() async {
 
 Future<void> _update() async {}
 
-
 /// [provideTime] is the core action of the [MyAction] object
 /// which produces some widgets into the infoList showing useful information.
 void _provideTime() {
@@ -56,7 +55,7 @@ Future<bool> _showGreeting() async {
 class _TimeWidget extends StatefulWidget {
   final bool showGreeting;
 
-  const _TimeWidget({Key key, this.showGreeting}) : super(key: key);
+  const _TimeWidget({Key? key, required this.showGreeting}) : super(key: key);
 
   @override
   _TimeWidgetState createState() =>
@@ -64,16 +63,16 @@ class _TimeWidget extends StatefulWidget {
 }
 
 class _TimeWidgetState extends State<_TimeWidget> {
-  _TimeWidgetState({bool showGreeting}) {
+  _TimeWidgetState({required bool showGreeting}) {
     this.showGreeting = showGreeting;
   }
 
-  Timer timer;
-  bool showGreeting;
+  late Timer timer;
+  late bool showGreeting;
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (DateTime.now().second == 0) {
         setState(() {});
       }
@@ -113,7 +112,7 @@ class _TimeWidgetState extends State<_TimeWidget> {
     }
 
     // month
-    Map<int, String> months = {
+    const Map<int, String> months = {
       1: 'January',
       2: 'February',
       3: 'March',
@@ -127,7 +126,7 @@ class _TimeWidgetState extends State<_TimeWidget> {
       11: 'November',
       12: 'December'
     };
-    String month = months[now.month];
+    String month = months[now.month] ?? '';
 
     int day = now.day;
     String dayString = day.toString();

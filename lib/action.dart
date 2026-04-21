@@ -11,26 +11,26 @@ import 'ui.dart';
 /// [MyAction] class is representing the actions can be done by user.
 class MyAction {
   /// the name or key of the action
-  String name;
+  late String name;
 
   /// use for search, combine as one string with blank between them
-  String _keywords;
+  late String _keywords;
 
   /// Core action, what this action actually does.
   /// This action will influence infoWidgets, So infoList will be global.
-  void Function() _action;
-  List<int> _times; // 24 hours, every num means times in an hour
-  Widget _suggestWidget; // Widget show in suggestList
+  late void Function() _action;
+  late List<int> _times; // 24 hours, every num means times in an hour
+  late Widget _suggestWidget; // Widget show in suggestList
   Widget get suggestWidget {
     return _suggestWidget;
   }
 
   /// Initialization
   MyAction({
-    String name,
-    String keywords,
-    void Function() action,
-    List<int> times,
+    required String name,
+    required String keywords,
+    required void Function() action,
+    required List<int> times,
   }) {
     this.name = name;
     this._keywords = keywords.toLowerCase();

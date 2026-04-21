@@ -63,7 +63,7 @@ class Global {
   //__________________________________________________Action_and_Suggestion
   /// A model for managing actions
   static ActionModel actionModel = ActionModel();
-  static String input;
+  static String? input;
 
   static Future<void> addActions(List<MyAction> actions) async {
     actionModel.addActions(actions);
@@ -128,8 +128,8 @@ class ActionModel with ChangeNotifier {
   void runFirstAction(String input) {
     Global.input = input;
     if (_suggestList.isNotEmpty) {
-      FlatButton suggest = _suggestList[0] as FlatButton;
-      suggest.onPressed.call();
+      TextButton suggest = _suggestList[0] as TextButton;
+      suggest.onPressed?.call();
     } else {
       Global.infoModel.addInfo("Help", "I don't know what to do",
           subtitle: "Try type something else.", icon: Icon(Icons.help));
@@ -148,11 +148,11 @@ class InfoModel with ChangeNotifier {
 
   /// This method use title as key and add a [customInfoWidget] to infoList
   void addInfo(String key, String title,
-      {String subtitle, Widget icon, void Function() onTap}) {
+      {String? subtitle, Widget? icon, void Function()? onTap}) {
     this.addInfoWidget(
         key,
         customInfoWidget(
-            title: title, subtitle: subtitle, icon: icon, onTap: onTap));
+            title: title, subtitle: subtitle ?? '', icon: icon, onTap: onTap));
   }
 
   /// This method is more flexible for providers
@@ -161,12 +161,11 @@ class InfoModel with ChangeNotifier {
     _infoList[key] = infoWidget;
     notifyListeners();
   }
-
 }
 
 class ThemeModel with ChangeNotifier {
-  ThemeData _themeData;
-  ThemeData get themeData => _themeData;
+  ThemeData? _themeData;
+  ThemeData get themeData => _themeData ?? ThemeData();
 
   set themeData(ThemeData value) {
     _themeData = value;
@@ -178,9 +177,9 @@ class SettingsModel with ChangeNotifier {
   Future init() async {
     _prefs = await SharedPreferences.getInstance();
     // Initialize settingList
-    Set<String> keys = _prefs.getKeys();
+    Set<String> keys = _prefs!.getKeys();
     for (String key in keys) {
-      var value = _prefs.get(key);
+      var value = _prefs!.get(key);
       _addSettingWidget(key, value);
     }
   }
@@ -188,7 +187,7 @@ class SettingsModel with ChangeNotifier {
   // data
   /// A widget list generated for changing settings.
   static Map<String, Widget> _settingMap = <String, Widget>{};
-  static SharedPreferences _prefs;
+  static SharedPreferences? _prefs;
 
   // getter or setter
   /// [settingList] is generated for all the settings in shared preferences.
@@ -204,15 +203,15 @@ class SettingsModel with ChangeNotifier {
   /// If the type of [value] is not support, nothing will be store.
   void saveValue(String key, var value) {
     if (value is String) {
-      _prefs.setString(key, value);
+      _prefs!.setString(key, value);
     } else if (value is bool) {
-      _prefs.setBool(key, value);
+      _prefs!.setBool(key, value);
     } else if (value is double) {
-      _prefs.setDouble(key, value);
+      _prefs!.setDouble(key, value);
     } else if (value is int) {
-      _prefs.setInt(key, value);
+      _prefs!.setInt(key, value);
     } else if (value is List<String>) {
-      _prefs.setStringList(key, value);
+      _prefs!.setStringList(key, value);
     }
     _addSettingWidget(key, value);
   }
@@ -223,8 +222,8 @@ class SettingsModel with ChangeNotifier {
     if (_prefs == null) {
       _prefs = await SharedPreferences.getInstance();
     }
-    if (_prefs.containsKey(key)) {
-      return _prefs.get(key);
+    if (_prefs!.containsKey(key)) {
+      return _prefs!.get(key);
     } else {
       saveValue(key, defaultValue);
       return defaultValue;

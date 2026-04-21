@@ -20,17 +20,16 @@ MyProvider providerSystem = MyProvider(
 Future<void> _provideActions() async {
   Global.addActions([
     MyAction(
-        name: 'Open launcher settings',
-        keywords: 'launcher settings',
-        action: () {
-          navigatorKey.currentState.push(
-              MaterialPageRoute(builder: (BuildContext context) => Setting()));
-        },
-        times: List.generate(24, (index) => 0),
-      ),
+      name: 'Open launcher settings',
+      keywords: 'launcher settings',
+      action: () {
+        navigatorKey.currentState?.push(
+            MaterialPageRoute(builder: (BuildContext context) => Setting()));
+      },
+      times: List.generate(24, (index) => 0),
+    ),
   ]);
 }
 
 Future<void> _initActions() async {}
 Future<void> _update() async {}
-

@@ -49,20 +49,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  DateTime _lastReturn; // last return time
+  DateTime? _lastReturn;
   @override
   Widget build(BuildContext context) {
     List<Widget> infoList = context.watch<InfoModel>().infoList;
     List<Widget> suggestList = context.watch<ActionModel>().suggestList;
-    return WillPopScope(
-      onWillPop: () async {
-        if (_lastReturn == null ||
-            DateTime.now().difference(_lastReturn) > Duration(seconds: 1)) {
+    return PopScope(
+      canPop: _lastReturn != null &&
+              DateTime.now().difference(_lastReturn!) > Duration(seconds: 1)
+          ? false
+          : true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
           _lastReturn = DateTime.now();
-          return false;
         }
-        return true;
-      }, // return check
+      },
       child: Stack(fit: StackFit.expand, children: <Widget>[
         // Background Image
         Consumer<BackgroundImageModel>(
@@ -87,11 +88,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       hintText: ">_ Input something here.",
                       focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(
-                            color: Theme.of(context).accentColor, width: 10.0),
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 10.0),
                       )),
                   controller: context.watch<ActionModel>().inputBoxController,
-                  onSubmitted:
-                      context.watch<ActionModel>().runFirstAction,
+                  onSubmitted: context.watch<ActionModel>().runFirstAction,
                   onChanged: context.watch<ActionModel>().generateSuggestList,
                 ),
               ),
@@ -113,7 +114,8 @@ class _MyHomePageState extends State<MyHomePage> {
               // Information Area
               Expanded(
                   child: GestureDetector(
-                onTap: () { // put away the keyboard
+                onTap: () {
+                  // put away the keyboard
                   FocusScope.of(context).requestFocus(FocusNode());
                 },
                 child: ListView.builder(

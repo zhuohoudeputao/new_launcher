@@ -20,7 +20,7 @@ import 'package:new_launcher/data.dart';
 /// 3. provide settings and take actions when settings are changing (asynchronously)
 class MyProvider {
   /// A provider needs a name or key to identify it. The name must be UpperCase.
-  String name;
+  late String name;
 
   /// A provider provide services when it's enabled. Default is true.
   Future<bool> isEnabled() async {
@@ -29,20 +29,20 @@ class MyProvider {
 
   /// A provider generate actions to actionList, and this must be done when this provider is initializing if it's enabled.
   /// This should be asynchronous.
-  void Function() provideActions;
+  late void Function() provideActions;
 
   /// Some actions will be taken when it's initializing,
   /// such as checking if this provider is enabled.
-  void Function() initActions;
+  late void Function() initActions;
 
   /// Some actions will be taken when settings changed.
-  void Function() update;
+  late void Function() update;
 
   MyProvider(
-      {String name,
-      void Function() provideActions,
-      void Function() initActions,
-      void Function() update}) {
+      {required String name,
+      required void Function() provideActions,
+      required void Function() initActions,
+      required void Function() update}) {
     this.name = name;
     this.provideActions = provideActions;
     this.initActions = initActions;

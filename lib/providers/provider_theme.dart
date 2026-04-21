@@ -40,7 +40,7 @@ void _provideTheme() async {
 
   if (dark) {
     brightness = Brightness.dark;
-    cardColor = Colors.grey[850];
+    cardColor = Colors.grey[850] ?? Colors.grey;
   }
 
   if (transparent) {

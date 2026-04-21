@@ -9,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
-import 'package:launcher_helper/launcher_helper.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 MyProvider providerWallpaper = MyProvider(
     name: "Wallpaper",
@@ -38,15 +36,6 @@ Future<void> _update() async {
 }
 
 Future<void> _readBackground() async {
-  var status = await Permission.storage.status;
-  if (status.isUndetermined || status.isDenied) {
-    status = await Permission.storage.request();
-  }
-  if (status.isGranted) {
-    Global.setBackgroundImage(MemoryImage(await LauncherHelper.getWallpaper));
-  } else {
-    Global.infoModel.addInfo(
-        "ReadBackgroundFail", "Read local background fail.",
-        subtitle: "Using default background. Check the storage permission.");
-  }
+  Global.infoModel.addInfo("Wallpaper", "Wallpaper loading disabled",
+      subtitle: "依赖项缺失，使用默认背景.");
 }
