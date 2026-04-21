@@ -112,7 +112,7 @@ Future<void> _provideWeather() async {
       }
     }
   } catch (e) {
-    // Use default location if geolocation fails
+    print("Weather geolocation error: $e");
   }
 
   try {

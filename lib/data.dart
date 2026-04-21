@@ -181,7 +181,11 @@ class ActionModel with ChangeNotifier {
   /// Initialize all providers
   Future<void> init() async {
     for (MyProvider provider in Global.providerList) {
-      provider.init();
+      try {
+        await provider.init();
+      } catch (e) {
+        print("Provider ${provider.name} init error: $e");
+      }
     }
   }
 

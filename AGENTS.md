@@ -73,6 +73,15 @@ Settings auto-saved via `SharedPreferences`:
 - `provider_app.dart` uses `device_apps` package (not in pubspec.yaml) - will fail to build
 - Widget test in `test/widget_test.dart` is outdated (tests counter, not launcher)
 - Some providers reference missing packages (`provider_translate.dart`, etc.)
+- `lib/core/` contains incomplete AI features (not used)
+
+## Providers
+
+- **Weather**: Fetches weather using Open-Meteo API with geolocator
+- **Theme**: Manages card colors, dark mode, transparency
+- **Wallpaper**: Background image selection
+- **Time**: Local time display
+- **App**: App launcher with device_apps
 
 ## Dependencies
 
