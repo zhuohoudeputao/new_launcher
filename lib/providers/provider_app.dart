@@ -61,6 +61,7 @@ Future<void> _provideActions() async {
     Global.infoModel.addInfoWidget(
       "app_${app.packageName}",
       _buildAppCard(app),
+      title: app.appName,
     );
   }
 
@@ -72,7 +73,8 @@ Future<void> _initActions() async {
       "RecentApp",
       ChangeNotifierProvider.value(
           value: _appModel,
-          builder: (context, child) => RecentlyUsedAppsCard()));
+          builder: (context, child) => RecentlyUsedAppsCard()),
+      title: "Recent Apps");
 }
 
 Future<void> _update() async {}

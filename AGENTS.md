@@ -47,11 +47,19 @@ MyProvider providerExample = MyProvider(
     ]);
   },
   initActions: () {
-    Global.infoModel.addInfoWidget("WidgetKey", MyWidget());
+    Global.infoModel.addInfoWidget("WidgetKey", MyWidget(), title: "Display Name");
   },
   update: () { /* handle settings change */ },
 );
 ```
+
+## Search Feature
+
+The search feature filters info cards based on user input:
+- `ActionModel.searchQuery` stores the current search text
+- `InfoModel.getFilteredList(query)` returns cards matching the query
+- Pass `title` parameter to `addInfoWidget()` to make cards searchable by title
+- Filtering matches against both key and title (case-insensitive)
 
 ## Settings Storage
 

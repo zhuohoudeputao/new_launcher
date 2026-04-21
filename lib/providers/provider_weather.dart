@@ -84,6 +84,7 @@ Future<void> _initActions() async {
       subtitle: "Loading...",
       icon: Icon(Icons.cloud),
     ),
+    title: "Weather",
   );
   await _provideWeather();
 }
@@ -131,14 +132,16 @@ Future<void> _provideWeather() async {
           customInfoWidget(
               title: "$temp°C - $condition",
               subtitle: "Wind: $wind km/h",
-              icon: Icon(getWeatherIcon(condition))));
+              icon: Icon(getWeatherIcon(condition))),
+          title: "Weather");
     } else {
       Global.infoModel.addInfoWidget(
           "Weather",
           customInfoWidget(
               title: "Weather error",
               subtitle: "Status: ${response.statusCode}",
-              icon: Icon(Icons.error)));
+              icon: Icon(Icons.error)),
+          title: "Weather");
     }
   } catch (e) {
     Global.infoModel.addInfoWidget(
@@ -146,6 +149,7 @@ Future<void> _provideWeather() async {
         customInfoWidget(
             title: "Weather error",
             subtitle: e.toString(),
-            icon: Icon(Icons.error)));
+            icon: Icon(Icons.error)),
+        title: "Weather");
   }
 }

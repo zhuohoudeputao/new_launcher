@@ -231,4 +231,60 @@ void main() {
       expect(newValue, isNot(0.5));
     });
   });
+
+  group('InfoModel getFilteredList tests', () {
+    late InfoModel infoModel;
+
+    setUp(() {
+      infoModel = InfoModel();
+      infoModel.addInfoWidget('app_chrome', customInfoWidget(title: 'Chrome'), title: 'Chrome');
+      infoModel.addInfoWidget('app_maps', customInfoWidget(title: 'Maps'), title: 'Maps');
+      infoModel.addInfoWidget('time', customInfoWidget(title: 'Time'), title: 'Time');
+      infoModel.addInfoWidget('Weather', customInfoWidget(title: 'Weather'), title: 'Weather');
+    });
+
+    test('returns all items when query is empty', () {
+      final result = infoModel.getFilteredList('');
+      expect(result.length, 4);
+    });
+
+    test('filters by key', () {
+      final result = infoModel.getFilteredList('chrome');
+      expect(result.length, 1);
+    });
+
+    test('filters by title', () {
+      final result = infoModel.getFilteredList('Maps');
+      expect(result.length, 1);
+    });
+
+    test('filters case-insensitively', () {
+      final result = infoModel.getFilteredList('TIME');
+      expect(result.length, 1);
+    });
+
+    test('returns empty when no match', () {
+      final result = infoModel.getFilteredList('xyz123');
+      expect(result.length, 0);
+    });
+
+    test('trims whitespace from query', () {
+      final result = infoModel.getFilteredList('  chrome  ');
+      expect(result.length, 1);
+    });
+  });
+
+  group('ActionModel searchQuery tests', () {
+    test('stores search query correctly', () {
+      final actionModel = ActionModel();
+      actionModel.generateSuggestList('test query');
+      expect(actionModel.searchQuery, 'test query');
+    });
+
+    test('clears search query when empty', () {
+      final actionModel = ActionModel();
+      actionModel.generateSuggestList('');
+      expect(actionModel.searchQuery, '');
+    });
+  });
 }

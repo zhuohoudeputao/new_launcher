@@ -52,8 +52,10 @@ class _MyHomePageState extends State<MyHomePage> {
   DateTime? _lastReturn;
   @override
   Widget build(BuildContext context) {
-    List<Widget> infoList = context.watch<InfoModel>().infoList;
-    List<Widget> suggestList = context.watch<ActionModel>().suggestList;
+    final actionModel = context.watch<ActionModel>();
+    String query = actionModel.searchQuery;
+    List<Widget> infoList = context.watch<InfoModel>().getFilteredList(query);
+    List<Widget> suggestList = actionModel.suggestList;
     return PopScope(
       canPop: _lastReturn != null &&
               DateTime.now().difference(_lastReturn!) > Duration(seconds: 1)
