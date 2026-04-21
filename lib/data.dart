@@ -259,7 +259,17 @@ class SettingsModel with ChangeNotifier {
     if (key == "WallpaperPicker") {
       _settingMap[key] = WallpaperPickerButton(
         label: "Change Wallpaper",
-        onTap: () {},
+        onTap: () async {
+          final ImagePicker picker = ImagePicker();
+          final XFile? image =
+              await picker.pickImage(source: ImageSource.gallery);
+          if (image != null) {
+            final bytes = await image.readAsBytes();
+            Global.backgroundImageModel.backgroundImage = MemoryImage(bytes);
+            Global.infoModel.addInfo("Wallpaper", "Wallpaper updated",
+                subtitle: "From gallery");
+          }
+        },
       );
     } else if (key == "CardOpacity" && value is double) {
       _settingMap[key] = CardOpacitySlider(
