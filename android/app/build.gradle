@@ -19,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId "Ind.zhuohoudeputao.new_launcher"
-        minSdkVersion 21
+        minSdkVersion flutter.minSdkVersion
         targetSdk 35
         versionCode 1
         versionName "1.0"
