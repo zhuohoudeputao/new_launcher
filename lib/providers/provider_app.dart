@@ -11,6 +11,7 @@ import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
+import 'package:new_launcher/data.dart';
 
 // a provider provides some actions
 MyProvider providerApp = MyProvider(
@@ -190,6 +191,7 @@ Widget _customButton(Widget icon, void Function() onPressed) {
 
 Widget _buildAppCard(ApplicationWithIcon app) {
   return Card(
+    color: Colors.white.withOpacity(Global.cardOpacity),
     child: ListTile(
       leading: Image.memory(
         app.icon,
