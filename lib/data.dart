@@ -166,9 +166,17 @@ class ActionModel with ChangeNotifier {
 }
 
 class InfoModel with ChangeNotifier {
-  /// A list for storing info widgets
-  Map<String, Widget> _infoList = Map<String, Widget>();
+  final Map<String, Widget> _infoList = <String, Widget>{};
   List<Widget> get infoList => _infoList.values.toList();
+
+  List<Widget> getFilteredList(String query) {
+    if (query.isEmpty) return infoList;
+    return _infoList.entries
+        .where((e) => e.key.toLowerCase().contains(query.toLowerCase()))
+        .map((e) => e.value)
+        .toList();
+  }
+
   int get length => _infoList.length;
 
   /// This method use title as key and add a [customInfoWidget] to infoList
