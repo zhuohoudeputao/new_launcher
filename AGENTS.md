@@ -1,0 +1,80 @@
+# AGENTS.md
+
+## Project Overview
+
+Flutter-based Android launcher with a command-based interface. Users type commands in a text field to trigger actions. Info widgets display in a list.
+
+## Key Commands
+
+```bash
+flutter run              # Run app on connected device/emulator
+flutter build apk        # Build debug APK
+flutter test             # Run tests
+```
+
+## Architecture
+
+- **Entry point**: `lib/main.dart` - `MyApp` widget wraps `MyHomePage`
+- **Providers system**: `lib/providers/*.dart` - Each provider adds services (weather, apps, wallpaper, etc.)
+- **Data layer**: `lib/data.dart` - Contains `Global`, `ActionModel`, `InfoModel`, `SettingsModel`, `BackgroundImageModel`, `ThemeModel`
+- **Action definition**: `lib/action.dart` - `MyAction` class with keywords, action function, and suggest widget
+
+## Adding a New Provider
+
+1. Create `lib/providers/provider_<name>.dart`
+2. Create a `MyProvider` instance with:
+   - `name`: UpperCase identifier (used for settings key: `name.Enabled`)
+   - `provideActions`: Register `MyAction` objects via `Global.addActions()`
+   - `initActions`: Add initial info widgets via `Global.infoModel.addInfoWidget()`
+   - `update`: Handle settings changes
+3. Add provider to `Global.providerList` in `lib/data.dart`
+
+## Provider Pattern Example
+
+```dart
+MyProvider providerExample = MyProvider(
+  name: "Example",
+  provideActions: () {
+    Global.addActions([
+      MyAction(
+        name: "Command Name",
+        keywords: "search keywords",
+        action: () {
+          Global.infoModel.addInfo("key", "Title", subtitle: "Subtitle");
+        },
+        times: List.generate(24, (_) => 0),
+      ),
+    ]);
+  },
+  initActions: () {
+    Global.infoModel.addInfoWidget("WidgetKey", MyWidget());
+  },
+  update: () { /* handle settings change */ },
+);
+```
+
+## Settings Storage
+
+Settings auto-saved via `SharedPreferences`:
+- `Global.getValue(key, defaultValue)` - Read
+- `Global.settingsModel.saveValue(key, value)` - Write
+- Boolean settings auto-generate toggle UI
+
+## Known Issues
+
+- `provider_app.dart` uses `device_apps` package (not in pubspec.yaml) - will fail to build
+- Widget test in `test/widget_test.dart` is outdated (tests counter, not launcher)
+- Some providers reference missing packages (`provider_translate.dart`, etc.)
+
+## Dependencies
+
+Key packages (pubspec.yaml):
+- `provider: ^6.0.0` - State management
+- `shared_preferences: ^2.0.0` - Settings storage
+- `url_launcher: ^6.0.0` - Open URLs
+- `sqflite: ^2.0.0` - Database (unused)
+- `permission_handler: ^10.0.0` - Permissions
+- `http: ^1.0.0` - HTTP requests
+
+## Notice
+DO NOT EDIT task.md

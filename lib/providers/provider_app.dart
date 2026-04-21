@@ -26,25 +26,27 @@ Future<void> _provideActions() async {
           includeAppIcons: true,
           onlyAppsWithLaunchIntent: true)
       .then((apps) {
-    for (ApplicationWithIcon app in apps) {
+    for (var app in apps) {
+      if (app is! ApplicationWithIcon) continue;
+      final appWithIcon = app as ApplicationWithIcon;
       // ApplicationWithIcon app = apps[i] as ApplicationWithIcon;
       actions.add(MyAction(
-        name: app.appName,
+        name: appWithIcon.appName,
         keywords: "launch " +
-            app.appName.toLowerCase() +
+            appWithIcon.appName.toLowerCase() +
             " " +
-            app.packageName.toLowerCase(),
+            appWithIcon.packageName.toLowerCase(),
         action: () async {
-          DeviceApps.openApp(app.packageName); // launch this app
+          DeviceApps.openApp(appWithIcon.packageName); // launch this app
           _appModel.addApp(
-              app.appName,
+              appWithIcon.appName,
               _customButton(
                   Image.memory(
-                    app.icon,
+                    appWithIcon.icon,
                     width: 60,
                     height: 60,
                   ), () {
-                DeviceApps.openApp(app.packageName);
+                DeviceApps.openApp(appWithIcon.packageName);
               }));
         },
         times: List.generate(24, (index) => 0),
@@ -72,7 +74,7 @@ class AppModel with ChangeNotifier {
   List<Widget> get recentlyUsedApps => recentApps.values.toList();
   int get length => recentApps.length;
 
-  Future<void> addApp(String key, Widget app) async{
+  Future<void> addApp(String key, Widget app) async {
     recentApps.remove(key); // remove key will let the index of it become 0
     recentApps[key] = app;
     notifyListeners();
@@ -107,11 +109,12 @@ Widget _customButton(Widget icon, void Function() onPressed) {
   return Container(
       width: 80,
       child: ClipOval(
-          child: FlatButton(
+          child: TextButton(
         onPressed: onPressed,
         child: icon,
-        highlightColor: Colors.transparent,
-        padding: EdgeInsets.all(-0.5),
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+        ),
       )));
 }
 
