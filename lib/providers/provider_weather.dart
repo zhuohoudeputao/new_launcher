@@ -7,6 +7,7 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/data.dart';
@@ -82,9 +83,32 @@ Future<void> _initActions() async {
 Future<void> _update() async {}
 
 Future<void> _provideWeather() async {
+  double latitude = 40.71;
+  double longitude = -74.01;
+
+  try {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (serviceEnabled) {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always) {
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.medium,
+        );
+        latitude = position.latitude;
+        longitude = position.longitude;
+      }
+    }
+  } catch (e) {
+    // Use default location if geolocation fails
+  }
+
   try {
     final response = await http.get(Uri.parse(
-        "https://api.open-meteo.com/v1/forecast?latitude=40.71&longitude=-74.01&current_weather=true"));
+        "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&current_weather=true"));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
