@@ -21,6 +21,7 @@ MyProvider providerApp = MyProvider(
 
 Future<void> _provideActions() async {
   List<MyAction> actions = <MyAction>[];
+  List<ApplicationWithIcon> allAppsWithIcons = [];
   DeviceApps.getInstalledApplications(
           includeSystemApps: true,
           includeAppIcons: true,
@@ -29,7 +30,7 @@ Future<void> _provideActions() async {
     for (var app in apps) {
       if (app is! ApplicationWithIcon) continue;
       final appWithIcon = app as ApplicationWithIcon;
-      // ApplicationWithIcon app = apps[i] as ApplicationWithIcon;
+      allAppsWithIcons.add(appWithIcon);
       actions.add(MyAction(
         name: appWithIcon.appName,
         keywords: "launch " +
@@ -37,7 +38,7 @@ Future<void> _provideActions() async {
             " " +
             appWithIcon.packageName.toLowerCase(),
         action: () async {
-          DeviceApps.openApp(appWithIcon.packageName); // launch this app
+          DeviceApps.openApp(appWithIcon.packageName);
           _appModel.addApp(
               appWithIcon.appName,
               _customButton(
@@ -52,6 +53,7 @@ Future<void> _provideActions() async {
         times: List.generate(24, (index) => 0),
       ));
     }
+    _allAppsModel.setApps(allAppsWithIcons);
     Global.addActions(actions);
   });
 }
@@ -62,12 +64,17 @@ Future<void> _initActions() async {
       ChangeNotifierProvider.value(
           value: _appModel,
           builder: (context, child) => RecentlyUsedAppsCard()));
+  Global.infoModel.addInfoWidget(
+      "AllApps",
+      ChangeNotifierProvider.value(
+          value: _allAppsModel, builder: (context, child) => AllAppsCard()));
 }
 
 Future<void> _update() async {}
 
 // Recently used apps
 AppModel _appModel = AppModel();
+AllAppsModel _allAppsModel = AllAppsModel();
 
 class AppModel with ChangeNotifier {
   Map<String, Widget> recentApps = Map<String, Widget>();
@@ -75,10 +82,22 @@ class AppModel with ChangeNotifier {
   int get length => recentApps.length;
 
   Future<void> addApp(String key, Widget app) async {
-    recentApps.remove(key); // remove key will let the index of it become 0
+    recentApps.remove(key);
     recentApps[key] = app;
     notifyListeners();
   }
+}
+
+class AllAppsModel with ChangeNotifier {
+  List<ApplicationWithIcon> allApps = [];
+
+  Future<void> setApps(List<ApplicationWithIcon> apps) async {
+    allApps = apps;
+    notifyListeners();
+  }
+
+  int get length => allApps.length;
+  List<ApplicationWithIcon> get apps => allApps;
 }
 
 class RecentlyUsedAppsCard extends StatefulWidget {
@@ -99,6 +118,55 @@ class RecentlyUsedAppsCardState extends State<RecentlyUsedAppsCard> {
               context.watch<AppModel>().recentlyUsedApps[length - index - 1],
           scrollDirection: Axis.horizontal,
           reverse: true,
+        ),
+      ),
+    );
+  }
+}
+
+class AllAppsCard extends StatefulWidget {
+  @override
+  State<AllAppsCard> createState() => _AllAppsCardState();
+}
+
+class _AllAppsCardState extends State<AllAppsCard> {
+  @override
+  Widget build(BuildContext context) {
+    final apps = context.watch<AllAppsModel>().apps;
+    return Card(
+      child: Container(
+        height: 120,
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 5,
+            childAspectRatio: 0.8,
+          ),
+          itemCount: apps.length,
+          itemBuilder: (context, index) {
+            final app = apps[index];
+            return InkWell(
+              onTap: () => DeviceApps.openApp(app.packageName),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.memory(
+                    app.icon,
+                    width: 48,
+                    height: 48,
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    app.appName,
+                    style: TextStyle(fontSize: 10),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
+          },
+          scrollDirection: Axis.horizontal,
         ),
       ),
     );
