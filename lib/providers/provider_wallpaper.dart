@@ -64,6 +64,15 @@ Future<dynamic> _cacheImage(XFile image) async {
 }
 
 Future<void> _readBackground() async {
+  final savedWallpaper =
+      await Global.settingsModel.getValue("LastWallpaper", "");
+  if (savedWallpaper.isNotEmpty) {
+    Global.backgroundImageModel.backgroundImage = NetworkImage(savedWallpaper);
+    Global.infoModel.addInfo("Wallpaper", "Wallpaper restored",
+        subtitle: "From saved wallpaper");
+    return;
+  }
+
   final random = Random();
   final url = _wallpaperUrls[random.nextInt(_wallpaperUrls.length)];
 
@@ -71,6 +80,7 @@ Future<void> _readBackground() async {
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       Global.backgroundImageModel.backgroundImage = NetworkImage(url);
+      Global.settingsModel.saveValue("LastWallpaper", url);
       Global.infoModel.addInfo("Wallpaper", "Wallpaper updated",
           subtitle: "New background from Picsum");
     } else {

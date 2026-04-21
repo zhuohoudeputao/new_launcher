@@ -283,7 +283,9 @@ class SettingsModel with ChangeNotifier {
       _settingMap[key] = CardOpacitySlider(
           value: value,
           onChanged: (newValue) {
+            Global.cardOpacityValue = newValue;
             saveValue(key, newValue);
+            notifyListeners();
           });
     } else if (value is String) {
       _settingMap[key] = customTextSettingWidget(
