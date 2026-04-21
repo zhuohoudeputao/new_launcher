@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:new_launcher/ui.dart';
+import 'package:new_launcher/providers/provider_weather.dart';
 
 void main() {
   group('customInfoWidget tests', () {
@@ -143,6 +144,38 @@ void main() {
 
       expect(newValue, true);
       expect(find.text('is true'), findsOneWidget);
+    });
+  });
+
+  group('Weather icon tests', () {
+    test('getWeatherIcon returns sun for clear', () {
+      final icon = getWeatherIcon("Clear sky");
+      expect(icon, Icons.wb_sunny);
+    });
+
+    test('getWeatherIcon returns cloud for cloudy', () {
+      final icon = getWeatherIcon("Partly cloudy");
+      expect(icon, Icons.cloud);
+    });
+
+    test('getWeatherIcon returns water for rain', () {
+      final icon = getWeatherIcon("Moderate rain");
+      expect(icon, Icons.water_drop);
+    });
+
+    test('getWeatherIcon returns snow for snow', () {
+      final icon = getWeatherIcon("Heavy snow");
+      expect(icon, Icons.ac_unit);
+    });
+
+    test('getWeatherIcon returns flash for thunder', () {
+      final icon = getWeatherIcon("Thunderstorm");
+      expect(icon, Icons.flash_on);
+    });
+
+    test('getWeatherIcon returns default for unknown', () {
+      final icon = getWeatherIcon("Unknown condition");
+      expect(icon, Icons.cloud);
     });
   });
 }
