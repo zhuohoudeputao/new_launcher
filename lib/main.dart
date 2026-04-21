@@ -80,17 +80,19 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             verticalDirection: VerticalDirection.up,
             children: <Widget>[
-              // Input Box
+              // Input Box with Search Icon
               Card(
                 child: TextField(
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                      hintText: ">_ Input something here.",
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
-                            width: 10.0),
-                      )),
+                    hintText: "Search apps, settings...",
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    filled: true,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                  ),
                   controller: context.watch<ActionModel>().inputBoxController,
                   onSubmitted: context.watch<ActionModel>().runFirstAction,
                   onChanged: context.watch<ActionModel>().generateSuggestList,
