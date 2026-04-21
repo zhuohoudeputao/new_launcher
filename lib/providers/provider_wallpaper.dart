@@ -5,7 +5,9 @@
  * @Description: file content
  */
 
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
@@ -15,6 +17,14 @@ MyProvider providerWallpaper = MyProvider(
     provideActions: _provideActions,
     initActions: _initActions,
     update: _update);
+
+final List<String> _wallpaperUrls = [
+  "https://picsum.photos/1920/1080",
+  "https://picsum.photos/1920/1080?random=1",
+  "https://picsum.photos/1920/1080?random=2",
+  "https://picsum.photos/1920/1080?random=3",
+  "https://picsum.photos/1920/1080?random=4",
+];
 
 Future<void> _provideActions() async {
   Global.addActions([
@@ -28,14 +38,29 @@ Future<void> _provideActions() async {
 }
 
 Future<void> _initActions() async {
-  _readBackground();
+  await _readBackground();
 }
 
 Future<void> _update() async {
-  _readBackground();
+  await _readBackground();
 }
 
 Future<void> _readBackground() async {
-  Global.infoModel.addInfo("Wallpaper", "Wallpaper loading disabled",
-      subtitle: "依赖项缺失，使用默认背景.");
+  final random = Random();
+  final url = _wallpaperUrls[random.nextInt(_wallpaperUrls.length)];
+
+  try {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      Global.backgroundImageModel.backgroundImage = NetworkImage(url);
+      Global.infoModel.addInfo("Wallpaper", "Wallpaper updated",
+          subtitle: "New background from Picsum");
+    } else {
+      Global.infoModel.addInfo("Wallpaper", "Failed to load wallpaper",
+          subtitle: "Status: ${response.statusCode}");
+    }
+  } catch (e) {
+    Global.infoModel
+        .addInfo("Wallpaper", "Wallpaper error", subtitle: e.toString());
+  }
 }
