@@ -95,6 +95,12 @@ class Global {
         title: "Settings");
   }
 
+  static Future<void> _refreshTheme() async {
+    final provider = Global.providerList.firstWhere((p) => p.name == "Theme");
+    await provider.init();
+    Global.themeModel.notifyListeners();
+  }
+
   //_____________________________________________________________Opacity
   static double cardOpacityValue = 0.7;
   static double get cardOpacity => cardOpacityValue;
@@ -362,6 +368,9 @@ class SettingsModel with ChangeNotifier {
           value: value,
           onChanged: (newValue) {
             saveValue(key, newValue);
+            if (key.startsWith("Theme.")) {
+              Global._refreshTheme();
+            }
           });
     } else if (value is double) {
       _settingMap[key] = customTextSettingWidget(
