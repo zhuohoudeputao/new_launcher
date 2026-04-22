@@ -104,9 +104,9 @@ Settings auto-saved via `SharedPreferences`:
 - **Wallpaper**: Background image selection
 - **Time**: Local time display
 - **App**: App launcher with device_apps
-  - `AllAppsCard`: Horizontal GridView showing all installed apps
+  - `AllAppsCard`: Horizontal GridView showing all installed apps (compact view)
   - `RecentlyUsedAppsCard`: Shows recently launched apps
-  - Top 10 apps displayed as individual cards
+  - All installed apps displayed as individual cards in the circular list
   - Models registered as providers: `appModel`, `allAppsModel`
 - **System**: System-related actions
 

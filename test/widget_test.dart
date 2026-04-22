@@ -415,4 +415,39 @@ void main() {
       expect(gridView.scrollDirection, Axis.horizontal);
     });
   });
+
+  group('InfoModel multiple app cards tests', () {
+    test('InfoModel can hold many app widgets', () {
+      final infoModel = InfoModel();
+      for (int i = 0; i < 100; i++) {
+        infoModel.addInfoWidget(
+          'app_test$i',
+          customInfoWidget(title: 'App $i'),
+          title: 'App $i',
+        );
+      }
+      expect(infoModel.length, 100);
+    });
+
+    test('InfoModel filters multiple apps correctly', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('app_chrome', customInfoWidget(title: 'Chrome'), title: 'Chrome');
+      infoModel.addInfoWidget('app_firefox', customInfoWidget(title: 'Firefox'), title: 'Firefox');
+      infoModel.addInfoWidget('app_safari', customInfoWidget(title: 'Safari'), title: 'Safari');
+      infoModel.addInfoWidget('app_edge', customInfoWidget(title: 'Edge'), title: 'Edge');
+      infoModel.addInfoWidget('weather', customInfoWidget(title: 'Weather'), title: 'Weather');
+
+      final result = infoModel.getFilteredList('app');
+      expect(result.length, 4);
+    });
+
+    test('InfoModel updates widget when same key is used', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('app_test', customInfoWidget(title: 'Test App'), title: 'Test App');
+      expect(infoModel.length, 1);
+
+      infoModel.addInfoWidget('app_test', customInfoWidget(title: 'Updated App'), title: 'Updated App');
+      expect(infoModel.length, 1);
+    });
+  });
 }

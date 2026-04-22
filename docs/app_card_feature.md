@@ -63,12 +63,11 @@ final apps = await DeviceApps.getInstalledApplications(
     onlyAppsWithLaunchIntent: false);
 ```
 
-### Top Apps as Individual Cards
+### Individual App Cards
 
-Top 10 apps are added as individual info cards for quick access:
+All installed apps are added as individual info cards in the circular list:
 ```dart
-final topApps = allAppsWithIcons.take(10).toList();
-for (final app in topApps) {
+for (final app in allAppsWithIcons) {
     Global.infoModel.addInfoWidget(
         "app_${app.packageName}",
         _buildAppCard(app),
@@ -76,6 +75,20 @@ for (final app in topApps) {
     );
 }
 ```
+
+Each app card:
+- Displays app icon and name
+- Shows package name as subtitle
+- Tap to launch the app
+- Searchable by app name or key
+
+### AllAppsCard (Compact View)
+
+The AllAppsCard provides a compact horizontal grid view for quick app browsing:
+- 5 columns per row
+- Scrollable horizontally
+- Each item shows app icon and name
+- Tap to launch app
 
 ## Testing
 

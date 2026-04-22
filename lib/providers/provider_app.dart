@@ -55,9 +55,7 @@ Future<void> _provideActions() async {
   }
   allAppsModel.setApps(allAppsWithIcons);
 
-  // Only add top 10 apps as individual cards to improve performance
-  final topApps = allAppsWithIcons.take(10).toList();
-  for (final app in topApps) {
+  for (final app in allAppsWithIcons) {
     Global.infoModel.addInfoWidget(
       "app_${app.packageName}",
       _buildAppCard(app),
