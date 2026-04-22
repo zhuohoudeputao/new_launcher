@@ -739,6 +739,84 @@ void main() {
     });
   });
 
+  group('DarkModeOptionSelector tests', () {
+    testWidgets('renders current mode correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DarkModeOptionSelector(
+              currentMode: 'light',
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Theme Mode'), findsOneWidget);
+      expect(find.text('light'), findsOneWidget);
+      expect(find.text('Light'), findsOneWidget);
+      expect(find.text('Dark'), findsOneWidget);
+      expect(find.text('System'), findsOneWidget);
+    });
+
+    testWidgets('calls onChanged when Light button pressed', (WidgetTester tester) async {
+      String newMode = 'dark';
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DarkModeOptionSelector(
+              currentMode: 'dark',
+              onChanged: (mode) => newMode = mode,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Light'));
+      await tester.pump();
+
+      expect(newMode, 'light');
+    });
+
+    testWidgets('calls onChanged when Dark button pressed', (WidgetTester tester) async {
+      String newMode = 'light';
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DarkModeOptionSelector(
+              currentMode: 'light',
+              onChanged: (mode) => newMode = mode,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Dark'));
+      await tester.pump();
+
+      expect(newMode, 'dark');
+    });
+
+    testWidgets('calls onChanged when System button pressed', (WidgetTester tester) async {
+      String newMode = 'light';
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DarkModeOptionSelector(
+              currentMode: 'light',
+              onChanged: (mode) => newMode = mode,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('System'));
+      await tester.pump();
+
+      expect(newMode, 'system');
+    });
+  });
+
   group('InfoModel getFilteredList tests', () {
     late InfoModel infoModel;
 
