@@ -116,8 +116,10 @@ Future<void> _provideWeather() async {
   }
 
   try {
-    final response = await http.get(Uri.parse(
-        "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&current_weather=true"));
+    final response = await http.get(
+      Uri.parse(
+          "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&current_weather=true"),
+    ).timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);

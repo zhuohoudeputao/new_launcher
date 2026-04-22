@@ -120,7 +120,7 @@ class Global {
   /// A model for storing settings
   static SettingsModel settingsModel = SettingsModel();
 
-  static dynamic getValue(String key, var defaultValue) {
+  static Future<dynamic> getValue(String key, var defaultValue) {
     return settingsModel.getValue(key, defaultValue);
   }
 
@@ -214,8 +214,10 @@ class ActionModel with ChangeNotifier {
   void runFirstAction(String input) {
     Global.input = input;
     if (_suggestList.isNotEmpty) {
-      TextButton suggest = _suggestList[0] as TextButton;
-      suggest.onPressed?.call();
+      final widget = _suggestList[0];
+      if (widget is TextButton) {
+        widget.onPressed?.call();
+      }
     } else {
       Global.infoModel.addInfo("Help", "I don't know what to do",
           subtitle: "Try type something else.", icon: Icon(Icons.help));
@@ -290,56 +292,46 @@ class ThemeModel with ChangeNotifier {
 }
 
 class SettingsModel with ChangeNotifier {
+  SharedPreferences? _prefs;
+  Map<String, Widget> _settingMap = <String, Widget>{};
+
   Future init() async {
     _prefs = await SharedPreferences.getInstance();
-    // Initialize settingList
-    Set<String> keys = _prefs!.getKeys();
+    final keys = _prefs?.getKeys() ?? <String>{};
     for (String key in keys) {
-      var value = _prefs!.get(key);
-      _addSettingWidget(key, value);
+      final value = _prefs?.get(key);
+      if (value != null) {
+        _addSettingWidget(key, value);
+      }
     }
   }
 
-  // data
-  /// A widget list generated for changing settings.
-  static Map<String, Widget> _settingMap = <String, Widget>{};
-  static SharedPreferences? _prefs;
+  List<Widget> get settingList => _settingMap.values.toList();
 
-  // getter or setter
-  /// [settingList] is generated for all the settings in shared preferences.
-  /// Providers just need to save and use key-value pairs,
-  /// don't need to design the widget of setting items.
-  List<Widget> get settingList {
-    return _settingMap.values.toList();
-  }
-
-  // manipulators
-  /// Save key-value pair for providers.
-  /// [value] can be a string, bool, double, int or string list.
-  /// If the type of [value] is not support, nothing will be store.
   void saveValue(String key, var value) {
+    final prefs = _prefs;
+    if (prefs == null) return;
     if (value is String) {
-      _prefs!.setString(key, value);
+      prefs.setString(key, value);
     } else if (value is bool) {
-      _prefs!.setBool(key, value);
+      prefs.setBool(key, value);
     } else if (value is double) {
-      _prefs!.setDouble(key, value);
+      prefs.setDouble(key, value);
     } else if (value is int) {
-      _prefs!.setInt(key, value);
+      prefs.setInt(key, value);
     } else if (value is List<String>) {
-      _prefs!.setStringList(key, value);
+      prefs.setStringList(key, value);
     }
     _addSettingWidget(key, value);
   }
 
-  /// Get value for providers.
-  /// If the [key] is not contained in preferences, [defaultValue] will be saved and return.
-  dynamic getValue(String key, var defaultValue) async {
+  Future<dynamic> getValue(String key, var defaultValue) async {
     if (_prefs == null) {
       _prefs = await SharedPreferences.getInstance();
     }
-    if (_prefs!.containsKey(key)) {
-      return _prefs!.get(key);
+    final prefs = _prefs!;
+    if (prefs.containsKey(key)) {
+      return prefs.get(key);
     } else {
       saveValue(key, defaultValue);
       return defaultValue;

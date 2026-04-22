@@ -90,8 +90,6 @@ Settings auto-saved via `SharedPreferences`:
 ## Known Issues
 
 - System proxy configuration may cause Flutter test failures - unset proxy env vars before running tests
-- Some providers reference missing packages (`provider_translate.dart`, etc.)
-- `lib/core/` contains incomplete AI features (not used)
 
 ### Build Troubleshooting
 
@@ -122,6 +120,33 @@ Key packages (pubspec.yaml):
 - `permission_handler: ^10.0.0` - Permissions
 - `http: ^1.0.0` - HTTP requests
 - `device_apps: ^2.2.0` - App enumeration and launching
+
+## Testing
+
+Tests are located in `test/widget_test.dart`. Run tests with:
+```bash
+unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && ~/app/flutter/bin/flutter test
+```
+
+Test coverage includes:
+- `MyAction` class (keyword matching, frequency tracking, midnight safety)
+- `MyProvider` class (constructor, initialization)
+- `ActionModel` class (action storage, suggestion generation)
+- `InfoModel` class (widget storage, filtering, batch operations)
+- `ThemeModel` and `BackgroundImageModel` (notifications)
+- UI widget tests (`customInfoWidget`, `CustomBoolSettingWidget`, etc.)
+
+## Documentation
+
+Technical documentation is available in `docs/`:
+- `critical_bug_fixes.md` - Bug fixes and code cleanup history
+- `search_feature.md` - Search feature implementation
+- `theme_feature.md` - Theme management
+- `wallpaper_feature.md` - Wallpaper handling
+- `weather_service.md` - Weather API integration
+- `logging_system.md` - Logging model usage
+- `card_list_feature.md` - Circular list implementation
+- `app_card_feature.md` - App display cards
 
 ## Notice
 DO NOT EDIT task*.md

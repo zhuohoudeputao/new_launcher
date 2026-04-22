@@ -74,7 +74,7 @@ Future<void> _fetchNewWallpaper() async {
   final url = _wallpaperUrls[random.nextInt(_wallpaperUrls.length)];
 
   try {
-    final response = await http.get(Uri.parse(url));
+    final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
     if (response.statusCode == 200) {
       Global.backgroundImageModel.backgroundImage = NetworkImage(url);
       Global.settingsModel.saveValue("LastWallpaper", url);

@@ -158,7 +158,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               // Suggestion Area
               Container(
-                height: 50.0,
+                height: 56.0,
+                padding: EdgeInsets.symmetric(vertical: 4),
                 child: ListView.builder(
                   // suggestion displayer
                   itemCount: suggestList.length,

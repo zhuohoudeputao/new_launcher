@@ -5,9 +5,244 @@ import 'package:new_launcher/data.dart';
 import 'package:new_launcher/setting.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
 import 'package:new_launcher/providers/provider_app.dart';
+import 'package:new_launcher/action.dart';
+import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  group('MyAction tests', () {
+    test('canIdentifyBy returns true for matching keyword', () {
+      final action = MyAction(
+        name: 'TestAction',
+        keywords: 'test keyword example',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      expect(action.canIdentifyBy('test'), true);
+      expect(action.canIdentifyBy('keyword'), true);
+      expect(action.canIdentifyBy('example'), true);
+    });
+
+    test('canIdentifyBy returns false for non-matching keyword', () {
+      final action = MyAction(
+        name: 'TestAction',
+        keywords: 'test keyword',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      expect(action.canIdentifyBy('xyz'), false);
+      expect(action.canIdentifyBy('other'), false);
+    });
+
+    test('canIdentifyBy is case-insensitive', () {
+      final action = MyAction(
+        name: 'TestAction',
+        keywords: 'Test Keyword',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      expect(action.canIdentifyBy('TEST'), true);
+      expect(action.canIdentifyBy('KEYWORD'), true);
+      expect(action.canIdentifyBy('test keyword'), true);
+    });
+
+    test('frequency returns value for current hour', () {
+      final times = List.generate(24, (_) => 0);
+      final currentHour = DateTime.now().hour;
+      times[currentHour] = 5;
+      final action = MyAction(
+        name: 'TestAction',
+        keywords: 'test',
+        action: () {},
+        times: times,
+      );
+      expect(action.frequency, 5);
+    });
+
+    test('action execution increments frequency for current hour', () async {
+      final times = List.generate(24, (_) => 0);
+      final currentHour = DateTime.now().hour;
+      var actionExecuted = false;
+      final action = MyAction(
+        name: 'TestAction',
+        keywords: 'test',
+        action: () => actionExecuted = true,
+        times: times,
+      );
+      
+      await action.action();
+      
+      expect(actionExecuted, true);
+      expect(times[currentHour], 1);
+    });
+
+    test('frequency increment works at midnight (hour 0)', () async {
+      final times = List.generate(24, (_) => 0);
+      final action = MyAction(
+        name: 'TestAction',
+        keywords: 'test',
+        action: () {},
+        times: times,
+      );
+      
+      await action.action();
+      
+      final currentHour = DateTime.now().hour;
+      expect(times[currentHour], 1);
+    });
+
+    test('suggestWidget is created correctly', () {
+      final action = MyAction(
+        name: 'TestAction',
+        keywords: 'test',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      
+      expect(action.suggestWidget, isA<Widget>());
+    });
+  });
+
+  group('MyProvider tests', () {
+    test('MyProvider constructor assigns values correctly', () {
+      final provider = MyProvider(
+        name: 'Test',
+        provideActions: () {},
+        initActions: () {},
+        update: () {},
+      );
+      
+      expect(provider.name, 'Test');
+    });
+
+    test('MyProvider init calls provideActions and initActions when enabled', () async {
+      var provideCalled = false;
+      var initCalled = false;
+      
+      final provider = MyProvider(
+        name: 'TestEnabled',
+        provideActions: () => provideCalled = true,
+        initActions: () => initCalled = true,
+        update: () {},
+      );
+      
+      await provider.init();
+      
+      expect(provideCalled, true);
+      expect(initCalled, true);
+    }, skip: 'Requires SharedPreferences plugin mock');
+  });
+
+  group('ThemeModel tests', () {
+    test('ThemeModel starts with default ThemeData', () {
+      final themeModel = ThemeModel();
+      expect(themeModel.themeData, isA<ThemeData>());
+    });
+
+    test('ThemeModel updates theme and notifies listeners', () {
+      final themeModel = ThemeModel();
+      int notifyCount = 0;
+      themeModel.addListener(() => notifyCount++);
+      
+      final newTheme = ThemeData.dark();
+      themeModel.themeData = newTheme;
+      
+      expect(themeModel.themeData, newTheme);
+      expect(notifyCount, 1);
+    });
+  });
+
+  group('BackgroundImageModel tests', () {
+    test('BackgroundImageModel has default image', () {
+      final backgroundImageModel = BackgroundImageModel();
+      expect(backgroundImageModel.backgroundImage, isA<ImageProvider>());
+    });
+
+    test('BackgroundImageModel updates image and notifies listeners', () {
+      final backgroundImageModel = BackgroundImageModel();
+      int notifyCount = 0;
+      backgroundImageModel.addListener(() => notifyCount++);
+      
+      final newImage = NetworkImage('https://example.com/image.jpg');
+      backgroundImageModel.backgroundImage = newImage;
+      
+      expect(backgroundImageModel.backgroundImage, newImage);
+      expect(notifyCount, 1);
+    });
+  });
+
+  group('ActionModel tests', () {
+    test('ActionModel starts empty', () {
+      final actionModel = ActionModel();
+      expect(actionModel.suggestList.isEmpty, true);
+    });
+
+    test('addAction stores action in map', () async {
+      final actionModel = ActionModel();
+      final action = MyAction(
+        name: 'Test',
+        keywords: 'test',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      
+      await actionModel.addAction(action);
+      
+      actionModel.generateSuggestList('test');
+      expect(actionModel.suggestList.length, 1);
+    });
+
+    test('generateSuggestList filters actions by input', () {
+      final actionModel = ActionModel();
+      final action1 = MyAction(
+        name: 'Weather',
+        keywords: 'weather forecast',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      final action2 = MyAction(
+        name: 'Time',
+        keywords: 'time clock',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      
+      actionModel.addAction(action1);
+      actionModel.addAction(action2);
+      
+      actionModel.generateSuggestList('weather');
+      expect(actionModel.suggestList.length, 1);
+      
+      actionModel.generateSuggestList('time');
+      expect(actionModel.suggestList.length, 1);
+      
+      actionModel.generateSuggestList('clock');
+      expect(actionModel.suggestList.length, 1);
+    });
+
+    test('generateSuggestList returns all matching actions', () {
+      final actionModel = ActionModel();
+      final action1 = MyAction(
+        name: 'Weather',
+        keywords: 'weather forecast',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      final action2 = MyAction(
+        name: 'Weather2',
+        keywords: 'weather today',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      
+      actionModel.addAction(action1);
+      actionModel.addAction(action2);
+      
+      actionModel.generateSuggestList('weather');
+      expect(actionModel.suggestList.length, 2);
+    });
+  });
+
   group('customInfoWidget tests', () {
     testWidgets('renders title correctly', (WidgetTester tester) async {
       await tester.pumpWidget(

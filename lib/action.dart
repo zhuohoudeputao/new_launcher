@@ -52,7 +52,7 @@ class MyAction {
 
   /// when this action is taken, add frequency by 1
   Future<void> _frequencyIncre() async {
-    _times[DateTime.now().hour - 1] += 1;
+    _times[DateTime.now().hour] += 1;
   }
 
   /// whether search string is in keywords
