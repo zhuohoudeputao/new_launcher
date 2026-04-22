@@ -179,6 +179,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   onChanged: context.watch<ActionModel>().generateSuggestList,
                 ),
               ),
+              // Result count indicator
+              if (query.isNotEmpty && infoList.isNotEmpty)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                  child: Text(
+                    "${infoList.length} results",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ),
               // Suggestion Area
               Container(
                 height: 56.0,
