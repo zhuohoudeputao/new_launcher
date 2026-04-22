@@ -1035,6 +1035,73 @@ void main() {
 
       expect(find.widgetWithIcon(AppBar, Icons.arrow_back), findsOneWidget);
     }, skip: true);
+
+    testWidgets('Setting page uses FadeTransition', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: Global.settingsModel),
+              ChangeNotifierProvider.value(value: Global.backgroundImageModel),
+            ],
+            child: Setting(),
+          ),
+        ),
+      );
+
+      expect(find.byType(FadeTransition), findsWidgets);
+    });
+
+    testWidgets('Setting page has animation controller', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: Global.settingsModel),
+              ChangeNotifierProvider.value(value: Global.backgroundImageModel),
+            ],
+            child: Setting(),
+          ),
+        ),
+      );
+
+      await tester.pump(Duration(milliseconds: 100));
+      expect(find.byType(Setting), findsOneWidget);
+    });
+
+    testWidgets('Setting items use TweenAnimationBuilder', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: Global.settingsModel),
+              ChangeNotifierProvider.value(value: Global.backgroundImageModel),
+            ],
+            child: Setting(),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      expect(find.byType(TweenAnimationBuilder), findsWidgets);
+    });
+
+    testWidgets('Setting title is animated', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: Global.settingsModel),
+              ChangeNotifierProvider.value(value: Global.backgroundImageModel),
+            ],
+            child: Setting(),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      expect(find.text('Settings'), findsOneWidget);
+    });
   });
 
   group('CardOpacitySlider tests', () {
