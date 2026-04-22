@@ -1361,6 +1361,16 @@ void main() {
       await allAppsModel.setApps([]);
       expect(notifyCount, 1);
     });
+
+    test('length getter returns correct count', () {
+      final allAppsModel = AllAppsModel();
+      expect(allAppsModel.length, 0);
+    });
+
+    test('apps getter returns empty list initially', () {
+      final allAppsModel = AllAppsModel();
+      expect(allAppsModel.apps, isEmpty);
+    });
   });
 
   group('RecentlyUsedAppsCard tests', () {
