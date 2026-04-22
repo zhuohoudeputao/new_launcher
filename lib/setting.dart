@@ -34,8 +34,7 @@ class SettingState extends State<Setting> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     List<Widget> settingList = context.watch<SettingsModel>().settingList;
-    final brightness = Theme.of(context).brightness;
-    final textColor = brightness == Brightness.dark ? Colors.white : Colors.black87;
+    final colorScheme = Theme.of(context).colorScheme;
     
     return Stack(fit: StackFit.expand, children: <Widget>[
       Consumer<BackgroundImageModel>(
@@ -45,22 +44,26 @@ class SettingState extends State<Setting> with TickerProviderStateMixin {
             fit: BoxFit.cover);
       }),
       Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: colorScheme.surface.withValues(alpha: 0),
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
+          backgroundColor: colorScheme.surface.withValues(alpha: 0),
+          surfaceTintColor: colorScheme.surfaceTint,
+          scrolledUnderElevation: 0,
           title: FadeTransition(
             opacity: _fadeAnimation,
             child: Text(
               "Settings",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: textColor,
+                color: colorScheme.onSurface,
               ),
             ),
           ),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: textColor),
+            icon: Icon(Icons.arrow_back),
+            style: IconButton.styleFrom(
+              foregroundColor: colorScheme.onSurface,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -70,8 +73,8 @@ class SettingState extends State<Setting> with TickerProviderStateMixin {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withValues(alpha: 0.3),
-                Colors.black.withValues(alpha: 0.7),
+                colorScheme.surface.withValues(alpha: 0.3),
+                colorScheme.surface.withValues(alpha: 0.7),
               ],
             ),
           ),

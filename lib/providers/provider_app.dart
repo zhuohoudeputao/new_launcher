@@ -276,11 +276,7 @@ class RecentlyUsedAppsCardState extends State<RecentlyUsedAppsCard> {
   @override
   Widget build(BuildContext context) {
     int length = context.watch<AppModel>().length;
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return Card.filled(
       child: Container(
         height: 80,
         child: ListView.builder(
@@ -305,11 +301,7 @@ class _AllAppsCardState extends State<AllAppsCard> {
   @override
   Widget build(BuildContext context) {
     final apps = context.watch<AllAppsModel>().apps;
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return Card.outlined(
       child: Container(
         height: 120,
         child: GridView.builder(
@@ -400,11 +392,7 @@ class _AppStatisticsCardState extends State<AppStatisticsCard> {
     
     final topApps = stats.mostUsedApps.take(5).toList();
     
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return Card.outlined(
       child: Padding(
         padding: EdgeInsets.all(8),
         child: Column(

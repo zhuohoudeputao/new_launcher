@@ -398,11 +398,7 @@ class _WeatherCardState extends State<WeatherCard> {
       7: 'Sun',
     };
 
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return Card.filled(
       child: Padding(
         padding: EdgeInsets.all(12),
         child: Column(

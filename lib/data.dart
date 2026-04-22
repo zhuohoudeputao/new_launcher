@@ -38,38 +38,37 @@ class DarkModeOptionSelector extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 8),
+        padding: EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Theme Mode", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(currentMode, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
-                ],
-              ),
-            ),
-            SizedBox(height: 8),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  TextButton(
-                    onPressed: () => onChanged("light"),
-                    child: Text("Light"),
-                  ),
-                  TextButton(
-                    onPressed: () => onChanged("dark"),
-                    child: Text("Dark"),
-                  ),
-                  TextButton(
-                    onPressed: () => onChanged("system"),
-                    child: Text("System"),
-                  ),
-                ],
+            Text("Theme Mode", style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 12),
+            SegmentedButton<String>(
+              segments: [
+                ButtonSegment(
+                  value: "light",
+                  label: Text("Light"),
+                  icon: Icon(Icons.light_mode),
+                ),
+                ButtonSegment(
+                  value: "dark",
+                  label: Text("Dark"),
+                  icon: Icon(Icons.dark_mode),
+                ),
+                ButtonSegment(
+                  value: "system",
+                  label: Text("System"),
+                  icon: Icon(Icons.settings_suggest),
+                ),
+              ],
+              selected: {currentMode},
+              onSelectionChanged: (Set<String> newSelection) {
+                onChanged(newSelection.first);
+              },
+              style: ButtonStyle(
+                visualDensity: VisualDensity.comfortable,
               ),
             ),
           ],

@@ -155,18 +155,14 @@ class _MyHomePageState extends State<MyHomePage> {
         }),
         // Main Scaffold
         Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0),
           body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             verticalDirection: VerticalDirection.up,
             children: <Widget>[
               // Input Box with Search Icon
-              Card(
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28),
-                ),
+              Card.filled(
                 child: TextField(
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
@@ -189,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     "${infoList.length} results",
                     style: TextStyle(
                       fontSize: 12,
-                      color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ),

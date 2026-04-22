@@ -67,8 +67,11 @@ Widget customInfoWidget(
 /// above the input box.
 Widget customSuggestWidget(
     {required String name, required void Function() onPressed}) {
-  return TextButton(
+  return ElevatedButton(
     onPressed: onPressed,
+    style: ElevatedButton.styleFrom(
+      elevation: 0,
+    ),
     child: Text(name),
   );
 }
@@ -225,11 +228,8 @@ class WallpaperPickerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+    final colorScheme = Theme.of(context).colorScheme;
+    return Card.filled(
       child: ListTile(
         title: Text(
           label,
@@ -238,6 +238,9 @@ class WallpaperPickerButton extends StatelessWidget {
         subtitle: Text("Tap to select from gallery"),
         trailing: IconButton(
           icon: Icon(Icons.photo_library),
+          style: IconButton.styleFrom(
+            foregroundColor: colorScheme.primary,
+          ),
           onPressed: onTap,
         ),
       ),
@@ -331,8 +334,13 @@ class _LogViewerWidgetState extends State<LogViewerWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
+                ElevatedButton(
                   onPressed: () => logger.clear(),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                    foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                  ),
                   child: Text("Clear"),
                 ),
               ],
@@ -344,11 +352,12 @@ class _LogViewerWidgetState extends State<LogViewerWidget> {
   }
 
   Color _getLevelColor(LogLevel level) {
+    final colorScheme = Theme.of(context).colorScheme;
     switch (level) {
-      case LogLevel.error: return Colors.red;
-      case LogLevel.warning: return Colors.orange;
-      case LogLevel.info: return Colors.blue;
-      case LogLevel.debug: return Colors.grey;
+      case LogLevel.error: return colorScheme.error;
+      case LogLevel.warning: return colorScheme.tertiary;
+      case LogLevel.info: return colorScheme.primary;
+      case LogLevel.debug: return colorScheme.onSurfaceVariant;
     }
   }
 }
