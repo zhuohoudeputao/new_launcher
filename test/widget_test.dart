@@ -682,6 +682,77 @@ void main() {
     });
   });
 
+  group('customTextSettingWidget tests', () {
+    testWidgets('renders key and value', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: customTextSettingWidget(
+              key: 'TestKey',
+              value: 'TestValue',
+              onSubmitted: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('TestKey'), findsOneWidget);
+    });
+
+    testWidgets('calls onSubmitted when text entered', (WidgetTester tester) async {
+      String submittedValue = '';
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: customTextSettingWidget(
+              key: 'Test',
+              value: 'OldValue',
+              onSubmitted: (value) => submittedValue = value,
+            ),
+          ),
+        ),
+      );
+
+      await tester.enterText(find.byType(TextField), 'NewValue');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
+
+      expect(submittedValue, 'NewValue');
+    });
+
+    testWidgets('handles int value', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: customTextSettingWidget(
+              key: 'IntKey',
+              value: 42,
+              onSubmitted: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('IntKey'), findsOneWidget);
+    });
+
+    testWidgets('handles double value', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: customTextSettingWidget(
+              key: 'DoubleKey',
+              value: 3.14,
+              onSubmitted: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('DoubleKey'), findsOneWidget);
+    });
+  });
+
   group('CustomBoolSettingWidget tests', () {
     testWidgets('renders key and value correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
