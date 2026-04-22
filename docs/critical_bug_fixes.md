@@ -237,3 +237,35 @@ Remaining 6 issues are protected member warnings for notifyListeners in static m
 - Added Padding with vertical spacing
 - Wrapped Row in SingleChildScrollView for horizontal overflow prevention
 - Used Row with MainAxisAlignment.spaceBetween for header
+
+## Critical Bug Fixes (Loop 38)
+
+### 1. HTTP Security Vulnerability (data.dart:424)
+
+**Issue**: Default background image URL used insecure HTTP, which modern Android may block.
+
+**Fix**: Changed to HTTPS URL using Picsum: `https://picsum.photos/1920/1080`
+
+### 2. Async Persistence Error Handling (provider_app.dart:212-226)
+
+**Issue**: `_saveStats()` could fail silently without error handling, causing undetected data loss.
+
+**Fix**: Added try-catch block with error logging via LoggerModel.
+
+### 3. Timer Disposal Edge Case (provider_time.dart:78-82)
+
+**Issue**: If `dispose()` called during initial delay, periodic timer could still be created, causing memory leaks and setState on disposed widget.
+
+**Fix**: 
+- Added `_disposed` flag to track disposal state
+- Split timer into `_initialTimer` and `_periodicTimer`
+- Check `_disposed` before creating periodic timer and before setState
+- Cancel both timers in dispose()
+
+## Test Summary (Updated)
+
+| Loop | Tests Added | Total Tests |
+|------|-------------|-------------|
+| 36 | 13 | 165 |
+| 37 | 0 | 165 |
+| 38 | 0 | 165 |

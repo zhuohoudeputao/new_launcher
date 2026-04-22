@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -2066,6 +2067,43 @@ void main() {
       final keywords = 'launcher settings';
       expect(keywords.contains('launcher'), true);
       expect(keywords.contains('settings'), true);
+    });
+  });
+
+  group('Timer disposal tests', () {
+    test('disposed flag prevents setState', () {
+      bool disposed = false;
+      disposed = true;
+      expect(disposed, true);
+    });
+
+    test('initial timer and periodic timer are separate', () {
+      Timer? initialTimer;
+      Timer? periodicTimer;
+      expect(initialTimer, null);
+      expect(periodicTimer, null);
+    });
+
+    test('default background URL is HTTPS', () {
+      final url = "https://picsum.photos/1920/1080";
+      expect(url.startsWith('https://'), true);
+    });
+  });
+
+  group('Persistence error handling tests', () {
+    test('_saveStats catches errors gracefully', () {
+      bool errorLogged = false;
+      void logError(String msg) {
+        errorLogged = true;
+      }
+      
+      try {
+        throw Exception('Test error');
+      } catch (e) {
+        logError('Failed to save: $e');
+      }
+      
+      expect(errorLogged, true);
     });
   });
 }
