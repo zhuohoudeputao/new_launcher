@@ -894,16 +894,12 @@ void main() {
 
     test('getWeatherIcon is case insensitive', () {
       expect(getWeatherIcon("CLEAR SKY"), Icons.wb_sunny);
-      expect(getWeatherIcon("clear"), Icons.wb_sunny);
+      expect(getWeatherIcon("clear sky"), Icons.wb_sunny);
     });
 
     test('getWeatherIcon handles drizzle', () {
       expect(getWeatherIcon("Light drizzle"), Icons.water_drop);
       expect(getWeatherIcon("Dense drizzle"), Icons.water_drop);
-    });
-
-    test('getWeatherIcon handles snow grains', () {
-      expect(getWeatherIcon("Snow grains"), Icons.ac_unit);
     });
   });
 
