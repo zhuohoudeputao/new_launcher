@@ -33,31 +33,43 @@ class DarkModeOptionSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            title: Text("Theme Mode", style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(currentMode),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              TextButton(
-                onPressed: () => onChanged("light"),
-                child: Text("Light"),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Theme Mode", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(currentMode, style: TextStyle(color: Colors.grey)),
+                ],
               ),
-              TextButton(
-                onPressed: () => onChanged("dark"),
-                child: Text("Dark"),
+            ),
+            SizedBox(height: 8),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  TextButton(
+                    onPressed: () => onChanged("light"),
+                    child: Text("Light"),
+                  ),
+                  TextButton(
+                    onPressed: () => onChanged("dark"),
+                    child: Text("Dark"),
+                  ),
+                  TextButton(
+                    onPressed: () => onChanged("system"),
+                    child: Text("System"),
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () => onChanged("system"),
-                child: Text("System"),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
