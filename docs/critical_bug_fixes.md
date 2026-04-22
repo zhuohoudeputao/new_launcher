@@ -225,3 +225,15 @@ Added tests for:
 | 17 issues | 6 issues |
 
 Remaining 6 issues are protected member warnings for notifyListeners in static methods - a design limitation in Flutter.
+
+## UI Fix (Loop 37)
+
+### 1. RenderFlex Overflow in DarkModeOptionSelector
+
+**Issue**: `A RenderFlex overflowed by 52 pixels on the bottom` error in settings page.
+
+**Fix**: Redesigned `DarkModeOptionSelector` with:
+- Removed ListTile (adds implicit constraints)
+- Added Padding with vertical spacing
+- Wrapped Row in SingleChildScrollView for horizontal overflow prevention
+- Used Row with MainAxisAlignment.spaceBetween for header
