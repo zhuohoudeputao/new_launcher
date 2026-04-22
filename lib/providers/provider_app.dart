@@ -213,16 +213,20 @@ class AppStatisticsModel extends ChangeNotifier {
     final prefs = _prefs;
     if (prefs == null) return;
     
-    final countsStr = _launchCounts.entries
-      .map((e) => '${e.key}:${e.value}')
-      .join(',');
-    
-    final timesStr = _lastLaunchTime.entries
-      .map((e) => '${e.key}:${e.value.toIso8601String()}')
-      .join(',');
-    
-    await prefs.setString(_countsKey, countsStr);
-    await prefs.setString(_timesKey, timesStr);
+    try {
+      final countsStr = _launchCounts.entries
+        .map((e) => '${e.key}:${e.value}')
+        .join(',');
+      
+      final timesStr = _lastLaunchTime.entries
+        .map((e) => '${e.key}:${e.value.toIso8601String()}')
+        .join(',');
+      
+      await prefs.setString(_countsKey, countsStr);
+      await prefs.setString(_timesKey, timesStr);
+    } catch (e) {
+      Global.loggerModel.error("Failed to save app statistics: $e", source: "AppStatistics");
+    }
   }
   
   void recordLaunch(String appName) {

@@ -421,7 +421,7 @@ class SettingsModel with ChangeNotifier {
 class BackgroundImageModel with ChangeNotifier {
   // data
   ImageProvider _backgroundImage = NetworkImage(
-      "http://bizhi.bcoderss.com/wp-content/uploads/2019/05/pixel-3a-wallpaper-droidviews.jpg");
+      "https://picsum.photos/1920/1080");
   // getter or setter
   ImageProvider get backgroundImage {
     return _backgroundImage;

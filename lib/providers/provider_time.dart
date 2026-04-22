@@ -68,16 +68,21 @@ class _TimeWidgetState extends State<_TimeWidget> {
     this.showGreeting = showGreeting;
   }
 
-  late Timer timer;
+  Timer? _initialTimer;
+  Timer? _periodicTimer;
   late bool showGreeting;
+  bool _disposed = false;
+  
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
     final initialDelay = 60 - now.second;
-    timer = Timer(Duration(seconds: initialDelay), () {
+    _initialTimer = Timer(Duration(seconds: initialDelay), () {
+      if (_disposed) return;
       setState(() {});
-      timer = Timer.periodic(const Duration(minutes: 1), (Timer timer) {
+      _periodicTimer = Timer.periodic(const Duration(minutes: 1), (Timer timer) {
+        if (_disposed) return;
         setState(() {});
       });
     });
@@ -90,8 +95,10 @@ class _TimeWidgetState extends State<_TimeWidget> {
 
   @override
   void dispose() {
+    _disposed = true;
+    _initialTimer?.cancel();
+    _periodicTimer?.cancel();
     super.dispose();
-    timer.cancel();
   }
 
   Widget customTimeWidget() {
