@@ -10,6 +10,40 @@ import 'package:flutter/services.dart';
 import 'package:new_launcher/data.dart';
 import 'package:provider/provider.dart';
 
+class CircularListController extends ScrollController {
+  int itemCount;
+  double itemExtent;
+  bool _isWrapping = false;
+
+  CircularListController({required this.itemCount, this.itemExtent = 100});
+
+  void updateItemCount(int count) {
+    itemCount = count;
+  }
+
+  void jumpToCircular(int index) {
+    if (itemCount == 0 || position.maxScrollExtent == 0) return;
+    final target = index * itemExtent % (itemCount * itemExtent);
+    jumpTo(target);
+  }
+
+  void maybeWrap() {
+    if (_isWrapping || itemCount == 0 || position.maxScrollExtent == 0) return;
+    final extent = itemCount * itemExtent;
+    final offset = position.pixels;
+    
+    if (offset >= extent - itemExtent * 2) {
+      _isWrapping = true;
+      jumpTo(offset - extent);
+      _isWrapping = false;
+    } else if (offset < itemExtent) {
+      _isWrapping = true;
+      jumpTo(offset + extent);
+      _isWrapping = false;
+    }
+  }
+}
+
 void main() {
   // remove the shadow of status bar
   SystemUiOverlayStyle systemUiOverlayStyle =
@@ -51,6 +85,26 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   DateTime? _lastReturn;
+  late CircularListController _circularListController;
+
+  @override
+  void initState() {
+    super.initState();
+    _circularListController = CircularListController(itemCount: 0);
+    _circularListController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    _circularListController.maybeWrap();
+  }
+
+  @override
+  void dispose() {
+    _circularListController.removeListener(_onScroll);
+    _circularListController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final actionModel = context.watch<ActionModel>();
@@ -116,25 +170,34 @@ class _MyHomePageState extends State<MyHomePage> {
                   scrollDirection: Axis.horizontal,
                 ),
               ),
-              // Information Area
+// Information Area
               Expanded(
                   child: GestureDetector(
                 onTap: () {
                   // put away the keyboard
                   FocusScope.of(context).requestFocus(FocusNode());
                 },
-                child: ListView.builder(
-                  cacheExtent: 500,
-                  itemCount: infoList.length,
-                  addAutomaticKeepAlives: false,
-                  addRepaintBoundaries: false,
-                  itemBuilder: (BuildContext context, int index) {
-                    final widget = infoList[infoList.length - index - 1];
-                    return widget;
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    if (notification is ScrollUpdateNotification) {
+                      _circularListController.maybeWrap();
+                    }
+                    return false;
                   },
-                  scrollDirection: Axis.vertical,
-                  reverse: true,
-                  physics: BouncingScrollPhysics(),
+                  child: ListView.builder(
+                    controller: _circularListController,
+                    cacheExtent: 500,
+                    itemCount: infoList.length,
+                    addAutomaticKeepAlives: false,
+                    addRepaintBoundaries: false,
+                    itemBuilder: (BuildContext context, int index) {
+                      final widget = infoList[infoList.length - index - 1];
+                      return widget;
+                    },
+                    scrollDirection: Axis.vertical,
+                    reverse: true,
+                    physics: BouncingScrollPhysics(),
+                  ),
                 ),
               )),
             ],
