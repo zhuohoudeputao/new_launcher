@@ -495,6 +495,15 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 350));
       expect(notifyCount, 1);
     });
+
+    test('dispose cancels debounce timer', () async {
+      final actionModel = ActionModel();
+      actionModel.generateSuggestList('test');
+      actionModel.dispose();
+      
+      await Future.delayed(const Duration(milliseconds: 350));
+      expect(actionModel.searchQuery, '');
+    });
   });
 
   group('customInfoWidget tests', () {
