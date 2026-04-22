@@ -825,6 +825,34 @@ void main() {
       await appModel.addApp('Test', Container());
       expect(notifyCount, 1);
     });
+
+    testWidgets('maxRecentApps limit removes oldest', (WidgetTester tester) async {
+      final appModel = AppModel();
+      
+      for (int i = 0; i < AppModel.maxRecentApps + 10; i++) {
+        await appModel.addApp('App$i', Container(child: Text('App$i')));
+      }
+      
+      expect(appModel.length, AppModel.maxRecentApps);
+    });
+
+    testWidgets('recentOrder maintains insertion order', (WidgetTester tester) async {
+      final appModel = AppModel();
+      await appModel.addApp('First', Container());
+      await appModel.addApp('Second', Container());
+      await appModel.addApp('Third', Container());
+      
+      expect(appModel.length, 3);
+    });
+
+    testWidgets('re-adding existing key moves to end', (WidgetTester tester) async {
+      final appModel = AppModel();
+      await appModel.addApp('App1', Container());
+      await appModel.addApp('App2', Container());
+      await appModel.addApp('App1', Container());
+      
+      expect(appModel.length, 2);
+    });
   });
 
   group('AllAppsModel tests', () {

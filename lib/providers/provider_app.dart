@@ -99,13 +99,26 @@ AppModel appModel = AppModel();
 AllAppsModel allAppsModel = AllAppsModel();
 
 class AppModel with ChangeNotifier {
-  Map<String, Widget> recentApps = Map<String, Widget>();
-  List<Widget> get recentlyUsedApps => recentApps.values.toList();
-  int get length => recentApps.length;
+  final Map<String, Widget> _recentApps = Map<String, Widget>();
+  final List<String> _recentOrder = [];
+  static const int maxRecentApps = 20;
+  
+  List<Widget> get recentlyUsedApps => _recentApps.values.toList();
+  int get length => _recentApps.length;
+  Map<String, Widget> get recentApps => Map.unmodifiable(_recentApps);
 
   Future<void> addApp(String key, Widget app) async {
-    recentApps.remove(key);
-    recentApps[key] = app;
+    _recentApps.remove(key);
+    _recentOrder.remove(key);
+    _recentApps[key] = app;
+    _recentOrder.add(key);
+    
+    if (_recentApps.length > maxRecentApps) {
+      final oldestKey = _recentOrder.first;
+      _recentApps.remove(oldestKey);
+      _recentOrder.removeAt(0);
+    }
+    
     notifyListeners();
   }
 }
