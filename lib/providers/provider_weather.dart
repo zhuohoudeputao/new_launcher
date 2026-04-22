@@ -399,6 +399,10 @@ class _WeatherCardState extends State<WeatherCard> {
     };
 
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: EdgeInsets.all(12),
         child: Column(
@@ -410,7 +414,7 @@ class _WeatherCardState extends State<WeatherCard> {
               children: [
                 Row(
                   children: [
-                    Icon(icon, size: 32, color: Theme.of(context).textTheme.bodyLarge?.color),
+                    Icon(icon, size: 32, color: Theme.of(context).colorScheme.onSurface),
                     SizedBox(width: 12),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -447,13 +451,13 @@ class _WeatherCardState extends State<WeatherCard> {
               padding: EdgeInsets.only(top: 4),
               child: Text(
                 cache.locationName + (isCached ? " (cached)" : ""),
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
               ),
             ),
             SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.air, size: 16, color: Colors.grey),
+                Icon(Icons.air, size: 16, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                 SizedBox(width: 4),
                 Text(
                   "Wind: ${cache.windspeed.toInt()} km/h",

@@ -277,6 +277,10 @@ class RecentlyUsedAppsCardState extends State<RecentlyUsedAppsCard> {
   Widget build(BuildContext context) {
     int length = context.watch<AppModel>().length;
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Container(
         height: 80,
         child: ListView.builder(
@@ -285,6 +289,7 @@ class RecentlyUsedAppsCardState extends State<RecentlyUsedAppsCard> {
               context.watch<AppModel>().recentlyUsedApps[length - index - 1],
           scrollDirection: Axis.horizontal,
           reverse: true,
+          addRepaintBoundaries: true,
         ),
       ),
     );
@@ -301,6 +306,10 @@ class _AllAppsCardState extends State<AllAppsCard> {
   Widget build(BuildContext context) {
     final apps = context.watch<AllAppsModel>().apps;
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Container(
         height: 120,
         child: GridView.builder(
@@ -311,29 +320,34 @@ class _AllAppsCardState extends State<AllAppsCard> {
           itemCount: apps.length,
           itemBuilder: (context, index) {
             final app = apps[index];
-            return InkWell(
-              onTap: () => DeviceApps.openApp(app.packageName),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.memory(
-                    app.icon,
-                    width: 48,
-                    height: 48,
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    app.appName,
-                    style: TextStyle(fontSize: 10),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+            return RepaintBoundary(
+              child: InkWell(
+                onTap: () => DeviceApps.openApp(app.packageName),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.memory(
+                      app.icon,
+                      width: 48,
+                      height: 48,
+                      cacheWidth: 96,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      app.appName,
+                      style: TextStyle(fontSize: 10),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             );
           },
           scrollDirection: Axis.horizontal,
+          addRepaintBoundaries: true,
+          addAutomaticKeepAlives: true,
         ),
       ),
     );
@@ -355,14 +369,19 @@ Widget _customButton(Widget icon, void Function() onPressed) {
 
 Widget _buildAppCard(ApplicationWithIcon app) {
   return Card(
+    elevation: 0,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
     child: ListTile(
       leading: Image.memory(
         app.icon,
         width: 40,
         height: 40,
+        cacheWidth: 80,
       ),
       title: Text(app.appName),
-      subtitle: Text(app.packageName),
+      subtitle: Text(app.packageName, style: TextStyle(fontSize: 12)),
       onTap: () => DeviceApps.openApp(app.packageName),
     ),
   );
@@ -382,6 +401,10 @@ class _AppStatisticsCardState extends State<AppStatisticsCard> {
     final topApps = stats.mostUsedApps.take(5).toList();
     
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: EdgeInsets.all(8),
         child: Column(
@@ -399,7 +422,7 @@ class _AppStatisticsCardState extends State<AppStatisticsCard> {
             if (topApps.isEmpty)
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
-                child: Text("No app usage data yet", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                child: Text("No app usage data yet", style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
               )
             else
               ListView.builder(
