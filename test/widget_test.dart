@@ -450,4 +450,70 @@ void main() {
       expect(infoModel.length, 1);
     });
   });
+
+  group('InfoModel batch adding tests', () {
+    test('addInfoWidgetsBatch adds multiple widgets', () {
+      final infoModel = InfoModel();
+      final widgets = [
+        MapEntry('app_1', customInfoWidget(title: 'App 1')),
+        MapEntry('app_2', customInfoWidget(title: 'App 2')),
+        MapEntry('app_3', customInfoWidget(title: 'App 3')),
+      ];
+      final titles = {
+        'app_1': 'App 1',
+        'app_2': 'App 2',
+        'app_3': 'App 3',
+      };
+      
+      infoModel.addInfoWidgetsBatch(widgets, titles: titles);
+      expect(infoModel.length, 3);
+    });
+
+    test('addInfoWidgetsBatch only notifies once', () {
+      final infoModel = InfoModel();
+      int notifyCount = 0;
+      infoModel.addListener(() => notifyCount++);
+      
+      final widgets = List.generate(100, (i) => 
+        MapEntry('app_$i', customInfoWidget(title: 'App $i'))
+      );
+      final titles = Map.fromEntries(
+        List.generate(100, (i) => MapEntry('app_$i', 'App $i'))
+      );
+      
+      infoModel.addInfoWidgetsBatch(widgets, titles: titles);
+      expect(notifyCount, 1);
+    });
+
+    test('addInfoWidget notifies each time', () {
+      final infoModel = InfoModel();
+      int notifyCount = 0;
+      infoModel.addListener(() => notifyCount++);
+      
+      for (int i = 0; i < 10; i++) {
+        infoModel.addInfoWidget('app_$i', customInfoWidget(title: 'App $i'), title: 'App $i');
+      }
+      expect(notifyCount, 10);
+    });
+
+    test('batch adding with titles preserves titles', () {
+      final infoModel = InfoModel();
+      final widgets = [
+        MapEntry('app_chrome', customInfoWidget(title: 'Chrome')),
+        MapEntry('app_firefox', customInfoWidget(title: 'Firefox')),
+      ];
+      final titles = {
+        'app_chrome': 'Chrome',
+        'app_firefox': 'Firefox',
+      };
+      
+      infoModel.addInfoWidgetsBatch(widgets, titles: titles);
+      
+      final chromeResult = infoModel.getFilteredList('Chrome');
+      expect(chromeResult.length, 1);
+      
+      final firefoxResult = infoModel.getFilteredList('Firefox');
+      expect(firefoxResult.length, 1);
+    });
+  });
 }

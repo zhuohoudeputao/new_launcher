@@ -55,13 +55,13 @@ Future<void> _provideActions() async {
   }
   allAppsModel.setApps(allAppsWithIcons);
 
-  for (final app in allAppsWithIcons) {
-    Global.infoModel.addInfoWidget(
-      "app_${app.packageName}",
-      _buildAppCard(app),
-      title: app.appName,
-    );
-  }
+  final appWidgets = allAppsWithIcons.map((app) => 
+    MapEntry("app_${app.packageName}", _buildAppCard(app))
+  ).toList();
+  final appTitles = Map.fromEntries(
+    allAppsWithIcons.map((app) => MapEntry("app_${app.packageName}", app.appName))
+  );
+  Global.infoModel.addInfoWidgetsBatch(appWidgets, titles: appTitles);
 
   Global.addActions(actions);
 }

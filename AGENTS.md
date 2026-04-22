@@ -35,6 +35,7 @@ flutter.sdk=/home/linzuxuan/app/flutter
 - **Card list**: `CircularListController` in main.dart handles circular scrolling
 - **Providers system**: `lib/providers/*.dart` - Each provider adds services (weather, apps, wallpaper, etc.)
 - **Data layer**: `lib/data.dart` - Contains `Global`, `ActionModel`, `InfoModel`, `SettingsModel`, `BackgroundImageModel`, `ThemeModel`
+  - `InfoModel.addInfoWidgetsBatch()`: Batch add widgets with single notifyListeners for performance
 - **Action definition**: `lib/action.dart` - `MyAction` class with keywords, action function, and suggest widget
 
 ## Adding a New Provider

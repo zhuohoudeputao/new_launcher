@@ -4,7 +4,7 @@ DO NOT EDIT THIS!
 
 严格按照下列顺序及方法进行开发：
 
-1. 在tasks目录下随机选择一个task进行实现（除了task_template.md）
+1. 在tasks目录下选择一个未完成的task进行实现（除了task_template.md）
 2. 读取任务相关代码，分析当前任务状态
 3. 根据当前任务状态制定一个实现计划
 4. 根据实现计划完成该任务的代码实现，参考flutter相关的skills

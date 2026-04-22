@@ -65,16 +65,18 @@ final apps = await DeviceApps.getInstalledApplications(
 
 ### Individual App Cards
 
-All installed apps are added as individual info cards in the circular list:
+All installed apps are added as individual info cards using batch adding for performance:
 ```dart
-for (final app in allAppsWithIcons) {
-    Global.infoModel.addInfoWidget(
-        "app_${app.packageName}",
-        _buildAppCard(app),
-        title: app.appName,
-    );
-}
+final appWidgets = allAppsWithIcons.map((app) => 
+  MapEntry("app_${app.packageName}", _buildAppCard(app))
+).toList();
+final appTitles = Map.fromEntries(
+  allAppsWithIcons.map((app) => MapEntry("app_${app.packageName}", app.appName))
+);
+Global.infoModel.addInfoWidgetsBatch(appWidgets, titles: appTitles);
 ```
+
+Using `addInfoWidgetsBatch` instead of calling `addInfoWidget` for each app ensures only one `notifyListeners()` call, improving performance when loading many apps.
 
 Each app card:
 - Displays app icon and name

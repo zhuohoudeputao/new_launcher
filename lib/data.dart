@@ -264,6 +264,19 @@ class InfoModel with ChangeNotifier {
     _infoList[key] = infoWidget;
     notifyListeners();
   }
+
+  void addInfoWidgetsBatch(List<MapEntry<String, Widget>> widgets, {Map<String, String>? titles}) {
+    for (final entry in widgets) {
+      _infoList.remove(entry.key);
+      _infoList[entry.key] = entry.value;
+    }
+    if (titles != null) {
+      for (final entry in titles.entries) {
+        _titleMap[entry.key] = entry.value;
+      }
+    }
+    notifyListeners();
+  }
 }
 
 class ThemeModel with ChangeNotifier {
