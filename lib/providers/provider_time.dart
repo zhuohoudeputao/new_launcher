@@ -40,52 +40,68 @@ Future<void> _update() async {
 
 /// [provideTime] is the core action of the [MyAction] object
 /// which produces some widgets into the infoList showing useful information.
-void _provideTime() {
-  _showGreeting().then((value) {
-    Global.infoModel.addInfoWidget("Time", _TimeWidget(showGreeting: value), title: "Time");
-  });
+void _provideTime() async {
+  final showGreeting = await _showGreeting();
+  final showSeconds = await _showSeconds();
+  Global.infoModel.addInfoWidget("Time", _TimeWidget(showGreeting: showGreeting, showSeconds: showSeconds), title: "Time");
 }
 
 Future<bool> _showGreeting() async {
   String greetingKey = "Time.ShowGreeting";
-  // obtain greeting state from myData
   bool showGreeting = await Global.getValue(greetingKey, true);
   return showGreeting;
 }
 
+Future<bool> _showSeconds() async {
+  String secondsKey = "Time.ShowSeconds";
+  bool showSeconds = await Global.getValue(secondsKey, false);
+  return showSeconds;
+}
+
 class _TimeWidget extends StatefulWidget {
   final bool showGreeting;
+  final bool showSeconds;
 
-  const _TimeWidget({Key? key, required this.showGreeting}) : super(key: key);
+  const _TimeWidget({Key? key, required this.showGreeting, required this.showSeconds}) : super(key: key);
 
   @override
   _TimeWidgetState createState() =>
-      _TimeWidgetState(showGreeting: showGreeting);
+      _TimeWidgetState(showGreeting: showGreeting, showSeconds: showSeconds);
 }
 
 class _TimeWidgetState extends State<_TimeWidget> {
-  _TimeWidgetState({required bool showGreeting}) {
+  _TimeWidgetState({required bool showGreeting, required bool showSeconds}) {
     this.showGreeting = showGreeting;
+    this.showSeconds = showSeconds;
   }
 
   Timer? _initialTimer;
   Timer? _periodicTimer;
   late bool showGreeting;
+  late bool showSeconds;
   bool _disposed = false;
   
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
-    final initialDelay = 60 - now.second;
-    _initialTimer = Timer(Duration(seconds: initialDelay), () {
-      if (_disposed) return;
-      setState(() {});
-      _periodicTimer = Timer.periodic(const Duration(minutes: 1), (Timer timer) {
+    
+    if (showSeconds) {
+      _periodicTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
         if (_disposed) return;
         setState(() {});
       });
-    });
+    } else {
+      final initialDelay = 60 - now.second;
+      _initialTimer = Timer(Duration(seconds: initialDelay), () {
+        if (_disposed) return;
+        setState(() {});
+        _periodicTimer = Timer.periodic(const Duration(minutes: 1), (Timer timer) {
+          if (_disposed) return;
+          setState(() {});
+        });
+      });
+    }
   }
 
   @override
@@ -157,9 +173,20 @@ class _TimeWidgetState extends State<_TimeWidget> {
       minuteString = "0" + minuteString;
     }
 
+    String timeString = hourString + ":" + minuteString;
+    
+    if (showSeconds) {
+      int second = now.second;
+      String secondString = second.toString();
+      if (second < 10) {
+        secondString = "0" + secondString;
+      }
+      timeString = timeString + ":" + secondString;
+    }
+
     // create widget
     return customInfoWidget(
-        title: month + " " + dayString + ", " + hourString + ":" + minuteString,
+        title: month + " " + dayString + ", " + timeString,
         subtitle: greeting);
   }
 }
