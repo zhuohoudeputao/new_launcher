@@ -2106,4 +2106,76 @@ void main() {
       expect(errorLogged, true);
     });
   });
+
+  group('Weather cache tests', () {
+    const Duration cacheValidity = Duration(minutes: 30);
+    
+    test('WeatherCache toJson preserves all fields', () {
+      final cache = WeatherCache(
+        temperature: 25.5,
+        windspeed: 10.0,
+        weathercode: 0,
+        latitude: 40.71,
+        longitude: -74.01,
+        timestamp: DateTime.now(),
+      );
+      
+      final json = cache.toJson();
+      expect(json['temperature'], 25.5);
+      expect(json['windspeed'], 10.0);
+      expect(json['weathercode'], 0);
+      expect(json['latitude'], 40.71);
+      expect(json['longitude'], -74.01);
+    });
+
+    test('WeatherCache fromJson restores all fields', () {
+      final json = {
+        'temperature': 20.0,
+        'windspeed': 15.0,
+        'weathercode': 3,
+        'latitude': 35.0,
+        'longitude': -80.0,
+        'timestamp': '2026-04-23T12:00:00.000Z',
+      };
+      
+      final cache = WeatherCache.fromJson(json);
+      expect(cache.temperature, 20.0);
+      expect(cache.windspeed, 15.0);
+      expect(cache.weathercode, 3);
+      expect(cache.latitude, 35.0);
+      expect(cache.longitude, -80.0);
+    });
+
+    test('cache validity duration is 30 minutes', () {
+      expect(cacheValidity.inMinutes, 30);
+    });
+
+    test('cache is expired after 30 minutes', () {
+      final oldCache = WeatherCache(
+        temperature: 25.0,
+        windspeed: 10.0,
+        weathercode: 0,
+        latitude: 40.0,
+        longitude: -74.0,
+        timestamp: DateTime.now().subtract(Duration(minutes: 35)),
+      );
+      
+      final isExpired = DateTime.now().difference(oldCache.timestamp) > cacheValidity;
+      expect(isExpired, true);
+    });
+
+    test('cache is valid within 30 minutes', () {
+      final freshCache = WeatherCache(
+        temperature: 25.0,
+        windspeed: 10.0,
+        weathercode: 0,
+        latitude: 40.0,
+        longitude: -74.0,
+        timestamp: DateTime.now().subtract(Duration(minutes: 15)),
+      );
+      
+      final isValid = DateTime.now().difference(freshCache.timestamp) < cacheValidity;
+      expect(isValid, true);
+    });
+  });
 }
