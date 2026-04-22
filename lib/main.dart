@@ -163,14 +163,16 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               // Input Box with Search Icon
               Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
                 child: TextField(
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     hintText: "Search... Try 'weather', 'camera', 'settings'",
                     prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
+                    border: InputBorder.none,
                     filled: true,
                     contentPadding: EdgeInsets.symmetric(horizontal: 20),
                   ),

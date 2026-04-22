@@ -33,6 +33,10 @@ class DarkModeOptionSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 8),
         child: Column(
@@ -44,7 +48,7 @@ class DarkModeOptionSelector extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("Theme Mode", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(currentMode, style: TextStyle(color: Colors.grey)),
+                  Text(currentMode, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
                 ],
               ),
             ),

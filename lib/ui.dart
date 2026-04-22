@@ -32,6 +32,10 @@ class InfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: Theme.of(context).cardColor,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: ListTile(
         title: Text(
           title,
@@ -74,19 +78,20 @@ Widget customTextSettingWidget(
     required var value,
     required void Function(String) onSubmitted}) {
   return Card(
+    elevation: 0,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
     child: ListTile(
-      // leading: icon,
       title: TextField(
         textAlign: TextAlign.left,
         style: TextStyle(fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           hintText: value.toString(),
           labelText: key,
-          // helperText: key,
           border: InputBorder.none,
         ),
         onSubmitted: onSubmitted,
-        // controller: TextEditingController()..text=value.toString(),
       ),
     ),
   );
@@ -135,8 +140,11 @@ class CustomBoolSettingWidgetState extends State<CustomBoolSettingWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: ListTile(
-        // leading: icon,
         title: Text(
           key,
           textAlign: TextAlign.left,
@@ -175,6 +183,10 @@ class _CardOpacitySliderState extends State<CardOpacitySlider> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: ListTile(
         title: Text(
           "Card Opacity",
@@ -214,6 +226,10 @@ class WallpaperPickerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: ListTile(
         title: Text(
           label,
@@ -254,6 +270,10 @@ class _LogViewerWidgetState extends State<LogViewerWidget> {
     }
 
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

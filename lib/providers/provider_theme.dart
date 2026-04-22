@@ -35,11 +35,9 @@ Brightness _getSystemBrightness() {
 
 Future<void> _provideTheme() async {
   Brightness brightness = Brightness.light;
-  Color cardColor = Colors.white.withValues(alpha: Global.cardOpacity);
-  Color textColor = Colors.black87;
-
+  
   String modeKey = "Theme.Mode";
-  String mode = await Global.getValue(modeKey, "light");
+  String mode = await Global.getValue(modeKey, "system");
 
   String darkKey = "Theme.Dark";
   bool legacyDark = await Global.getValue(darkKey, false);
@@ -50,26 +48,36 @@ Future<void> _provideTheme() async {
     brightness = Brightness.dark;
   }
 
-  String transparentKey = "Theme.Transparent";
-  bool transparent = await Global.getValue(transparentKey, true);
-
+  ColorScheme colorScheme;
   if (brightness == Brightness.dark) {
-    cardColor = Colors.grey[850]?.withValues(alpha: Global.cardOpacity) ?? Colors.grey;
-    textColor = Colors.white;
+    colorScheme = ColorScheme.fromSeed(
+      seedColor: Colors.indigo,
+      brightness: Brightness.dark,
+    );
+  } else {
+    colorScheme = ColorScheme.fromSeed(
+      seedColor: Colors.indigo,
+      brightness: Brightness.light,
+    );
   }
 
-  if (transparent && brightness == Brightness.light) {
-    cardColor = Colors.white.withValues(alpha: Global.cardOpacity);
+  String transparentKey = "Theme.Transparent";
+  bool transparent = await Global.getValue(transparentKey, true);
+  
+  Color cardColor = colorScheme.surface;
+  if (transparent) {
+    cardColor = colorScheme.surface.withValues(alpha: Global.cardOpacity);
   }
 
   Global.setTheme(ThemeData(
-    brightness: brightness,
+    useMaterial3: true,
+    colorScheme: colorScheme,
     cardColor: cardColor,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     textTheme: TextTheme(
-      bodyMedium: TextStyle(color: textColor),
-      bodyLarge: TextStyle(color: textColor),
-      titleMedium: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+      bodyMedium: TextStyle(color: colorScheme.onSurface),
+      bodyLarge: TextStyle(color: colorScheme.onSurface),
+      titleMedium: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold),
     ),
   ));
   
