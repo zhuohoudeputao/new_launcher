@@ -128,3 +128,51 @@ Removed from `pubspec.yaml`: `sqflite`, `url_launcher`, `permission_handler`.
 - Loop 1: 2026-04-22
 - Loop 2: 2026-04-22
 - Loop 3: 2026-04-22
+- Loops 4-8: 2026-04-23
+
+## Feature Improvements (Loop 5-8)
+
+### 1. App Statistics Feature (Loop 1, Loop 2)
+
+**Issue**: No tracking of app usage patterns.
+
+**Fix**: Added `AppStatisticsModel` to track:
+- Launch counts per app
+- Last launch timestamps
+- Top 5 most used apps display
+
+**Persistence**: Statistics survive app restarts via SharedPreferences.
+
+### 2. Memory Leak Fix (Loop 3)
+
+**Issue**: `ActionModel.dispose()` never called, leaving `_debounceTimer` active.
+
+**Fix**: Added disposal call in `_MyAppState.dispose()`.
+
+### 3. Recent Apps Limit (Loop 4)
+
+**Issue**: `AppModel.recentApps` could grow unbounded.
+
+**Fix**: Added `maxRecentApps = 20` limit with automatic oldest removal.
+
+### 4. Test Coverage Expansion (Loops 5-8)
+
+Added widget tests for:
+- `DarkModeOptionSelector` (4 tests)
+- `WallpaperPickerButton` (2 tests)
+- `InfoCard` (4 tests)
+- `LogViewerWidget` (4 tests)
+- `AppModel` limit behavior (3 tests)
+- `ActionModel.dispose` (1 test)
+
+## Tests Summary (Updated)
+
+| Loop | Tests Added | Total Tests |
+|------|-------------|-------------|
+| 1 | 16 | 58 |
+| 2 | 12 | 70 |
+| 3 | 7 | 77 |
+| 4 | 12 | 92 |
+| 5 | 4 | 96 |
+| 6-7 | 9 | 105 |
+| 8 | 8 | 113 |
