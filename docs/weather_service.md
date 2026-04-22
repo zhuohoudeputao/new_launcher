@@ -64,9 +64,42 @@ The weather service fetches current weather data based on the device's location 
 
 Users can trigger weather refresh by typing "weather now" in the command box.
 
+## Caching (Implemented)
+
+Weather data is now cached for 30 minutes to support offline usage and reduce API calls.
+
+### Cache Implementation
+
+- **Storage**: SharedPreferences
+- **Key**: `Weather.Cache`
+- **Validity**: 30 minutes (`_cacheValidity`)
+- **Class**: `WeatherCache`
+
+### Cache Behavior
+
+| Scenario | Behavior |
+|----------|----------|
+| API success | Save new cache, display fresh data |
+| Network error | Show cached data with "(cached)" suffix |
+| Geolocation error | Show cached data if available |
+| Cache expired (30+ min) | Fetch fresh data, ignore old cache |
+| No cache available | Show error message |
+
+### WeatherCache Fields
+
+```dart
+class WeatherCache {
+  double temperature;
+  double windspeed;
+  int weathercode;
+  double latitude;
+  double longitude;
+  DateTime timestamp;
+}
+```
+
 ## Future Improvements
 
 - Add forecast data (hourly/daily)
 - Support for multiple locations
-- Weather cache to reduce API calls
 - Manual location input option

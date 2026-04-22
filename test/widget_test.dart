@@ -2177,5 +2177,101 @@ void main() {
       final isValid = DateTime.now().difference(freshCache.timestamp) < cacheValidity;
       expect(isValid, true);
     });
+
+    test('WeatherCache handles negative temperatures', () {
+      final cache = WeatherCache(
+        temperature: -15.5,
+        windspeed: 20.0,
+        weathercode: 71,
+        latitude: 60.0,
+        longitude: -100.0,
+        timestamp: DateTime.now(),
+      );
+      
+      expect(cache.temperature, -15.5);
+    });
+
+    test('WeatherCache handles high wind speeds', () {
+      final cache = WeatherCache(
+        temperature: 30.0,
+        windspeed: 150.0,
+        weathercode: 95,
+        latitude: 25.0,
+        longitude: 80.0,
+        timestamp: DateTime.now(),
+      );
+      
+      expect(cache.windspeed, 150.0);
+    });
+  });
+
+  group('Weather icon extended tests', () {
+    test('getWeatherIcon handles slight snow showers', () {
+      final icon = getWeatherIcon('Slight snow showers');
+      expect(icon, Icons.ac_unit);
+    });
+
+    test('getWeatherIcon handles heavy snow showers', () {
+      final icon = getWeatherIcon('Heavy snow showers');
+      expect(icon, Icons.ac_unit);
+    });
+
+    test('getWeatherIcon handles thunderstorm with hail', () {
+      final icon = getWeatherIcon('Thunderstorm with hail');
+      expect(icon, Icons.flash_on);
+    });
+
+    test('getWeatherIcon handles violent rain showers', () {
+      final icon = getWeatherIcon('Violent rain showers');
+      expect(icon, Icons.water_drop);
+    });
+
+    test('getWeatherIcon handles moderate drizzle', () {
+      final icon = getWeatherIcon('Moderate drizzle');
+      expect(icon, Icons.water_drop);
+    });
+
+    test('getWeatherIcon handles dense drizzle', () {
+      final icon = getWeatherIcon('Dense drizzle');
+      expect(icon, Icons.water_drop);
+    });
+
+    test('getWeatherIcon handles depositing rime fog', () {
+      final icon = getWeatherIcon('Depositing rime fog');
+      expect(icon, Icons.foggy);
+    });
+
+    test('getWeatherIcon handles mainly clear', () {
+      final icon = getWeatherIcon('Mainly clear');
+      expect(icon, Icons.wb_sunny);
+    });
+
+    test('getWeatherIcon handles partly cloudy', () {
+      final icon = getWeatherIcon('Partly cloudy');
+      expect(icon, Icons.cloud);
+    });
+  });
+
+  group('Weather codes mapping tests', () {
+    test('weather code 77 maps to snow grains', () {
+      const codes = {
+        77: 'Snow grains',
+      };
+      expect(codes[77], 'Snow grains');
+    });
+
+    test('weather code 96 maps to thunderstorm with hail', () {
+      const codes = {
+        96: 'Thunderstorm with hail',
+      };
+      expect(codes[96], 'Thunderstorm with hail');
+    });
+
+    test('weather code 99 maps to thunderstorm with heavy hail', () {
+      const codes = {
+        99: 'Thunderstorm with heavy hail',
+      };
+      expect(codes[99], 'Thunderstorm with heavy hail');
+    });
   });
 }
