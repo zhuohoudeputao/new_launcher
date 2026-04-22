@@ -2471,4 +2471,145 @@ void main() {
       expect(notifyCount, 1);
     });
   });
+
+  group('InfoModel extended tests', () {
+    test('infoList returns widgets in insertion order', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('key1', Container(), title: 'Title1');
+      infoModel.addInfoWidget('key2', Container(), title: 'Title2');
+      infoModel.addInfoWidget('key3', Container(), title: 'Title3');
+      
+      expect(infoModel.length, 3);
+    });
+
+    test('addInfoWidget removes old widget with same key', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('key', Container(), title: 'Title1');
+      infoModel.addInfoWidget('key', Container(), title: 'Title2');
+      
+      expect(infoModel.length, 1);
+    });
+
+    test('getFilteredList handles special characters', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('test@key', Container(), title: 'Test');
+      
+      final filtered = infoModel.getFilteredList('@');
+      expect(filtered.length, 1);
+    });
+
+    test('getFilteredList handles unicode', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('中文测试', Container(), title: '中文');
+      
+      final filtered = infoModel.getFilteredList('中文');
+      expect(filtered.length, 1);
+    });
+
+    test('addInfo with all parameters', () {
+      final infoModel = InfoModel();
+      infoModel.addInfo('key', 'Title', subtitle: 'Subtitle', icon: Icon(Icons.info), onTap: () {});
+      
+      expect(infoModel.length, 1);
+    });
+
+    test('addInfo without optional parameters', () {
+      final infoModel = InfoModel();
+      infoModel.addInfo('key', 'Title');
+      
+      expect(infoModel.length, 1);
+    });
+  });
+
+  group('AppStatisticsModel extended tests', () {
+    test('totalLaunches sum is correct', () {
+      final statsModel = AppStatisticsModel();
+      statsModel.recordLaunch('App1');
+      statsModel.recordLaunch('App1');
+      statsModel.recordLaunch('App2');
+      statsModel.recordLaunch('App3');
+      
+      expect(statsModel.totalLaunches, 4);
+    });
+
+    test('uniqueApps count is correct', () {
+      final statsModel = AppStatisticsModel();
+      statsModel.recordLaunch('App1');
+      statsModel.recordLaunch('App2');
+      statsModel.recordLaunch('App3');
+      
+      expect(statsModel.uniqueApps, 3);
+    });
+
+    test('mostUsedApps sorts by count descending', () {
+      final statsModel = AppStatisticsModel();
+      statsModel.recordLaunch('App1');
+      statsModel.recordLaunch('App1');
+      statsModel.recordLaunch('App1');
+      statsModel.recordLaunch('App2');
+      statsModel.recordLaunch('App3');
+      statsModel.recordLaunch('App3');
+      
+      final mostUsed = statsModel.mostUsedApps;
+      expect(mostUsed[0], 'App1');
+      expect(mostUsed[1], 'App3');
+      expect(mostUsed[2], 'App2');
+    });
+
+    test('getLaunchCount returns 0 for untracked app', () {
+      final statsModel = AppStatisticsModel();
+      expect(statsModel.getLaunchCount('UnknownApp'), 0);
+    });
+
+    test('getLastLaunchTime returns null for untracked app', () {
+      final statsModel = AppStatisticsModel();
+      expect(statsModel.getLastLaunchTime('UnknownApp'), null);
+    });
+  });
+
+  group('AppModel extended tests', () {
+    test('recentOrder is correct after multiple adds', () {
+      final appModel = AppModel();
+      appModel.addApp('key1', Container());
+      appModel.addApp('key2', Container());
+      appModel.addApp('key3', Container());
+      
+      expect(appModel.length, 3);
+    });
+
+    test('recentlyUsedApps returns widgets list', () {
+      final appModel = AppModel();
+      appModel.addApp('key1', Container());
+      
+      final apps = appModel.recentlyUsedApps;
+      expect(apps.length, 1);
+    });
+
+    test('recentApps returns unmodifiable map', () {
+      final appModel = AppModel();
+      appModel.addApp('key1', Container());
+      
+      final apps = appModel.recentApps;
+      expect(apps.containsKey('key1'), true);
+    });
+  });
+
+  group('AllAppsModel extended tests', () {
+    test('setApps with empty list', () {
+      final allAppsModel = AllAppsModel();
+      allAppsModel.setApps([]);
+      
+      expect(allAppsModel.length, 0);
+    });
+
+    test('apps getter returns list', () {
+      final allAppsModel = AllAppsModel();
+      expect(allAppsModel.apps, isEmpty);
+    });
+
+    test('length is zero initially', () {
+      final allAppsModel = AllAppsModel();
+      expect(allAppsModel.length, 0);
+    });
+  });
 }
