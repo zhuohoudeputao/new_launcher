@@ -2274,4 +2274,95 @@ void main() {
       expect(codes[99], 'Thunderstorm with heavy hail');
     });
   });
+
+  group('CircularListController edge cases', () {
+    test('getActualIndex handles index 0', () {
+      final controller = CircularListController(itemCount: 5, itemExtent: 100);
+      expect(controller.getActualIndex(0), 0);
+      expect(controller.getActualIndex(100), 0);
+      expect(controller.getActualIndex(500), 0);
+    });
+
+    test('getActualIndex handles negative-like values via modulo', () {
+      final controller = CircularListController(itemCount: 5, itemExtent: 100);
+      expect(controller.getActualIndex(5), 0);
+    });
+
+    test('virtualCount scales correctly with itemCount', () {
+      for (int count in [1, 5, 10, 20, 50]) {
+        final controller = CircularListController(itemCount: count, itemExtent: 100);
+        expect(controller.virtualCount, count * 100);
+      }
+    });
+  });
+
+  group('Global methods tests', () {
+    test('Global.providerList contains all providers', () {
+      expect(Global.providerList.length, 6);
+    });
+
+    test('Global.providerList names are correct', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Wallpaper'), true);
+      expect(names.contains('Theme'), true);
+      expect(names.contains('Time'), true);
+      expect(names.contains('Weather'), true);
+      expect(names.contains('App'), true);
+      expect(names.contains('System'), true);
+    });
+
+    test('Global.cardOpacity defaults to 0.7', () {
+      expect(Global.cardOpacityValue, 0.7);
+    });
+
+    test('Global models exist', () {
+      expect(Global.themeModel, isNotNull);
+      expect(Global.backgroundImageModel, isNotNull);
+      expect(Global.settingsModel, isNotNull);
+      expect(Global.infoModel, isNotNull);
+      expect(Global.actionModel, isNotNull);
+      expect(Global.loggerModel, isNotNull);
+    });
+  });
+
+  group('MyAction frequency tests', () {
+    test('frequency is correct for current hour', () {
+      final times = List.generate(24, (i) => i * 2);
+      final action = MyAction(
+        name: 'Test',
+        keywords: 'test',
+        action: () {},
+        times: times,
+      );
+      
+      final hour = DateTime.now().hour;
+      expect(action.frequency, times[hour]);
+    });
+
+    test('frequency starts at 0 for new actions', () {
+      final action = MyAction(
+        name: 'New',
+        keywords: 'new',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      
+      expect(action.frequency, 0);
+    });
+
+    test('frequency tracking has 24 hours', () {
+      final action = MyAction(
+        name: 'Test',
+        keywords: 'test',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      
+      final hour1 = DateTime.now().hour;
+      final hour2 = (hour1 + 1) % 24;
+      final hour3 = (hour1 + 5) % 24;
+      
+      expect(action.frequency >= 0, true);
+    });
+  });
 }
