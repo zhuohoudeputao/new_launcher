@@ -7,6 +7,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:new_launcher/data.dart';
+import 'package:new_launcher/logger.dart';
+import 'package:provider/provider.dart';
 // Contains some custom widgets here
 
 /// ``customInfoWidget`` is designed for displaying a message
@@ -241,5 +243,109 @@ class WallpaperPickerButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class LogViewerWidget extends StatefulWidget {
+  const LogViewerWidget({Key? key}) : super(key: key);
+
+  @override
+  State<LogViewerWidget> createState() => _LogViewerWidgetState();
+}
+
+class _LogViewerWidgetState extends State<LogViewerWidget> {
+  LogLevel? _filterLevel;
+  String _searchQuery = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final logger = context.watch<LoggerModel>();
+    var logs = logger.logs;
+
+    if (_filterLevel != null) {
+      logs = logger.filterByLevel(_filterLevel!);
+    }
+    if (_searchQuery.isNotEmpty) {
+      logs = logs.where((l) =>
+          l.message.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+    }
+
+    return Card(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Text("Logs: ${logs.length}", style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(width: 8),
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Search...",
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                    ),
+                    onChanged: (q) => setState(() => _searchQuery = q),
+                  ),
+                ),
+                SizedBox(width: 8),
+                DropdownButton<LogLevel?>(
+                  value: _filterLevel,
+                  items: [
+                    DropdownMenuItem(value: null, child: Text("All")),
+                    DropdownMenuItem(value: LogLevel.error, child: Text("Error")),
+                    DropdownMenuItem(value: LogLevel.warning, child: Text("Warn")),
+                    DropdownMenuItem(value: LogLevel.info, child: Text("Info")),
+                    DropdownMenuItem(value: LogLevel.debug, child: Text("Debug")),
+                  ],
+                  onChanged: (v) => setState(() => _filterLevel = v),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 200,
+            child: ListView.builder(
+              itemCount: logs.length,
+              itemBuilder: (context, index) {
+                final log = logs[logs.length - index - 1];
+                return ListTile(
+                  dense: true,
+                  leading: Icon(log.levelIcon, color: _getLevelColor(log.level), size: 20),
+                  title: Text(log.message, style: TextStyle(fontSize: 12)),
+                  subtitle: Text(
+                    "${log.source ?? ''} - ${log.timestamp.toIso8601String()}",
+                    style: TextStyle(fontSize: 10),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => logger.clear(),
+                  child: Text("Clear"),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getLevelColor(LogLevel level) {
+    switch (level) {
+      case LogLevel.error: return Colors.red;
+      case LogLevel.warning: return Colors.orange;
+      case LogLevel.info: return Colors.blue;
+      case LogLevel.debug: return Colors.grey;
+    }
   }
 }

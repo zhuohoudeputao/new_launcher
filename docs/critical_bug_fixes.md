@@ -83,6 +83,38 @@ Removed from `pubspec.yaml`: `sqflite`, `url_launcher`, `permission_handler`.
 
 **Fix**: Made `refreshTheme()` public for use in brightness change callbacks.
 
+## Feature Improvements (Loop 4)
+
+### 1. Log Viewer UI (ui.dart)
+
+**Issue**: LoggerModel existed but no UI to display logs.
+
+**Fix**: Added `LogViewerWidget` with:
+- Search bar for filtering by message
+- Dropdown filter for log level
+- Log list with icons, messages, sources, timestamps
+- Clear button to remove all logs
+
+### 2. View Logs Action (provider_system.dart)
+
+**Issue**: No action to view logs.
+
+**Fix**: Added "View logs" action with keywords "logs debug error view".
+
+### 3. Provider Update Trigger (data.dart)
+
+**Issue**: Provider `update()` functions never called.
+
+**Fix**: Added `_triggerProviderUpdate()` in SettingsModel to call provider updates when matching settings change.
+
+### 4. Implemented Provider Updates
+
+**Issue**: `_update()` functions in providers were empty.
+
+**Fix**: 
+- `provider_time.dart`: Calls `_provideTime()` to refresh time widget
+- `provider_wallpaper.dart`: Calls `_loadSavedWallpaper()` to reload wallpaper
+
 ## Tests Summary
 
 | Loop | Tests Added | Total Tests |

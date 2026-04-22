@@ -34,7 +34,9 @@ Future<void> _initActions() async {
   _provideTime();
 }
 
-Future<void> _update() async {}
+Future<void> _update() async {
+  _provideTime();
+}
 
 /// [provideTime] is the core action of the [MyAction] object
 /// which produces some widgets into the infoList showing useful information.

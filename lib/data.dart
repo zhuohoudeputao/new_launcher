@@ -327,6 +327,16 @@ class SettingsModel with ChangeNotifier {
       prefs.setStringList(key, value);
     }
     _addSettingWidget(key, value);
+    _triggerProviderUpdate(key);
+  }
+
+  void _triggerProviderUpdate(String key) {
+    for (final provider in Global.providerList) {
+      if (key.startsWith(provider.name + ".")) {
+        provider.update();
+        Global.loggerModel.info("Provider ${provider.name} updated due to setting: $key", source: "Settings");
+      }
+    }
   }
 
   Future<dynamic> getValue(String key, var defaultValue) async {

@@ -53,25 +53,28 @@ The logger is integrated into:
 
 ### Display
 
-Logs are available in memory. To display logs to users:
+Logs are available in memory. A `LogViewerWidget` is implemented in `lib/ui.dart`:
+
+- Search bar for filtering by message content
+- Dropdown filter for log level (All, Error, Warn, Info, Debug)
+- Displays log icon, message, source, and timestamp
+- Clear button to remove all logs
+
+### View Logs Action
+
+Added in `lib/providers/provider_system.dart`:
 
 ```dart
-Consumer<LoggerModel>(
-  builder: (context, logger, child) {
-    return ListView.builder(
-      itemCount: logger.logs.length,
-      itemBuilder: (context, index) {
-        final log = logger.logs[index];
-        return ListTile(
-          leading: Icon(log.levelIcon),
-          title: Text(log.message),
-          subtitle: Text(log.timestamp.toIso8601String()),
-        );
-      },
-    );
+MyAction(
+  name: 'View logs',
+  keywords: 'logs debug error view',
+  action: () {
+    Global.infoModel.addInfoWidget("Logs", LogViewerWidget(), title: "Logs");
   },
 )
 ```
+
+Type "logs" in the search field to display the log viewer.
 
 ## Usage Examples
 

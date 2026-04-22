@@ -44,7 +44,9 @@ Future<void> _initActions() async {
   await _loadSavedWallpaper();
 }
 
-Future<void> _update() async {}
+Future<void> _update() async {
+  await _loadSavedWallpaper();
+}
 
 Future<void> _loadSavedWallpaper() async {
   final savedWallpaperType =

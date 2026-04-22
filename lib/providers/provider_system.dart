@@ -10,6 +10,7 @@ import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/setting.dart';
+import 'package:new_launcher/ui.dart';
 
 MyProvider providerSystem = MyProvider(
     name: "System",
@@ -25,6 +26,14 @@ Future<void> _provideActions() async {
       action: () {
         navigatorKey.currentState?.push(
             MaterialPageRoute(builder: (BuildContext context) => Setting()));
+      },
+      times: List.generate(24, (index) => 0),
+    ),
+    MyAction(
+      name: 'View logs',
+      keywords: 'logs debug error view',
+      action: () {
+        Global.infoModel.addInfoWidget("Logs", LogViewerWidget(), title: "Logs");
       },
       times: List.generate(24, (index) => 0),
     ),
