@@ -105,9 +105,10 @@ Settings auto-saved via `SharedPreferences`:
 - **App**: App launcher with device_apps
   - `AllAppsCard`: Horizontal GridView showing all installed apps (compact view)
   - `RecentlyUsedAppsCard`: Shows recently launched apps
+  - `AppStatisticsCard`: Displays top 5 most used apps with launch counts and timestamps
   - Top 20 apps displayed as individual cards for quick access (performance optimized)
   - ListView uses itemExtent and repaintBoundaries for smooth scrolling
-  - Models registered as providers: `appModel`, `allAppsModel`
+  - Models registered as providers: `appModel`, `allAppsModel`, `appStatisticsModel`
 - **System**: System-related actions
 
 ## Dependencies
@@ -134,7 +135,8 @@ Test coverage includes:
 - `ActionModel` class (action storage, suggestion generation)
 - `InfoModel` class (widget storage, filtering, batch operations)
 - `ThemeModel` and `BackgroundImageModel` (notifications)
-- UI widget tests (`customInfoWidget`, `CustomBoolSettingWidget`, etc.)
+- `AppStatisticsModel` class (launch tracking, sorting, entry limits)
+- UI widget tests (`customInfoWidget`, `CustomBoolSettingWidget`, `AppStatisticsCard`, etc.)
 
 ## Documentation
 
@@ -147,6 +149,7 @@ Technical documentation is available in `docs/`:
 - `logging_system.md` - Logging model usage
 - `card_list_feature.md` - Circular list implementation
 - `app_card_feature.md` - App display cards
+- `app_statistics_feature.md` - App usage statistics tracking and display
 
 ## Notice
 DO NOT EDIT task*.md

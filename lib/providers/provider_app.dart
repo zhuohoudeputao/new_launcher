@@ -38,6 +38,8 @@ Future<void> _provideActions() async {
           appWithIcon.packageName.toLowerCase(),
       action: () async {
         DeviceApps.openApp(appWithIcon.packageName);
+        appStatisticsModel.recordLaunch(appWithIcon.appName);
+        Global.loggerModel.info("Launched app: ${appWithIcon.appName}", source: "App");
         appModel.addApp(
             appWithIcon.appName,
             _customButton(
@@ -47,6 +49,7 @@ Future<void> _provideActions() async {
                   height: 60,
                 ), () {
               DeviceApps.openApp(appWithIcon.packageName);
+              appStatisticsModel.recordLaunch(appWithIcon.appName);
             }));
       },
       times: List.generate(24, (index) => 0),
@@ -67,6 +70,12 @@ Future<void> _provideActions() async {
 }
 
 Future<void> _initActions() async {
+  Global.infoModel.addInfoWidget(
+      "AppStatistics",
+      ChangeNotifierProvider.value(
+          value: appStatisticsModel,
+          builder: (context, child) => AppStatisticsCard()),
+      title: "App Statistics");
   Global.infoModel.addInfoWidget(
       "RecentApp",
       ChangeNotifierProvider.value(
@@ -110,6 +119,63 @@ class AllAppsModel with ChangeNotifier {
   int get length => allApps.length;
   List<ApplicationWithIcon> get apps => allApps;
 }
+
+class AppStatisticsModel extends ChangeNotifier {
+  final Map<String, int> _launchCounts = {};
+  final Map<String, DateTime> _lastLaunchTime = {};
+  
+  static const int maxStatsEntries = 50;
+  
+  List<String> get mostUsedApps {
+    final sorted = _launchCounts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    return sorted.map((e) => e.key).toList();
+  }
+  
+  int getLaunchCount(String appName) => _launchCounts[appName] ?? 0;
+  
+  DateTime? getLastLaunchTime(String appName) => _lastLaunchTime[appName];
+  
+  Map<String, int> get allStats => Map.unmodifiable(_launchCounts);
+  
+  int get totalLaunches => _launchCounts.values.fold(0, (a, b) => a + b);
+  
+  int get uniqueApps => _launchCounts.length;
+  
+  void recordLaunch(String appName) {
+    _launchCounts[appName] = (_launchCounts[appName] ?? 0) + 1;
+    _lastLaunchTime[appName] = DateTime.now();
+    
+    if (_launchCounts.length > maxStatsEntries) {
+      final leastUsed = _launchCounts.entries.toList()
+        ..sort((a, b) => a.value.compareTo(b.value));
+      _launchCounts.remove(leastUsed.first.key);
+      _lastLaunchTime.remove(leastUsed.first.key);
+    }
+    
+    notifyListeners();
+  }
+  
+  void clearStats() {
+    _launchCounts.clear();
+    _lastLaunchTime.clear();
+    notifyListeners();
+  }
+  
+  void loadStats(Map<String, int> counts, Map<String, DateTime> times) {
+    _launchCounts.clear();
+    _lastLaunchTime.clear();
+    counts.forEach((key, value) {
+      _launchCounts[key] = value;
+    });
+    times.forEach((key, value) {
+      _lastLaunchTime[key] = value;
+    });
+    notifyListeners();
+  }
+}
+
+AppStatisticsModel appStatisticsModel = AppStatisticsModel();
 
 class RecentlyUsedAppsCard extends StatefulWidget {
   @override
@@ -210,4 +276,86 @@ Widget _buildAppCard(ApplicationWithIcon app) {
       onTap: () => DeviceApps.openApp(app.packageName),
     ),
   );
+}
+
+class AppStatisticsCard extends StatefulWidget {
+  @override
+  State<AppStatisticsCard> createState() => _AppStatisticsCardState();
+}
+
+class _AppStatisticsCardState extends State<AppStatisticsCard> {
+  @override
+  Widget build(BuildContext context) {
+    final stats = context.watch<AppStatisticsModel>();
+    final apps = context.watch<AllAppsModel>().apps;
+    
+    final topApps = stats.mostUsedApps.take(5).toList();
+    
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("App Statistics", style: TextStyle(fontWeight: FontWeight.bold)),
+                Text("${stats.uniqueApps} apps, ${stats.totalLaunches} launches", style: TextStyle(fontSize: 12)),
+              ],
+            ),
+            SizedBox(height: 4),
+            if (topApps.isEmpty)
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text("No app usage data yet", style: TextStyle(fontSize: 12, color: Colors.grey)),
+              )
+            else
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: topApps.length,
+                itemBuilder: (context, index) {
+                  final appName = topApps[index];
+                  final app = apps.where((a) => a.appName == appName).firstOrNull;
+                  final count = stats.getLaunchCount(appName);
+                  final lastTime = stats.getLastLaunchTime(appName);
+                  return _buildStatItem(appName, count, lastTime, app);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildStatItem(String appName, int count, DateTime? lastTime, ApplicationWithIcon? app) {
+    String lastLaunchStr = "";
+    if (lastTime != null) {
+      final diff = DateTime.now().difference(lastTime);
+      if (diff.inMinutes < 60) {
+        lastLaunchStr = "${diff.inMinutes}m ago";
+      } else if (diff.inHours < 24) {
+        lastLaunchStr = "${diff.inHours}h ago";
+      } else {
+        lastLaunchStr = "${diff.inDays}d ago";
+      }
+    }
+    
+    return ListTile(
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      leading: app != null 
+        ? Image.memory(app.icon, width: 28, height: 28)
+        : Icon(Icons.apps, size: 28),
+      title: Text(appName, style: TextStyle(fontSize: 13)),
+      subtitle: Text("$count launches, $lastLaunchStr", style: TextStyle(fontSize: 11)),
+      trailing: Container(
+        width: 50,
+        alignment: Alignment.centerRight,
+        child: Text("$count", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+      ),
+    );
+  }
 }

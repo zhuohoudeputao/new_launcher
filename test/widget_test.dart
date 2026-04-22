@@ -1014,4 +1014,192 @@ void main() {
       expect(firefoxResult.length, 1);
     });
   });
+
+  group('AppStatisticsModel tests', () {
+    test('starts empty', () {
+      final statsModel = AppStatisticsModel();
+      expect(statsModel.uniqueApps, 0);
+      expect(statsModel.totalLaunches, 0);
+      expect(statsModel.mostUsedApps.length, 0);
+    });
+
+    test('recordLaunch increments count', () {
+      final statsModel = AppStatisticsModel();
+      statsModel.recordLaunch('Chrome');
+      expect(statsModel.getLaunchCount('Chrome'), 1);
+      expect(statsModel.totalLaunches, 1);
+      expect(statsModel.uniqueApps, 1);
+    });
+
+    test('recordLaunch updates last launch time', () {
+      final statsModel = AppStatisticsModel();
+      statsModel.recordLaunch('Chrome');
+      final lastTime = statsModel.getLastLaunchTime('Chrome');
+      expect(lastTime, isNotNull);
+      expect(lastTime!.difference(DateTime.now()).inSeconds.abs(), lessThan(2));
+    });
+
+    test('multiple launches increment count correctly', () {
+      final statsModel = AppStatisticsModel();
+      statsModel.recordLaunch('Chrome');
+      statsModel.recordLaunch('Chrome');
+      statsModel.recordLaunch('Chrome');
+      expect(statsModel.getLaunchCount('Chrome'), 3);
+      expect(statsModel.totalLaunches, 3);
+      expect(statsModel.uniqueApps, 1);
+    });
+
+    test('mostUsedApps sorted by launch count', () {
+      final statsModel = AppStatisticsModel();
+      statsModel.recordLaunch('Chrome');
+      statsModel.recordLaunch('Chrome');
+      statsModel.recordLaunch('Chrome');
+      statsModel.recordLaunch('Firefox');
+      statsModel.recordLaunch('Maps');
+      statsModel.recordLaunch('Maps');
+      
+      final mostUsed = statsModel.mostUsedApps;
+      expect(mostUsed[0], 'Chrome');
+      expect(mostUsed[1], 'Maps');
+      expect(mostUsed[2], 'Firefox');
+    });
+
+    test('clearStats removes all data', () {
+      final statsModel = AppStatisticsModel();
+      statsModel.recordLaunch('Chrome');
+      statsModel.recordLaunch('Firefox');
+      
+      statsModel.clearStats();
+      
+      expect(statsModel.uniqueApps, 0);
+      expect(statsModel.totalLaunches, 0);
+      expect(statsModel.mostUsedApps.length, 0);
+    });
+
+    test('notifyListeners called on recordLaunch', () {
+      final statsModel = AppStatisticsModel();
+      int notifyCount = 0;
+      statsModel.addListener(() => notifyCount++);
+      
+      statsModel.recordLaunch('Test');
+      expect(notifyCount, 1);
+    });
+
+    test('notifyListeners called on clearStats', () {
+      final statsModel = AppStatisticsModel();
+      statsModel.recordLaunch('Test');
+      int notifyCount = 0;
+      statsModel.addListener(() => notifyCount++);
+      
+      statsModel.clearStats();
+      expect(notifyCount, 1);
+    });
+
+    test('loadStats restores data', () {
+      final statsModel = AppStatisticsModel();
+      final counts = {'Chrome': 5, 'Firefox': 3};
+      final times = {'Chrome': DateTime.now().subtract(Duration(hours: 1))};
+      
+      statsModel.loadStats(counts, times);
+      
+      expect(statsModel.getLaunchCount('Chrome'), 5);
+      expect(statsModel.getLaunchCount('Firefox'), 3);
+      expect(statsModel.uniqueApps, 2);
+      expect(statsModel.totalLaunches, 8);
+    });
+
+    test('maxStatsEntries limit removes least used', () {
+      final statsModel = AppStatisticsModel();
+      
+      for (int i = 0; i < AppStatisticsModel.maxStatsEntries + 10; i++) {
+        statsModel.recordLaunch('App$i');
+      }
+      
+      expect(statsModel.uniqueApps, AppStatisticsModel.maxStatsEntries);
+    });
+
+    test('allStats returns unmodifiable map', () {
+      final statsModel = AppStatisticsModel();
+      statsModel.recordLaunch('Chrome');
+      
+      final stats = statsModel.allStats;
+      expect(stats['Chrome'], 1);
+    });
+  });
+
+  group('AppStatisticsCard tests', () {
+    testWidgets('renders with empty model', (WidgetTester tester) async {
+      final statsModel = AppStatisticsModel();
+      final allAppsModel = AllAppsModel();
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MultiProvider(
+              providers: [
+                ChangeNotifierProvider.value(value: statsModel),
+                ChangeNotifierProvider.value(value: allAppsModel),
+              ],
+              child: AppStatisticsCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('App Statistics'), findsOneWidget);
+      expect(find.text('No app usage data yet'), findsOneWidget);
+    });
+
+    testWidgets('renders stats when apps recorded', (WidgetTester tester) async {
+      final statsModel = AppStatisticsModel();
+      final allAppsModel = AllAppsModel();
+      
+      statsModel.recordLaunch('Chrome');
+      statsModel.recordLaunch('Chrome');
+      statsModel.recordLaunch('Firefox');
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MultiProvider(
+              providers: [
+                ChangeNotifierProvider.value(value: statsModel),
+                ChangeNotifierProvider.value(value: allAppsModel),
+              ],
+              child: AppStatisticsCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('App Statistics'), findsOneWidget);
+      expect(find.text('Chrome'), findsOneWidget);
+      expect(find.text('Firefox'), findsOneWidget);
+    });
+
+    testWidgets('shows correct launch counts', (WidgetTester tester) async {
+      final statsModel = AppStatisticsModel();
+      final allAppsModel = AllAppsModel();
+      
+      statsModel.recordLaunch('TestApp');
+      statsModel.recordLaunch('TestApp');
+      statsModel.recordLaunch('TestApp');
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MultiProvider(
+              providers: [
+                ChangeNotifierProvider.value(value: statsModel),
+                ChangeNotifierProvider.value(value: allAppsModel),
+              ],
+              child: AppStatisticsCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.textContaining('3 launches, 0m ago'), findsOneWidget);
+    });
+  });
 }

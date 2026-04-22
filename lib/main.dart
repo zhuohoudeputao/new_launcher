@@ -56,20 +56,21 @@ void main() {
   // ensure data bindings
   WidgetsFlutterBinding.ensureInitialized();
   // initialize global values then run app
-  Global.init().then((value) => runApp(MultiProvider(
+Global.init().then((value) => runApp(MultiProvider(
         // add providers here to make them accessible
-providers: [
-           ChangeNotifierProvider.value(value: Global.themeModel),
-           ChangeNotifierProvider.value(value: Global.backgroundImageModel),
-           ChangeNotifierProvider.value(value: Global.settingsModel),
-           ChangeNotifierProvider.value(value: Global.infoModel),
-           ChangeNotifierProvider.value(value: Global.actionModel),
-           ChangeNotifierProvider.value(value: Global.loggerModel),
-           ChangeNotifierProvider.value(value: appModel),
-           ChangeNotifierProvider.value(value: allAppsModel),
-         ],
-        child: MyApp(),
-      )));
+ providers: [
+            ChangeNotifierProvider.value(value: Global.themeModel),
+            ChangeNotifierProvider.value(value: Global.backgroundImageModel),
+            ChangeNotifierProvider.value(value: Global.settingsModel),
+            ChangeNotifierProvider.value(value: Global.infoModel),
+            ChangeNotifierProvider.value(value: Global.actionModel),
+            ChangeNotifierProvider.value(value: Global.loggerModel),
+            ChangeNotifierProvider.value(value: appModel),
+            ChangeNotifierProvider.value(value: allAppsModel),
+            ChangeNotifierProvider.value(value: appStatisticsModel),
+          ],
+         child: MyApp(),
+       )));
 }
 
 class MyApp extends StatefulWidget {
