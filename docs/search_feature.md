@@ -21,6 +21,7 @@ The search functionality allows users to filter info cards by typing in the sear
 3. **Main UI** (`lib/main.dart`)
    - Uses `context.watch<ActionModel>()` to get search query
    - Calls `infoModel.getFilteredList(query)` to get filtered cards
+   - Updates `CircularListController.itemCount` to reflect filtered list size
 
 ### Filtering Logic
 
@@ -35,6 +36,25 @@ List<Widget> getFilteredList(String query) {
           (_titleMap[e.key]?.toLowerCase().contains(lowerQuery) ?? false))
       .map((e) => e.value)
       .toList();
+}
+```
+
+### Circular List Integration
+
+When the search query changes, the filtered list size is updated in the CircularListController to maintain circular scrolling:
+
+```dart
+@override
+Widget build(BuildContext context) {
+  final actionModel = context.watch<ActionModel>();
+  String query = actionModel.searchQuery;
+  List<Widget> infoList = context.watch<InfoModel>().getFilteredList(query);
+  
+  if (_circularListController.hasClients) {
+    _circularListController.itemCount = infoList.isEmpty ? 1 : infoList.length;
+  }
+  
+  // ... rest of build method
 }
 ```
 

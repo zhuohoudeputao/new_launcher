@@ -123,6 +123,11 @@ class _MyHomePageState extends State<MyHomePage> {
     String query = actionModel.searchQuery;
     List<Widget> infoList = context.watch<InfoModel>().getFilteredList(query);
     List<Widget> suggestList = actionModel.suggestList;
+    
+    if (_circularListController.hasClients) {
+      _circularListController.itemCount = infoList.isEmpty ? 1 : infoList.length;
+    }
+    
     return PopScope(
       canPop: _lastReturn != null &&
               DateTime.now().difference(_lastReturn!) > Duration(seconds: 1)
