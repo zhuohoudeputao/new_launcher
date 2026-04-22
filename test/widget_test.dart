@@ -56,6 +56,23 @@ void main() {
       controller.itemCount = 5;
       expect(controller.itemCount, 5);
     });
+
+    test('itemExtent is stored correctly', () {
+      final controller = CircularListController(itemCount: 5, itemExtent: 80);
+      expect(controller.itemExtent, 80);
+    });
+
+    test('getActualIndex handles large virtualIndex', () {
+      final controller = CircularListController(itemCount: 3, itemExtent: 100);
+      expect(controller.getActualIndex(10000), 1);
+      expect(controller.getActualIndex(9999), 0);
+    });
+
+    test('itemCount change resets _initialized flag', () {
+      final controller = CircularListController(itemCount: 5, itemExtent: 100);
+      controller.itemCount = 10;
+      controller.itemCount = 5;
+    });
   });
 
   group('LoggerModel tests', () {
