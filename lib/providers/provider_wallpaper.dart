@@ -5,6 +5,7 @@
  * @Description: file content
  */
 
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -12,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
+import 'package:path_provider/path_provider.dart';
 
 MyProvider providerWallpaper = MyProvider(
     name: "Wallpaper",
@@ -32,47 +34,42 @@ Future<void> _provideActions() async {
     MyAction(
       name: "Refresh Wallpaper",
       keywords: "refresh background wallpaper",
-      action: _readBackground,
+      action: _fetchNewWallpaper,
       times: List.generate(24, (index) => 0),
     )
   ]);
 }
 
 Future<void> _initActions() async {
-  await _readBackground();
+  await _loadSavedWallpaper();
 }
 
-Future<void> _update() async {
-  await _readBackground();
-}
+Future<void> _update() async {}
 
-Future<void> pickWallpaperFromGallery() async {
-  final ImagePicker picker = ImagePicker();
-  final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-  if (image != null) {
-    Global.backgroundImageModel.backgroundImage = FileImage(
-      await _cacheImage(image),
-    );
-    Global.infoModel
-        .addInfo("Wallpaper", "Wallpaper updated", subtitle: "From gallery");
+Future<void> _loadSavedWallpaper() async {
+  final savedWallpaperType =
+      await Global.settingsModel.getValue("WallpaperType", "");
+  
+  if (savedWallpaperType == "network") {
+    final url = await Global.settingsModel.getValue("LastWallpaper", "");
+    if (url.isNotEmpty) {
+      Global.backgroundImageModel.backgroundImage = NetworkImage(url);
+      Global.loggerModel.info("Wallpaper restored from network: $url", source: "Wallpaper");
+      return;
+    }
+  } else if (savedWallpaperType == "file") {
+    final filePath = await Global.settingsModel.getValue("WallpaperFile", "");
+    if (filePath.isNotEmpty && File(filePath).existsSync()) {
+      Global.backgroundImageModel.backgroundImage = FileImage(File(filePath));
+      Global.loggerModel.info("Wallpaper restored from file: $filePath", source: "Wallpaper");
+      return;
+    }
   }
+  
+  Global.loggerModel.info("No saved wallpaper found", source: "Wallpaper");
 }
 
-Future<dynamic> _cacheImage(XFile image) async {
-  return await image.readAsBytes();
-}
-
-Future<void> _readBackground() async {
-  final savedWallpaper =
-      await Global.settingsModel.getValue("LastWallpaper", "");
-  if (savedWallpaper.isNotEmpty) {
-    Global.backgroundImageModel.backgroundImage = NetworkImage(savedWallpaper);
-    Global.infoModel.addInfo("Wallpaper", "Wallpaper restored",
-        subtitle: "From saved wallpaper");
-    Global.loggerModel.info("Wallpaper restored: $savedWallpaper", source: "Wallpaper");
-    return;
-  }
-
+Future<void> _fetchNewWallpaper() async {
   final random = Random();
   final url = _wallpaperUrls[random.nextInt(_wallpaperUrls.length)];
 
@@ -81,6 +78,7 @@ Future<void> _readBackground() async {
     if (response.statusCode == 200) {
       Global.backgroundImageModel.backgroundImage = NetworkImage(url);
       Global.settingsModel.saveValue("LastWallpaper", url);
+      Global.settingsModel.saveValue("WallpaperType", "network");
       Global.infoModel.addInfo("Wallpaper", "Wallpaper updated",
           subtitle: "New background from Picsum");
       Global.loggerModel.info("Wallpaper updated from Picsum: $url", source: "Wallpaper");
@@ -92,5 +90,24 @@ Future<void> _readBackground() async {
   } catch (e) {
     Global.infoModel.addInfo("Wallpaper", "Wallpaper error", subtitle: e.toString());
     Global.loggerModel.error("Wallpaper error: $e", source: "Wallpaper");
+  }
+}
+
+Future<void> pickWallpaperFromGallery() async {
+  final ImagePicker picker = ImagePicker();
+  final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+  if (image != null) {
+    final directory = await getApplicationDocumentsDirectory();
+    final wallpaperPath = '${directory.path}/saved_wallpaper.jpg';
+    
+    await File(image.path).copy(wallpaperPath);
+    
+    Global.backgroundImageModel.backgroundImage = FileImage(File(wallpaperPath));
+    Global.settingsModel.saveValue("WallpaperFile", wallpaperPath);
+    Global.settingsModel.saveValue("WallpaperType", "file");
+    
+    Global.infoModel
+        .addInfo("Wallpaper", "Wallpaper updated", subtitle: "From gallery");
+    Global.loggerModel.info("Wallpaper saved from gallery: $wallpaperPath", source: "Wallpaper");
   }
 }
