@@ -7,4 +7,8 @@ DO NOT EDIT THIS!
 
 ## 任务分解树
 
-1. 添加应用卡片 - 未完成
+1. 添加应用卡片 - 已完成
+   1. AllAppsCard添加到卡片列表 - 已完成
+   2. RecentlyUsedAppsCard添加到卡片列表 - 已完成
+   3. appModel和allAppsModel注册为Provider - 已完成
+   4. Top 10应用显示为独立卡片 - 已完成
