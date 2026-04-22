@@ -88,8 +88,7 @@ Settings auto-saved via `SharedPreferences`:
 
 ## Known Issues
 
-- `provider_app.dart` uses `device_apps` package (not in pubspec.yaml) - will fail to build
-- Widget test in `test/widget_test.dart` is outdated (tests counter, not launcher)
+- Widget test infrastructure may have network connection issues on some systems
 - Some providers reference missing packages (`provider_translate.dart`, etc.)
 - `lib/core/` contains incomplete AI features (not used)
 
@@ -105,6 +104,11 @@ Settings auto-saved via `SharedPreferences`:
 - **Wallpaper**: Background image selection
 - **Time**: Local time display
 - **App**: App launcher with device_apps
+  - `AllAppsCard`: Horizontal GridView showing all installed apps
+  - `RecentlyUsedAppsCard`: Shows recently launched apps
+  - Top 10 apps displayed as individual cards
+  - Models registered as providers: `appModel`, `allAppsModel`
+- **System**: System-related actions
 
 ## Dependencies
 
@@ -115,6 +119,7 @@ Key packages (pubspec.yaml):
 - `sqflite: ^2.0.0` - Database (unused)
 - `permission_handler: ^10.0.0` - Permissions
 - `http: ^1.0.0` - HTTP requests
+- `device_apps: ^2.2.0` - App enumeration and launching
 
 ## Notice
-DO NOT EDIT task.md
+DO NOT EDIT task*.md

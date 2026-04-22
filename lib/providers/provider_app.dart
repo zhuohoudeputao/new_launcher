@@ -39,7 +39,7 @@ Future<void> _provideActions() async {
           appWithIcon.packageName.toLowerCase(),
       action: () async {
         DeviceApps.openApp(appWithIcon.packageName);
-        _appModel.addApp(
+        appModel.addApp(
             appWithIcon.appName,
             _customButton(
                 Image.memory(
@@ -53,7 +53,7 @@ Future<void> _provideActions() async {
       times: List.generate(24, (index) => 0),
     ));
   }
-  _allAppsModel.setApps(allAppsWithIcons);
+  allAppsModel.setApps(allAppsWithIcons);
 
   // Only add top 10 apps as individual cards to improve performance
   final topApps = allAppsWithIcons.take(10).toList();
@@ -72,16 +72,22 @@ Future<void> _initActions() async {
   Global.infoModel.addInfoWidget(
       "RecentApp",
       ChangeNotifierProvider.value(
-          value: _appModel,
+          value: appModel,
           builder: (context, child) => RecentlyUsedAppsCard()),
       title: "Recent Apps");
+  Global.infoModel.addInfoWidget(
+      "AllApps",
+      ChangeNotifierProvider.value(
+          value: allAppsModel,
+          builder: (context, child) => AllAppsCard()),
+      title: "All Apps");
 }
 
 Future<void> _update() async {}
 
 // Recently used apps
-AppModel _appModel = AppModel();
-AllAppsModel _allAppsModel = AllAppsModel();
+AppModel appModel = AppModel();
+AllAppsModel allAppsModel = AllAppsModel();
 
 class AppModel with ChangeNotifier {
   Map<String, Widget> recentApps = Map<String, Widget>();

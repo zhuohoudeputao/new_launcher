@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:new_launcher/data.dart';
+import 'package:new_launcher/providers/provider_app.dart';
 import 'package:provider/provider.dart';
 
 class CircularListController extends ScrollController {
@@ -57,14 +58,16 @@ void main() {
   // initialize global values then run app
   Global.init().then((value) => runApp(MultiProvider(
         // add providers here to make them accessible
-        providers: [
-          ChangeNotifierProvider.value(value: Global.themeModel),
-          ChangeNotifierProvider.value(value: Global.backgroundImageModel),
-          ChangeNotifierProvider.value(value: Global.settingsModel),
-          ChangeNotifierProvider.value(value: Global.infoModel),
-          ChangeNotifierProvider.value(value: Global.actionModel),
-          ChangeNotifierProvider.value(value: Global.loggerModel),
-        ],
+providers: [
+           ChangeNotifierProvider.value(value: Global.themeModel),
+           ChangeNotifierProvider.value(value: Global.backgroundImageModel),
+           ChangeNotifierProvider.value(value: Global.settingsModel),
+           ChangeNotifierProvider.value(value: Global.infoModel),
+           ChangeNotifierProvider.value(value: Global.actionModel),
+           ChangeNotifierProvider.value(value: Global.loggerModel),
+           ChangeNotifierProvider.value(value: appModel),
+           ChangeNotifierProvider.value(value: allAppsModel),
+         ],
         child: MyApp(),
       )));
 }

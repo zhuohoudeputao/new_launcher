@@ -4,6 +4,8 @@ import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/setting.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
+import 'package:new_launcher/providers/provider_app.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   group('customInfoWidget tests', () {
@@ -285,6 +287,132 @@ void main() {
       final actionModel = ActionModel();
       actionModel.generateSuggestList('');
       expect(actionModel.searchQuery, '');
+    });
+  });
+
+  group('AppModel tests', () {
+    test('starts empty', () {
+      final appModel = AppModel();
+      expect(appModel.length, 0);
+      expect(appModel.recentlyUsedApps.length, 0);
+    });
+
+    testWidgets('addApp increases length', (WidgetTester tester) async {
+      final appModel = AppModel();
+      await appModel.addApp('Chrome', Container(child: Text('Chrome')));
+      expect(appModel.length, 1);
+      expect(appModel.recentlyUsedApps.length, 1);
+    });
+
+    testWidgets('addApp replaces existing key', (WidgetTester tester) async {
+      final appModel = AppModel();
+      await appModel.addApp('Chrome', Container(child: Text('Chrome')));
+      await appModel.addApp('Chrome', Container(child: Text('Chrome Updated')));
+      expect(appModel.length, 1);
+    });
+
+    testWidgets('notifyListeners called on addApp', (WidgetTester tester) async {
+      final appModel = AppModel();
+      int notifyCount = 0;
+      appModel.addListener(() => notifyCount++);
+      await appModel.addApp('Test', Container());
+      expect(notifyCount, 1);
+    });
+  });
+
+  group('AllAppsModel tests', () {
+    test('starts empty', () {
+      final allAppsModel = AllAppsModel();
+      expect(allAppsModel.length, 0);
+      expect(allAppsModel.apps.length, 0);
+    });
+
+    testWidgets('setApps updates apps list', (WidgetTester tester) async {
+      final allAppsModel = AllAppsModel();
+      await allAppsModel.setApps([]);
+      expect(allAppsModel.length, 0);
+    });
+
+    testWidgets('notifyListeners called on setApps', (WidgetTester tester) async {
+      final allAppsModel = AllAppsModel();
+      int notifyCount = 0;
+      allAppsModel.addListener(() => notifyCount++);
+      await allAppsModel.setApps([]);
+      expect(notifyCount, 1);
+    });
+  });
+
+  group('RecentlyUsedAppsCard tests', () {
+    testWidgets('renders with empty model', (WidgetTester tester) async {
+      final appModel = AppModel();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: appModel,
+              child: RecentlyUsedAppsCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(Card), findsOneWidget);
+      expect(find.byType(ListView), findsOneWidget);
+    });
+
+    testWidgets('renders apps when added', (WidgetTester tester) async {
+      final appModel = AppModel();
+      await appModel.addApp('TestApp', Container(child: Text('TestApp')));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: appModel,
+              child: RecentlyUsedAppsCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(Card), findsOneWidget);
+      expect(find.text('TestApp'), findsOneWidget);
+    });
+  });
+
+  group('AllAppsCard tests', () {
+    testWidgets('renders with empty model', (WidgetTester tester) async {
+      final allAppsModel = AllAppsModel();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: allAppsModel,
+              child: AllAppsCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(Card), findsOneWidget);
+      expect(find.byType(GridView), findsOneWidget);
+    });
+
+    testWidgets('shows GridView with correct configuration', (WidgetTester tester) async {
+      final allAppsModel = AllAppsModel();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: allAppsModel,
+              child: AllAppsCard(),
+            ),
+          ),
+        ),
+      );
+
+      final gridView = tester.widget<GridView>(find.byType(GridView));
+      expect(gridView.scrollDirection, Axis.horizontal);
     });
   });
 }
