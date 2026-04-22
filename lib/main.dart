@@ -16,6 +16,7 @@ class CircularListController extends ScrollController {
   static const int virtualMultiplier = 100;
   
   late int _virtualCount;
+  bool _initialized = false;
   
   CircularListController({int itemCount = 1, this.itemExtent = 100}) 
       : _itemCount = itemCount == 0 ? 1 : itemCount {
@@ -28,6 +29,7 @@ class CircularListController extends ScrollController {
     if (_itemCount != value) {
       _itemCount = value == 0 ? 1 : value;
       _virtualCount = _itemCount * virtualMultiplier;
+      _initialized = false;
     }
   }
   
@@ -37,22 +39,11 @@ class CircularListController extends ScrollController {
     return virtualIndex % _itemCount;
   }
   
-  void jumpToActualIndex(int actualIndex) {
-    if (!hasClients || _itemCount == 0) return;
-    jumpTo(actualIndex * itemExtent);
-  }
-  
-  void onScroll() {
-    if (!hasClients || _itemCount == 0) return;
-    final maxExtent = _virtualCount * itemExtent;
-    final current = position.pixels;
-    final halfPoint = (_itemCount ~/ 2) * itemExtent;
-    
-    if (current >= maxExtent - itemExtent * 4) {
-      jumpTo(halfPoint);
-    } else if (current < itemExtent * 2) {
-      jumpTo(halfPoint);
-    }
+  void initPosition() {
+    if (!hasClients || _initialized) return;
+    final startPoint = (_itemCount * virtualMultiplier ~/ 2) * itemExtent;
+    jumpTo(startPoint);
+    _initialized = true;
   }
 }
 
@@ -101,17 +92,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _circularListController = CircularListController(itemCount: 0);
-    _circularListController.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    _circularListController.onScroll();
+    _circularListController = CircularListController(itemCount: 1);
   }
 
   @override
   void dispose() {
-    _circularListController.removeListener(_onScroll);
     _circularListController.dispose();
     super.dispose();
   }
@@ -123,9 +108,11 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Widget> infoList = context.watch<InfoModel>().getFilteredList(query);
     List<Widget> suggestList = actionModel.suggestList;
     
-    if (_circularListController.hasClients) {
-      _circularListController.itemCount = infoList.isEmpty ? 1 : infoList.length;
-    }
+    _circularListController.itemCount = infoList.isEmpty ? 1 : infoList.length;
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _circularListController.initPosition();
+    });
     
     return PopScope(
       canPop: false,
