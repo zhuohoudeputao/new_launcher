@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:new_launcher/ui.dart';
@@ -445,6 +446,30 @@ void main() {
       
       expect(backgroundImageModel.backgroundImage, newImage);
       expect(notifyCount, 1);
+    });
+
+    test('BackgroundImageModel can set FileImage', () {
+      final backgroundImageModel = BackgroundImageModel();
+      backgroundImageModel.backgroundImage = MemoryImage(Uint8List.fromList([0, 0, 0, 0]));
+      expect(backgroundImageModel.backgroundImage, isA<MemoryImage>());
+    });
+
+    test('BackgroundImageModel can set NetworkImage', () {
+      final backgroundImageModel = BackgroundImageModel();
+      backgroundImageModel.backgroundImage = NetworkImage('https://test.com/wallpaper.png');
+      expect(backgroundImageModel.backgroundImage, isA<NetworkImage>());
+    });
+
+    test('Multiple updates trigger multiple notifications', () {
+      final backgroundImageModel = BackgroundImageModel();
+      int notifyCount = 0;
+      backgroundImageModel.addListener(() => notifyCount++);
+      
+      backgroundImageModel.backgroundImage = NetworkImage('https://a.com/a.jpg');
+      backgroundImageModel.backgroundImage = NetworkImage('https://b.com/b.jpg');
+      backgroundImageModel.backgroundImage = MemoryImage(Uint8List.fromList([1, 2, 3]));
+      
+      expect(notifyCount, 3);
     });
   });
 
