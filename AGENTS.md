@@ -9,7 +9,7 @@ Flutter-based Android launcher with a command-based interface. Users type comman
 ```bash
 ~/app/flutter/bin/flutter run              # Run app on connected device/emulator
 ~/app/flutter/bin/flutter build apk        # Build debug APK
-~/app/flutter/bin/flutter test             # Run tests
+unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && ~/app/flutter/bin/flutter test  # Run tests (unset proxy first)
 ```
 
 ## Build Configuration
@@ -89,7 +89,7 @@ Settings auto-saved via `SharedPreferences`:
 
 ## Known Issues
 
-- Widget test infrastructure may have network connection issues on some systems
+- System proxy configuration may cause Flutter test failures - unset proxy env vars before running tests
 - Some providers reference missing packages (`provider_translate.dart`, etc.)
 - `lib/core/` contains incomplete AI features (not used)
 
