@@ -394,6 +394,39 @@ void main() {
       expect(themeModel.themeData, newTheme);
       expect(notifyCount, 1);
     });
+
+    test('ThemeModel can set light theme', () {
+      final themeModel = ThemeModel();
+      themeModel.themeData = ThemeData.light();
+      expect(themeModel.themeData.brightness, Brightness.light);
+    });
+
+    test('ThemeModel can set dark theme', () {
+      final themeModel = ThemeModel();
+      themeModel.themeData = ThemeData.dark();
+      expect(themeModel.themeData.brightness, Brightness.dark);
+    });
+
+    test('ThemeData with custom cardColor', () {
+      final themeModel = ThemeModel();
+      final customTheme = ThemeData(
+        cardColor: Colors.red.withOpacity(0.5),
+      );
+      themeModel.themeData = customTheme;
+      expect(themeModel.themeData.cardColor, Colors.red.withOpacity(0.5));
+    });
+
+    test('Multiple updates trigger multiple notifications', () {
+      final themeModel = ThemeModel();
+      int notifyCount = 0;
+      themeModel.addListener(() => notifyCount++);
+      
+      themeModel.themeData = ThemeData.light();
+      themeModel.themeData = ThemeData.dark();
+      themeModel.themeData = ThemeData.fallback();
+      
+      expect(notifyCount, 3);
+    });
   });
 
   group('BackgroundImageModel tests', () {
