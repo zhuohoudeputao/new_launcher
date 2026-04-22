@@ -872,9 +872,38 @@ void main() {
       expect(icon, Icons.flash_on);
     });
 
-    test('getWeatherIcon returns default for unknown', () {
+    test('getWeatherIcon returns foggy for fog', () {
+      final icon = getWeatherIcon("Fog");
+      expect(icon, Icons.foggy);
+    });
+
+    test('getWeatherIcon returns foggy for rime fog', () {
+      final icon = getWeatherIcon("Depositing rime fog");
+      expect(icon, Icons.foggy);
+    });
+
+    test('getWeatherIcon returns cloud for overcast', () {
+      final icon = getWeatherIcon("Overcast");
+      expect(icon, Icons.cloud);
+    });
+
+    test('getWeatherIcon returns cloud for unknown', () {
       final icon = getWeatherIcon("Unknown condition");
       expect(icon, Icons.cloud);
+    });
+
+    test('getWeatherIcon is case insensitive', () {
+      expect(getWeatherIcon("CLEAR SKY"), Icons.wb_sunny);
+      expect(getWeatherIcon("clear"), Icons.wb_sunny);
+    });
+
+    test('getWeatherIcon handles drizzle', () {
+      expect(getWeatherIcon("Light drizzle"), Icons.water_drop);
+      expect(getWeatherIcon("Dense drizzle"), Icons.water_drop);
+    });
+
+    test('getWeatherIcon handles snow grains', () {
+      expect(getWeatherIcon("Snow grains"), Icons.ac_unit);
     });
   });
 
