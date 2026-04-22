@@ -1104,6 +1104,282 @@ void main() {
     });
   });
 
+  group('DarkModeOptionSelector Material 3 tests', () {
+    testWidgets('renders SegmentedButton', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DarkModeOptionSelector(
+              currentMode: 'light',
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(SegmentedButton), findsOneWidget);
+    });
+
+    testWidgets('shows all three segments', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DarkModeOptionSelector(
+              currentMode: 'system',
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Light'), findsOneWidget);
+      expect(find.text('Dark'), findsOneWidget);
+      expect(find.text('System'), findsOneWidget);
+    });
+
+    testWidgets('has icons for each segment', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DarkModeOptionSelector(
+              currentMode: 'dark',
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.light_mode), findsOneWidget);
+      expect(find.byIcon(Icons.dark_mode), findsOneWidget);
+      expect(find.byIcon(Icons.settings_suggest), findsOneWidget);
+    });
+
+    testWidgets('calls onChanged when segment selected', (WidgetTester tester) async {
+      String selectedMode = 'light';
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DarkModeOptionSelector(
+              currentMode: 'light',
+              onChanged: (mode) => selectedMode = mode,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Dark'));
+      await tester.pump();
+
+      expect(selectedMode, 'dark');
+    });
+
+    testWidgets('currentMode is selected', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DarkModeOptionSelector(
+              currentMode: 'system',
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      final segmentedButton = tester.widget<SegmentedButton<String>>(find.byType(SegmentedButton));
+      expect(segmentedButton.selected.contains('system'), true);
+    });
+  });
+
+  group('Material 3 Card variants tests', () {
+    testWidgets('WallpaperPickerButton uses Card.filled', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WallpaperPickerButton(
+              label: 'Test',
+              onTap: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(Card), findsOneWidget);
+    });
+
+    testWidgets('CardOpacitySlider uses Card.filled', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CardOpacitySlider(
+              value: 0.5,
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(Card), findsOneWidget);
+      expect(find.text('Card Opacity'), findsOneWidget);
+    });
+
+    testWidgets('CustomBoolSettingWidget uses Card', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CustomBoolSettingWidget(
+              settingKey: 'TestKey',
+              value: true,
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(Card), findsOneWidget);
+      expect(find.text('TestKey'), findsOneWidget);
+    });
+  });
+
+  group('Material 3 Button tests', () {
+    testWidgets('customSuggestWidget uses ElevatedButton', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: customSuggestWidget(
+              name: 'Test Action',
+              onPressed: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(ElevatedButton), findsOneWidget);
+      expect(find.text('Test Action'), findsOneWidget);
+    });
+
+    testWidgets('customSuggestButton has zero elevation', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: customSuggestWidget(
+              name: 'Test',
+              onPressed: () {},
+            ),
+          ),
+        ),
+      );
+
+      final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+      expect(button.style?.elevation?.resolve({}), 0);
+    });
+
+    testWidgets('customSuggestButton onPressed works', (WidgetTester tester) async {
+      bool pressed = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: customSuggestWidget(
+              name: 'Test',
+              onPressed: () => pressed = true,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pump();
+
+      expect(pressed, true);
+    });
+  });
+
+  group('ColorScheme integration tests', () {
+    testWidgets('Theme uses Material 3', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+          ),
+          home: Scaffold(
+            body: Text('Test'),
+          ),
+        ),
+      );
+
+      final theme = Theme.of(tester.element(find.text('Test')));
+      expect(theme.useMaterial3, true);
+    });
+
+    testWidgets('ColorScheme from seed generates colors', (WidgetTester tester) async {
+      final colorScheme = ColorScheme.fromSeed(seedColor: Colors.indigo);
+      
+      expect(colorScheme.primary, isNotNull);
+      expect(colorScheme.onPrimary, isNotNull);
+      expect(colorScheme.secondary, isNotNull);
+      expect(colorScheme.surface, isNotNull);
+      expect(colorScheme.error, isNotNull);
+    });
+
+    testWidgets('Dark ColorScheme has different colors', (WidgetTester tester) async {
+      final lightScheme = ColorScheme.fromSeed(
+        seedColor: Colors.indigo,
+        brightness: Brightness.light,
+      );
+      final darkScheme = ColorScheme.fromSeed(
+        seedColor: Colors.indigo,
+        brightness: Brightness.dark,
+      );
+
+      expect(lightScheme.primary != darkScheme.primary, true);
+      expect(lightScheme.surface != darkScheme.surface, true);
+    });
+  });
+
+  group('LogViewerWidget Material 3 tests', () {
+    testWidgets('uses ElevatedButton for Clear', (WidgetTester tester) async {
+      final logger = LoggerModel();
+      logger.clear();
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: logger,
+              child: LogViewerWidget(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(ElevatedButton), findsOneWidget);
+      expect(find.text('Clear'), findsOneWidget);
+    });
+
+    testWidgets('Clear button onPressed works', (WidgetTester tester) async {
+      final logger = LoggerModel();
+      logger.info('Test log');
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: logger,
+              child: LogViewerWidget(),
+            ),
+          ),
+        ),
+      );
+
+      expect(logger.logs.length, 1);
+      
+      await tester.tap(find.text('Clear'));
+      await tester.pump();
+      
+      expect(logger.logs.length, 0);
+    });
+  });
+
   group('CardOpacitySlider tests', () {
     testWidgets('renders slider with value', (WidgetTester tester) async {
       await tester.pumpWidget(
