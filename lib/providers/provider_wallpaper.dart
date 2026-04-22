@@ -5,7 +5,6 @@
  * @Description: file content
  */
 
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -70,6 +69,7 @@ Future<void> _readBackground() async {
     Global.backgroundImageModel.backgroundImage = NetworkImage(savedWallpaper);
     Global.infoModel.addInfo("Wallpaper", "Wallpaper restored",
         subtitle: "From saved wallpaper");
+    Global.loggerModel.info("Wallpaper restored: $savedWallpaper", source: "Wallpaper");
     return;
   }
 
@@ -83,12 +83,14 @@ Future<void> _readBackground() async {
       Global.settingsModel.saveValue("LastWallpaper", url);
       Global.infoModel.addInfo("Wallpaper", "Wallpaper updated",
           subtitle: "New background from Picsum");
+      Global.loggerModel.info("Wallpaper updated from Picsum: $url", source: "Wallpaper");
     } else {
       Global.infoModel.addInfo("Wallpaper", "Failed to load wallpaper",
           subtitle: "Status: ${response.statusCode}");
+      Global.loggerModel.warning("Wallpaper fetch failed: ${response.statusCode}", source: "Wallpaper");
     }
   } catch (e) {
-    Global.infoModel
-        .addInfo("Wallpaper", "Wallpaper error", subtitle: e.toString());
+    Global.infoModel.addInfo("Wallpaper", "Wallpaper error", subtitle: e.toString());
+    Global.loggerModel.error("Wallpaper error: $e", source: "Wallpaper");
   }
 }
