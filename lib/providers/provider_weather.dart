@@ -49,7 +49,6 @@ const Map<int, String> _weatherCodes = {
 };
 
 const String _weatherCacheKey = "Weather.Cache";
-const String _weatherCacheTimeKey = "Weather.CacheTime";
 const Duration _cacheValidity = Duration(minutes: 30);
 
 class WeatherCache {
