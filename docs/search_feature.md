@@ -83,3 +83,36 @@ Global.infoModel.addInfoWidget(
 Tests are located in `test/widget_test.dart` under the groups:
 - `InfoModel getFilteredList tests`
 - `ActionModel searchQuery tests`
+- `ActionModel extended tests` (includes frequency sorting tests)
+
+## Suggestion Sorting by Frequency
+
+As of recent updates, the suggestion list is now sorted by usage frequency to prioritize commonly used actions.
+
+### Sorting Implementation
+
+When generating the suggestion list, actions are sorted by their frequency count (current hour usage):
+
+```dart
+void generateSuggestList(String input) {
+  final matchingActions = _actionMap.values
+      .where((action) => action.canIdentifyBy(input))
+      .toList();
+  
+  matchingActions.sort((a, b) => b.frequency.compareTo(a.frequency));
+  
+  for (MyAction action in matchingActions) {
+    _suggestList.add(action.suggestWidget);
+  }
+}
+```
+
+### Benefits
+
+- Frequently used apps appear first in suggestions
+- Reduces search time for common operations
+- Automatically adapts to user behavior over time
+
+### Frequency Tracking
+
+Each action tracks usage per hour (24-hour array). The `frequency` getter returns the count for the current hour, ensuring sorting reflects recent usage patterns.

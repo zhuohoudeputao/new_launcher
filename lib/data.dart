@@ -206,11 +206,17 @@ class ActionModel with ChangeNotifier {
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
       _searchQuery = input;
       _suggestList.clear();
-      for (MyAction action in _actionMap.values) {
-        if (action.canIdentifyBy(input)) {
-          _suggestList.add(action.suggestWidget);
-        }
+      
+      final matchingActions = _actionMap.values
+          .where((action) => action.canIdentifyBy(input))
+          .toList();
+      
+      matchingActions.sort((a, b) => b.frequency.compareTo(a.frequency));
+      
+      for (MyAction action in matchingActions) {
+        _suggestList.add(action.suggestWidget);
       }
+      
       notifyListeners();
     });
   }

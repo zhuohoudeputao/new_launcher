@@ -2407,6 +2407,105 @@ void main() {
       actionModel.runFirstAction('test');
       expect(actionModel.inputBoxController.text, '');
     });
+
+    test('generateSuggestList sorts by frequency', () async {
+      final actionModel = ActionModel();
+      final currentHour = DateTime.now().hour;
+      
+      final times1 = List.generate(24, (_) => 0);
+      times1[currentHour] = 10;
+      
+      final times2 = List.generate(24, (_) => 0);
+      times2[currentHour] = 5;
+      
+      final times3 = List.generate(24, (_) => 0);
+      times3[currentHour] = 20;
+      
+      final action1 = MyAction(
+        name: 'Low',
+        keywords: 'test',
+        action: () {},
+        times: times1,
+      );
+      final action2 = MyAction(
+        name: 'Medium',
+        keywords: 'test',
+        action: () {},
+        times: times2,
+      );
+      final action3 = MyAction(
+        name: 'High',
+        keywords: 'test',
+        action: () {},
+        times: times3,
+      );
+      
+      actionModel.addAction(action1);
+      actionModel.addAction(action2);
+      actionModel.addAction(action3);
+      
+      actionModel.generateSuggestList('test');
+      await Future.delayed(const Duration(milliseconds: 350));
+      
+      expect(actionModel.suggestList.length, 3);
+    });
+
+    test('suggestList order reflects frequency descending', () async {
+      final actionModel = ActionModel();
+      final currentHour = DateTime.now().hour;
+      
+      final times1 = List.generate(24, (_) => 0);
+      times1[currentHour] = 1;
+      
+      final times2 = List.generate(24, (_) => 0);
+      times2[currentHour] = 100;
+      
+      final actionLow = MyAction(
+        name: 'ActionLow',
+        keywords: 'common',
+        action: () {},
+        times: times1,
+      );
+      final actionHigh = MyAction(
+        name: 'ActionHigh',
+        keywords: 'common',
+        action: () {},
+        times: times2,
+      );
+      
+      actionModel.addAction(actionLow);
+      actionModel.addAction(actionHigh);
+      
+      actionModel.generateSuggestList('common');
+      await Future.delayed(const Duration(milliseconds: 350));
+      
+      expect(actionModel.suggestList.length, 2);
+    });
+
+    test('actions with same frequency maintain stable order', () async {
+      final actionModel = ActionModel();
+      
+      final action1 = MyAction(
+        name: 'First',
+        keywords: 'same',
+        action: () {},
+        times: List.generate(24, (_) => 5),
+      );
+      final action2 = MyAction(
+        name: 'Second',
+        keywords: 'same',
+        action: () {},
+        times: List.generate(24, (_) => 5),
+      );
+      
+      actionModel.addAction(action1);
+      actionModel.addAction(action2);
+      
+      actionModel.generateSuggestList('same');
+      await Future.delayed(const Duration(milliseconds: 350));
+      
+      expect(actionModel.suggestList.length, 2);
+    });
   });
 
   group('LogEntry tests', () {
