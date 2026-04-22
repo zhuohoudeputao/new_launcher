@@ -817,6 +817,110 @@ void main() {
     });
   });
 
+  group('WallpaperPickerButton tests', () {
+    testWidgets('renders label correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WallpaperPickerButton(
+              label: 'Test Wallpaper',
+              onTap: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Test Wallpaper'), findsOneWidget);
+      expect(find.text('Tap to select from gallery'), findsOneWidget);
+      expect(find.byIcon(Icons.photo_library), findsOneWidget);
+    });
+
+    testWidgets('calls onTap when button pressed', (WidgetTester tester) async {
+      bool tapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WallpaperPickerButton(
+              label: 'Test',
+              onTap: () => tapped = true,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byIcon(Icons.photo_library));
+      await tester.pump();
+
+      expect(tapped, true);
+    });
+  });
+
+  group('InfoCard tests', () {
+    testWidgets('renders title and subtitle', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: InfoCard(
+              title: 'Test Title',
+              subtitle: 'Test Subtitle',
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Test Title'), findsOneWidget);
+      expect(find.text('Test Subtitle'), findsOneWidget);
+    });
+
+    testWidgets('renders with icon', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: InfoCard(
+              title: 'Test',
+              icon: Icon(Icons.star),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.star), findsOneWidget);
+    });
+
+    testWidgets('calls onTap when tapped', (WidgetTester tester) async {
+      bool tapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: InfoCard(
+              title: 'Test',
+              onTap: () => tapped = true,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(Card));
+      await tester.pump();
+
+      expect(tapped, true);
+    });
+
+    testWidgets('subtitle defaults to empty string', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: InfoCard(
+              title: 'Test',
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Test'), findsOneWidget);
+    });
+  });
+
   group('InfoModel getFilteredList tests', () {
     late InfoModel infoModel;
 
