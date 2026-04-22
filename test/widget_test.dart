@@ -1750,6 +1750,31 @@ void main() {
       
       expect(newModel.getLaunchCount('SavedApp'), 2);
     }, skip: 'Requires SharedPreferences plugin mock');
+
+    test('getLastLaunchTime returns null for unknown app', () {
+      final statsModel = AppStatisticsModel();
+      expect(statsModel.getLastLaunchTime('Unknown'), null);
+    });
+
+    test('getLaunchCount returns 0 for unknown app', () {
+      final statsModel = AppStatisticsModel();
+      expect(statsModel.getLaunchCount('Unknown'), 0);
+    });
+
+    test('mostUsedApps returns empty list initially', () {
+      final statsModel = AppStatisticsModel();
+      expect(statsModel.mostUsedApps, isEmpty);
+    });
+
+    test('recordLaunch with same app updates time', () {
+      final statsModel = AppStatisticsModel();
+      statsModel.recordLaunch('App');
+      final time1 = statsModel.getLastLaunchTime('App');
+      await Future.delayed(Duration(milliseconds: 100));
+      statsModel.recordLaunch('App');
+      final time2 = statsModel.getLastLaunchTime('App');
+      expect(time2!.isAfter(time1!), true);
+    });
   });
 
   group('AppStatisticsCard tests', () {
