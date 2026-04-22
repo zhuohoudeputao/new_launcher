@@ -269,3 +269,31 @@ Remaining 6 issues are protected member warnings for notifyListeners in static m
 | 36 | 13 | 165 |
 | 37 | 0 | 165 |
 | 38 | 0 | 165 |
+
+## Weather Caching Feature (Loop 39)
+
+### 1. Offline Weather Support
+
+**Issue**: Weather data fetched fresh every time without caching, poor UX when offline.
+
+**Fix**: Added `WeatherCache` class with:
+- SharedPreferences-based persistence
+- 30-minute cache validity period
+- Automatic fallback to cached data on network/geolocation errors
+- "(cached)" indicator in subtitle when showing cached data
+
+### 2. Cache Implementation Details
+
+- `WeatherCache` class stores: temperature, windspeed, weathercode, latitude, longitude, timestamp
+- `_loadCachedWeather()` validates cache age before returning
+- `_saveWeatherCache()` persists successful API responses
+- Cache shown in 3 scenarios: geolocation error, HTTP error, network error
+
+## Test Summary (Final)
+
+| Loop | Tests Added | Total Tests |
+|------|-------------|-------------|
+| 36 | 13 | 165 |
+| 37 | 0 | 165 |
+| 38 | 4 | 169 |
+| 39 | 5 | 174 |
