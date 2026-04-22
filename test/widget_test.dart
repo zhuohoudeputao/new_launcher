@@ -203,6 +203,40 @@ void main() {
     });
   });
 
+  group('SettingsModel tests', () {
+    test('settingList is initially empty', () {
+      final settingsModel = SettingsModel();
+      expect(settingsModel.settingList.length, 0);
+    });
+
+    test('saveValue creates correct widget for bool', () async {
+      final settingsModel = SettingsModel();
+      await settingsModel.init();
+      settingsModel.saveValue('TestBool', true);
+      expect(settingsModel.settingList.any((w) => w is CustomBoolSettingWidget), true);
+    }, skip: 'Requires SharedPreferences plugin mock');
+
+    test('saveValue creates correct widget for double', () async {
+      final settingsModel = SettingsModel();
+      await settingsModel.init();
+      settingsModel.saveValue('TestDouble', 0.5);
+      expect(settingsModel.settingList.length, greaterThan(0));
+    }, skip: 'Requires SharedPreferences plugin mock');
+
+    test('getValue returns default for missing key', () async {
+      final settingsModel = SettingsModel();
+      await settingsModel.init();
+      final value = await settingsModel.getValue('NonexistentKey', 'defaultValue');
+      expect(value, 'defaultValue');
+    }, skip: 'Requires SharedPreferences plugin mock');
+
+    test('init loads existing preferences', () async {
+      final settingsModel = SettingsModel();
+      await settingsModel.init();
+      expect(settingsModel.settingList, isNotNull);
+    }, skip: 'Requires SharedPreferences plugin mock');
+  });
+
   group('MyAction tests', () {
     test('canIdentifyBy returns true for matching keyword', () {
       final action = MyAction(

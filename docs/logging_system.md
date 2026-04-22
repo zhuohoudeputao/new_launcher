@@ -109,6 +109,5 @@ logger.debug("Operation took ${stopwatch.elapsedMilliseconds}ms", source: "Perfo
 
 - Log persistence to file
 - Log export functionality
-- Log viewer UI
 - Crash reporting
 - Analytics integration

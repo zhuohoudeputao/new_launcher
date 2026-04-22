@@ -93,22 +93,6 @@ Widget customTextSettingWidget(
   );
 }
 
-// Widget customBoolSettingWidget(
-//     {String key, bool value, void Function(bool) onChanged}) {
-//   return Card(
-//     child: ListTile(
-//       // leading: icon,
-//       title: Text(
-//         key,
-//         textAlign: TextAlign.left,
-//         style: TextStyle(fontWeight: FontWeight.bold),
-//       ),
-//       subtitle: Text("is " + value.toString()),
-//       trailing: Switch(value: value, onChanged: onChanged),
-//     ),
-//   );
-// }
-
 class CustomBoolSettingWidget extends StatefulWidget {
   final String settingKey;
   final bool value;

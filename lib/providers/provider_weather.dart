@@ -89,7 +89,9 @@ Future<void> _initActions() async {
   await _provideWeather();
 }
 
-Future<void> _update() async {}
+Future<void> _update() async {
+  await _provideWeather();
+}
 
 Future<void> _provideWeather() async {
   double latitude = 40.71;
