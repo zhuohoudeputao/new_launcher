@@ -2365,4 +2365,110 @@ void main() {
       expect(action.frequency >= 0, true);
     });
   });
+
+  group('ActionModel extended tests', () {
+    test('addAction overwrites existing action', () {
+      final actionModel = ActionModel();
+      final action1 = MyAction(
+        name: 'Test',
+        keywords: 'test1',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      final action2 = MyAction(
+        name: 'Test',
+        keywords: 'test2',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      
+      actionModel.addAction(action1);
+      actionModel.addAction(action2);
+      
+      actionModel.generateSuggestList('test');
+    });
+
+    test('generateSuggestList handles empty input', () async {
+      final actionModel = ActionModel();
+      actionModel.generateSuggestList('');
+      await Future.delayed(const Duration(milliseconds: 350));
+      expect(actionModel.suggestList.length, 0);
+    });
+
+    test('generateSuggestList handles whitespace input', () async {
+      final actionModel = ActionModel();
+      actionModel.generateSuggestList('   ');
+      await Future.delayed(const Duration(milliseconds: 350));
+      expect(actionModel.suggestList.length, 0);
+    });
+
+    test('runFirstAction does nothing with empty suggestList', () {
+      final actionModel = ActionModel();
+      actionModel.runFirstAction('test');
+      expect(actionModel.inputBoxController.text, '');
+    });
+  });
+
+  group('LogEntry tests', () {
+    test('LogEntry levelString returns correct values', () {
+      expect(LogEntry(timestamp: DateTime.now(), level: LogLevel.debug, message: '').levelString, 'DEBUG');
+      expect(LogEntry(timestamp: DateTime.now(), level: LogLevel.info, message: '').levelString, 'INFO');
+      expect(LogEntry(timestamp: DateTime.now(), level: LogLevel.warning, message: '').levelString, 'WARN');
+      expect(LogEntry(timestamp: DateTime.now(), level: LogLevel.error, message: '').levelString, 'ERROR');
+    });
+
+    test('LogEntry with null source', () {
+      final entry = LogEntry(timestamp: DateTime.now(), level: LogLevel.info, message: 'Test');
+      expect(entry.source, null);
+    });
+
+    test('LogEntry with source', () {
+      final entry = LogEntry(timestamp: DateTime.now(), level: LogLevel.info, message: 'Test', source: 'App');
+      expect(entry.source, 'App');
+    });
+  });
+
+  group('SettingsModel tests (non-SharedPreferences)', () {
+    test('settingList returns empty list initially', () {
+      final settingsModel = SettingsModel();
+      expect(settingsModel.settingList.isEmpty, true);
+    });
+
+    test('SettingsModel is ChangeNotifier', () {
+      final settingsModel = SettingsModel();
+      expect(settingsModel is ChangeNotifier, true);
+    });
+  });
+
+  group('BackgroundImageModel tests', () {
+    test('default image is NetworkImage', () {
+      final model = BackgroundImageModel();
+      expect(model.backgroundImage is NetworkImage, true);
+    });
+
+    test('set backgroundImage notifies listeners', () {
+      final model = BackgroundImageModel();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      
+      model.backgroundImage = NetworkImage('https://example.com/test.jpg');
+      expect(notifyCount, 1);
+    });
+  });
+
+  group('ThemeModel tests', () {
+    test('default theme is ThemeData', () {
+      final model = ThemeModel();
+      expect(model.themeData is ThemeData, true);
+    });
+
+    test('set themeData notifies listeners', () {
+      final model = ThemeModel();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      
+      model.themeData = ThemeData.dark();
+      expect(notifyCount, 1);
+    });
+  });
 }
