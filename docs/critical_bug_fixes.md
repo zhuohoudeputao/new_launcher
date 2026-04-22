@@ -272,6 +272,8 @@ Remaining 6 issues are protected member warnings for notifyListeners in static m
 | 39 | 5 | 174 |
 | 40 | 14 | 188 |
 | 41 | 10 | 198 |
+| 42 | 13 | 211 |
+| 43 | 17 | 228 |
 
 ## Weather Caching Feature (Loop 39)
 
