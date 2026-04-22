@@ -105,17 +105,55 @@ Settings auto-saved via `SharedPreferences`:
   - Manual refresh button
   - Cache for 30 minutes
   - Geocoding API for location name
-- **Theme**: Manages card colors, dark mode, transparency
+  - Uses `Card.filled` for Material 3 style
+- **Theme**: Manages Material 3 theme with dynamic colors
+  - Uses `ColorScheme.fromSeed()` with Indigo seed color
+  - Light/dark/system mode support
+  - SegmentedButton for mode selection (Material 3 component)
+  - Transparent card backgrounds with configurable opacity
 - **Wallpaper**: Background image selection
-- **Time**: Local time display
+  - WallpaperPickerButton uses Card.filled with IconButton.styleFrom()
+- **Time**: Local time display with optional seconds
 - **App**: App launcher with device_apps
-  - `AllAppsCard`: Horizontal GridView showing all installed apps (compact view)
-  - `RecentlyUsedAppsCard`: Shows recently launched apps
-  - `AppStatisticsCard`: Displays top 5 most used apps with launch counts and timestamps
-  - Top 20 apps displayed as individual cards for quick access (performance optimized)
-  - ListView uses itemExtent and repaintBoundaries for smooth scrolling
-  - Models registered as providers: `appModel`, `allAppsModel`, `appStatisticsModel`
+  - `AllAppsCard`: Card.outlined with GridView (Material 3 secondary style)
+  - `RecentlyUsedAppsCard`: Card.filled (Material 3 primary style)
+  - `AppStatisticsCard`: Card.outlined with statistics display
+  - RepaintBoundary and cacheWidth for icon performance
+  - Models: `appModel`, `allAppsModel`, `appStatisticsModel`
 - **System**: System-related actions
+  - Quick launch: camera, settings, clock, calculator
+
+## Material 3 Design System
+
+The app uses Material 3 design system with the following components:
+
+### Color Scheme
+- Dynamic colors from `ColorScheme.fromSeed(seedColor: Colors.indigo)`
+- Light and dark theme variants
+- All hardcoded colors replaced with ColorScheme properties
+
+### Card Variants
+- `Card.filled()` - Primary content (search input, weather, recent apps)
+- `Card.outlined()` - Secondary content (all apps, app statistics)
+- Standard Card with `elevation: 0` - Settings items
+
+### Buttons
+- `ElevatedButton` with `elevation: 0` for suggestions (Material 3 tonal style)
+- `SegmentedButton` for theme mode selection (new Material 3 component)
+
+### Components Updated
+- Theme mode selector uses SegmentedButton with icons
+- Log viewer uses ColorScheme for level colors
+- Settings page AppBar uses scrolledUnderElevation
+- All IconButtons use IconButton.styleFrom() with ColorScheme
+
+### Benefits
+- Consistent visual hierarchy
+- Dynamic color adaptation
+- Modern Material 3 appearance
+- Better accessibility compliance
+
+See `docs/material3_upgrade.md` for detailed implementation guide.
 
 ## Dependencies
 
@@ -143,6 +181,8 @@ Test coverage includes:
 - `ThemeModel` and `BackgroundImageModel` (notifications)
 - `AppStatisticsModel` class (launch tracking, sorting, entry limits, persistence)
 - UI widget tests (`customInfoWidget`, `CustomBoolSettingWidget`, `AppStatisticsCard`, etc.)
+- Material 3 component tests (SegmentedButton, Card.filled/outlined, ElevatedButton)
+- ColorScheme integration tests (Material 3 enabled, color generation)
 
 ## Documentation
 
@@ -156,6 +196,7 @@ Technical documentation is available in `docs/`:
 - `card_list_feature.md` - Circular list implementation
 - `app_card_feature.md` - App display cards
 - `app_statistics_feature.md` - App usage statistics tracking and display
+- `material3_upgrade.md` - Material 3 implementation guide
 
 ## Notice
 DO NOT EDIT task*.md
