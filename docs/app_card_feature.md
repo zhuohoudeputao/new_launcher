@@ -65,24 +65,37 @@ final apps = await DeviceApps.getInstalledApplications(
 
 ### Individual App Cards
 
-All installed apps are added as individual info cards using batch adding for performance:
+Top 20 apps are added as individual info cards for quick access (performance optimization):
 ```dart
-final appWidgets = allAppsWithIcons.map((app) => 
+final topApps = allAppsWithIcons.take(20).toList();
+final appWidgets = topApps.map((app) => 
   MapEntry("app_${app.packageName}", _buildAppCard(app))
 ).toList();
 final appTitles = Map.fromEntries(
-  allAppsWithIcons.map((app) => MapEntry("app_${app.packageName}", app.appName))
+  topApps.map((app) => MapEntry("app_${app.packageName}", app.appName))
 );
 Global.infoModel.addInfoWidgetsBatch(appWidgets, titles: appTitles);
 ```
 
-Using `addInfoWidgetsBatch` instead of calling `addInfoWidget` for each app ensures only one `notifyListeners()` call, improving performance when loading many apps.
+**Performance Note:** Only top 20 apps are added as individual cards to prevent memory bloat and UI lag. All apps are still accessible through:
+- **AllAppsCard**: Horizontal GridView showing all apps
+- **Search**: Type app name to find any app
+- **Actions**: Each app has a searchable action for quick launch
+
+Using `addInfoWidgetsBatch` ensures only one `notifyListeners()` call, improving performance.
 
 Each app card:
 - Displays app icon and name
 - Shows package name as subtitle
 - Tap to launch the app
 - Searchable by app name or key
+
+### ListView Performance Optimization
+
+The main ListView.builder uses:
+- `itemExtent: 80`: Fixed item height for better scroll performance
+- `addRepaintBoundaries: true`: Caches rendered widgets
+- `cacheExtent: 500`: Pre-caches items for smoother scrolling
 
 ### AllAppsCard (Compact View)
 

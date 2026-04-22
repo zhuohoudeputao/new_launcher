@@ -107,7 +107,8 @@ Settings auto-saved via `SharedPreferences`:
 - **App**: App launcher with device_apps
   - `AllAppsCard`: Horizontal GridView showing all installed apps (compact view)
   - `RecentlyUsedAppsCard`: Shows recently launched apps
-  - All installed apps displayed as individual cards in the circular list
+  - Top 20 apps displayed as individual cards for quick access (performance optimized)
+  - ListView uses itemExtent and repaintBoundaries for smooth scrolling
   - Models registered as providers: `appModel`, `allAppsModel`
 - **System**: System-related actions
 

@@ -178,24 +178,25 @@ class _MyHomePageState extends State<MyHomePage> {
                   // put away the keyboard
                   FocusScope.of(context).requestFocus(FocusNode());
                 },
-                child: ListView.builder(
-                  controller: _circularListController,
-                  cacheExtent: 500,
-                  itemCount: _circularListController.virtualCount,
-                  addAutomaticKeepAlives: false,
-                  addRepaintBoundaries: false,
-                  itemBuilder: (BuildContext context, int virtualIndex) {
-                    final actualIndex = _circularListController.getActualIndex(virtualIndex);
-                    if (actualIndex >= infoList.length) {
-                      return SizedBox.shrink();
-                    }
-                    final widget = infoList[infoList.length - actualIndex - 1];
-                    return widget;
-                  },
-                  scrollDirection: Axis.vertical,
-                  reverse: true,
-                  physics: BouncingScrollPhysics(),
-                ),
+child: ListView.builder(
+                   controller: _circularListController,
+                   cacheExtent: 500,
+                   itemExtent: 80,
+                   itemCount: _circularListController.virtualCount,
+                   addAutomaticKeepAlives: false,
+                   addRepaintBoundaries: true,
+                   itemBuilder: (BuildContext context, int virtualIndex) {
+                     final actualIndex = _circularListController.getActualIndex(virtualIndex);
+                     if (actualIndex >= infoList.length) {
+                       return SizedBox.shrink();
+                     }
+                     final widget = infoList[infoList.length - actualIndex - 1];
+                     return widget;
+                   },
+                   scrollDirection: Axis.vertical,
+                   reverse: true,
+                   physics: BouncingScrollPhysics(),
+                 ),
               )),
             ],
           ),
