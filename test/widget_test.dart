@@ -1766,7 +1766,7 @@ void main() {
       expect(statsModel.mostUsedApps, isEmpty);
     });
 
-    test('recordLaunch with same app updates time', () {
+    test('recordLaunch with same app updates time', () async {
       final statsModel = AppStatisticsModel();
       statsModel.recordLaunch('App');
       final time1 = statsModel.getLastLaunchTime('App');
