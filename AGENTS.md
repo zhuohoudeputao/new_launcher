@@ -32,6 +32,7 @@ flutter.sdk=/home/linzuxuan/app/flutter
 ## Architecture
 
 - **Entry point**: `lib/main.dart` - `MyApp` widget wraps `MyHomePage`
+- **Card list**: `CircularListController` in main.dart handles circular scrolling
 - **Providers system**: `lib/providers/*.dart` - Each provider adds services (weather, apps, wallpaper, etc.)
 - **Data layer**: `lib/data.dart` - Contains `Global`, `ActionModel`, `InfoModel`, `SettingsModel`, `BackgroundImageModel`, `ThemeModel`
 - **Action definition**: `lib/action.dart` - `MyAction` class with keywords, action function, and suggest widget
