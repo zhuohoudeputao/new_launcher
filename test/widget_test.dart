@@ -346,6 +346,44 @@ void main() {
       
       expect(action.suggestWidget, isA<Widget>());
     });
+
+    test('MyAction stores name correctly', () {
+      final action = MyAction(
+        name: 'MyActionName',
+        keywords: 'test',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      expect(action.name, 'MyActionName');
+    });
+
+    test('MyAction keywords are lowercased', () {
+      final action = MyAction(
+        name: 'Test',
+        keywords: 'UPPERCASE Keywords',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      expect(action.canIdentifyBy('uppercase'), true);
+      expect(action.canIdentifyBy('KEYWORDS'), true);
+    });
+
+    test('multiple action calls increment frequency correctly', () async {
+      final times = List.generate(24, (_) => 0);
+      final currentHour = DateTime.now().hour;
+      final action = MyAction(
+        name: 'Test',
+        keywords: 'test',
+        action: () {},
+        times: times,
+      );
+      
+      await action.action();
+      await action.action();
+      await action.action();
+      
+      expect(times[currentHour], 3);
+    });
   });
 
   group('MyProvider tests', () {
