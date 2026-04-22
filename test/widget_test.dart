@@ -630,6 +630,25 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 350));
       expect(actionModel.searchQuery, '');
     });
+
+    test('addActions stores multiple actions', () async {
+      final actionModel = ActionModel();
+      final actions = [
+        MyAction(name: 'A', keywords: 'a', action: () {}, times: List.generate(24, (_) => 0)),
+        MyAction(name: 'B', keywords: 'b', action: () {}, times: List.generate(24, (_) => 0)),
+      ];
+      
+      await actionModel.addActions(actions);
+      
+      actionModel.generateSuggestList('a');
+      await Future.delayed(const Duration(milliseconds: 350));
+      expect(actionModel.suggestList.length, 1);
+    });
+
+    test('inputBoxController exists', () {
+      final actionModel = ActionModel();
+      expect(actionModel.inputBoxController, isA<TextEditingController>());
+    });
   });
 
   group('customInfoWidget tests', () {
