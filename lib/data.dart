@@ -10,6 +10,7 @@ import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/setting.dart';
+import 'package:new_launcher/logger.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/providers/provider_app.dart';
@@ -137,6 +138,7 @@ class Global {
   //__________________________________________________Action_and_Suggestion
   /// A model for managing actions
   static ActionModel actionModel = ActionModel();
+  static LoggerModel loggerModel = LoggerModel();
   static String? input;
 
   static Future<void> addActions(List<MyAction> actions) async {
@@ -186,11 +188,13 @@ class ActionModel with ChangeNotifier {
 
   /// Initialize all providers
   Future<void> init() async {
+    Global.loggerModel.info("Initializing providers", source: "Global");
     for (MyProvider provider in Global.providerList) {
       try {
         await provider.init();
+        Global.loggerModel.info("Provider ${provider.name} initialized", source: "Global");
       } catch (e) {
-        print("Provider ${provider.name} init error: $e");
+        Global.loggerModel.error("Provider ${provider.name} init error: $e", source: "Global");
       }
     }
   }

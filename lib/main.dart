@@ -26,6 +26,7 @@ void main() {
           ChangeNotifierProvider.value(value: Global.settingsModel),
           ChangeNotifierProvider.value(value: Global.infoModel),
           ChangeNotifierProvider.value(value: Global.actionModel),
+          ChangeNotifierProvider.value(value: Global.loggerModel),
         ],
         child: MyApp(),
       )));

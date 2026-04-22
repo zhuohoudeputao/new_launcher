@@ -112,7 +112,7 @@ Future<void> _provideWeather() async {
       }
     }
   } catch (e) {
-    print("Weather geolocation error: $e");
+    Global.loggerModel.warning("Weather geolocation error: $e", source: "Weather");
   }
 
   try {
