@@ -13,23 +13,48 @@ import 'package:new_launcher/data.dart';
 /// with informations. The most important part of a "info" should be
 /// displayed on title area. And the second important part is displayed
 /// on subtitle.
+class InfoCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final Widget? icon;
+  final void Function()? onTap;
+
+  const InfoCard({
+    Key? key,
+    required this.title,
+    this.subtitle = "",
+    this.icon,
+    this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Theme.of(context).cardColor,
+      child: ListTile(
+        title: Text(
+          title,
+          textAlign: TextAlign.left,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(subtitle),
+        onTap: onTap,
+        trailing: icon,
+      ),
+    );
+  }
+}
+
 Widget customInfoWidget(
     {required String title,
     String subtitle = "",
     Widget? icon,
     void Function()? onTap}) {
-  return Card(
-    color: Colors.white.withOpacity(Global.cardOpacity),
-    child: ListTile(
-      title: Text(
-        title,
-        textAlign: TextAlign.left,
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      subtitle: Text(subtitle),
-      onTap: onTap,
-      trailing: icon,
-    ),
+  return InfoCard(
+    title: title,
+    subtitle: subtitle,
+    icon: icon,
+    onTap: onTap,
   );
 }
 

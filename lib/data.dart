@@ -100,6 +100,7 @@ class Global {
     final provider = Global.providerList.firstWhere((p) => p.name == "Theme");
     await provider.init();
     Global.themeModel.notifyListeners();
+    Global.infoModel.notifyListeners();
   }
 
   //_____________________________________________________________Opacity
@@ -354,9 +355,7 @@ class SettingsModel with ChangeNotifier {
           onChanged: (newValue) async {
             Global.cardOpacityValue = newValue;
             saveValue(key, newValue);
-            final provider = Global.providerList.firstWhere((p) => p.name == "Theme");
-            await provider.init();
-            Global.themeModel.notifyListeners();
+            await Global._refreshTheme();
             notifyListeners();
           });
     } else if (value is String) {

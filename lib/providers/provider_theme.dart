@@ -58,4 +58,6 @@ Future<void> _provideTheme() async {
       titleMedium: TextStyle(color: textColor, fontWeight: FontWeight.bold),
     ),
   ));
+  
+  Global.infoModel.notifyListeners();
 }
