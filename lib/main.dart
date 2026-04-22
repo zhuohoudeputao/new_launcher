@@ -166,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: TextField(
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    hintText: "Search apps, settings...",
+                    hintText: "Search... Try 'weather', 'camera', 'settings'",
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
