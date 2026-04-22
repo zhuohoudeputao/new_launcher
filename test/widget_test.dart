@@ -360,6 +360,45 @@ void main() {
       expect(provider.name, 'Test');
     });
 
+    test('MyProvider stores provideActions function', () {
+      var called = false;
+      final provider = MyProvider(
+        name: 'Test',
+        provideActions: () => called = true,
+        initActions: () {},
+        update: () {},
+      );
+      
+      provider.provideActions();
+      expect(called, true);
+    });
+
+    test('MyProvider stores initActions function', () {
+      var called = false;
+      final provider = MyProvider(
+        name: 'Test',
+        provideActions: () {},
+        initActions: () => called = true,
+        update: () {},
+      );
+      
+      provider.initActions();
+      expect(called, true);
+    });
+
+    test('MyProvider stores update function', () {
+      var called = false;
+      final provider = MyProvider(
+        name: 'Test',
+        provideActions: () {},
+        initActions: () {},
+        update: () => called = true,
+      );
+      
+      provider.update();
+      expect(called, true);
+    });
+
     test('MyProvider init calls provideActions and initActions when enabled', () async {
       var provideCalled = false;
       var initCalled = false;
@@ -376,6 +415,18 @@ void main() {
       expect(provideCalled, true);
       expect(initCalled, true);
     }, skip: 'Requires SharedPreferences plugin mock');
+
+    test('MyProvider name can be used as settings key prefix', () {
+      final provider = MyProvider(
+        name: 'Weather',
+        provideActions: () {},
+        initActions: () {},
+        update: () {},
+      );
+      
+      final settingsKey = '${provider.name}.Enabled';
+      expect(settingsKey, 'Weather.Enabled');
+    });
   });
 
   group('ThemeModel tests', () {
