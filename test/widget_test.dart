@@ -1499,6 +1499,18 @@ void main() {
       infoModel.addInfoWidget('app_test', customInfoWidget(title: 'Updated App'), title: 'Updated App');
       expect(infoModel.length, 1);
     });
+
+    test('InfoModel getFilteredList handles empty query', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('test', Container());
+      expect(infoModel.getFilteredList('').length, 1);
+    });
+
+    test('InfoModel getFilteredList handles null-like empty', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('test', Container());
+      expect(infoModel.getFilteredList('   ').length, 1);
+    });
   });
 
   group('InfoModel batch adding tests', () {
