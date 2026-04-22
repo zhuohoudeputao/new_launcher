@@ -11,6 +11,7 @@ import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // a provider provides some actions
 MyProvider providerApp = MyProvider(
@@ -70,6 +71,7 @@ Future<void> _provideActions() async {
 }
 
 Future<void> _initActions() async {
+  await appStatisticsModel.init();
   Global.infoModel.addInfoWidget(
       "AppStatistics",
       ChangeNotifierProvider.value(
@@ -125,6 +127,10 @@ class AppStatisticsModel extends ChangeNotifier {
   final Map<String, DateTime> _lastLaunchTime = {};
   
   static const int maxStatsEntries = 50;
+  static const String _countsKey = 'AppStatistics.LaunchCounts';
+  static const String _timesKey = 'AppStatistics.LastLaunchTimes';
+  
+  SharedPreferences? _prefs;
   
   List<String> get mostUsedApps {
     final sorted = _launchCounts.entries.toList()
@@ -142,6 +148,71 @@ class AppStatisticsModel extends ChangeNotifier {
   
   int get uniqueApps => _launchCounts.length;
   
+  Future<void> init() async {
+    _prefs = await SharedPreferences.getInstance();
+    await _loadPersistedStats();
+  }
+  
+  Future<void> _loadPersistedStats() async {
+    final prefs = _prefs;
+    if (prefs == null) return;
+    
+    final countsData = prefs.getString(_countsKey);
+    final timesData = prefs.getString(_timesKey);
+    
+    if (countsData != null) {
+      try {
+        final parts = countsData.split(',');
+        for (final part in parts) {
+          if (part.isEmpty) continue;
+          final kv = part.split(':');
+          if (kv.length == 2) {
+            _launchCounts[kv[0]] = int.parse(kv[1]);
+          }
+        }
+      } catch (e) {
+        Global.loggerModel.warning("Failed to parse launch counts: $e", source: "AppStatistics");
+      }
+    }
+    
+    if (timesData != null) {
+      try {
+        final parts = timesData.split(',');
+        for (final part in parts) {
+          if (part.isEmpty) continue;
+          final kv = part.split(':');
+          if (kv.length == 2) {
+            _lastLaunchTime[kv[0]] = DateTime.parse(kv[1]);
+          }
+        }
+      } catch (e) {
+        Global.loggerModel.warning("Failed to parse launch times: $e", source: "AppStatistics");
+      }
+    }
+    
+    if (_launchCounts.isNotEmpty) {
+      Global.loggerModel.info("Loaded ${_launchCounts.length} persisted app statistics", source: "AppStatistics");
+    }
+    
+    notifyListeners();
+  }
+  
+  Future<void> _saveStats() async {
+    final prefs = _prefs;
+    if (prefs == null) return;
+    
+    final countsStr = _launchCounts.entries
+      .map((e) => '${e.key}:${e.value}')
+      .join(',');
+    
+    final timesStr = _lastLaunchTime.entries
+      .map((e) => '${e.key}:${e.value.toIso8601String()}')
+      .join(',');
+    
+    await prefs.setString(_countsKey, countsStr);
+    await prefs.setString(_timesKey, timesStr);
+  }
+  
   void recordLaunch(String appName) {
     _launchCounts[appName] = (_launchCounts[appName] ?? 0) + 1;
     _lastLaunchTime[appName] = DateTime.now();
@@ -154,12 +225,14 @@ class AppStatisticsModel extends ChangeNotifier {
     }
     
     notifyListeners();
+    _saveStats();
   }
   
   void clearStats() {
     _launchCounts.clear();
     _lastLaunchTime.clear();
     notifyListeners();
+    _saveStats();
   }
   
   void loadStats(Map<String, int> counts, Map<String, DateTime> times) {
@@ -172,6 +245,7 @@ class AppStatisticsModel extends ChangeNotifier {
       _lastLaunchTime[key] = value;
     });
     notifyListeners();
+    _saveStats();
   }
 }
 

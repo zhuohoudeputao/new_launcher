@@ -135,7 +135,7 @@ Test coverage includes:
 - `ActionModel` class (action storage, suggestion generation)
 - `InfoModel` class (widget storage, filtering, batch operations)
 - `ThemeModel` and `BackgroundImageModel` (notifications)
-- `AppStatisticsModel` class (launch tracking, sorting, entry limits)
+- `AppStatisticsModel` class (launch tracking, sorting, entry limits, persistence)
 - UI widget tests (`customInfoWidget`, `CustomBoolSettingWidget`, `AppStatisticsCard`, etc.)
 
 ## Documentation

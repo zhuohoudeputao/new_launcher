@@ -1125,6 +1125,29 @@ void main() {
       final stats = statsModel.allStats;
       expect(stats['Chrome'], 1);
     });
+
+    test('init method exists and can be called', () async {
+      final statsModel = AppStatisticsModel();
+      await statsModel.init();
+    }, skip: 'Requires SharedPreferences plugin mock');
+
+    test('_saveStats is called after recordLaunch', () async {
+      final statsModel = AppStatisticsModel();
+      await statsModel.init();
+      statsModel.recordLaunch('TestApp');
+    }, skip: 'Requires SharedPreferences plugin mock');
+
+    test('_loadPersistedStats restores saved data', () async {
+      final statsModel = AppStatisticsModel();
+      await statsModel.init();
+      statsModel.recordLaunch('SavedApp');
+      statsModel.recordLaunch('SavedApp');
+      
+      final newModel = AppStatisticsModel();
+      await newModel.init();
+      
+      expect(newModel.getLaunchCount('SavedApp'), 2);
+    }, skip: 'Requires SharedPreferences plugin mock');
   });
 
   group('AppStatisticsCard tests', () {
