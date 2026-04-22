@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:new_launcher/data.dart';
 import 'package:provider/provider.dart';
@@ -45,8 +44,8 @@ class SettingState extends State<Setting> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withOpacity(0.3),
-                Colors.black.withOpacity(0.7),
+                Colors.black.withValues(alpha: 0.3),
+                Colors.black.withValues(alpha: 0.7),
               ],
             ),
           ),

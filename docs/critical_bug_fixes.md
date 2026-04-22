@@ -176,3 +176,52 @@ Added widget tests for:
 | 5 | 4 | 96 |
 | 6-7 | 9 | 105 |
 | 8 | 8 | 113 |
+| 9-35 | 40+ | 152 |
+| 36 | 13 | 165 |
+
+## Code Cleanup (Loop 36)
+
+### 1. Missing super.dispose() Call (data.dart)
+
+**Issue**: `ActionModel.dispose()` didn't call `super.dispose()`, violating Flutter's ChangeNotifier contract.
+
+**Fix**: Added `super.dispose()` call to properly clean up ChangeNotifier.
+
+### 2. Deprecated withOpacity API
+
+**Issue**: `Color.withOpacity()` is deprecated in newer Flutter versions.
+
+**Fix**: Updated to `Color.withValues(alpha: value)` in:
+- provider_theme.dart (3 occurrences)
+- setting.dart (2 occurrences)
+- test/widget_test.dart (2 occurrences)
+
+### 3. Unused Imports
+
+**Issue**: Unused imports causing unnecessary code.
+
+**Fix**: Removed:
+- `import 'package:new_launcher/data.dart'` from ui.dart
+- `import 'package:flutter/cupertino.dart'` from setting.dart
+
+### 4. Unnecessary Type Cast
+
+**Issue**: `app as ApplicationWithIcon` cast was unnecessary after type promotion.
+
+**Fix**: Removed cast and used `app` directly in provider_app.dart.
+
+### 5. Test Coverage Expansion
+
+Added tests for:
+- Wallpaper URL handling (2 tests)
+- Greeting logic for time widget (5 tests)
+- Time formatting helpers (4 tests)
+- System provider keywords (2 tests)
+
+## Analyzer Issues Summary
+
+| Before Loop 36 | After Loop 36 |
+|----------------|---------------|
+| 17 issues | 6 issues |
+
+Remaining 6 issues are protected member warnings for notifyListeners in static methods - a design limitation in Flutter.

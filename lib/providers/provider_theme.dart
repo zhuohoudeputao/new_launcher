@@ -35,7 +35,7 @@ Brightness _getSystemBrightness() {
 
 Future<void> _provideTheme() async {
   Brightness brightness = Brightness.light;
-  Color cardColor = Colors.white.withOpacity(Global.cardOpacity);
+  Color cardColor = Colors.white.withValues(alpha: Global.cardOpacity);
   Color textColor = Colors.black87;
 
   String modeKey = "Theme.Mode";
@@ -54,12 +54,12 @@ Future<void> _provideTheme() async {
   bool transparent = await Global.getValue(transparentKey, true);
 
   if (brightness == Brightness.dark) {
-    cardColor = Colors.grey[850]?.withOpacity(Global.cardOpacity) ?? Colors.grey;
+    cardColor = Colors.grey[850]?.withValues(alpha: Global.cardOpacity) ?? Colors.grey;
     textColor = Colors.white;
   }
 
   if (transparent && brightness == Brightness.light) {
-    cardColor = Colors.white.withOpacity(Global.cardOpacity);
+    cardColor = Colors.white.withValues(alpha: Global.cardOpacity);
   }
 
   Global.setTheme(ThemeData(

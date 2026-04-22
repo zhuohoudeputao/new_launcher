@@ -205,6 +205,7 @@ class ActionModel with ChangeNotifier {
 
   void dispose() {
     _debounceTimer?.cancel();
+    super.dispose();
   }
 
   void runFirstAction(String input) {

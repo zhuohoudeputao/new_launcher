@@ -29,28 +29,27 @@ Future<void> _provideActions() async {
       onlyAppsWithLaunchIntent: false);
   for (var app in apps) {
     if (app is! ApplicationWithIcon) continue;
-    final appWithIcon = app as ApplicationWithIcon;
-    allAppsWithIcons.add(appWithIcon);
+    allAppsWithIcons.add(app);
     actions.add(MyAction(
-      name: appWithIcon.appName,
+      name: app.appName,
       keywords: "launch " +
-          appWithIcon.appName.toLowerCase() +
+          app.appName.toLowerCase() +
           " " +
-          appWithIcon.packageName.toLowerCase(),
+          app.packageName.toLowerCase(),
       action: () async {
-        DeviceApps.openApp(appWithIcon.packageName);
-        appStatisticsModel.recordLaunch(appWithIcon.appName);
-        Global.loggerModel.info("Launched app: ${appWithIcon.appName}", source: "App");
+        DeviceApps.openApp(app.packageName);
+        appStatisticsModel.recordLaunch(app.appName);
+        Global.loggerModel.info("Launched app: ${app.appName}", source: "App");
         appModel.addApp(
-            appWithIcon.appName,
+            app.appName,
             _customButton(
                 Image.memory(
-                  appWithIcon.icon,
+                  app.icon,
                   width: 60,
                   height: 60,
                 ), () {
-              DeviceApps.openApp(appWithIcon.packageName);
-              appStatisticsModel.recordLaunch(appWithIcon.appName);
+              DeviceApps.openApp(app.packageName);
+              appStatisticsModel.recordLaunch(app.appName);
             }));
       },
       times: List.generate(24, (index) => 0),

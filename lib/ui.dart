@@ -6,7 +6,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:new_launcher/data.dart';
 import 'package:new_launcher/logger.dart';
 import 'package:provider/provider.dart';
 // Contains some custom widgets here

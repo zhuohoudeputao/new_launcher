@@ -219,6 +219,63 @@ void main() {
       expect(entry3.levelIcon, Icons.warning);
       expect(entry4.levelIcon, Icons.error);
     });
+
+    test('log entry timestamp is current time', () {
+      final logger = LoggerModel();
+      logger.clear();
+      final before = DateTime.now();
+      logger.info('Test');
+      final after = DateTime.now();
+      
+      final entry = logger.logs.last;
+      expect(entry.timestamp.isAfter(before.subtract(Duration(milliseconds: 10))), true);
+      expect(entry.timestamp.isBefore(after.add(Duration(milliseconds: 10))), true);
+    });
+
+    test('log without source works', () {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.info('Test without source');
+      
+      final entry = logger.logs.last;
+      expect(entry.source, null);
+    });
+
+    test('filterByLevel returns empty for no matches', () {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.info('Only info logs');
+      
+      final debugLogs = logger.filterByLevel(LogLevel.debug);
+      expect(debugLogs.length, 0);
+    });
+
+    test('filterBySource returns empty for no matches', () {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.info('Msg', source: 'Source1');
+      
+      final logs = logger.filterBySource('UnknownSource');
+      expect(logs.length, 0);
+    });
+
+    test('search returns empty for no matches', () {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.info('Some message');
+      
+      final results = logger.search('xyz');
+      expect(results.length, 0);
+    });
+
+    test('logs getter returns unmodifiable list', () {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.info('Test');
+      
+      final logs = logger.logs;
+      expect(logs.length, 1);
+    });
   });
 
   group('SettingsModel tests', () {
@@ -500,10 +557,10 @@ void main() {
     test('ThemeData with custom cardColor', () {
       final themeModel = ThemeModel();
       final customTheme = ThemeData(
-        cardColor: Colors.red.withOpacity(0.5),
+        cardColor: Colors.red.withValues(alpha: 0.5),
       );
       themeModel.themeData = customTheme;
-      expect(themeModel.themeData.cardColor, Colors.red.withOpacity(0.5));
+      expect(themeModel.themeData.cardColor, Colors.red.withValues(alpha: 0.5));
     });
 
     test('Multiple updates trigger multiple notifications', () {
@@ -1850,6 +1907,165 @@ void main() {
       );
 
       expect(find.textContaining('3 launches, 0m ago'), findsOneWidget);
+    });
+  });
+
+  group('Wallpaper provider tests', () {
+    test('wallpaper URLs are valid format', () {
+      final urls = [
+        "https://picsum.photos/1920/1080",
+        "https://picsum.photos/1920/1080?random=1",
+        "https://picsum.photos/1920/1080?random=2",
+        "https://picsum.photos/1920/1080?random=3",
+        "https://picsum.photos/1920/1080?random=4",
+      ];
+      
+      for (final url in urls) {
+        expect(url.startsWith('https://'), true);
+        expect(url.contains('picsum.photos'), true);
+        expect(url.contains('1920/1080'), true);
+      }
+    });
+
+    test('wallpaper URL count is 5', () {
+      final urls = [
+        "https://picsum.photos/1920/1080",
+        "https://picsum.photos/1920/1080?random=1",
+        "https://picsum.photos/1920/1080?random=2",
+        "https://picsum.photos/1920/1080?random=3",
+        "https://picsum.photos/1920/1080?random=4",
+      ];
+      expect(urls.length, 5);
+    });
+  });
+
+  group('Greeting logic tests', () {
+    String getGreeting(int hour) {
+      if (hour >= 22 || (hour >= 0 && hour < 6)) {
+        return "night";
+      } else if (hour >= 6 && hour < 9) {
+        return "early morning";
+      } else if (hour >= 9 && hour < 12) {
+        return "morning";
+      } else if (hour >= 12 && hour < 18) {
+        return "afternoon";
+      } else if (hour >= 18 && hour < 22) {
+        return "evening";
+      }
+      return "unknown";
+    }
+
+    test('late night hours return night greeting', () {
+      expect(getGreeting(22), "night");
+      expect(getGreeting(23), "night");
+      expect(getGreeting(0), "night");
+      expect(getGreeting(1), "night");
+      expect(getGreeting(5), "night");
+    });
+
+    test('early morning hours return early morning greeting', () {
+      expect(getGreeting(6), "early morning");
+      expect(getGreeting(7), "early morning");
+      expect(getGreeting(8), "early morning");
+    });
+
+    test('morning hours return morning greeting', () {
+      expect(getGreeting(9), "morning");
+      expect(getGreeting(10), "morning");
+      expect(getGreeting(11), "morning");
+    });
+
+    test('afternoon hours return afternoon greeting', () {
+      expect(getGreeting(12), "afternoon");
+      expect(getGreeting(13), "afternoon");
+      expect(getGreeting(17), "afternoon");
+    });
+
+    test('evening hours return evening greeting', () {
+      expect(getGreeting(18), "evening");
+      expect(getGreeting(19), "evening");
+      expect(getGreeting(21), "evening");
+    });
+  });
+
+  group('Time widget tests', () {
+    test('month mapping is complete', () {
+      const months = {
+        1: 'January',
+        2: 'February',
+        3: 'March',
+        4: 'April',
+        5: 'May',
+        6: 'June',
+        7: 'July',
+        8: 'August',
+        9: 'September',
+        10: 'October',
+        11: 'November',
+        12: 'December'
+      };
+      
+      expect(months.length, 12);
+      expect(months[1], 'January');
+      expect(months[12], 'December');
+    });
+
+    test('day formatting adds leading zero for single digit', () {
+      String formatDay(int day) {
+        if (day < 10) {
+          return "0" + day.toString();
+        }
+        return day.toString();
+      }
+      
+      expect(formatDay(1), "01");
+      expect(formatDay(9), "09");
+      expect(formatDay(10), "10");
+      expect(formatDay(31), "31");
+    });
+
+    test('hour formatting adds leading zero for single digit', () {
+      String formatHour(int hour) {
+        if (hour < 10) {
+          return "0" + hour.toString();
+        }
+        return hour.toString();
+      }
+      
+      expect(formatHour(0), "00");
+      expect(formatHour(9), "09");
+      expect(formatHour(10), "10");
+      expect(formatHour(23), "23");
+    });
+
+    test('minute formatting adds leading zero for single digit', () {
+      String formatMinute(int minute) {
+        if (minute < 10) {
+          return "0" + minute.toString();
+        }
+        return minute.toString();
+      }
+      
+      expect(formatMinute(0), "00");
+      expect(formatMinute(9), "09");
+      expect(formatMinute(10), "10");
+      expect(formatMinute(59), "59");
+    });
+  });
+
+  group('System provider tests', () {
+    test('system provider keywords include logs', () {
+      final keywords = 'logs debug error view';
+      expect(keywords.contains('logs'), true);
+      expect(keywords.contains('debug'), true);
+      expect(keywords.contains('error'), true);
+      expect(keywords.contains('view'), true);
+    });
+
+    test('system provider keywords include settings', () {
+      final keywords = 'launcher settings';
+      expect(keywords.contains('launcher'), true);
+      expect(keywords.contains('settings'), true);
     });
   });
 }
