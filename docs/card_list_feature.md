@@ -8,33 +8,45 @@ The card list displays information widgets in a vertically scrolling list. Each 
 
 ### Circular Scrolling
 
-The card list supports circular scrolling, allowing users to scroll infinitely in both directions without reaching the end.
+The card list supports circular scrolling, allowing users to scroll infinitely in both directions without reaching the end. This is achieved using a virtual list approach.
 
-**Implementation Details:**
+**How it works:**
 
-- `CircularListController` extends `ScrollController` to manage the circular behavior
-- When the user scrolls near the boundaries, the scroll position is seamlessly wrapped to the opposite end
-- Uses a flag `_isWrapping` to prevent recursive wrapping calls
+1. **Virtual Count**: The list uses `itemCount * 100` as the total count, creating a large virtual scroll range
+2. **Index Mapping**: `getActualIndex(virtualIndex)` converts virtual indices to actual indices using modulo
+3. **Wrap on Scroll**: When scrolling near boundaries, the position jumps to the middle to create infinite scrolling illusion
 
 ```dart
 class CircularListController extends ScrollController {
-  int itemCount;
-  double itemExtent;
-  bool _isWrapping = false;
-
-  void maybeWrap() {
-    if (_isWrapping || itemCount == 0 || position.maxScrollExtent == 0) return;
-    final extent = itemCount * itemExtent;
-    final offset = position.pixels;
+  int _itemCount;
+  final double itemExtent;
+  static const int virtualMultiplier = 100;
+  
+  late int _virtualCount;
+  
+  CircularListController({int itemCount = 1, this.itemExtent = 100}) 
+      : _itemCount = itemCount == 0 ? 1 : itemCount {
+    _virtualCount = _itemCount * virtualMultiplier;
+  }
+  
+  int get itemCount => _itemCount;
+  
+  int get virtualCount => _virtualCount;
+  
+  int getActualIndex(int virtualIndex) {
+    return virtualIndex % _itemCount;
+  }
+  
+  void onScroll() {
+    if (!hasClients || _itemCount == 0) return;
+    final maxExtent = _virtualCount * itemExtent;
+    final current = position.pixels;
+    final halfPoint = (_itemCount ~/ 2) * itemExtent;
     
-    if (offset >= extent - itemExtent * 2) {
-      _isWrapping = true;
-      jumpTo(offset - extent);
-      _isWrapping = false;
-    } else if (offset < itemExtent) {
-      _isWrapping = true;
-      jumpTo(offset + extent);
-      _isWrapping = false;
+    if (current >= maxExtent - itemExtent * 4) {
+      jumpTo(halfPoint);
+    } else if (current < itemExtent * 2) {
+      jumpTo(halfPoint);
     }
   }
 }
@@ -42,10 +54,10 @@ class CircularListController extends ScrollController {
 
 **Key Points:**
 
-1. `NotificationListener<ScrollNotification>` wraps the `ListView` to detect scroll updates
-2. The `maybeWrap()` method is called on each scroll update
-3. When approaching boundaries (within 2 item extents), the position is jumped to create the circular effect
-4. The `_isWrapping` flag prevents infinite loops during the jump
+1. `itemExtent = 100` by default, representing average card height
+2. Listener attached to `_circularListController` calls `onScroll()` on each scroll event
+3. When approaching 95% of the virtual list, jumps to the middle section
+4. When near the start, also jumps to the middle to maintain continuous scrolling
 
 ### List Configuration
 

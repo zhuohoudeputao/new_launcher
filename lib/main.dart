@@ -11,35 +11,47 @@ import 'package:new_launcher/data.dart';
 import 'package:provider/provider.dart';
 
 class CircularListController extends ScrollController {
-  int itemCount;
-  double itemExtent;
-  bool _isWrapping = false;
-
-  CircularListController({required this.itemCount, this.itemExtent = 100});
-
-  void updateItemCount(int count) {
-    itemCount = count;
+  int _itemCount;
+  final double itemExtent;
+  static const int virtualMultiplier = 100;
+  
+  late int _virtualCount;
+  
+  CircularListController({int itemCount = 1, this.itemExtent = 100}) 
+      : _itemCount = itemCount == 0 ? 1 : itemCount {
+    _virtualCount = _itemCount * virtualMultiplier;
   }
-
-  void jumpToCircular(int index) {
-    if (itemCount == 0 || position.maxScrollExtent == 0) return;
-    final target = index * itemExtent % (itemCount * itemExtent);
-    jumpTo(target);
+  
+  int get itemCount => _itemCount;
+  
+  set itemCount(int value) {
+    if (_itemCount != value) {
+      _itemCount = value == 0 ? 1 : value;
+      _virtualCount = _itemCount * virtualMultiplier;
+    }
   }
-
-  void maybeWrap() {
-    if (_isWrapping || itemCount == 0 || position.maxScrollExtent == 0) return;
-    final extent = itemCount * itemExtent;
-    final offset = position.pixels;
+  
+  int get virtualCount => _virtualCount;
+  
+  int getActualIndex(int virtualIndex) {
+    return virtualIndex % _itemCount;
+  }
+  
+  void jumpToActualIndex(int actualIndex) {
+    if (!hasClients || _itemCount == 0) return;
+    jumpTo(actualIndex * itemExtent);
+  }
+  
+  void onScroll() {
+    if (!hasClients || _itemCount == 0) return;
+    final maxExtent = _virtualCount * itemExtent;
+    final current = position.pixels;
+    final halfPoint = (_itemCount ~/ 2) * itemExtent;
     
-    if (offset >= extent - itemExtent * 2) {
-      _isWrapping = true;
-      jumpTo(offset - extent);
-      _isWrapping = false;
-    } else if (offset < itemExtent) {
-      _isWrapping = true;
-      jumpTo(offset + extent);
-      _isWrapping = false;
+    if (current >= maxExtent - itemExtent * 4) {
+      jumpTo(halfPoint);
+    } else if (current < itemExtent * 2) {
+      jumpTo(halfPoint);
     }
   }
 }
@@ -95,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onScroll() {
-    _circularListController.maybeWrap();
+    _circularListController.onScroll();
   }
 
   @override
@@ -177,27 +189,23 @@ class _MyHomePageState extends State<MyHomePage> {
                   // put away the keyboard
                   FocusScope.of(context).requestFocus(FocusNode());
                 },
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (notification) {
-                    if (notification is ScrollUpdateNotification) {
-                      _circularListController.maybeWrap();
+                child: ListView.builder(
+                  controller: _circularListController,
+                  cacheExtent: 500,
+                  itemCount: _circularListController.virtualCount,
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: false,
+                  itemBuilder: (BuildContext context, int virtualIndex) {
+                    final actualIndex = _circularListController.getActualIndex(virtualIndex);
+                    if (actualIndex >= infoList.length) {
+                      return SizedBox.shrink();
                     }
-                    return false;
+                    final widget = infoList[infoList.length - actualIndex - 1];
+                    return widget;
                   },
-                  child: ListView.builder(
-                    controller: _circularListController,
-                    cacheExtent: 500,
-                    itemCount: infoList.length,
-                    addAutomaticKeepAlives: false,
-                    addRepaintBoundaries: false,
-                    itemBuilder: (BuildContext context, int index) {
-                      final widget = infoList[infoList.length - index - 1];
-                      return widget;
-                    },
-                    scrollDirection: Axis.vertical,
-                    reverse: true,
-                    physics: BouncingScrollPhysics(),
-                  ),
+                  scrollDirection: Axis.vertical,
+                  reverse: true,
+                  physics: BouncingScrollPhysics(),
                 ),
               )),
             ],
