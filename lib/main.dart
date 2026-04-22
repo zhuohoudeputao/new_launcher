@@ -96,7 +96,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  DateTime? _lastReturn;
   late CircularListController _circularListController;
 
   @override
@@ -129,14 +128,9 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     
     return PopScope(
-      canPop: _lastReturn != null &&
-              DateTime.now().difference(_lastReturn!) > Duration(seconds: 1)
-          ? false
-          : true,
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) {
-          _lastReturn = DateTime.now();
-        }
+        // Launcher should never pop - this is intentional
       },
       child: Stack(fit: StackFit.expand, children: <Widget>[
         // Background Image
