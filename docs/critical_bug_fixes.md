@@ -10,24 +10,13 @@ This document describes critical bug fixes and code cleanup performed during the
 
 **Issue**: The frequency increment logic used `_times[DateTime.now().hour - 1]`, which would cause a `RangeError` at midnight (hour 0) since `0 - 1 = -1`.
 
-**Fix**: Changed to `_times[DateTime.now().hour]` to increment the current hour's counter, matching the getter behavior.
-
-```dart
-// Before (buggy)
-_times[DateTime.now().hour - 1] += 1;
-
-// After (fixed)
-_times[DateTime.now().hour] += 1;
-```
+**Fix**: Changed to `_times[DateTime.now().hour]` to increment the current hour's counter.
 
 ### 2. HTTP Request Timeout Missing
 
-**Issue**: HTTP requests in `provider_weather.dart` and `provider_wallpaper.dart` had no timeout, causing the app to potentially hang indefinitely.
+**Issue**: HTTP requests in `provider_weather.dart` and `provider_wallpaper.dart` had no timeout.
 
-**Fix**: Added timeout to all HTTP requests:
-
-- Weather API: 10 seconds timeout
-- Wallpaper fetch: 15 seconds timeout
+**Fix**: Added timeout to all HTTP requests (10s for weather, 15s for wallpaper).
 
 ### 3. Null Safety Issues in SettingsModel
 
@@ -51,18 +40,9 @@ _times[DateTime.now().hour] += 1;
 
 ### 1. Search Debounce (data.dart)
 
-**Issue**: `generateSuggestList()` ran on every keystroke without debounce, causing unnecessary rebuilds.
+**Issue**: `generateSuggestList()` ran on every keystroke without debounce.
 
-**Fix**: Added 300ms debounce timer to reduce CPU usage during rapid typing.
-
-```dart
-void generateSuggestList(String input) {
-  _debounceTimer?.cancel();
-  _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-    // ... update suggestions
-  });
-}
-```
+**Fix**: Added 300ms debounce timer.
 
 ### 2. Timer Efficiency (provider_time.dart)
 
@@ -70,37 +50,49 @@ void generateSuggestList(String input) {
 
 **Fix**: Changed to fire every minute with initial delay aligned to minute boundary.
 
-```dart
-// Before: 60 callbacks per minute, only 1 useful
-Timer.periodic(Duration(seconds: 1), ...)
+### 3. Removed Unused Dependencies
 
-// After: 1 callback per minute
-final initialDelay = 60 - DateTime.now().second;
-Timer(Duration(seconds: initialDelay), () {
-  Timer.periodic(Duration(minutes: 1), ...);
-});
-```
+Removed from `pubspec.yaml`: `sqflite`, `url_launcher`, `permission_handler`.
 
-## Code Cleanup (Loop 2)
+## Feature Improvements (Loop 3)
 
-### Removed Unused Dependencies
+### 1. System Theme Mode (provider_theme.dart)
 
-Removed from `pubspec.yaml`:
-- `sqflite` - Database package never used
-- `url_launcher` - Never imported
-- `permission_handler` - Never imported
+**Issue**: Theme only supported boolean "dark" setting, not system theme mode.
 
-### Removed Outdated TODOs
+**Fix**: 
+- Added `Theme.Mode` setting with values "light", "dark", "system"
+- Added `WidgetsBindingObserver` in `MyApp` to detect system brightness changes
+- Theme now follows system brightness when mode is "system"
 
-Removed TODO comments in `provider_app.dart` that were already implemented.
+### 2. CircularListController Tests
 
-## Tests Added
+**Issue**: Critical UI component for circular scrolling had no tests.
 
-- **Loop 1**: MyAction, MyProvider, ThemeModel, BackgroundImageModel, ActionModel tests
-- **Loop 2**: LoggerModel tests (singleton, log methods, filtering, search, maxLogs limit)
-- Debounce tests for ActionModel
+**Fix**: Added 7 unit tests for CircularListController.
+
+### 3. Integration Tests
+
+**Issue**: Integration test was placeholder with `expect(true, true)`.
+
+**Fix**: Added meaningful tests for app launch, search field, background image, and info cards.
+
+### 4. Public refreshTheme Method
+
+**Issue**: `_refreshTheme` was private, preventing external calls.
+
+**Fix**: Made `refreshTheme()` public for use in brightness change callbacks.
+
+## Tests Summary
+
+| Loop | Tests Added | Total Tests |
+|------|-------------|-------------|
+| 1 | 16 | 58 |
+| 2 | 12 | 70 |
+| 3 | 7 | 77 |
 
 ## Date
 
 - Loop 1: 2026-04-22
 - Loop 2: 2026-04-22
+- Loop 3: 2026-04-22

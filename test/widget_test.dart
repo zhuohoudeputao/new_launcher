@@ -8,9 +8,56 @@ import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
+import 'package:new_launcher/main.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  group('CircularListController tests', () {
+    test('constructor initializes with correct itemCount', () {
+      final controller = CircularListController(itemCount: 5, itemExtent: 100);
+      expect(controller.itemCount, 5);
+      expect(controller.virtualCount, 5 * CircularListController.virtualMultiplier);
+    });
+
+    test('itemCount setter updates virtualCount', () {
+      final controller = CircularListController(itemCount: 3, itemExtent: 100);
+      controller.itemCount = 10;
+      expect(controller.itemCount, 10);
+      expect(controller.virtualCount, 10 * CircularListController.virtualMultiplier);
+    });
+
+    test('getActualIndex returns correct modulo result', () {
+      final controller = CircularListController(itemCount: 5, itemExtent: 100);
+      expect(controller.getActualIndex(502), 2);
+      expect(controller.getActualIndex(1000), 0);
+      expect(controller.getActualIndex(503), 3);
+      expect(controller.getActualIndex(504), 4);
+      expect(controller.getActualIndex(505), 0);
+    });
+
+    test('itemCount of 0 defaults to 1', () {
+      final controller = CircularListController(itemCount: 0, itemExtent: 100);
+      expect(controller.itemCount, 1);
+      expect(controller.virtualCount, CircularListController.virtualMultiplier);
+    });
+
+    test('virtualMultiplier is correct value', () {
+      expect(CircularListController.virtualMultiplier, 100);
+    });
+
+    test('itemCount setter handles negative by defaulting to 1', () {
+      final controller = CircularListController(itemCount: 5, itemExtent: 100);
+      controller.itemCount = 0;
+      expect(controller.itemCount, 1);
+    });
+
+    test('same itemCount does not reset initialization', () {
+      final controller = CircularListController(itemCount: 5, itemExtent: 100);
+      controller.itemCount = 5;
+      expect(controller.itemCount, 5);
+    });
+  });
+
   group('LoggerModel tests', () {
     test('LoggerModel is singleton', () {
       final logger1 = LoggerModel();

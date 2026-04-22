@@ -97,7 +97,7 @@ class Global {
         title: "Settings");
   }
 
-  static Future<void> _refreshTheme() async {
+  static Future<void> refreshTheme() async {
     final provider = Global.providerList.firstWhere((p) => p.name == "Theme");
     await provider.init();
     Global.themeModel.notifyListeners();
@@ -350,13 +350,21 @@ class SettingsModel with ChangeNotifier {
           await pickWallpaperFromGallery();
         },
       );
+    } else if (key == "Theme.Mode" && value is String) {
+      _settingMap[key] = DarkModeOptionSelector(
+        currentMode: value,
+        onChanged: (newMode) {
+          saveValue(key, newMode);
+          Global.refreshTheme();
+        },
+      );
     } else if (key == "CardOpacity" && value is double) {
       _settingMap[key] = CardOpacitySlider(
           value: value,
           onChanged: (newValue) async {
             Global.cardOpacityValue = newValue;
             saveValue(key, newValue);
-            await Global._refreshTheme();
+            await Global.refreshTheme();
             notifyListeners();
           });
     } else if (value is String) {
@@ -373,7 +381,7 @@ class SettingsModel with ChangeNotifier {
           onChanged: (newValue) {
             saveValue(key, newValue);
             if (key.startsWith("Theme.")) {
-              Global._refreshTheme();
+              Global.refreshTheme();
             }
           });
     } else if (value is double) {
@@ -391,7 +399,6 @@ class SettingsModel with ChangeNotifier {
             saveValue(key, int.parse(newValue));
           });
     } else if (value is List<String>) {
-      // coming soon
     }
     notifyListeners();
   }
