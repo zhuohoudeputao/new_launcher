@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:new_launcher/main.dart';
 import 'package:new_launcher/data.dart';
+import 'package:new_launcher/providers/provider_app.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -19,6 +20,8 @@ void main() {
           ChangeNotifierProvider.value(value: Global.infoModel),
           ChangeNotifierProvider.value(value: Global.actionModel),
           ChangeNotifierProvider.value(value: Global.loggerModel),
+          ChangeNotifierProvider.value(value: appModel),
+          ChangeNotifierProvider.value(value: allAppsModel),
         ],
         child: MyApp(),
       ));
@@ -37,6 +40,8 @@ void main() {
           ChangeNotifierProvider.value(value: Global.infoModel),
           ChangeNotifierProvider.value(value: Global.actionModel),
           ChangeNotifierProvider.value(value: Global.loggerModel),
+          ChangeNotifierProvider.value(value: appModel),
+          ChangeNotifierProvider.value(value: allAppsModel),
         ],
         child: MyApp(),
       ));
@@ -55,6 +60,8 @@ void main() {
           ChangeNotifierProvider.value(value: Global.infoModel),
           ChangeNotifierProvider.value(value: Global.actionModel),
           ChangeNotifierProvider.value(value: Global.loggerModel),
+          ChangeNotifierProvider.value(value: appModel),
+          ChangeNotifierProvider.value(value: allAppsModel),
         ],
         child: MyApp(),
       ));

@@ -199,7 +199,6 @@ Widget _customButton(Widget icon, void Function() onPressed) {
 
 Widget _buildAppCard(ApplicationWithIcon app) {
   return Card(
-    color: Colors.white,
     child: ListTile(
       leading: Image.memory(
         app.icon,

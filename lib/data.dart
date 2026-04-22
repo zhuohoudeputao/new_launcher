@@ -7,8 +7,6 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/setting.dart';
 import 'package:new_launcher/logger.dart';
@@ -111,11 +109,6 @@ class Global {
   //________________________________________________________BackgroundImage
   /// A model for storing background image.
   static BackgroundImageModel backgroundImageModel = BackgroundImageModel();
-  // Frequently used methods can be writed as static
-  /// Set background image
-  static setBackgroundImage(ImageProvider value) {
-    backgroundImageModel.backgroundImage = value;
-  }
 
   //_______________________________________________________________Settings
   /// A model for storing settings
@@ -141,7 +134,6 @@ class Global {
   /// A model for managing actions
   static ActionModel actionModel = ActionModel();
   static LoggerModel loggerModel = LoggerModel();
-  static String? input;
 
   static Future<void> addActions(List<MyAction> actions) async {
     actionModel.addActions(actions);
@@ -216,7 +208,6 @@ class ActionModel with ChangeNotifier {
   }
 
   void runFirstAction(String input) {
-    Global.input = input;
     if (_suggestList.isNotEmpty) {
       final widget = _suggestList[0];
       if (widget is TextButton) {

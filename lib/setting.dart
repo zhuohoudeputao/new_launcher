@@ -12,6 +12,9 @@ class SettingState extends State<Setting> {
   @override
   Widget build(BuildContext context) {
     List<Widget> settingList = context.watch<SettingsModel>().settingList;
+    final brightness = Theme.of(context).brightness;
+    final textColor = brightness == Brightness.dark ? Colors.white : Colors.black87;
+    
     return Stack(fit: StackFit.expand, children: <Widget>[
       Consumer<BackgroundImageModel>(
           builder: (context, BackgroundImageModel background, child) {
@@ -28,11 +31,11 @@ class SettingState extends State<Setting> {
             "Settings",
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: textColor,
             ),
           ),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
+            icon: Icon(Icons.arrow_back, color: textColor),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
