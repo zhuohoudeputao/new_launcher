@@ -7,10 +7,27 @@ Flutter-based Android launcher with a command-based interface. Users type comman
 ## Key Commands
 
 ```bash
-flutter run              # Run app on connected device/emulator
-flutter build apk        # Build debug APK
-flutter test             # Run tests
+~/app/flutter/bin/flutter run              # Run app on connected device/emulator
+~/app/flutter/bin/flutter build apk        # Build debug APK
+~/app/flutter/bin/flutter test             # Run tests
 ```
+
+## Build Configuration
+
+### Required Android Settings
+Add to `android/gradle.properties`:
+```properties
+android.useAndroidX=true
+android.enableJetifier=true
+```
+
+### Flutter SDK Path
+Set in `android/local.properties`:
+```properties
+flutter.sdk=/home/linzuxuan/app/flutter
+```
+
+**Note**: The system Flutter (`/usr/lib/flutter`) has gradle cache issues. Use the local flutter at `~/app/flutter` instead.
 
 ## Architecture
 
@@ -74,6 +91,11 @@ Settings auto-saved via `SharedPreferences`:
 - Widget test in `test/widget_test.dart` is outdated (tests counter, not launcher)
 - Some providers reference missing packages (`provider_translate.dart`, etc.)
 - `lib/core/` contains incomplete AI features (not used)
+
+### Build Troubleshooting
+
+- **Kotlin compiler session errors**: Use local Flutter SDK at `~/app/flutter`, not system Flutter
+- **AndroidX not enabled**: Add `android.useAndroidX=true` to `android/gradle.properties`
 
 ## Providers
 
