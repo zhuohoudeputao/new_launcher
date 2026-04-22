@@ -921,6 +921,88 @@ void main() {
     });
   });
 
+  group('LogViewerWidget tests', () {
+    testWidgets('renders with empty logs', (WidgetTester tester) async {
+      final logger = LoggerModel();
+      logger.clear();
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: logger,
+              child: LogViewerWidget(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Logs: 0'), findsOneWidget);
+    });
+
+    testWidgets('renders logs count', (WidgetTester tester) async {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.info('Test message');
+      logger.info('Another message');
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: logger,
+              child: LogViewerWidget(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Logs: 2'), findsOneWidget);
+    });
+
+    testWidgets('shows clear button', (WidgetTester tester) async {
+      final logger = LoggerModel();
+      logger.clear();
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: logger,
+              child: LogViewerWidget(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Clear'), findsOneWidget);
+    });
+
+    testWidgets('clear button clears logs', (WidgetTester tester) async {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.info('Test');
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: logger,
+              child: LogViewerWidget(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Logs: 1'), findsOneWidget);
+      
+      await tester.tap(find.text('Clear'));
+      await tester.pump();
+      
+      expect(logger.logs.length, 0);
+    });
+  });
+
   group('InfoModel getFilteredList tests', () {
     late InfoModel infoModel;
 
