@@ -7,9 +7,155 @@ import 'package:new_launcher/providers/provider_weather.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
+import 'package:new_launcher/logger.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  group('LoggerModel tests', () {
+    test('LoggerModel is singleton', () {
+      final logger1 = LoggerModel();
+      final logger2 = LoggerModel();
+      expect(identical(logger1, logger2), true);
+    });
+
+    test('log() adds entry and notifies listeners', () {
+      final logger = LoggerModel();
+      logger.clear();
+      int notifyCount = 0;
+      logger.addListener(() => notifyCount++);
+      
+      logger.log(LogLevel.info, 'Test message', source: 'Test');
+      
+      expect(logger.logs.length, 1);
+      expect(notifyCount, 1);
+    });
+
+    test('log entry has correct properties', () {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.log(LogLevel.warning, 'Warning test', source: 'TestSource');
+      
+      final entry = logger.logs.last;
+      expect(entry.level, LogLevel.warning);
+      expect(entry.message, 'Warning test');
+      expect(entry.source, 'TestSource');
+      expect(entry.levelString, 'WARN');
+    });
+
+    test('convenience methods work correctly', () {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.debug('Debug msg', source: 'D');
+      logger.info('Info msg', source: 'I');
+      logger.warning('Warning msg', source: 'W');
+      logger.error('Error msg', source: 'E');
+      
+      expect(logger.logs.length, 4);
+      expect(logger.logs[0].level, LogLevel.debug);
+      expect(logger.logs[1].level, LogLevel.info);
+      expect(logger.logs[2].level, LogLevel.warning);
+      expect(logger.logs[3].level, LogLevel.error);
+    });
+
+    test('clear() removes all logs and notifies', () {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.info('Test1');
+      logger.info('Test2');
+      expect(logger.logs.length, 2);
+      
+      int notifyCount = 0;
+      logger.addListener(() => notifyCount++);
+      
+      logger.clear();
+      
+      expect(logger.logs.length, 0);
+      expect(notifyCount, 1);
+    });
+
+    test('filterByLevel returns correct entries', () {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.debug('D1');
+      logger.info('I1');
+      logger.warning('W1');
+      logger.error('E1');
+      logger.debug('D2');
+      
+      final debugLogs = logger.filterByLevel(LogLevel.debug);
+      expect(debugLogs.length, 2);
+      
+      final errorLogs = logger.filterByLevel(LogLevel.error);
+      expect(errorLogs.length, 1);
+    });
+
+    test('filterBySource returns correct entries', () {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.info('Msg1', source: 'App');
+      logger.info('Msg2', source: 'Weather');
+      logger.info('Msg3', source: 'App');
+      
+      final appLogs = logger.filterBySource('App');
+      expect(appLogs.length, 2);
+      
+      final weatherLogs = logger.filterBySource('Weather');
+      expect(weatherLogs.length, 1);
+    });
+
+    test('search() finds matching messages', () {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.info('Application started');
+      logger.info('Weather loaded');
+      logger.info('App initialized');
+      
+      final results = logger.search('app');
+      expect(results.length, 2);
+      
+      final weatherResults = logger.search('weather');
+      expect(weatherResults.length, 1);
+    });
+
+    test('search() is case-insensitive', () {
+      final logger = LoggerModel();
+      logger.clear();
+      logger.info('Test Message');
+      
+      final results1 = logger.search('test');
+      final results2 = logger.search('TEST');
+      final results3 = logger.search('TeSt');
+      
+      expect(results1.length, 1);
+      expect(results2.length, 1);
+      expect(results3.length, 1);
+    });
+
+    test('maxLogs limit removes oldest entries', () {
+      final logger = LoggerModel();
+      logger.clear();
+      
+      for (int i = 0; i < LoggerModel.maxLogs + 100; i++) {
+        logger.info('Message $i');
+      }
+      
+      expect(logger.logs.length, LoggerModel.maxLogs);
+      expect(logger.logs.first.message.contains('${100}'), true);
+    });
+
+    test('LogEntry levelIcon returns correct icon', () {
+      final entry1 = LogEntry(timestamp: DateTime.now(), level: LogLevel.debug, message: '');
+      final entry2 = LogEntry(timestamp: DateTime.now(), level: LogLevel.info, message: '');
+      final entry3 = LogEntry(timestamp: DateTime.now(), level: LogLevel.warning, message: '');
+      final entry4 = LogEntry(timestamp: DateTime.now(), level: LogLevel.error, message: '');
+      
+      expect(entry1.levelIcon, Icons.bug_report);
+      expect(entry2.levelIcon, Icons.info);
+      expect(entry3.levelIcon, Icons.warning);
+      expect(entry4.levelIcon, Icons.error);
+    });
+  });
+
   group('MyAction tests', () {
     test('canIdentifyBy returns true for matching keyword', () {
       final action = MyAction(
@@ -189,10 +335,11 @@ void main() {
       await actionModel.addAction(action);
       
       actionModel.generateSuggestList('test');
+      await Future.delayed(const Duration(milliseconds: 350));
       expect(actionModel.suggestList.length, 1);
     });
 
-    test('generateSuggestList filters actions by input', () {
+    test('generateSuggestList filters actions by input', () async {
       final actionModel = ActionModel();
       final action1 = MyAction(
         name: 'Weather',
@@ -211,16 +358,19 @@ void main() {
       actionModel.addAction(action2);
       
       actionModel.generateSuggestList('weather');
+      await Future.delayed(const Duration(milliseconds: 350));
       expect(actionModel.suggestList.length, 1);
       
       actionModel.generateSuggestList('time');
+      await Future.delayed(const Duration(milliseconds: 350));
       expect(actionModel.suggestList.length, 1);
       
       actionModel.generateSuggestList('clock');
+      await Future.delayed(const Duration(milliseconds: 350));
       expect(actionModel.suggestList.length, 1);
     });
 
-    test('generateSuggestList returns all matching actions', () {
+    test('generateSuggestList returns all matching actions', () async {
       final actionModel = ActionModel();
       final action1 = MyAction(
         name: 'Weather',
@@ -239,7 +389,30 @@ void main() {
       actionModel.addAction(action2);
       
       actionModel.generateSuggestList('weather');
+      await Future.delayed(const Duration(milliseconds: 350));
       expect(actionModel.suggestList.length, 2);
+    });
+
+    test('generateSuggestList debounces rapid calls', () async {
+      final actionModel = ActionModel();
+      int notifyCount = 0;
+      actionModel.addListener(() => notifyCount++);
+      
+      final action = MyAction(
+        name: 'Test',
+        keywords: 'test',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      actionModel.addAction(action);
+      
+      actionModel.generateSuggestList('t');
+      actionModel.generateSuggestList('te');
+      actionModel.generateSuggestList('tes');
+      actionModel.generateSuggestList('test');
+      
+      await Future.delayed(const Duration(milliseconds: 350));
+      expect(notifyCount, 1);
     });
   });
 
@@ -519,15 +692,17 @@ void main() {
   });
 
   group('ActionModel searchQuery tests', () {
-    test('stores search query correctly', () {
+    test('stores search query correctly after debounce', () async {
       final actionModel = ActionModel();
       actionModel.generateSuggestList('test query');
+      await Future.delayed(const Duration(milliseconds: 350));
       expect(actionModel.searchQuery, 'test query');
     });
 
-    test('clears search query when empty', () {
+    test('clears search query when empty after debounce', () async {
       final actionModel = ActionModel();
       actionModel.generateSuggestList('');
+      await Future.delayed(const Duration(milliseconds: 350));
       expect(actionModel.searchQuery, '');
     });
   });

@@ -71,10 +71,13 @@ class _TimeWidgetState extends State<_TimeWidget> {
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      if (DateTime.now().second == 0) {
+    final now = DateTime.now();
+    final initialDelay = 60 - now.second;
+    timer = Timer(Duration(seconds: initialDelay), () {
+      setState(() {});
+      timer = Timer.periodic(const Duration(minutes: 1), (Timer timer) {
         setState(() {});
-      }
+      });
     });
   }
 

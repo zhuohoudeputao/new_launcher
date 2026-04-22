@@ -212,7 +212,3 @@ Widget _buildAppCard(ApplicationWithIcon app) {
     ),
   );
 }
-
-// TODO: Frequently used apps
-
-// TODO: Recently used apps
