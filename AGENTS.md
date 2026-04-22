@@ -99,6 +99,12 @@ Settings auto-saved via `SharedPreferences`:
 ## Providers
 
 - **Weather**: Fetches weather using Open-Meteo API with geolocator
+  - Current temperature, wind speed, weather condition
+  - Location name display (city, country)
+  - 3-day forecast (max/min temps, weather icon)
+  - Manual refresh button
+  - Cache for 30 minutes
+  - Geocoding API for location name
 - **Theme**: Manages card colors, dark mode, transparency
 - **Wallpaper**: Background image selection
 - **Time**: Local time display

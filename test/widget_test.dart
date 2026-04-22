@@ -2612,4 +2612,284 @@ void main() {
       expect(allAppsModel.length, 0);
     });
   });
+
+  group('ForecastDay tests', () {
+    test('ForecastDay toJson preserves all fields', () {
+      final forecast = ForecastDay(
+        date: DateTime(2026, 4, 24),
+        maxTemp: 25.0,
+        minTemp: 15.0,
+        weathercode: 0,
+      );
+      
+      final json = forecast.toJson();
+      expect(json['date'], '2026-04-24T00:00:00.000');
+      expect(json['maxTemp'], 25.0);
+      expect(json['minTemp'], 15.0);
+      expect(json['weathercode'], 0);
+    });
+
+    test('ForecastDay fromJson restores all fields', () {
+      final json = {
+        'date': '2026-04-25T00:00:00.000',
+        'maxTemp': 28.0,
+        'minTemp': 18.0,
+        'weathercode': 1,
+      };
+      
+      final forecast = ForecastDay.fromJson(json);
+      expect(forecast.date.year, 2026);
+      expect(forecast.date.month, 4);
+      expect(forecast.date.day, 25);
+      expect(forecast.maxTemp, 28.0);
+      expect(forecast.minTemp, 18.0);
+      expect(forecast.weathercode, 1);
+    });
+
+    test('ForecastDay handles negative temperatures', () {
+      final forecast = ForecastDay(
+        date: DateTime.now(),
+        maxTemp: -5.0,
+        minTemp: -15.0,
+        weathercode: 71,
+      );
+      
+      expect(forecast.maxTemp, -5.0);
+      expect(forecast.minTemp, -15.0);
+    });
+  });
+
+  group('WeatherCache extended tests', () {
+    test('WeatherCache with locationName', () {
+      final cache = WeatherCache(
+        temperature: 25.0,
+        windspeed: 10.0,
+        weathercode: 0,
+        latitude: 40.71,
+        longitude: -74.01,
+        locationName: 'New York, USA',
+        forecast: [],
+        timestamp: DateTime.now(),
+      );
+      
+      expect(cache.locationName, 'New York, USA');
+    });
+
+    test('WeatherCache with forecast', () {
+      final forecast = [
+        ForecastDay(date: DateTime.now(), maxTemp: 25.0, minTemp: 15.0, weathercode: 0),
+        ForecastDay(date: DateTime.now().add(Duration(days: 1)), maxTemp: 26.0, minTemp: 16.0, weathercode: 1),
+      ];
+      
+      final cache = WeatherCache(
+        temperature: 25.0,
+        windspeed: 10.0,
+        weathercode: 0,
+        latitude: 40.71,
+        longitude: -74.01,
+        locationName: 'Test City',
+        forecast: forecast,
+        timestamp: DateTime.now(),
+      );
+      
+      expect(cache.forecast.length, 2);
+      expect(cache.forecast[0].maxTemp, 25.0);
+      expect(cache.forecast[1].maxTemp, 26.0);
+    });
+
+    test('WeatherCache toJson includes locationName and forecast', () {
+      final cache = WeatherCache(
+        temperature: 20.0,
+        windspeed: 15.0,
+        weathercode: 2,
+        latitude: 35.0,
+        longitude: -80.0,
+        locationName: 'Test Location',
+        forecast: [
+          ForecastDay(date: DateTime.now(), maxTemp: 20.0, minTemp: 10.0, weathercode: 2),
+        ],
+        timestamp: DateTime.now(),
+      );
+      
+      final json = cache.toJson();
+      expect(json['locationName'], 'Test Location');
+      expect(json['forecast'] is List, true);
+      expect((json['forecast'] as List).length, 1);
+    });
+
+    test('WeatherCache fromJson handles missing locationName', () {
+      final json = {
+        'temperature': 20.0,
+        'windspeed': 15.0,
+        'weathercode': 3,
+        'latitude': 35.0,
+        'longitude': -80.0,
+        'timestamp': '2026-04-23T12:00:00.000Z',
+      };
+      
+      final cache = WeatherCache.fromJson(json);
+      expect(cache.locationName, '');
+      expect(cache.forecast.length, 0);
+    });
+
+    test('WeatherCache fromJson handles missing forecast', () {
+      final json = {
+        'temperature': 20.0,
+        'windspeed': 15.0,
+        'weathercode': 3,
+        'latitude': 35.0,
+        'longitude': -80.0,
+        'locationName': 'City',
+        'timestamp': '2026-04-23T12:00:00.000Z',
+      };
+      
+      final cache = WeatherCache.fromJson(json);
+      expect(cache.forecast.length, 0);
+    });
+  });
+
+  group('WeatherCard tests', () {
+    testWidgets('renders temperature correctly', (WidgetTester tester) async {
+      final cache = WeatherCache(
+        temperature: 25.0,
+        windspeed: 10.0,
+        weathercode: 0,
+        latitude: 40.71,
+        longitude: -74.01,
+        locationName: 'Test City',
+        forecast: [],
+        timestamp: DateTime.now(),
+      );
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WeatherCard(cache: cache, onRefresh: () {}),
+          ),
+        ),
+      );
+      
+      expect(find.textContaining('25'), findsOneWidget);
+      expect(find.text('Clear sky'), findsOneWidget);
+    });
+
+    testWidgets('renders location name', (WidgetTester tester) async {
+      final cache = WeatherCache(
+        temperature: 20.0,
+        windspeed: 15.0,
+        weathercode: 1,
+        latitude: 35.0,
+        longitude: -80.0,
+        locationName: 'New York, USA',
+        forecast: [],
+        timestamp: DateTime.now(),
+      );
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WeatherCard(cache: cache, onRefresh: () {}),
+          ),
+        ),
+      );
+      
+      expect(find.textContaining('New York'), findsOneWidget);
+    });
+
+    testWidgets('renders wind speed', (WidgetTester tester) async {
+      final cache = WeatherCache(
+        temperature: 20.0,
+        windspeed: 15.0,
+        weathercode: 0,
+        latitude: 35.0,
+        longitude: -80.0,
+        locationName: '',
+        forecast: [],
+        timestamp: DateTime.now(),
+      );
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WeatherCard(cache: cache, onRefresh: () {}),
+          ),
+        ),
+      );
+      
+      expect(find.textContaining('Wind: 15 km/h'), findsOneWidget);
+    });
+
+    testWidgets('renders refresh button', (WidgetTester tester) async {
+      final cache = WeatherCache(
+        temperature: 20.0,
+        windspeed: 15.0,
+        weathercode: 0,
+        latitude: 35.0,
+        longitude: -80.0,
+        locationName: '',
+        forecast: [],
+        timestamp: DateTime.now(),
+      );
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WeatherCard(cache: cache, onRefresh: () {}),
+          ),
+        ),
+      );
+      
+      expect(find.byIcon(Icons.refresh), findsOneWidget);
+    });
+
+    testWidgets('renders forecast when available', (WidgetTester tester) async {
+      final cache = WeatherCache(
+        temperature: 20.0,
+        windspeed: 15.0,
+        weathercode: 0,
+        latitude: 35.0,
+        longitude: -80.0,
+        locationName: '',
+        forecast: [
+          ForecastDay(date: DateTime.now(), maxTemp: 20.0, minTemp: 10.0, weathercode: 0),
+          ForecastDay(date: DateTime.now().add(Duration(days: 1)), maxTemp: 22.0, minTemp: 12.0, weathercode: 1),
+          ForecastDay(date: DateTime.now().add(Duration(days: 2)), maxTemp: 24.0, minTemp: 14.0, weathercode: 2),
+        ],
+        timestamp: DateTime.now(),
+      );
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WeatherCard(cache: cache, onRefresh: () {}),
+          ),
+        ),
+      );
+      
+      expect(find.text('Forecast'), findsOneWidget);
+    });
+
+    testWidgets('handles empty location name', (WidgetTester tester) async {
+      final cache = WeatherCache(
+        temperature: 20.0,
+        windspeed: 15.0,
+        weathercode: 0,
+        latitude: 35.0,
+        longitude: -80.0,
+        locationName: '',
+        forecast: [],
+        timestamp: DateTime.now(),
+      );
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WeatherCard(cache: cache, onRefresh: () {}),
+          ),
+        ),
+      );
+      
+      expect(find.text('20°C'), findsOneWidget);
+    });
+  });
 }

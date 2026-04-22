@@ -51,12 +51,42 @@ const Map<int, String> _weatherCodes = {
 const String _weatherCacheKey = "Weather.Cache";
 const Duration _cacheValidity = Duration(minutes: 30);
 
+class ForecastDay {
+  final DateTime date;
+  final double maxTemp;
+  final double minTemp;
+  final int weathercode;
+
+  ForecastDay({
+    required this.date,
+    required this.maxTemp,
+    required this.minTemp,
+    required this.weathercode,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'date': date.toIso8601String(),
+    'maxTemp': maxTemp,
+    'minTemp': minTemp,
+    'weathercode': weathercode,
+  };
+
+  factory ForecastDay.fromJson(Map<String, dynamic> json) => ForecastDay(
+    date: DateTime.parse(json['date']),
+    maxTemp: json['maxTemp'],
+    minTemp: json['minTemp'],
+    weathercode: json['weathercode'],
+  );
+}
+
 class WeatherCache {
   final double temperature;
   final double windspeed;
   final int weathercode;
   final double latitude;
   final double longitude;
+  final String locationName;
+  final List<ForecastDay> forecast;
   final DateTime timestamp;
 
   WeatherCache({
@@ -65,6 +95,8 @@ class WeatherCache {
     required this.weathercode,
     required this.latitude,
     required this.longitude,
+    this.locationName = '',
+    this.forecast = const [],
     required this.timestamp,
   });
 
@@ -74,6 +106,8 @@ class WeatherCache {
     'weathercode': weathercode,
     'latitude': latitude,
     'longitude': longitude,
+    'locationName': locationName,
+    'forecast': forecast.map((f) => f.toJson()).toList(),
     'timestamp': timestamp.toIso8601String(),
   };
 
@@ -83,6 +117,10 @@ class WeatherCache {
     weathercode: json['weathercode'],
     latitude: json['latitude'],
     longitude: json['longitude'],
+    locationName: json['locationName'] ?? '',
+    forecast: (json['forecast'] as List?)
+        ?.map((f) => ForecastDay.fromJson(f as Map<String, dynamic>))
+        .toList() ?? [],
     timestamp: DateTime.parse(json['timestamp']),
   );
 }
@@ -113,6 +151,35 @@ Future<void> _saveWeatherCache(WeatherCache cache) async {
   } catch (e) {
     Global.loggerModel.warning("Failed to save weather cache: $e", source: "Weather");
   }
+}
+
+Future<String> _getLocationName(double latitude, double longitude) async {
+  try {
+    final response = await http.get(
+      Uri.parse("https://geocoding-api.open-meteo.com/v1/reverse?latitude=$latitude&longitude=$longitude&count=1"),
+    ).timeout(const Duration(seconds: 5));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final results = data['results'] as List?;
+      if (results != null && results.isNotEmpty) {
+        final location = results[0];
+        final city = location['name'] ?? '';
+        final country = location['country'] ?? '';
+        if (city.isNotEmpty && country.isNotEmpty) {
+          return '$city, $country';
+        } else if (city.isNotEmpty) {
+          return city;
+        }
+      }
+    }
+  } catch (e) {
+    Global.loggerModel.warning("Failed to get location name: $e", source: "Weather");
+  }
+  
+  final latStr = latitude.toStringAsFixed(2);
+  final lonStr = longitude.toStringAsFixed(2);
+  return "$latStr°, $lonStr°";
 }
 
 IconData getWeatherIcon(String condition) {
@@ -186,13 +253,9 @@ Future<void> _provideWeather() async {
     
     final cached = await _loadCachedWeather();
     if (cached != null) {
-      final condition = _weatherCodes[cached.weathercode] ?? "Unknown";
       Global.infoModel.addInfoWidget(
           "Weather",
-          customInfoWidget(
-              title: "${cached.temperature}°C - $condition",
-              subtitle: "Wind: ${cached.windspeed} km/h (cached)",
-              icon: Icon(getWeatherIcon(condition))),
+          WeatherCard(cache: cached, onRefresh: _provideWeather),
           title: "Weather");
       Global.loggerModel.info("Weather displayed from cache", source: "Weather");
       return;
@@ -202,7 +265,7 @@ Future<void> _provideWeather() async {
   try {
     final response = await http.get(
       Uri.parse(
-          "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&current_weather=true"),
+          "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&current_weather=true&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto"),
     ).timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
@@ -211,7 +274,28 @@ Future<void> _provideWeather() async {
       final temp = current['temperature'];
       final wind = current['windspeed'];
       final code = current['weathercode'] ?? 0;
-      final condition = _weatherCodes[code] ?? "Unknown";
+
+      final locationName = await _getLocationName(latitude, longitude);
+      
+      List<ForecastDay> forecast = [];
+      if (data['daily'] != null) {
+        final daily = data['daily'];
+        final times = daily['time'] as List?;
+        final maxTemps = daily['temperature_2m_max'] as List?;
+        final minTemps = daily['temperature_2m_min'] as List?;
+        final codes = daily['weathercode'] as List?;
+        
+        if (times != null && maxTemps != null && minTemps != null && codes != null) {
+          for (int i = 0; i < times.length && i < 4; i++) {
+            forecast.add(ForecastDay(
+              date: DateTime.parse(times[i]),
+              maxTemp: maxTemps[i],
+              minTemp: minTemps[i],
+              weathercode: codes[i],
+            ));
+          }
+        }
+      }
 
       final cache = WeatherCache(
         temperature: temp,
@@ -219,28 +303,23 @@ Future<void> _provideWeather() async {
         weathercode: code,
         latitude: latitude,
         longitude: longitude,
+        locationName: locationName,
+        forecast: forecast,
         timestamp: DateTime.now(),
       );
       await _saveWeatherCache(cache);
 
       Global.infoModel.addInfoWidget(
           "Weather",
-          customInfoWidget(
-              title: "$temp°C - $condition",
-              subtitle: "Wind: $wind km/h",
-              icon: Icon(getWeatherIcon(condition))),
+          WeatherCard(cache: cache, onRefresh: _provideWeather),
           title: "Weather");
-      Global.loggerModel.info("Weather updated from API", source: "Weather");
+      Global.loggerModel.info("Weather updated from API with location and forecast", source: "Weather");
     } else {
       final cached = await _loadCachedWeather();
       if (cached != null) {
-        final condition = _weatherCodes[cached.weathercode] ?? "Unknown";
         Global.infoModel.addInfoWidget(
             "Weather",
-            customInfoWidget(
-                title: "${cached.temperature}°C - $condition",
-                subtitle: "Wind: ${cached.windspeed} km/h (cached)",
-                icon: Icon(getWeatherIcon(condition))),
+            WeatherCard(cache: cached, onRefresh: _provideWeather),
             title: "Weather");
       } else {
         Global.infoModel.addInfoWidget(
@@ -255,13 +334,9 @@ Future<void> _provideWeather() async {
   } catch (e) {
     final cached = await _loadCachedWeather();
     if (cached != null) {
-      final condition = _weatherCodes[cached.weathercode] ?? "Unknown";
       Global.infoModel.addInfoWidget(
           "Weather",
-          customInfoWidget(
-              title: "${cached.temperature}°C - $condition",
-              subtitle: "Wind: ${cached.windspeed} km/h (cached)",
-              icon: Icon(getWeatherIcon(condition))),
+          WeatherCard(cache: cached, onRefresh: _provideWeather),
           title: "Weather");
       Global.loggerModel.info("Weather displayed from cache due to error", source: "Weather");
     } else {
@@ -273,5 +348,152 @@ Future<void> _provideWeather() async {
               icon: Icon(Icons.error)),
           title: "Weather");
     }
+  }
+}
+
+class WeatherCard extends StatefulWidget {
+  final WeatherCache cache;
+  final VoidCallback onRefresh;
+
+  const WeatherCard({
+    Key? key,
+    required this.cache,
+    required this.onRefresh,
+  }) : super(key: key);
+
+  @override
+  State<WeatherCard> createState() => _WeatherCardState();
+}
+
+class _WeatherCardState extends State<WeatherCard> {
+  bool _isRefreshing = false;
+
+  Future<void> _handleRefresh() async {
+    setState(() => _isRefreshing = true);
+    try {
+      widget.onRefresh();
+    } finally {
+      await Future.delayed(Duration(milliseconds: 500));
+      setState(() => _isRefreshing = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cache = widget.cache;
+    final condition = _weatherCodes[cache.weathercode] ?? "Unknown";
+    final icon = getWeatherIcon(condition);
+    
+    final now = DateTime.now();
+    final cacheAge = now.difference(cache.timestamp);
+    final isCached = cacheAge > Duration(minutes: 5);
+    
+    const Map<int, String> dayNames = {
+      1: 'Mon',
+      2: 'Tue',
+      3: 'Wed',
+      4: 'Thu',
+      5: 'Fri',
+      6: 'Sat',
+      7: 'Sun',
+    };
+
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(icon, size: 32, color: Theme.of(context).textTheme.bodyLarge?.color),
+                    SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${cache.temperature.toInt()}°C",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          condition,
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                IconButton(
+                  icon: _isRefreshing 
+                    ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Icon(Icons.refresh, size: 20),
+                  onPressed: _isRefreshing ? null : _handleRefresh,
+                  tooltip: "Refresh weather",
+                ),
+              ],
+            ),
+            if (cache.locationName.isNotEmpty) Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Text(
+                cache.locationName + (isCached ? " (cached)" : ""),
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.air, size: 16, color: Colors.grey),
+                SizedBox(width: 4),
+                Text(
+                  "Wind: ${cache.windspeed.toInt()} km/h",
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+            if (cache.forecast.length > 1) SizedBox(height: 12),
+            if (cache.forecast.length > 1) Text(
+              "Forecast",
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+            if (cache.forecast.length > 1) SizedBox(height: 4),
+            if (cache.forecast.length > 1) SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: cache.forecast.skip(1).take(3).map((day) {
+                  final dayCondition = _weatherCodes[day.weathercode] ?? "Unknown";
+                  final dayIcon = getWeatherIcon(dayCondition);
+                  final dayName = dayNames[day.date.weekday] ?? "";
+                  
+                  return Padding(
+                    padding: EdgeInsets.only(right: 16),
+                    child: Column(
+                      children: [
+                        Text(dayName, style: TextStyle(fontSize: 11)),
+                        Icon(dayIcon, size: 20),
+                        Text(
+                          "${day.maxTemp.toInt()}°/${day.minTemp.toInt()}°",
+                          style: TextStyle(fontSize: 11),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
