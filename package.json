@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@th0rgal/ralph-wiggum": "^1.2.2",
+    "ocloop": "^0.2.0"
+  }
+}
