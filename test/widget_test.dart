@@ -6,6 +6,7 @@ import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
 import 'package:new_launcher/providers/provider_app.dart';
+import 'package:new_launcher/providers/provider_battery.dart';
 import 'package:new_launcher/providers/provider_settings.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
@@ -2447,7 +2448,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 7);
+      expect(Global.providerList.length, 8);
     });
 
     test('Global.providerList names are correct', () {
@@ -2459,6 +2460,7 @@ void main() {
       expect(names.contains('Weather'), true);
       expect(names.contains('App'), true);
       expect(names.contains('System'), true);
+      expect(names.contains('Battery'), true);
     });
 
     test('Global.cardOpacity defaults to 0.7', () {
@@ -3354,6 +3356,83 @@ void main() {
     });
   });
 
+  group('Battery provider tests', () {
+    test('providerBattery exists in Global.providerList', () {
+      final batteryProvider = Global.providerList.where((p) => p.name == 'Battery').first;
+      expect(batteryProvider.name, 'Battery');
+    });
+
+    test('Battery provider keywords include battery', () {
+      final keywords = 'battery power charge level';
+      expect(keywords.contains('battery'), true);
+      expect(keywords.contains('power'), true);
+      expect(keywords.contains('charge'), true);
+      expect(keywords.contains('level'), true);
+    });
+
+    test('BatteryModel starts uninitialized', () {
+      final model = BatteryModel();
+      expect(model.isInitialized, false);
+      expect(model.level, 0);
+    });
+
+    test('BatteryModel is ChangeNotifier', () {
+      final model = BatteryModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    testWidgets('BatteryCard renders loading state', (WidgetTester tester) async {
+      final model = BatteryModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: BatteryCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Battery: Loading...'), findsOneWidget);
+    });
+
+    test('BatteryCard widget exists', () {
+      expect(BatteryCard, isNotNull);
+    });
+
+    test('_getBatteryIcon returns correct icons', () {
+      final icons = [
+        [0, false, Icons.battery_0_bar],
+        [10, false, Icons.battery_1_bar],
+        [20, false, Icons.battery_2_bar],
+        [30, false, Icons.battery_3_bar],
+        [50, false, Icons.battery_5_bar],
+        [70, false, Icons.battery_6_bar],
+        [90, false, Icons.battery_full],
+        [50, true, Icons.battery_charging_full],
+      ];
+      
+      for (final test in icons) {
+        final level = test[0] as int;
+        final charging = test[1] as bool;
+        final expectedIcon = test[2] as IconData;
+        
+        IconData getIcon(int l, bool c) {
+          if (c) return Icons.battery_charging_full;
+          if (l >= 90) return Icons.battery_full;
+          if (l >= 70) return Icons.battery_6_bar;
+          if (l >= 50) return Icons.battery_5_bar;
+          if (l >= 30) return Icons.battery_3_bar;
+          if (l >= 20) return Icons.battery_2_bar;
+          if (l >= 10) return Icons.battery_1_bar;
+          return Icons.battery_0_bar;
+        }
+        
+        expect(getIcon(level, charging), expectedIcon);
+      }
+    });
+  });
+
   group('Pull-to-refresh tests', () {
     testWidgets('MyHomePage has RefreshIndicator', (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
@@ -3403,7 +3482,7 @@ void main() {
       for (final provider in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 7);
+      expect(initCount, 8);
     });
   });
 }

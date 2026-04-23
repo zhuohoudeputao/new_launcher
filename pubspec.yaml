@@ -17,6 +17,7 @@ dependencies:
   geolocator: ^11.1.0
   image_picker: ^1.0.0
   path_provider: ^2.0.0
+  battery_plus: ^6.0.0
 
 dev_dependencies:
   flutter_test:

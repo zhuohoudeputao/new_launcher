@@ -140,6 +140,14 @@ Settings auto-saved via `SharedPreferences`:
   - Quick launch: camera, settings, clock, calculator
   - Date/time settings: opens Android settings with guidance
   - View logs: displays app log viewer
+- **Battery**: Device battery status display
+  - Battery level percentage
+  - Charging state (charging, discharging, full, connected not charging)
+  - Dynamic battery icon based on level
+  - Color indication (green >50%, orange 20-50%, red <20%)
+  - Real-time battery state updates
+  - Manual refresh button
+  - Uses `Card.filled` for Material 3 style
 
 ## Material 3 Design System
 
@@ -180,11 +188,12 @@ See `docs/material3_upgrade.md` for detailed implementation guide.
 Key packages (pubspec.yaml):
 - `provider: ^6.0.0` - State management
 - `shared_preferences: ^2.0.0` - Settings storage
-- `url_launcher: ^6.0.0` - Open URLs
-- `sqflite: ^2.0.0` - Database (unused)
-- `permission_handler: ^10.0.0` - Permissions
 - `http: ^1.0.0` - HTTP requests
 - `device_apps: ^2.2.0` - App enumeration and launching
+- `geolocator: ^11.1.0` - Location services for weather
+- `image_picker: ^1.0.0` - Wallpaper selection
+- `path_provider: ^2.0.0` - File system paths
+- `battery_plus: ^6.0.0` - Battery status
 
 ## Testing
 
@@ -210,8 +219,9 @@ Test coverage includes:
 - Search results indicator tests (filtering, count format, pluralization)
 - SearchTextField tests (rendering, clear button visibility and behavior)
 - Pull-to-refresh tests (RefreshIndicator, scroll physics, provider refresh)
+- Battery provider tests (provider existence, keywords, model state, widget rendering)
 
-Total tests: ~283 tests
+Total tests: ~290 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -245,6 +255,7 @@ Technical documentation is available in `docs/`:
 - `date_time_settings.md` - System date/time settings action
 - `app_statistics_clear.md` - Clear statistics button feature
 - `pull_to_refresh.md` - Pull-to-refresh feature implementation
+- `battery_provider.md` - Battery status provider implementation
 
 ## Notice
 DO NOT EDIT task*.md

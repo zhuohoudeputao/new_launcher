@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/providers/provider_app.dart';
+import 'package:new_launcher/providers/provider_battery.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -82,8 +83,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   // initialize global values then run app
 Global.init().then((value) => runApp(MultiProvider(
-        // add providers here to make them accessible
- providers: [
+        providers: [
             ChangeNotifierProvider.value(value: Global.themeModel),
             ChangeNotifierProvider.value(value: Global.backgroundImageModel),
             ChangeNotifierProvider.value(value: Global.settingsModel),
@@ -93,6 +93,7 @@ Global.init().then((value) => runApp(MultiProvider(
             ChangeNotifierProvider.value(value: appModel),
             ChangeNotifierProvider.value(value: allAppsModel),
             ChangeNotifierProvider.value(value: appStatisticsModel),
+            ChangeNotifierProvider.value(value: batteryModel),
           ],
          child: MyApp(),
        )));
