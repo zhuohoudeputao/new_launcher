@@ -4644,7 +4644,7 @@ void main() {
 
     test('CountdownModel is ChangeNotifier', () {
       final model = CountdownModel();
-      expect(model is ChangeNotifier, true);
+      expect(model, isA<ChangeNotifier>());
     });
 
     test('CountdownModel init sets initialized', () async {
