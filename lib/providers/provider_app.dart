@@ -306,7 +306,7 @@ class _AllAppsCardState extends State<AllAppsCard> {
         height: 120,
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 5,
+            crossAxisCount: 2,
             childAspectRatio: 0.8,
           ),
           itemCount: apps.length,

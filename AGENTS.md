@@ -207,6 +207,7 @@ Technical documentation is available in `docs/`:
 - `app_statistics_feature.md` - App usage statistics tracking and display
 - `material3_upgrade.md` - Material 3 implementation guide
 - `skipped_tests_fix.md` - Fix for SharedPreferences-dependent tests
+- `grid_overflow_fix.md` - Fix for AllAppsCard GridView overflow
 
 ## Notice
 DO NOT EDIT task*.md
