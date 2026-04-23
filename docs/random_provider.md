@@ -13,7 +13,7 @@ The Random Generator provider provides random generation utilities including coi
 
 ### Dice Roll
 - Multiple dice options: D4, D6, D8, D10, D12, D20, D100
-- SegmentedButton for dice type selection
+- SegmentedButton wrapped in SingleChildScrollView for horizontal scrolling
 - Real-time roll result display
 - Uses `Icons.casino` icon
 

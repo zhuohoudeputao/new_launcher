@@ -311,13 +311,14 @@ class _RandomCardState extends State<RandomCard> {
               ],
             ),
             SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: SegmentedButton<int>(
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  SegmentedButton<int>(
                     segments: _diceOptions.map((sides) => ButtonSegment(
                       value: _diceOptions.indexOf(sides),
-                      label: Text("D$sides", style: TextStyle(fontSize: 10)),
+                      label: Text("D$sides"),
                     )).toList(),
                     selected: {_selectedDiceIndex},
                     onSelectionChanged: (Set<int> selection) {
@@ -330,34 +331,34 @@ class _RandomCardState extends State<RandomCard> {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                   ),
-                ),
-                SizedBox(width: 8),
-                Container(
-                  width: 50,
-                  height: 40,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    random.diceResult.isEmpty ? "-" : random.diceResult,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  SizedBox(width: 8),
+                  Container(
+                    width: 50,
+                    height: 40,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      random.diceResult.isEmpty ? "-" : random.diceResult,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.refresh, size: 18),
-                  onPressed: () => random.rollDice(_diceOptions[_selectedDiceIndex]),
-                  tooltip: "Roll dice",
-                  style: IconButton.styleFrom(
-                    foregroundColor: Theme.of(context).colorScheme.primary,
+                  IconButton(
+                    icon: Icon(Icons.refresh, size: 18),
+                    onPressed: () => random.rollDice(_diceOptions[_selectedDiceIndex]),
+                    tooltip: "Roll dice",
+                    style: IconButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
