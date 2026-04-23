@@ -42,7 +42,7 @@ Future<void> _initActions() async {
 }
 
 Future<void> _update() async {
-  meditationModel.notifyListeners();
+  meditationModel.refresh();
 }
 
 void _showMeditationDialog(BuildContext context) {
@@ -273,6 +273,10 @@ class MeditationModel extends ChangeNotifier {
     _breathingTimer?.cancel();
     _remainingSeconds = 0;
     _breathingCount = 0;
+    notifyListeners();
+  }
+
+  void refresh() {
     notifyListeners();
   }
 
