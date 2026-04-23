@@ -182,13 +182,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 child: ListView.builder(
                   cacheExtent: 500,
-                  itemExtent: 80,
                   itemCount: infoList.length,
                   addAutomaticKeepAlives: false,
                   addRepaintBoundaries: true,
                   itemBuilder: (BuildContext context, int index) {
                     final widget = infoList[infoList.length - index - 1];
-                    return widget;
+                    return Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      child: widget,
+                    );
                   },
                   scrollDirection: Axis.vertical,
                   reverse: true,

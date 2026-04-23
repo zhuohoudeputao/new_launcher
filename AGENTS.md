@@ -32,7 +32,7 @@ flutter.sdk=/home/linzuxuan/app/flutter
 ## Architecture
 
 - **Entry point**: `lib/main.dart` - `MyApp` widget wraps `MyHomePage`
-- **Card list**: Standard ListView.builder displays info cards from bottom to top
+- **Card list**: Standard ListView.builder displays info cards with dynamic sizing
 - **Search input**: `SearchTextField` widget manages search field with clear button
 - **Providers system**: `lib/providers/*.dart` - Each provider adds services (weather, apps, wallpaper, etc.)
 - **Data layer**: `lib/data.dart` - Contains `Global`, `ActionModel`, `InfoModel`, `SettingsModel`, `BackgroundImageModel`, `ThemeModel`
@@ -125,9 +125,9 @@ Settings auto-saved via `SharedPreferences`:
   - WallpaperPickerButton uses Card.filled with IconButton.styleFrom()
 - **Time**: Local time display with optional seconds
 - **App**: App launcher with device_apps
-  - `AllAppsCard`: Card.outlined with GridView (Material 3 secondary style)
-  - `RecentlyUsedAppsCard`: Card.filled (Material 3 primary style)
-  - `AppStatisticsCard`: Card.outlined with statistics display
+  - `AllAppsCard`: Card.outlined with GridView (120px height, horizontal scroll)
+  - `RecentlyUsedAppsCard`: Card.filled (80px height, horizontal ListView)
+  - `AppStatisticsCard`: Card.outlined with dynamic height statistics display
   - RepaintBoundary and cacheWidth for icon performance
   - Models: `appModel`, `allAppsModel`, `appStatisticsModel`
 - **System**: System-related actions
@@ -148,6 +148,7 @@ The app uses Material 3 design system with the following components:
 - `Card.filled()` - Primary content (search input, weather, recent apps)
 - `Card.outlined()` - Secondary content (all apps, app statistics)
 - Standard Card with `elevation: 0` - Settings items
+- Cards use `mainAxisSize: MainAxisSize.min` for dynamic sizing to prevent overflow
 
 ### Buttons
 - `SegmentedButton` for theme mode selection (new Material 3 component)
