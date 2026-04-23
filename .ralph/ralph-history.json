@@ -696,13 +696,34 @@
         "\u001b[0m$ \u001b[0munset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && ~/app/flutter/bin/flutter test --timeout 60s 2>&1 | grep -E \"FAILED|failed|Expected|Actual\" | head -40",
         "[ERROR] 2026-04-24T06:56:06.815938 - Flashlight init error: MissingPluginException(No implementation found for method torch_available on channel com.svprdga.torchlight/main)"
       ]
+    },
+    {
+      "iteration": 29,
+      "startedAt": "2026-04-23T23:03:21.949Z",
+      "endedAt": "2026-04-23T23:13:11.426Z",
+      "durationMs": 581608,
+      "agent": "opencode",
+      "model": "",
+      "toolsUsed": {},
+      "filesModified": [
+        "AGENTS.md",
+        "docs/critical_bug_fixes_iteration29.md",
+        "lib/main.dart",
+        "lib/providers/provider_currency.dart",
+        "lib/providers/provider_timer.dart"
+      ],
+      "exitCode": 0,
+      "completionDetected": true,
+      "errors": [
+        "\u001b[0m$ \u001b[0munset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && ~/app/flutter/bin/flutter test 2>&1 | grep -E \"^(All tests passed|FAILED|Error)\""
+      ]
     }
   ],
-  "totalDurationMs": 14482634,
+  "totalDurationMs": 15064242,
   "struggleIndicators": {
     "repeatedErrors": {
       "00:09 +652 -4: Bookmarks provider tests BookmarksModel length getter works                          ": 2,
-      "\u001b[0m$ \u001b[0munset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && ~/app/flutter/bin/flutter test 2>&1": 12,
+      "\u001b[0m$ \u001b[0munset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && ~/app/flutter/bin/flutter test 2>&1": 13,
       "[ERROR] 2026-04-24T05:04:30.287989 - Flashlight init error: MissingPluginException(No implementation": 1,
       "00:09 +654 -2: Bookmarks provider tests BookmarksModel length getter works                          ": 1,
       "I/flutter (27026): [ERROR] 2026-04-24T04:41:09.222071 - Network error: ClientException with SocketEx": 1,
