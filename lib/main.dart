@@ -232,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
                   child: Text(
-                    "${infoList.length} results",
+                    "${infoList.length} ${infoList.length == 1 ? 'result' : 'results'}",
                     style: TextStyle(
                       fontSize: 12,
                       color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),

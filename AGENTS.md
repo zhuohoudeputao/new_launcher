@@ -191,10 +191,10 @@ Test coverage includes:
 - System provider action tests (camera, clock, calculator, settings, logs keywords)
 - MyHomePage structure tests (PopScope, TextField, Card, CircularListController)
 - MyApp structure tests (Material 3 theme, navigatorKey)
-- Search results indicator tests (filtering, count format)
+- Search results indicator tests (filtering, count format, pluralization)
 - SearchTextField tests (rendering, clear button visibility and behavior)
 
-Total tests: ~305 tests
+Total tests: ~307 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -211,6 +211,7 @@ Technical documentation is available in `docs/`:
 - `critical_bug_fixes.md` - Bug fixes and code cleanup history
 - `search_feature.md` - Search feature implementation
 - `search_clear_button.md` - Search clear button widget implementation
+- `search_results_pluralization.md` - Search results pluralization fix
 - `theme_feature.md` - Theme management
 - `wallpaper_feature.md` - Wallpaper handling
 - `weather_service.md` - Weather API integration

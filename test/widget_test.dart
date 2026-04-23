@@ -3557,8 +3557,20 @@ void main() {
 
     test('results indicator format for single result', () {
       final count = 1;
-      final text = '${count} results';
-      expect(text, '1 results');
+      final text = '$count ${count == 1 ? 'result' : 'results'}';
+      expect(text, '1 result');
+    });
+
+    test('results indicator format for multiple results', () {
+      final count = 5;
+      final text = '$count ${count == 1 ? 'result' : 'results'}';
+      expect(text, '5 results');
+    });
+
+    test('results indicator pluralization logic', () {
+      expect(1 == 1 ? 'result' : 'results', 'result');
+      expect(2 == 1 ? 'result' : 'results', 'results');
+      expect(0 == 1 ? 'result' : 'results', 'results');
     });
   });
 
