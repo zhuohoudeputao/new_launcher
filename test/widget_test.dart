@@ -31,6 +31,7 @@ import 'package:new_launcher/providers/provider_expense.dart';
 import 'package:new_launcher/providers/provider_numberbase.dart';
 import 'package:new_launcher/providers/provider_calendar.dart';
 import 'package:new_launcher/providers/provider_progress.dart';
+import 'package:new_launcher/providers/provider_anniversary.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2471,7 +2472,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 32);
+      expect(Global.providerList.length, 33);
     });
 
     test('Global.providerList names are correct', () {
@@ -3638,7 +3639,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 32);
+      expect(initCount, 33);
     });
   });
 
@@ -3956,7 +3957,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 32);
+      expect(Global.providerList.length, 33);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5300,7 +5301,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 32);
+      expect(Global.providerList.length, 33);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -8481,6 +8482,352 @@ void main() {
 
     test('providerProgress keywords', () {
       expect(providerProgress.name, 'Progress');
+    });
+  });
+
+  group('Anniversary provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('AnniversaryModel is initialized correctly', () async {
+      final model = AnniversaryModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.anniversaries, isEmpty);
+    });
+
+    test('AnniversaryModel addAnniversary works', () async {
+      final model = AnniversaryModel();
+      await model.init();
+      model.addAnniversary('Birthday', 6, 15, 1990);
+      expect(model.length, 1);
+      expect(model.anniversaries[0].name, 'Birthday');
+      expect(model.anniversaries[0].month, 6);
+      expect(model.anniversaries[0].day, 15);
+      expect(model.anniversaries[0].year, 1990);
+    });
+
+    test('AnniversaryModel addAnniversary without year works', () async {
+      final model = AnniversaryModel();
+      await model.init();
+      model.addAnniversary('Anniversary', 12, 25, null);
+      expect(model.length, 1);
+      expect(model.anniversaries[0].year, null);
+    });
+
+    test('AnniversaryModel addAnniversary does not add empty name', () async {
+      final model = AnniversaryModel();
+      await model.init();
+      model.addAnniversary('', 6, 15, 1990);
+      expect(model.length, 0);
+    });
+
+    test('AnniversaryModel updateAnniversary works', () async {
+      final model = AnniversaryModel();
+      await model.init();
+      model.addAnniversary('Birthday', 6, 15, 1990);
+      model.updateAnniversary(0, 'New Birthday', 7, 20, 1995);
+      expect(model.anniversaries[0].name, 'New Birthday');
+      expect(model.anniversaries[0].month, 7);
+      expect(model.anniversaries[0].day, 20);
+    });
+
+    test('AnniversaryModel deleteAnniversary works', () async {
+      final model = AnniversaryModel();
+      await model.init();
+      model.addAnniversary('Birthday1', 6, 15, 1990);
+      model.addAnniversary('Birthday2', 7, 20, 1995);
+      expect(model.length, 2);
+      model.deleteAnniversary(0);
+      expect(model.length, 1);
+      expect(model.anniversaries[0].name, 'Birthday1');
+    });
+
+    test('AnniversaryModel clearAllAnniversaries works', () async {
+      final model = AnniversaryModel();
+      await model.init();
+      model.addAnniversary('Birthday1', 6, 15, 1990);
+      model.addAnniversary('Birthday2', 7, 20, 1995);
+      expect(model.length, 2);
+      model.clearAllAnniversaries();
+      expect(model.length, 0);
+    });
+
+    test('AnniversaryModel maxAnniversaries is 15', () {
+      expect(AnniversaryModel.maxAnniversaries, 15);
+    });
+
+    test('AnniversaryModel max limit works', () async {
+      final model = AnniversaryModel();
+      await model.init();
+      for (int i = 0; i < 20; i++) {
+        model.addAnniversary('Event $i', (i % 12) + 1, (i % 28) + 1, null);
+      }
+      expect(model.length, 15);
+    });
+
+    test('AnniversaryEntry getNextOccurrence works', () {
+      final futureDate = DateTime.now().add(Duration(days: 5));
+      final entry = AnniversaryEntry(
+        name: 'Test',
+        month: futureDate.month,
+        day: futureDate.day,
+        year: 1990,
+      );
+      final next = entry.getNextOccurrence();
+      expect(next.year, DateTime.now().year);
+    });
+
+    test('AnniversaryEntry getDaysUntilNext works', () {
+      final futureDate = DateTime.now().add(Duration(days: 5));
+      final entry = AnniversaryEntry(
+        name: 'Test',
+        month: futureDate.month,
+        day: futureDate.day,
+        year: 1990,
+      );
+      final days = entry.getDaysUntilNext();
+      expect(days, greaterThanOrEqualTo(4));
+    });
+
+    test('AnniversaryEntry getOccurrences works', () {
+      final pastDate = DateTime.now().subtract(Duration(days: 5));
+      final entry = AnniversaryEntry(
+        name: 'Test',
+        month: pastDate.month,
+        day: pastDate.day,
+        year: DateTime.now().year - 30,
+      );
+      final occurrences = entry.getOccurrences();
+      expect(occurrences, 31);
+    });
+
+    test('AnniversaryEntry getOccurrences returns null when year is null', () {
+      final entry = AnniversaryEntry(
+        name: 'Test',
+        month: 6,
+        day: 15,
+        year: null,
+      );
+      expect(entry.getOccurrences(), null);
+    });
+
+    test('AnniversaryEntry toJsonString and fromJsonString work', () {
+      final entry = AnniversaryEntry(
+        name: 'Test',
+        month: 6,
+        day: 15,
+        year: 1990,
+        createdAt: DateTime(2026, 1, 1),
+      );
+      final json = entry.toJsonString();
+      final restored = AnniversaryEntry.fromJsonString(json);
+      expect(restored.name, 'Test');
+      expect(restored.month, 6);
+      expect(restored.day, 15);
+      expect(restored.year, 1990);
+    });
+
+    test('AnniversaryModel formatDaysUntil works for today', () async {
+      final model = AnniversaryModel();
+      await model.init();
+      final now = DateTime.now();
+      final entry = AnniversaryEntry(
+        name: 'Test',
+        month: now.month,
+        day: now.day,
+        year: 1990,
+      );
+      final formatted = model.formatDaysUntil(entry);
+      expect(formatted, 'Today!');
+    });
+
+    test('AnniversaryModel formatDaysUntil works for days less than a week', () async {
+      final model = AnniversaryModel();
+      await model.init();
+      final futureDate = DateTime.now().add(Duration(days: 3));
+      final entry = AnniversaryEntry(
+        name: 'Test',
+        month: futureDate.month,
+        day: futureDate.day,
+        year: 1990,
+      );
+      final formatted = model.formatDaysUntil(entry);
+      expect(formatted.contains('days'), true);
+    });
+
+    test('AnniversaryModel formatDaysUntil works for days', () async {
+      final model = AnniversaryModel();
+      await model.init();
+      final futureDate = DateTime.now().add(Duration(days: 5));
+      final entry = AnniversaryEntry(
+        name: 'Test',
+        month: futureDate.month,
+        day: futureDate.day,
+        year: 1990,
+      );
+      final formatted = model.formatDaysUntil(entry);
+      expect(formatted.contains('days'), true);
+    });
+
+    testWidgets('AnniversaryCard renders loading state', (WidgetTester tester) async {
+      final model = AnniversaryModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: AnniversaryCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Anniversaries: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('AnniversaryCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      await anniversaryModel.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: anniversaryModel,
+              child: AnniversaryCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Anniversaries'), findsOneWidget);
+      expect(find.text('No anniversaries. Tap + to add one.'), findsOneWidget);
+    });
+
+    testWidgets('AnniversaryCard renders with anniversaries', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      await anniversaryModel.init();
+      anniversaryModel.addAnniversary('Test Anniversary', 6, 15, 1990);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: anniversaryModel,
+              child: AnniversaryCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Test Anniversary'), findsOneWidget);
+    });
+
+    testWidgets('AnniversaryCard widget exists', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: anniversaryModel,
+            child: AnniversaryCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(AnniversaryCard), findsOneWidget);
+    });
+
+    testWidgets('AddAnniversaryDialog widget exists', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => AddAnniversaryDialog(),
+              ),
+              child: Text("Show"),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text("Show"));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AddAnniversaryDialog), findsOneWidget);
+      expect(find.text("Add Anniversary"), findsOneWidget);
+    });
+
+    testWidgets('EditAnniversaryDialog widget exists', (WidgetTester tester) async {
+      final entry = AnniversaryEntry(name: "Test", month: 6, day: 15);
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => EditAnniversaryDialog(index: 0, entry: entry),
+              ),
+              child: Text("Show"),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text("Show"));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(EditAnniversaryDialog), findsOneWidget);
+      expect(find.text("Edit Anniversary"), findsOneWidget);
+    });
+
+    test('providerAnniversary exists', () {
+      expect(providerAnniversary, isNotNull);
+      expect(providerAnniversary.name, 'Anniversary');
+    });
+
+    test('Global.providerList includes Anniversary', () {
+      final hasAnniversary = Global.providerList.any((p) => p.name == 'Anniversary');
+      expect(hasAnniversary, true);
+    });
+
+    test('Anniversary provider keywords include anniversary', () {
+      final keywords = 'anniversary birthday recurring event date add';
+      expect(keywords.contains('anniversary'), true);
+    });
+
+    test('Anniversary provider keywords include birthday', () {
+      final keywords = 'anniversary birthday recurring event date add';
+      expect(keywords.contains('birthday'), true);
+    });
+
+    test('Anniversary provider keywords include recurring', () {
+      final keywords = 'anniversary birthday recurring event date add';
+      expect(keywords.contains('recurring'), true);
+    });
+
+    test('AnniversaryModel is ChangeNotifier', () {
+      final model = AnniversaryModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('AnniversaryModel hasAnniversaries getter works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AnniversaryModel();
+      await model.init();
+      expect(model.hasAnniversaries, false);
+      model.addAnniversary('Test', 6, 15, null);
+      expect(model.hasAnniversaries, true);
+    });
+
+    test('AnniversaryModel length getter works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AnniversaryModel();
+      await model.init();
+      expect(model.length, 0);
+      model.addAnniversary('Test', 6, 15, null);
+      expect(model.length, 1);
     });
   });
 }

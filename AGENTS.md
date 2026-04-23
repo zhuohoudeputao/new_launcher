@@ -402,6 +402,17 @@ Settings auto-saved via `SharedPreferences`:
     - Color coding for progress levels (100% green, 75%+ teal, 50%+ secondary)
     - Uses `Card.filled` and `LinearProgressIndicator` for Material 3 style
     - Keywords: progress, track, goal, project, percentage, completion, goal tracker
+- **Anniversary**: Recurring event tracker for birthdays and anniversaries
+    - Track recurring events like birthdays, anniversaries, holidays
+    - Shows days until next occurrence
+    - Optional year tracking for age/years count display
+    - Add, edit, and delete anniversaries
+    - Maximum 15 anniversaries stored (oldest removed when limit exceeded)
+    - Anniversaries persisted via SharedPreferences
+    - Human-readable time display (Today!, Tomorrow, X days, X weeks, X months)
+    - Color coding for urgency (today shows celebration color)
+    - Uses `Card.filled` for Material 3 style
+    - Keywords: anniversary, birthday, recurring, event, date, add
 
 ## Material 3 Design System
 
@@ -500,7 +511,7 @@ Test coverage includes:
 - Calendar provider tests (provider existence, keywords, model state, navigation buttons, widget rendering)
 - Progress provider tests (provider existence, keywords, model state, CRUD operations, percentage calculation, widget rendering)
   
-Total tests: 823 tests
+Total tests: 854 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
