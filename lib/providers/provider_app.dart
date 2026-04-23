@@ -390,6 +390,31 @@ class AppStatisticsCard extends StatefulWidget {
 }
 
 class _AppStatisticsCardState extends State<AppStatisticsCard> {
+  Future<void> _showClearConfirmation(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Clear Statistics"),
+        content: Text("This will delete all app usage history. This action cannot be undone."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text("Cancel"),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text("Clear"),
+          ),
+        ],
+      ),
+    );
+    
+    if (confirmed == true) {
+      context.read<AppStatisticsModel>().clearStats();
+      Global.loggerModel.info("App statistics cleared by user", source: "AppStatistics");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final stats = context.watch<AppStatisticsModel>();
@@ -409,7 +434,21 @@ class _AppStatisticsCardState extends State<AppStatisticsCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("App Statistics", style: TextStyle(fontWeight: FontWeight.bold)),
-                Text("${stats.uniqueApps} apps, ${stats.totalLaunches} launches", style: TextStyle(fontSize: 12)),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("${stats.uniqueApps} apps, ${stats.totalLaunches} launches", style: TextStyle(fontSize: 12)),
+                    if (stats.totalLaunches > 0)
+                      IconButton(
+                        icon: Icon(Icons.delete_outline, size: 18),
+                        onPressed: () => _showClearConfirmation(context),
+                        tooltip: "Clear statistics",
+                        style: IconButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                  ],
+                ),
               ],
             ),
             SizedBox(height: 4),

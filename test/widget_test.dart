@@ -1942,6 +1942,143 @@ void main() {
 
       expect(find.textContaining('3 launches, 0m ago'), findsOneWidget);
     });
+
+    testWidgets('clear button not shown when no data', (WidgetTester tester) async {
+      final statsModel = AppStatisticsModel();
+      final allAppsModel = AllAppsModel();
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MultiProvider(
+              providers: [
+                ChangeNotifierProvider.value(value: statsModel),
+                ChangeNotifierProvider.value(value: allAppsModel),
+              ],
+              child: AppStatisticsCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.delete_outline), findsNothing);
+    });
+
+    testWidgets('clear button shown when has data', (WidgetTester tester) async {
+      final statsModel = AppStatisticsModel();
+      final allAppsModel = AllAppsModel();
+      
+      statsModel.recordLaunch('TestApp');
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MultiProvider(
+              providers: [
+                ChangeNotifierProvider.value(value: statsModel),
+                ChangeNotifierProvider.value(value: allAppsModel),
+              ],
+              child: AppStatisticsCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.delete_outline), findsOneWidget);
+    });
+
+    testWidgets('clear button shows confirmation dialog', (WidgetTester tester) async {
+      final statsModel = AppStatisticsModel();
+      final allAppsModel = AllAppsModel();
+      
+      statsModel.recordLaunch('TestApp');
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MultiProvider(
+              providers: [
+                ChangeNotifierProvider.value(value: statsModel),
+                ChangeNotifierProvider.value(value: allAppsModel),
+              ],
+              child: AppStatisticsCard(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byIcon(Icons.delete_outline));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Clear Statistics'), findsOneWidget);
+      expect(find.text('This will delete all app usage history. This action cannot be undone.'), findsOneWidget);
+      expect(find.text('Cancel'), findsOneWidget);
+      expect(find.text('Clear'), findsOneWidget);
+    });
+
+    testWidgets('clear button clears stats when confirmed', (WidgetTester tester) async {
+      final statsModel = AppStatisticsModel();
+      final allAppsModel = AllAppsModel();
+      
+      statsModel.recordLaunch('TestApp');
+      statsModel.recordLaunch('TestApp');
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MultiProvider(
+              providers: [
+                ChangeNotifierProvider.value(value: statsModel),
+                ChangeNotifierProvider.value(value: allAppsModel),
+              ],
+              child: AppStatisticsCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(statsModel.totalLaunches, 2);
+      
+      await tester.tap(find.byIcon(Icons.delete_outline));
+      await tester.pumpAndSettle();
+      
+      await tester.tap(find.text('Clear'));
+      await tester.pumpAndSettle();
+
+      expect(statsModel.totalLaunches, 0);
+      expect(find.text('No app usage data yet'), findsOneWidget);
+    });
+
+    testWidgets('cancel does not clear stats', (WidgetTester tester) async {
+      final statsModel = AppStatisticsModel();
+      final allAppsModel = AllAppsModel();
+      
+      statsModel.recordLaunch('TestApp');
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MultiProvider(
+              providers: [
+                ChangeNotifierProvider.value(value: statsModel),
+                ChangeNotifierProvider.value(value: allAppsModel),
+              ],
+              child: AppStatisticsCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(statsModel.totalLaunches, 1);
+      
+      await tester.tap(find.byIcon(Icons.delete_outline));
+      await tester.pumpAndSettle();
+      
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(statsModel.totalLaunches, 1);
+    });
   });
 
   group('Wallpaper provider tests', () {

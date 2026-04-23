@@ -128,6 +128,8 @@ Settings auto-saved via `SharedPreferences`:
   - `AllAppsCard`: Card.outlined with GridView (120px height, horizontal scroll)
   - `RecentlyUsedAppsCard`: Card.filled (80px height, horizontal ListView)
   - `AppStatisticsCard`: Card.outlined with dynamic height statistics display
+    - Clear button with confirmation dialog to reset usage history
+    - Button only visible when statistics exist
   - RepaintBoundary and cacheWidth for icon performance
   - Models: `appModel`, `allAppsModel`, `appStatisticsModel`
   - Requires `QUERY_ALL_PACKAGES` permission for Android 11+ to enumerate all apps
@@ -206,7 +208,7 @@ Test coverage includes:
 - Search results indicator tests (filtering, count format, pluralization)
 - SearchTextField tests (rendering, clear button visibility and behavior)
 
-Total tests: ~275 tests
+Total tests: ~280 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -238,6 +240,7 @@ Technical documentation is available in `docs/`:
 - `grid_overflow_fix.md` - Fix for AllAppsCard GridView overflow
 - `test_coverage_update.md` - Additional tests for improved coverage
 - `date_time_settings.md` - System date/time settings action
+- `app_statistics_clear.md` - Clear statistics button feature
 
 ## Notice
 DO NOT EDIT task*.md
