@@ -39,6 +39,7 @@ import 'package:new_launcher/providers/provider_habit.dart';
 import 'package:new_launcher/providers/provider_meditation.dart';
 import 'package:new_launcher/providers/provider_water.dart';
 import 'package:new_launcher/providers/provider_mood.dart';
+import 'package:new_launcher/providers/provider_expense.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -191,6 +192,7 @@ class Global {
     providerMeditation,
     providerWater,
     providerMood,
+    providerExpense,
   ];
 
   //_______________________________________________________________________

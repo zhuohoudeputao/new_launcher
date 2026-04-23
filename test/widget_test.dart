@@ -27,6 +27,7 @@ import 'package:new_launcher/providers/provider_habit.dart';
 import 'package:new_launcher/providers/provider_meditation.dart';
 import 'package:new_launcher/providers/provider_water.dart';
 import 'package:new_launcher/providers/provider_mood.dart';
+import 'package:new_launcher/providers/provider_expense.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2467,7 +2468,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 28);
+      expect(Global.providerList.length, 29);
     });
 
     test('Global.providerList names are correct', () {
@@ -3634,7 +3635,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 28);
+      expect(initCount, 29);
     });
   });
 
@@ -3952,7 +3953,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 28);
+      expect(Global.providerList.length, 29);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5296,7 +5297,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 28);
+      expect(Global.providerList.length, 29);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -7655,6 +7656,210 @@ void main() {
 
     test('providerMood keywords', () {
       expect(providerMood.name, 'Mood');
+    });
+  });
+
+  group('Expense provider tests', () {
+    test('ExpenseModel initialization works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ExpenseModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.entries.length, 0);
+    });
+
+    test('ExpenseCategory values are correct', () {
+      expect(ExpenseCategory.food.label, 'Food');
+      expect(ExpenseCategory.transport.label, 'Transport');
+      expect(ExpenseCategory.entertainment.label, 'Entertainment');
+      expect(ExpenseCategory.shopping.label, 'Shopping');
+      expect(ExpenseCategory.bills.label, 'Bills');
+      expect(ExpenseCategory.health.label, 'Health');
+      expect(ExpenseCategory.other.label, 'Other');
+    });
+
+    test('ExpenseCategory emoji are correct', () {
+      expect(ExpenseCategory.food.emoji, '🍔');
+      expect(ExpenseCategory.transport.emoji, '🚗');
+      expect(ExpenseCategory.entertainment.emoji, '🎬');
+      expect(ExpenseCategory.shopping.emoji, '🛍️');
+      expect(ExpenseCategory.bills.emoji, '📄');
+      expect(ExpenseCategory.health.emoji, '💊');
+      expect(ExpenseCategory.other.emoji, '📦');
+    });
+
+    test('ExpenseEntry toJson and fromJson work', () {
+      final entry = ExpenseEntry(
+        id: '123',
+        amount: 50.0,
+        category: ExpenseCategory.food,
+        description: 'Lunch',
+        date: DateTime(2024, 1, 15),
+      );
+      final json = entry.toJson();
+      final restored = ExpenseEntry.fromJson(json);
+      expect(restored.id, '123');
+      expect(restored.amount, 50.0);
+      expect(restored.category, ExpenseCategory.food);
+      expect(restored.description, 'Lunch');
+    });
+
+    test('ExpenseEntry generateId works', () {
+      final id1 = ExpenseEntry.generateId();
+      final id2 = ExpenseEntry.generateId();
+      expect(id1, isNotNull);
+      expect(id2, isNotNull);
+    });
+
+    test('ExpenseModel addExpense works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ExpenseModel();
+      await model.init();
+      model.addExpense(50.0, ExpenseCategory.food, description: 'Lunch');
+      expect(model.entries.length, 1);
+      expect(model.todayTotal, 50.0);
+    });
+
+    test('ExpenseModel addExpense without description', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ExpenseModel();
+      await model.init();
+      model.addExpense(25.0, ExpenseCategory.transport);
+      expect(model.entries.length, 1);
+      expect(model.entries.first.description, null);
+    });
+
+    test('ExpenseModel deleteExpense works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ExpenseModel();
+      await model.init();
+      model.addExpense(50.0, ExpenseCategory.food, description: 'Lunch');
+      expect(model.entries.length, 1);
+      model.deleteExpense(model.entries.first.id);
+      expect(model.entries.length, 0);
+    });
+
+    test('ExpenseModel todayEntries filters correctly', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ExpenseModel();
+      await model.init();
+      model.addExpense(50.0, ExpenseCategory.food);
+      expect(model.todayEntries.length, 1);
+    });
+
+    test('ExpenseModel todayTotal calculates correctly', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ExpenseModel();
+      await model.init();
+      model.addExpense(50.0, ExpenseCategory.food);
+      model.addExpense(25.0, ExpenseCategory.transport);
+      expect(model.todayTotal, 75.0);
+    });
+
+    test('ExpenseModel categoryTotals works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ExpenseModel();
+      await model.init();
+      model.addExpense(50.0, ExpenseCategory.food);
+      model.addExpense(25.0, ExpenseCategory.food);
+      model.addExpense(30.0, ExpenseCategory.transport);
+      final totals = model.categoryTotals;
+      expect(totals[ExpenseCategory.food], 75.0);
+      expect(totals[ExpenseCategory.transport], 30.0);
+    });
+
+    test('ExpenseModel clearHistory works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ExpenseModel();
+      await model.init();
+      model.addExpense(50.0, ExpenseCategory.food);
+      expect(model.entries.length, 1);
+      await model.clearHistory();
+      expect(model.entries.length, 0);
+    });
+
+    test('ExpenseModel refresh works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ExpenseModel();
+      await model.init();
+      await model.refresh();
+      expect(model.isInitialized, true);
+    });
+
+    test('ExpenseModel maxEntries constant', () {
+      expect(ExpenseModel.maxEntries, 100);
+    });
+
+    testWidgets('ExpenseCard renders loading state', (WidgetTester tester) async {
+      final model = ExpenseModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: ExpenseCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Expense Tracker: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('ExpenseCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ExpenseModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ExpenseCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Expense Tracker'), findsOneWidget);
+    });
+
+    testWidgets('ExpenseCard renders with expenses', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ExpenseModel();
+      await model.init();
+      model.addExpense(50.0, ExpenseCategory.food, description: 'Lunch');
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ExpenseCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Expense Tracker'), findsOneWidget);
+    });
+
+    test('ExpenseCard widget exists', () {
+      expect(ExpenseCard, isNotNull);
+    });
+
+    test('Global.providerList includes Expense', () {
+      final hasExpense = Global.providerList.any((p) => p.name == 'Expense');
+      expect(hasExpense, true);
+    });
+
+    test('providerExpense exists', () {
+      expect(providerExpense, isNotNull);
+      expect(providerExpense.name, 'Expense');
+    });
+
+    test('providerExpense keywords', () {
+      expect(providerExpense.name, 'Expense');
     });
   });
 }

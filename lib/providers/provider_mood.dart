@@ -504,7 +504,7 @@ class MoodPickerSheet extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: mood.getColor(context).withOpacity(0.1),
+                    color: mood.getColor(context).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(

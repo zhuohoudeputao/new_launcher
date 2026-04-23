@@ -356,6 +356,19 @@ Settings auto-saved via `SharedPreferences`:
     - History view with clear all option
     - Uses `Card.filled` and `showModalBottomSheet` for Material 3 style
     - Keywords: mood, emotion, feeling, happy, sad, track, daily, mental, health
+- **Expense**: Daily expense tracker with categories
+    - Track daily expenses with amounts and categories
+    - 7 predefined categories: Food, Transport, Entertainment, Shopping, Bills, Health, Other
+    - Emoji-based category icons (🍔, 🚗, 🎬, 🛍️, 📄, 💊, 📦)
+    - Optional description/notes for each expense
+    - Daily, weekly, and monthly totals display
+    - History view showing recent expenses
+    - Delete expenses by swipe gesture
+    - Clear all expenses with confirmation dialog
+    - Maximum 100 expenses stored (oldest removed when limit exceeded)
+    - Expenses persisted via SharedPreferences
+    - Uses `Card.filled` and `ChoiceChip` for Material 3 style
+    - Keywords: expense, money, spend, cost, budget, track, finance, wallet
 
 ## Material 3 Design System
 
@@ -450,8 +463,9 @@ Test coverage includes:
 - Meditation provider tests (provider existence, keywords, model state, timer operations, breathing guide, widget rendering)
 - Water provider tests (provider existence, keywords, model state, add/remove glasses, goal setting, progress, widget rendering)
 - Mood provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
+- Expense provider tests (provider existence, keywords, model state, CRUD operations, category totals, widget rendering)
 
-Total tests: 744 tests
+Total tests: 765 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
