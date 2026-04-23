@@ -311,6 +311,19 @@ Settings auto-saved via `SharedPreferences`:
     - Clear all bookmarks with confirmation dialog
     - Uses `Card.filled` for Material 3 style
     - Keywords: bookmark, bookmarks, url, link, website, save, quick
+- **Habit**: Daily habit tracking with streaks
+    - Track daily habits with completion marking
+    - Streak tracking for consecutive days
+    - Best streak record for each habit
+    - Tap to toggle completion status
+    - Long press to edit or delete habits
+    - Maximum 10 habits stored (oldest removed when limit exceeded)
+    - Habits persisted via SharedPreferences
+    - Daily streak reset if not completed previous day
+    - Color coding for streak levels (7+ days green, 3-6 days yellow, <3 days gray)
+    - Fire icon with streak count display
+    - Uses `Card.filled` for Material 3 style
+    - Keywords: habit, track, daily, routine, streak, goal, habit tracker
 
 ## Material 3 Design System
 
@@ -401,9 +414,9 @@ Test coverage includes:
 - Random Generator provider tests (provider existence, keywords, model state, coin flip, dice roll, password generation)
 - Color Generator provider tests (provider existence, keywords, model state, color operations, HEX/RGB conversion)
 - Currency Converter provider tests (provider existence, keywords, model state, currency operations, widget rendering)
-- Bookmarks provider tests (provider existence, keywords, model state, CRUD operations, URL normalization)
+- Habit provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
 
-Total tests: 659 tests
+Total tests: 675 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -455,6 +468,7 @@ Technical documentation is available in `docs/`:
 - `currency_provider.md` - Currency Converter provider implementation
 - `currency_provider_fix.md` - Currency provider MultiProvider fix
 - `bookmarks_provider.md` - Bookmarks provider implementation
+- `habit_provider.md` - Habit tracker provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice

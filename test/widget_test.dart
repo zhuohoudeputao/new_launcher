@@ -23,6 +23,7 @@ import 'package:new_launcher/providers/provider_random.dart';
 import 'package:new_launcher/providers/provider_color.dart';
 import 'package:new_launcher/providers/provider_currency.dart';
 import 'package:new_launcher/providers/provider_bookmarks.dart';
+import 'package:new_launcher/providers/provider_habit.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2463,7 +2464,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 24);
+      expect(Global.providerList.length, 25);
     });
 
     test('Global.providerList names are correct', () {
@@ -3630,7 +3631,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 24);
+      expect(initCount, 25);
     });
   });
 
@@ -3939,7 +3940,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 24);
+      expect(Global.providerList.length, 25);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5265,7 +5266,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 24);
+      expect(Global.providerList.length, 25);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -6853,6 +6854,174 @@ void main() {
       expect('google'.capitalize(), 'Google');
       expect('example'.capitalize(), 'Example');
       expect(''.capitalize(), '');
+    });
+  });
+
+  group('Habit provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('HabitModel is initialized correctly', () async {
+      final model = HabitModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.habits, isEmpty);
+    });
+
+    test('HabitModel addHabit works', () async {
+      final model = HabitModel();
+      await model.init();
+      model.addHabit('Exercise');
+      expect(model.length, 1);
+      expect(model.habits[0].name, 'Exercise');
+      expect(model.habits[0].streak, 0);
+    });
+
+    test('HabitModel maxHabits limit works', () async {
+      final model = HabitModel();
+      await model.init();
+      for (int i = 0; i < 15; i++) {
+        model.addHabit('Habit$i');
+      }
+      expect(model.length, HabitModel.maxHabits);
+    });
+
+    test('HabitModel toggleHabit works', () async {
+      final model = HabitModel();
+      await model.init();
+      model.addHabit('Read');
+      expect(model.habits[0].isCompletedToday(), false);
+      model.toggleHabit(0);
+      expect(model.habits[0].isCompletedToday(), true);
+      expect(model.habits[0].streak, 1);
+      model.toggleHabit(0);
+      expect(model.habits[0].isCompletedToday(), false);
+      expect(model.habits[0].streak, 0);
+    });
+
+    test('HabitModel updateHabit works', () async {
+      final model = HabitModel();
+      await model.init();
+      model.addHabit('Exercise');
+      model.updateHabit(0, 'Workout');
+      expect(model.habits[0].name, 'Workout');
+    });
+
+    test('HabitModel deleteHabit works', () async {
+      final model = HabitModel();
+      await model.init();
+      model.addHabit('Habit1');
+      model.addHabit('Habit2');
+      expect(model.length, 2);
+      model.deleteHabit(0);
+      expect(model.length, 1);
+      expect(model.habits[0].name, 'Habit2');
+    });
+
+    test('HabitModel clearAllHabits works', () async {
+      final model = HabitModel();
+      await model.init();
+      model.addHabit('Habit1');
+      model.addHabit('Habit2');
+      expect(model.length, 2);
+      await model.clearAllHabits();
+      expect(model.length, 0);
+    });
+
+    test('HabitItem toJson and fromJson work', () {
+      final item = HabitItem(name: 'Test', streak: 5, bestStreak: 10);
+      final json = item.toJson();
+      final restored = HabitItem.fromJson(json);
+      expect(restored.name, 'Test');
+      expect(restored.streak, 5);
+      expect(restored.bestStreak, 10);
+    });
+
+    test('HabitItem isCompletedToday works', () {
+      final item = HabitItem(name: 'Test');
+      expect(item.isCompletedToday(), false);
+      final todayKey = item.todayKey;
+      final completedItem = item.copyWith(completedDates: {todayKey});
+      expect(completedItem.isCompletedToday(), true);
+    });
+
+    test('HabitModel completedTodayCount works', () async {
+      final model = HabitModel();
+      await model.init();
+      model.addHabit('Habit1');
+      model.addHabit('Habit2');
+      model.addHabit('Habit3');
+      expect(model.completedTodayCount, 0);
+      model.toggleHabit(0);
+      model.toggleHabit(1);
+      expect(model.completedTodayCount, 2);
+    });
+
+    testWidgets('HabitCard renders loading state', (WidgetTester tester) async {
+      final model = HabitModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: HabitCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Habit Tracker: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('HabitCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = HabitModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: HabitCard(),
+            ),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Habit Tracker'), findsOneWidget);
+      expect(find.text('No habits. Tap + to add one!'), findsOneWidget);
+    });
+
+    test('HabitCard widget exists', () {
+      expect(HabitCard, isNotNull);
+    });
+
+    test('AddHabitDialog widget exists', () {
+      expect(AddHabitDialog, isNotNull);
+    });
+
+    test('EditHabitDialog widget exists', () {
+      expect(EditHabitDialog, isNotNull);
+    });
+
+    test('Global.providerList includes Habit', () {
+      final hasHabit = Global.providerList.any((p) => p.name == 'Habit');
+      expect(hasHabit, true);
+    });
+
+    test('providerHabit exists', () {
+      expect(providerHabit, isNotNull);
+      expect(providerHabit.name, 'Habit');
+    });
+
+    test('HabitModel length getter works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = HabitModel();
+      await model.init();
+      expect(model.length, 0);
+      model.addHabit('Test');
+      expect(model.length, 1);
     });
   });
 }

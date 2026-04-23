@@ -35,6 +35,7 @@ import 'package:new_launcher/providers/provider_random.dart';
 import 'package:new_launcher/providers/provider_color.dart';
 import 'package:new_launcher/providers/provider_currency.dart';
 import 'package:new_launcher/providers/provider_bookmarks.dart';
+import 'package:new_launcher/providers/provider_habit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -183,6 +184,7 @@ class Global {
     providerColor,
     providerCurrency,
     providerBookmarks,
+    providerHabit,
   ];
 
   //_______________________________________________________________________
