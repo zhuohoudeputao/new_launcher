@@ -29,6 +29,7 @@ import 'package:new_launcher/providers/provider_countdown.dart';
 import 'package:new_launcher/providers/provider_unitconverter.dart';
 import 'package:new_launcher/providers/provider_pomodoro.dart';
 import 'package:new_launcher/providers/provider_clipboard.dart';
+import 'package:new_launcher/providers/provider_todo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -171,6 +172,7 @@ class Global {
     providerUnitConverter,
     providerPomodoro,
     providerClipboard,
+    providerTodo,
   ];
 
   //_______________________________________________________________________

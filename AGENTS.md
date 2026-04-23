@@ -252,6 +252,17 @@ Settings auto-saved via `SharedPreferences`:
     - Timestamp display (just now, Xm ago, Xh ago, Xd ago)
     - Uses `Card.filled` for Material 3 style
     - Keywords: clipboard, history, copy, paste, clip, text, snippet
+- **Todo**: Task/todo list management
+    - Add, edit, and delete tasks
+    - Mark tasks as completed/incomplete
+    - Priority levels (high, medium, low) with visual indicators
+    - Maximum 20 tasks stored (oldest removed when limit exceeded)
+    - Tasks persisted via SharedPreferences
+    - Active/done count display
+    - Clear completed tasks button
+    - Clear all tasks with confirmation dialog
+    - Uses `Card.filled` and `SegmentedButton` for Material 3 style
+    - Keywords: todo, task, list, check, done, complete, add, checklist
 
 ## Material 3 Design System
 
@@ -335,8 +346,9 @@ Test coverage includes:
 - Unit Converter provider tests (provider existence, keywords, model state, conversion operations)
 - Pomodoro provider tests (provider existence, keywords, model state, timer operations, phase transitions)
 - Clipboard provider tests (provider existence, keywords, model state, CRUD operations)
+- Todo provider tests (provider existence, keywords, model state, CRUD operations, priority handling)
 
-Total tests: 523 tests
+Total tests: 546 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

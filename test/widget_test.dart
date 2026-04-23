@@ -17,6 +17,7 @@ import 'package:new_launcher/providers/provider_countdown.dart';
 import 'package:new_launcher/providers/provider_unitconverter.dart';
 import 'package:new_launcher/providers/provider_pomodoro.dart';
 import 'package:new_launcher/providers/provider_clipboard.dart';
+import 'package:new_launcher/providers/provider_todo.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2457,7 +2458,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 18);
+      expect(Global.providerList.length, 19);
     });
 
     test('Global.providerList names are correct', () {
@@ -3624,7 +3625,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 18);
+      expect(initCount, 19);
     });
   });
 
@@ -3932,8 +3933,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 18 providers', () {
-      expect(Global.providerList.length, 18);
+    test('Global.providerList now contains 19 providers', () {
+      expect(Global.providerList.length, 19);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5258,8 +5259,8 @@ void main() {
       expect(UnitConverterCard, isNotNull);
     });
 
-    test('Global.providerList now contains 18 providers', () {
-      expect(Global.providerList.length, 18);
+    test('Global.providerList now contains 19 providers', () {
+      expect(Global.providerList.length, 19);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -5642,6 +5643,242 @@ void main() {
 
       await tester.pump();
       expect(find.textContaining('Clipboard'), findsWidgets);
+    });
+  });
+
+  group('Todo provider tests', () {
+    test('TodoItem toJson and fromJson work', () {
+      final item = TodoItem(
+        text: 'Test task',
+        completed: true,
+        priority: TodoPriority.high,
+        createdAt: DateTime(2024, 1, 1, 10, 30),
+      );
+      final json = item.toJson();
+      final restored = TodoItem.fromJson(json);
+      expect(restored.text, 'Test task');
+      expect(restored.completed, true);
+      expect(restored.priority, TodoPriority.high);
+      expect(restored.createdAt, DateTime(2024, 1, 1, 10, 30));
+    });
+
+    test('TodoItem copyWith works', () {
+      final item = TodoItem(
+        text: 'Original',
+        completed: false,
+        priority: TodoPriority.low,
+      );
+      final copied = item.copyWith(completed: true);
+      expect(copied.text, 'Original');
+      expect(copied.completed, true);
+      expect(copied.priority, TodoPriority.low);
+    });
+
+    test('TodoPriority enum has correct values', () {
+      expect(TodoPriority.values.length, 3);
+      expect(TodoPriority.values[0], TodoPriority.high);
+      expect(TodoPriority.values[1], TodoPriority.medium);
+      expect(TodoPriority.values[2], TodoPriority.low);
+    });
+
+    test('TodoModel default values are correct', () {
+      final model = TodoModel();
+      expect(model.length, 0);
+      expect(model.isInitialized, false);
+      expect(model.hasTodos, false);
+      expect(model.activeCount, 0);
+      expect(model.completedCount, 0);
+    });
+
+    test('TodoModel init initializes correctly', () async {
+      final model = TodoModel();
+      await model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('TodoModel addTodo works', () async {
+      final model = TodoModel();
+      await model.init();
+      model.clearAllTodos();
+      model.addTodo('Test task 1', TodoPriority.medium);
+      expect(model.length, 1);
+      expect(model.todos[0].text, 'Test task 1');
+      expect(model.todos[0].priority, TodoPriority.medium);
+      expect(model.todos[0].completed, false);
+    });
+
+    test('TodoModel addTodo ignores empty text', () async {
+      final model = TodoModel();
+      await model.init();
+      model.clearAllTodos();
+      model.addTodo('', TodoPriority.medium);
+      expect(model.length, 0);
+      model.addTodo('   ', TodoPriority.medium);
+      expect(model.length, 0);
+    });
+
+    test('TodoModel updateTodo works', () async {
+      final model = TodoModel();
+      await model.init();
+      model.clearAllTodos();
+      model.addTodo('Original task', TodoPriority.low);
+      model.updateTodo(0, 'Updated task', TodoPriority.high);
+      expect(model.todos[0].text, 'Updated task');
+      expect(model.todos[0].priority, TodoPriority.high);
+    });
+
+    test('TodoModel updateTodo deletes if text empty', () async {
+      final model = TodoModel();
+      await model.init();
+      model.clearAllTodos();
+      model.addTodo('Task to delete', TodoPriority.medium);
+      expect(model.length, 1);
+      model.updateTodo(0, '', TodoPriority.medium);
+      expect(model.length, 0);
+    });
+
+    test('TodoModel toggleCompleted works', () async {
+      final model = TodoModel();
+      await model.init();
+      model.clearAllTodos();
+      model.addTodo('Task 1', TodoPriority.medium);
+      expect(model.todos[0].completed, false);
+      expect(model.activeCount, 1);
+      expect(model.completedCount, 0);
+      model.toggleCompleted(0);
+      expect(model.todos[0].completed, true);
+      expect(model.activeCount, 0);
+      expect(model.completedCount, 1);
+    });
+
+    test('TodoModel deleteTodo works', () async {
+      final model = TodoModel();
+      await model.init();
+      model.clearAllTodos();
+      model.addTodo('Task 1', TodoPriority.medium);
+      model.addTodo('Task 2', TodoPriority.high);
+      expect(model.length, 2);
+      model.deleteTodo(0);
+      expect(model.length, 1);
+      expect(model.todos[0].text, 'Task 1');
+    });
+
+    test('TodoModel clearCompleted works', () async {
+      final model = TodoModel();
+      await model.init();
+      model.clearAllTodos();
+      model.addTodo('Task 1', TodoPriority.medium);
+      model.addTodo('Task 2', TodoPriority.high);
+      model.toggleCompleted(0);
+      expect(model.length, 2);
+      expect(model.completedCount, 1);
+      model.clearCompleted();
+      expect(model.length, 1);
+      expect(model.completedCount, 0);
+    });
+
+    test('TodoModel clearAllTodos works', () async {
+      final model = TodoModel();
+      await model.init();
+      model.clearAllTodos();
+      model.addTodo('Task 1', TodoPriority.medium);
+      model.addTodo('Task 2', TodoPriority.high);
+      expect(model.length, 2);
+      model.clearAllTodos();
+      expect(model.length, 0);
+      expect(model.hasTodos, false);
+    });
+
+    test('TodoModel max todos limit', () async {
+      final model = TodoModel();
+      await model.init();
+      model.clearAllTodos();
+
+      for (int i = 0; i < 25; i++) {
+        model.addTodo('Task $i', TodoPriority.medium);
+      }
+
+      expect(model.length, 20);
+      expect(model.todos.first.text, 'Task 24');
+    });
+
+    test('TodoModel refresh calls notifyListeners', () async {
+      final model = TodoModel();
+      await model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      await model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    test('TodoCard widget exists', () {
+      expect(TodoCard, isNotNull);
+    });
+
+    test('Global.providerList includes Todo', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Todo'), true);
+    });
+
+    test('providerTodo exists', () {
+      expect(providerTodo, isNotNull);
+      expect(providerTodo.name, 'Todo');
+    });
+
+    test('AddTodoDialog widget exists', () {
+      expect(AddTodoDialog, isNotNull);
+    });
+
+    test('EditTodoDialog widget exists', () {
+      expect(EditTodoDialog, isNotNull);
+    });
+
+    testWidgets('TodoCard renders loading state', (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: todoModel,
+            builder: (context, child) => TodoCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('Todo'), findsWidgets);
+    });
+
+    testWidgets('TodoCard renders initialized state', (tester) async {
+      final model = TodoModel();
+      await model.init();
+      model.clearAllTodos();
+      model.addTodo('Test task', TodoPriority.high);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => TodoCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('Todo List'), findsWidgets);
+    });
+
+    test('TodoModel activeTodos and completedTodos work', () async {
+      final model = TodoModel();
+      await model.init();
+      model.clearAllTodos();
+      model.addTodo('Active 1', TodoPriority.high);
+      model.addTodo('Active 2', TodoPriority.medium);
+      model.addTodo('Done 1', TodoPriority.low);
+      model.toggleCompleted(2);
+
+      expect(model.activeTodos.length, 2);
+      expect(model.completedTodos.length, 1);
+      expect(model.activeTodos.every((t) => !t.completed), true);
+      expect(model.completedTodos.every((t) => t.completed), true);
     });
   });
 }
