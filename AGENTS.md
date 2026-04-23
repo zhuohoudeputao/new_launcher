@@ -263,6 +263,16 @@ Settings auto-saved via `SharedPreferences`:
     - Clear all tasks with confirmation dialog
     - Uses `Card.filled` and `SegmentedButton` for Material 3 style
     - Keywords: todo, task, list, check, done, complete, add, checklist
+- **QRCode**: QR code generator
+    - Generate QR codes from text input
+    - Multiple input types: Text, URL, Email, Phone
+    - URL auto-prefixing (adds https:// if missing)
+    - Email and phone formatting (mailto:, tel:)
+    - Copy text to clipboard
+    - Clear QR code option
+    - Uses `Card.filled` and `SegmentedButton` for Material 3 style
+    - Uses `QrImageView` from qr_flutter package
+    - Keywords: qr, qrcode, code, generate, barcode, scan, share
 
 ## Material 3 Design System
 
@@ -310,6 +320,7 @@ Key packages (pubspec.yaml):
 - `path_provider: ^2.0.0` - File system paths
 - `battery_plus: ^6.0.0` - Battery status
 - `torch_light: ^1.0.0` - Flashlight control
+- `qr_flutter: ^4.1.0` - QR code generation
 
 ## Testing
 
@@ -347,8 +358,9 @@ Test coverage includes:
 - Pomodoro provider tests (provider existence, keywords, model state, timer operations, phase transitions)
 - Clipboard provider tests (provider existence, keywords, model state, CRUD operations)
 - Todo provider tests (provider existence, keywords, model state, CRUD operations, priority handling)
+- QR Code provider tests (provider existence, keywords, model state, text operations, widget rendering)
 
-Total tests: 546 tests
+Total tests: 563 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

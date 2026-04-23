@@ -18,6 +18,7 @@ import 'package:new_launcher/providers/provider_unitconverter.dart';
 import 'package:new_launcher/providers/provider_pomodoro.dart';
 import 'package:new_launcher/providers/provider_clipboard.dart';
 import 'package:new_launcher/providers/provider_todo.dart';
+import 'package:new_launcher/providers/provider_qrcode.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2458,7 +2459,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 19);
+      expect(Global.providerList.length, 20);
     });
 
     test('Global.providerList names are correct', () {
@@ -3625,7 +3626,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 19);
+      expect(initCount, 20);
     });
   });
 
@@ -3933,8 +3934,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 19 providers', () {
-      expect(Global.providerList.length, 19);
+    test('Global.providerList now contains 20 providers', () {
+      expect(Global.providerList.length, 20);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5259,8 +5260,8 @@ void main() {
       expect(UnitConverterCard, isNotNull);
     });
 
-    test('Global.providerList now contains 19 providers', () {
-      expect(Global.providerList.length, 19);
+    test('Global.providerList now contains 20 providers', () {
+      expect(Global.providerList.length, 20);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -5879,6 +5880,152 @@ void main() {
       expect(model.completedTodos.length, 1);
       expect(model.activeTodos.every((t) => !t.completed), true);
       expect(model.completedTodos.every((t) => t.completed), true);
+    });
+  });
+
+  group('QR Code provider tests', () {
+    test('QRModel exists', () {
+      expect(qrModel, isNotNull);
+    });
+
+    test('QRModel initial state', () {
+      final model = QRModel();
+      expect(model.currentText, '');
+      expect(model.hasQR, false);
+      expect(model.isInitialized, false);
+    });
+
+    test('QRModel init sets initialized', () {
+      final model = QRModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('QRModel setText works', () {
+      final model = QRModel();
+      model.init();
+      model.setText('Test QR');
+      expect(model.currentText, 'Test QR');
+      expect(model.hasQR, true);
+    });
+
+    test('QRModel setText trims whitespace', () {
+      final model = QRModel();
+      model.init();
+      model.setText('  Test QR  ');
+      expect(model.currentText, 'Test QR');
+    });
+
+    test('QRModel clearText works', () {
+      final model = QRModel();
+      model.init();
+      model.setText('Test QR');
+      expect(model.hasQR, true);
+      model.clearText();
+      expect(model.currentText, '');
+      expect(model.hasQR, false);
+    });
+
+    test('QRModel refresh calls notifyListeners', () {
+      final model = QRModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    test('QRModel setText notifies listeners', () {
+      final model = QRModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.setText('New text');
+      expect(notifyCount, 1);
+    });
+
+    test('QRModel clearText notifies listeners', () {
+      final model = QRModel();
+      model.init();
+      model.setText('Test');
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.clearText();
+      expect(notifyCount, 1);
+    });
+
+    test('QRCard widget exists', () {
+      expect(QRCard, isNotNull);
+    });
+
+    test('QRGeneratorDialog widget exists', () {
+      expect(QRGeneratorDialog, isNotNull);
+    });
+
+    test('Global.providerList includes QRCode', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('QRCode'), true);
+    });
+
+    test('providerQRCode exists', () {
+      expect(providerQRCode, isNotNull);
+      expect(providerQRCode.name, 'QRCode');
+    });
+
+    testWidgets('QRCard renders loading state', (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: qrModel,
+            builder: (context, child) => QRCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('QR Code'), findsWidgets);
+    });
+
+    testWidgets('QRCard renders initialized empty state', (tester) async {
+      final model = QRModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => QRCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('QR Code Generator'), findsWidgets);
+      expect(find.textContaining('Enter text'), findsWidgets);
+    });
+
+    testWidgets('QRCard renders with QR code', (tester) async {
+      final model = QRModel();
+      model.init();
+      model.setText('https://example.com');
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => QRCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('QR Code Generator'), findsWidgets);
+      expect(find.textContaining('example.com'), findsWidgets);
+    });
+
+    test('QRModel keywords are correct', () {
+      expect(providerQRCode.name, 'QRCode');
+      expect(providerQRCode.provideActions, isNotNull);
     });
   });
 }
