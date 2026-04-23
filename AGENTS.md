@@ -195,6 +195,16 @@ Settings auto-saved via `SharedPreferences`:
   - Clear history button with confirmation dialog
   - Uses `Card.filled` for Material 3 style
   - Keywords: calc, calculator, math, calculate, equal
+- **WorldClock**: Multiple timezone display
+  - Shows time in up to 10 configured timezones
+  - Day/night icon indicators (sun/moon)
+  - Time period labels (morning, afternoon, evening, night)
+  - Add timezone via dialog with (+) button
+  - Remove timezone by swipe gesture or long press
+  - Default timezones: New York, London, Tokyo
+  - 14 supported timezones worldwide
+  - Uses `Card.filled` for Material 3 style
+  - Keywords: world, clock, timezone, time, zone, add, remove
 
 ## Material 3 Design System
 
@@ -273,8 +283,9 @@ Test coverage includes:
 - Timer provider tests (provider existence, keywords, model state, timer operations)
 - Stopwatch provider tests (provider existence, keywords, model state, stopwatch operations)
 - Calculator provider tests (provider existence, keywords, model state, calculation operations)
+- World Clock provider tests (provider existence, keywords, model state, timezone operations)
 
-Total tests: 398 tests
+Total tests: 417 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -314,6 +325,7 @@ Technical documentation is available in `docs/`:
 - `timer_provider.md` - Timer provider implementation
 - `stopwatch_provider.md` - Stopwatch provider implementation
 - `calculator_provider.md` - Calculator provider implementation
+- `worldclock_provider.md` - World Clock provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice

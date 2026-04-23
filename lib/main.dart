@@ -15,6 +15,7 @@ import 'package:new_launcher/providers/provider_flashlight.dart';
 import 'package:new_launcher/providers/provider_notes.dart';
 import 'package:new_launcher/providers/provider_stopwatch.dart';
 import 'package:new_launcher/providers/provider_timer.dart';
+import 'package:new_launcher/providers/provider_worldclock.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -104,6 +105,7 @@ Global.init().then((value) => runApp(MultiProvider(
             ChangeNotifierProvider.value(value: timerModel),
             ChangeNotifierProvider.value(value: stopwatchModel),
             ChangeNotifierProvider.value(value: calculatorModel),
+            ChangeNotifierProvider.value(value: worldClockModel),
           ],
          child: MyApp(),
         )));

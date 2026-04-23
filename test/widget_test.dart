@@ -12,6 +12,7 @@ import 'package:new_launcher/providers/provider_flashlight.dart';
 import 'package:new_launcher/providers/provider_notes.dart';
 import 'package:new_launcher/providers/provider_stopwatch.dart';
 import 'package:new_launcher/providers/provider_timer.dart';
+import 'package:new_launcher/providers/provider_worldclock.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2452,7 +2453,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 13);
+      expect(Global.providerList.length, 14);
     });
 
     test('Global.providerList names are correct', () {
@@ -3619,7 +3620,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 13);
+      expect(initCount, 14);
     });
   });
 
@@ -3927,8 +3928,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 13 providers', () {
-      expect(Global.providerList.length, 13);
+    test('Global.providerList now contains 14 providers', () {
+      expect(Global.providerList.length, 14);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -4474,6 +4475,143 @@ void main() {
     test('Global.providerList includes Stopwatch', () {
       final names = Global.providerList.map((p) => p.name).toList();
       expect(names.contains('Stopwatch'), true);
+    });
+  });
+
+  group('World Clock provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('providerWorldClock exists in Global.providerList', () {
+      final worldClockProvider = Global.providerList.where((p) => p.name == 'WorldClock').first;
+      expect(worldClockProvider.name, 'WorldClock');
+    });
+
+    test('World Clock keywords include timezone', () {
+      final keywords = 'world clock timezone time zone add remove';
+      expect(keywords.contains('timezone'), true);
+    });
+
+    test('World Clock keywords include world', () {
+      final keywords = 'world clock timezone time zone add remove';
+      expect(keywords.contains('world'), true);
+    });
+
+    test('WorldClockModel timezones is initially empty before init', () {
+      final model = WorldClockModel();
+      expect(model.timezones.length, 0);
+    });
+
+    test('WorldClockModel commonTimezones contains New York', () {
+      expect(WorldClockModel.commonTimezones.containsKey('America/New_York'), true);
+    });
+
+    test('WorldClockModel commonTimezones contains Tokyo', () {
+      expect(WorldClockModel.commonTimezones.containsKey('Asia/Tokyo'), true);
+    });
+
+    test('WorldClockModel commonTimezones contains London', () {
+      expect(WorldClockModel.commonTimezones.containsKey('Europe/London'), true);
+    });
+
+    test('WorldClockModel getDisplayName returns correct name', () {
+      final model = WorldClockModel();
+      expect(model.getDisplayName('America/New_York'), 'New York');
+      expect(model.getDisplayName('Asia/Tokyo'), 'Tokyo');
+    });
+
+    test('WorldClockModel formatTime returns HH:MM format', () {
+      final model = WorldClockModel();
+      final time = model.formatTime('UTC');
+      expect(time.length, 5);
+      expect(time.contains(':'), true);
+    });
+
+    test('WorldClockModel getTimezoneOffset returns correct offset', () {
+      final model = WorldClockModel();
+      expect(model.getTimezoneOffset('UTC'), Duration.zero);
+      expect(model.getTimezoneOffset('Asia/Tokyo'), Duration(hours: 9));
+      expect(model.getTimezoneOffset('America/New_York'), Duration(hours: -5));
+    });
+
+    test('WorldClockModel addTimezone adds timezone', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorldClockModel();
+      await model.init();
+      await model.addTimezone('Asia/Singapore');
+      expect(model.timezones.contains('Asia/Singapore'), true);
+    });
+
+    test('WorldClockModel addTimezone does not add duplicate', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorldClockModel();
+      await model.init();
+      await model.addTimezone('Asia/Singapore');
+      final initialLength = model.timezones.length;
+      await model.addTimezone('Asia/Singapore');
+      expect(model.timezones.length, initialLength);
+    });
+
+    test('WorldClockModel removeTimezone removes timezone', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorldClockModel();
+      await model.init();
+      await model.addTimezone('Asia/Singapore');
+      expect(model.timezones.contains('Asia/Singapore'), true);
+      await model.removeTimezone('Asia/Singapore');
+      expect(model.timezones.contains('Asia/Singapore'), false);
+    });
+
+    test('WorldClockModel getDayIcon returns correct icon', () {
+      final model = WorldClockModel();
+      final dayIcon = model.getDayIcon('America/New_York');
+      expect(dayIcon, anyOf(Icons.wb_sunny, Icons.nightlight_round));
+    });
+
+    test('WorldClockModel getDayPeriod returns valid period', () {
+      final model = WorldClockModel();
+      final period = model.getDayPeriod('America/New_York');
+      expect(['morning', 'afternoon', 'evening', 'night'].contains(period), true);
+    });
+
+    test('WorldClockModel maxTimezones is 10', () {
+      expect(WorldClockModel.maxTimezones, 10);
+    });
+
+    testWidgets('WorldClockCard renders with title', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: worldClockModel,
+            builder: (context, child) => WorldClockCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('World Clock'), findsOneWidget);
+    });
+
+    testWidgets('WorldClockCard has add button', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: worldClockModel,
+            builder: (context, child) => WorldClockCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.byIcon(Icons.add), findsOneWidget);
+    });
+
+    test('Global.providerList includes WorldClock', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('WorldClock'), true);
     });
   });
 }
