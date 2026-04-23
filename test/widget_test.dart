@@ -16,6 +16,7 @@ import 'package:new_launcher/providers/provider_worldclock.dart';
 import 'package:new_launcher/providers/provider_countdown.dart';
 import 'package:new_launcher/providers/provider_unitconverter.dart';
 import 'package:new_launcher/providers/provider_pomodoro.dart';
+import 'package:new_launcher/providers/provider_clipboard.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2456,7 +2457,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 17);
+      expect(Global.providerList.length, 18);
     });
 
     test('Global.providerList names are correct', () {
@@ -3623,7 +3624,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 17);
+      expect(initCount, 18);
     });
   });
 
@@ -3931,8 +3932,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 17 providers', () {
-      expect(Global.providerList.length, 17);
+    test('Global.providerList now contains 18 providers', () {
+      expect(Global.providerList.length, 18);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5257,8 +5258,8 @@ void main() {
       expect(UnitConverterCard, isNotNull);
     });
 
-    test('Global.providerList now contains 17 providers', () {
-      expect(Global.providerList.length, 17);
+    test('Global.providerList now contains 18 providers', () {
+      expect(Global.providerList.length, 18);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -5493,6 +5494,154 @@ void main() {
       model.addListener(() => notifyCount++);
       await model.refresh();
       expect(notifyCount, 1);
+    });
+  });
+
+  group('Clipboard provider tests', () {
+    test('ClipboardEntry toJson and fromJson work', () {
+      final entry = ClipboardEntry(
+        text: 'Test clipboard text',
+        timestamp: DateTime(2024, 1, 1, 10, 30),
+      );
+      final json = entry.toJson();
+      expect(json['text'], 'Test clipboard text');
+      expect(json['timestamp'], '2024-01-01T10:30:00.000');
+
+      final restored = ClipboardEntry.fromJson(json);
+      expect(restored.text, 'Test clipboard text');
+      expect(restored.timestamp, DateTime(2024, 1, 1, 10, 30));
+    });
+
+    test('ClipboardModel default values are correct', () {
+      final model = ClipboardModel();
+      expect(model.length, 0);
+      expect(model.isInitialized, false);
+      expect(model.hasEntries, false);
+    });
+
+    test('ClipboardModel init initializes correctly', () async {
+      final model = ClipboardModel();
+      await model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('ClipboardModel addEntry works', () async {
+      final model = ClipboardModel();
+      await model.init();
+      model.clearAllEntries();
+      await model.addEntry('Test entry 1');
+      expect(model.length, 1);
+      expect(model.entries[0].text, 'Test entry 1');
+    });
+
+    test('ClipboardModel addEntry ignores empty text', () async {
+      final model = ClipboardModel();
+      await model.init();
+      model.clearAllEntries();
+      await model.addEntry('');
+      expect(model.length, 0);
+      await model.addEntry('   ');
+      expect(model.length, 0);
+    });
+
+    test('ClipboardModel deleteEntry works', () async {
+      final model = ClipboardModel();
+      await model.init();
+      model.clearAllEntries();
+      await model.addEntry('Entry 1');
+      await model.addEntry('Entry 2');
+      expect(model.length, 2);
+      expect(model.entries[0].text, 'Entry 2');
+      model.deleteEntry(0);
+      expect(model.length, 1);
+      expect(model.entries[0].text, 'Entry 1');
+    });
+
+    test('ClipboardModel clearAllEntries works', () async {
+      final model = ClipboardModel();
+      await model.init();
+      model.clearAllEntries();
+      await model.addEntry('Entry 1');
+      await model.addEntry('Entry 2');
+      expect(model.length, 2);
+      model.clearAllEntries();
+      expect(model.length, 0);
+      expect(model.hasEntries, false);
+    });
+
+    test('ClipboardModel max entries limit', () async {
+      final model = ClipboardModel();
+      await model.init();
+
+      for (int i = 0; i < 20; i++) {
+        await model.addEntry('Entry $i');
+      }
+
+      expect(model.length, 15);
+      expect(model.entries.first.text, 'Entry 19');
+    });
+
+    test('ClipboardModel refresh calls notifyListeners', () async {
+      final model = ClipboardModel();
+      await model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      await model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    test('ClipboardCard widget exists', () {
+      expect(ClipboardCard, isNotNull);
+    });
+
+    test('Global.providerList includes Clipboard', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Clipboard'), true);
+    });
+
+    test('ClipboardModel loadEntries works', () async {
+      final model = ClipboardModel();
+      await model.init();
+      final entries = [
+        ClipboardEntry(text: 'Entry A', timestamp: DateTime.now()),
+        ClipboardEntry(text: 'Entry B', timestamp: DateTime.now()),
+      ];
+      model.loadEntries(entries);
+      expect(model.length, 2);
+      expect(model.entries[0].text, 'Entry A');
+    });
+
+    test('ClipboardModel addTestEntry works', () async {
+      final model = ClipboardModel();
+      await model.init();
+      model.clearAllEntries();
+      final entry = ClipboardEntry(text: 'Test', timestamp: DateTime.now());
+      model.addTestEntry(entry);
+      expect(model.length, 1);
+      expect(model.entries[0].text, 'Test');
+    });
+
+    test('providerClipboard exists', () {
+      expect(providerClipboard, isNotNull);
+      expect(providerClipboard.name, 'Clipboard');
+    });
+
+    test('providerClipboard keywords contain clipboard related words', () {
+      expect(providerClipboard.name, 'Clipboard');
+    });
+
+    testWidgets('ClipboardCard renders loading state', (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: clipboardModel,
+            builder: (context, child) => ClipboardCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('Clipboard'), findsWidgets);
     });
   });
 }

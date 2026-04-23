@@ -242,6 +242,16 @@ Settings auto-saved via `SharedPreferences`:
     - Phase-specific colors and icons
     - Uses `Card.filled` and `CircularProgressIndicator` for Material 3 style
     - Keywords: pomodoro, timer, productivity, work, break, focus, session
+- **Clipboard**: Clipboard history management
+    - Track copied text snippets
+    - Capture from system clipboard
+    - Copy entries back to system clipboard
+    - Add, delete, and clear entries
+    - Maximum 15 entries stored (oldest removed when limit exceeded)
+    - Entries persisted via SharedPreferences
+    - Timestamp display (just now, Xm ago, Xh ago, Xd ago)
+    - Uses `Card.filled` for Material 3 style
+    - Keywords: clipboard, history, copy, paste, clip, text, snippet
 
 ## Material 3 Design System
 
@@ -324,8 +334,9 @@ Test coverage includes:
 - Countdown provider tests (provider existence, keywords, model state, CRUD operations, time formatting)
 - Unit Converter provider tests (provider existence, keywords, model state, conversion operations)
 - Pomodoro provider tests (provider existence, keywords, model state, timer operations, phase transitions)
+- Clipboard provider tests (provider existence, keywords, model state, CRUD operations)
 
-Total tests: 507 tests
+Total tests: 523 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
