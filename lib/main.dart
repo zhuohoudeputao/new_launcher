@@ -11,43 +11,6 @@ import 'package:new_launcher/data.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:provider/provider.dart';
 
-class CircularListController extends ScrollController {
-  int _itemCount;
-  final double itemExtent;
-  static const int virtualMultiplier = 100;
-  
-  late int _virtualCount;
-  bool _initialized = false;
-  
-  CircularListController({int itemCount = 1, this.itemExtent = 100}) 
-      : _itemCount = itemCount == 0 ? 1 : itemCount {
-    _virtualCount = _itemCount * virtualMultiplier;
-  }
-  
-  int get itemCount => _itemCount;
-  
-  set itemCount(int value) {
-    if (_itemCount != value) {
-      _itemCount = value == 0 ? 1 : value;
-      _virtualCount = _itemCount * virtualMultiplier;
-      _initialized = false;
-    }
-  }
-  
-  int get virtualCount => _virtualCount;
-  
-  int getActualIndex(int virtualIndex) {
-    return virtualIndex % _itemCount;
-  }
-  
-  void initPosition() {
-    if (!hasClients || _initialized) return;
-    final startPoint = (_itemCount * virtualMultiplier ~/ 2) * itemExtent;
-    jumpTo(startPoint);
-    _initialized = true;
-  }
-}
-
 class SearchTextField extends StatefulWidget {
   @override
   State<SearchTextField> createState() => _SearchTextFieldState();
@@ -174,46 +137,23 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late CircularListController _circularListController;
-
-  @override
-  void initState() {
-    super.initState();
-    _circularListController = CircularListController(itemCount: 1);
-  }
-
-  @override
-  void dispose() {
-    _circularListController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final actionModel = context.watch<ActionModel>();
     String query = actionModel.searchQuery;
     List<Widget> infoList = context.watch<InfoModel>().getFilteredList(query);
     
-    _circularListController.itemCount = infoList.isEmpty ? 1 : infoList.length;
-    
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _circularListController.initPosition();
-    });
-    
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        // Launcher should never pop - this is intentional
       },
       child: Stack(fit: StackFit.expand, children: <Widget>[
-        // Background Image
         Consumer<BackgroundImageModel>(
             builder: (context, BackgroundImageModel background, child) {
           return Image(
               image: context.watch<BackgroundImageModel>().backgroundImage,
               fit: BoxFit.cover);
         }),
-        // Main Scaffold
         Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0),
           body: Column(
@@ -221,11 +161,9 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             verticalDirection: VerticalDirection.up,
             children: <Widget>[
-              // Input Box with Search Icon
               Card.filled(
                 child: SearchTextField(),
               ),
-              // Result count indicator
               if (query.isNotEmpty && infoList.isNotEmpty)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
@@ -237,32 +175,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-// Information Area
               Expanded(
                   child: GestureDetector(
                 onTap: () {
-                  // put away the keyboard
                   FocusScope.of(context).requestFocus(FocusNode());
                 },
-child: ListView.builder(
-                   controller: _circularListController,
-                   cacheExtent: 500,
-                   itemExtent: 80,
-                   itemCount: _circularListController.virtualCount,
-                   addAutomaticKeepAlives: false,
-                   addRepaintBoundaries: true,
-                   itemBuilder: (BuildContext context, int virtualIndex) {
-                     final actualIndex = _circularListController.getActualIndex(virtualIndex);
-                     if (actualIndex >= infoList.length) {
-                       return SizedBox.shrink();
-                     }
-                     final widget = infoList[infoList.length - actualIndex - 1];
-                     return widget;
-                   },
-                   scrollDirection: Axis.vertical,
-                   reverse: true,
-                   physics: BouncingScrollPhysics(),
-                 ),
+                child: ListView.builder(
+                  cacheExtent: 500,
+                  itemExtent: 80,
+                  itemCount: infoList.length,
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    final widget = infoList[infoList.length - index - 1];
+                    return widget;
+                  },
+                  scrollDirection: Axis.vertical,
+                  reverse: true,
+                  physics: BouncingScrollPhysics(),
+                ),
               )),
             ],
           ),

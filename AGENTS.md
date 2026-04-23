@@ -32,7 +32,7 @@ flutter.sdk=/home/linzuxuan/app/flutter
 ## Architecture
 
 - **Entry point**: `lib/main.dart` - `MyApp` widget wraps `MyHomePage`
-- **Card list**: `CircularListController` in main.dart handles circular scrolling
+- **Card list**: Standard ListView.builder displays info cards from bottom to top
 - **Search input**: `SearchTextField` widget manages search field with clear button
 - **Providers system**: `lib/providers/*.dart` - Each provider adds services (weather, apps, wallpaper, etc.)
 - **Data layer**: `lib/data.dart` - Contains `Global`, `ActionModel`, `InfoModel`, `SettingsModel`, `BackgroundImageModel`, `ThemeModel`
@@ -201,7 +201,7 @@ Test coverage includes:
 - Search results indicator tests (filtering, count format, pluralization)
 - SearchTextField tests (rendering, clear button visibility and behavior)
 
-Total tests: ~289 tests
+Total tests: ~275 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

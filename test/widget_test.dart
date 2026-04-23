@@ -21,69 +21,6 @@ void main() {
     Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
   });
 
-  group('CircularListController tests', () {
-    test('constructor initializes with correct itemCount', () {
-      final controller = CircularListController(itemCount: 5, itemExtent: 100);
-      expect(controller.itemCount, 5);
-      expect(controller.virtualCount, 5 * CircularListController.virtualMultiplier);
-    });
-
-    test('itemCount setter updates virtualCount', () {
-      final controller = CircularListController(itemCount: 3, itemExtent: 100);
-      controller.itemCount = 10;
-      expect(controller.itemCount, 10);
-      expect(controller.virtualCount, 10 * CircularListController.virtualMultiplier);
-    });
-
-    test('getActualIndex returns correct modulo result', () {
-      final controller = CircularListController(itemCount: 5, itemExtent: 100);
-      expect(controller.getActualIndex(502), 2);
-      expect(controller.getActualIndex(1000), 0);
-      expect(controller.getActualIndex(503), 3);
-      expect(controller.getActualIndex(504), 4);
-      expect(controller.getActualIndex(505), 0);
-    });
-
-    test('itemCount of 0 defaults to 1', () {
-      final controller = CircularListController(itemCount: 0, itemExtent: 100);
-      expect(controller.itemCount, 1);
-      expect(controller.virtualCount, CircularListController.virtualMultiplier);
-    });
-
-    test('virtualMultiplier is correct value', () {
-      expect(CircularListController.virtualMultiplier, 100);
-    });
-
-    test('itemCount setter handles negative by defaulting to 1', () {
-      final controller = CircularListController(itemCount: 5, itemExtent: 100);
-      controller.itemCount = 0;
-      expect(controller.itemCount, 1);
-    });
-
-    test('same itemCount does not reset initialization', () {
-      final controller = CircularListController(itemCount: 5, itemExtent: 100);
-      controller.itemCount = 5;
-      expect(controller.itemCount, 5);
-    });
-
-    test('itemExtent is stored correctly', () {
-      final controller = CircularListController(itemCount: 5, itemExtent: 80);
-      expect(controller.itemExtent, 80);
-    });
-
-    test('getActualIndex handles large virtualIndex', () {
-      final controller = CircularListController(itemCount: 3, itemExtent: 100);
-      expect(controller.getActualIndex(10000), 1);
-      expect(controller.getActualIndex(9999), 0);
-    });
-
-    test('itemCount change resets _initialized flag', () {
-      final controller = CircularListController(itemCount: 5, itemExtent: 100);
-      controller.itemCount = 10;
-      controller.itemCount = 5;
-    });
-  });
-
   group('LoggerModel tests', () {
     test('LoggerModel is singleton', () {
       final logger1 = LoggerModel();
@@ -2359,27 +2296,6 @@ void main() {
     });
   });
 
-  group('CircularListController edge cases', () {
-    test('getActualIndex handles index 0', () {
-      final controller = CircularListController(itemCount: 5, itemExtent: 100);
-      expect(controller.getActualIndex(0), 0);
-      expect(controller.getActualIndex(100), 0);
-      expect(controller.getActualIndex(500), 0);
-    });
-
-    test('getActualIndex handles negative-like values via modulo', () {
-      final controller = CircularListController(itemCount: 5, itemExtent: 100);
-      expect(controller.getActualIndex(5), 0);
-    });
-
-    test('virtualCount scales correctly with itemCount', () {
-      for (int count in [1, 5, 10, 20, 50]) {
-        final controller = CircularListController(itemCount: count, itemExtent: 100);
-        expect(controller.virtualCount, count * 100);
-      }
-    });
-  });
-
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
       expect(Global.providerList.length, 7);
@@ -3087,11 +3003,6 @@ void main() {
       expect(hintText.contains('weather'), true);
       expect(hintText.contains('camera'), true);
       expect(hintText.contains('settings'), true);
-    });
-
-    test('CircularListController is used in MyHomePage', () {
-      final controller = CircularListController(itemCount: 5, itemExtent: 80);
-      expect(controller.itemCount, 5);
     });
   });
 
