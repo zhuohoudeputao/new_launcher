@@ -7209,6 +7209,15 @@ void main() {
       await model.init();
       expect(model.sessionCount, 0);
     });
+
+    test('MeditationModel refresh method works', () async {
+      final model = MeditationModel();
+      await model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
   });
 
   group('Water provider tests', () {
