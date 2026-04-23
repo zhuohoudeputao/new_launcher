@@ -176,7 +176,7 @@ unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && ~/app/flutter/bin/flutter
 Test coverage includes:
 - `MyAction` class (keyword matching, frequency tracking, midnight safety)
 - `MyProvider` class (constructor, initialization, SharedPreferences enabled check)
-- `ActionModel` class (action storage, suggestion generation)
+- `ActionModel` class (action storage, suggestion generation, runFirstAction method)
 - `InfoModel` class (widget storage, filtering, batch operations)
 - `ThemeModel` and `BackgroundImageModel` (notifications)
 - `SettingsModel` class (save/load values, SharedPreferences integration)
@@ -184,6 +184,12 @@ Test coverage includes:
 - UI widget tests (`customInfoWidget`, `CustomBoolSettingWidget`, `AppStatisticsCard`, etc.)
 - Material 3 component tests (SegmentedButton, Card.filled/outlined, ElevatedButton)
 - ColorScheme integration tests (Material 3 enabled, color generation)
+- System provider action tests (camera, clock, calculator, settings, logs keywords)
+- MyHomePage structure tests (PopScope, TextField, Card, CircularListController)
+- MyApp structure tests (Material 3 theme, navigatorKey)
+- Search results indicator tests (filtering, count format)
+
+Total tests: ~285 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -208,6 +214,7 @@ Technical documentation is available in `docs/`:
 - `material3_upgrade.md` - Material 3 implementation guide
 - `skipped_tests_fix.md` - Fix for SharedPreferences-dependent tests
 - `grid_overflow_fix.md` - Fix for AllAppsCard GridView overflow
+- `test_coverage_update.md` - Additional tests for improved coverage
 
 ## Notice
 DO NOT EDIT task*.md

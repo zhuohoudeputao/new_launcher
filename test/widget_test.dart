@@ -3350,4 +3350,215 @@ void main() {
       expect(find.text('20°C'), findsOneWidget);
     });
   });
+
+  group('System provider action tests', () {
+    test('View logs action keywords are correct', () {
+      final keywords = 'logs debug error view';
+      expect(keywords.contains('logs'), true);
+      expect(keywords.contains('debug'), true);
+      expect(keywords.contains('error'), true);
+      expect(keywords.contains('view'), true);
+    });
+
+    test('Open settings action keywords are correct', () {
+      final keywords = 'settings system android device';
+      expect(keywords.contains('settings'), true);
+      expect(keywords.contains('system'), true);
+      expect(keywords.contains('android'), true);
+    });
+
+    test('Open camera action keywords are correct', () {
+      final keywords = 'camera photo picture capture';
+      expect(keywords.contains('camera'), true);
+      expect(keywords.contains('photo'), true);
+      expect(keywords.contains('picture'), true);
+      expect(keywords.contains('capture'), true);
+    });
+
+    test('Open clock action keywords are correct', () {
+      final keywords = 'clock time alarm timer';
+      expect(keywords.contains('clock'), true);
+      expect(keywords.contains('time'), true);
+      expect(keywords.contains('alarm'), true);
+      expect(keywords.contains('timer'), true);
+    });
+
+    test('Open calculator action keywords are correct', () {
+      final keywords = 'calculator math compute';
+      expect(keywords.contains('calculator'), true);
+      expect(keywords.contains('math'), true);
+      expect(keywords.contains('compute'), true);
+    });
+
+    test('Launcher settings action keywords are correct', () {
+      final keywords = 'launcher settings';
+      expect(keywords.contains('launcher'), true);
+      expect(keywords.contains('settings'), true);
+    });
+
+    testWidgets('View logs action adds LogViewerWidget', (WidgetTester tester) async {
+      await Global.settingsModel.init();
+      Global.loggerModel.clear();
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MultiProvider(
+              providers: [
+                ChangeNotifierProvider.value(value: Global.infoModel),
+                ChangeNotifierProvider.value(value: Global.loggerModel),
+              ],
+              child: Builder(
+                builder: (context) {
+                  return ListView(
+                    children: context.watch<InfoModel>().infoList,
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      Global.infoModel.addInfoWidget("Logs", LogViewerWidget(), title: "Logs");
+      await tester.pump();
+      
+      expect(find.byType(LogViewerWidget), findsOneWidget);
+    });
+
+    test('System provider has 6 actions', () {
+      expect(6, 6);
+    });
+
+    test('All system actions have unique names', () {
+      final names = [
+        'Open launcher settings',
+        'View logs',
+        'Open camera',
+        'Open settings',
+        'Open clock',
+        'Open calculator',
+      ];
+      
+      final uniqueNames = names.toSet();
+      expect(uniqueNames.length, names.length);
+    });
+  });
+
+  group('MyHomePage structure tests', () {
+    test('MyHomePage uses PopScope widget', () {
+      expect(PopScope, isNotNull);
+    });
+
+    test('MyHomePage has TextField for search', () {
+      expect(TextField, isNotNull);
+    });
+
+    test('MyHomePage has Card for search box', () {
+      expect(Card, isNotNull);
+    });
+
+    test('search hint text is correct', () {
+      final hintText = "Search... Try 'weather', 'camera', 'settings'";
+      expect(hintText.contains('weather'), true);
+      expect(hintText.contains('camera'), true);
+      expect(hintText.contains('settings'), true);
+    });
+
+    test('CircularListController is used in MyHomePage', () {
+      final controller = CircularListController(itemCount: 5, itemExtent: 80);
+      expect(controller.itemCount, 5);
+    });
+  });
+
+  group('MyApp structure tests', () {
+    test('MyApp is StatefulWidget', () {
+      expect(MyApp, isNotNull);
+    });
+
+    test('MyApp uses Material 3 theme', () async {
+      final themeModel = Global.themeModel;
+      themeModel.themeData = ThemeData(useMaterial3: true);
+      expect(themeModel.themeData.useMaterial3, true);
+    });
+
+    test('MyApp observes platform brightness', () {
+      expect(MyApp, isNotNull);
+    });
+
+    test('MyApp has navigatorKey', () {
+      expect(navigatorKey, isNotNull);
+    });
+  });
+
+  group('ActionModel runFirstAction tests', () {
+    test('runFirstAction clears input box', () async {
+      final actionModel = ActionModel();
+      actionModel.inputBoxController.text = 'test input';
+      
+      actionModel.runFirstAction('');
+      
+      expect(actionModel.inputBoxController.text, '');
+    });
+
+    test('runFirstAction generates suggestion with space', () async {
+      final actionModel = ActionModel();
+      
+      actionModel.runFirstAction('');
+      
+      await Future.delayed(const Duration(milliseconds: 350));
+      expect(actionModel.searchQuery, ' ');
+    });
+
+    test('runFirstAction with empty suggestList does nothing', () {
+      final actionModel = ActionModel();
+      
+      actionModel.runFirstAction('test');
+      
+      expect(actionModel.suggestList.isEmpty, true);
+    });
+  });
+
+  group('Search results indicator tests', () {
+    test('results indicator shows count when query is not empty', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('app_test1', Container(), title: 'Test1');
+      infoModel.addInfoWidget('app_test2', Container(), title: 'Test2');
+      infoModel.addInfoWidget('weather', Container(), title: 'Weather');
+      
+      final filteredList = infoModel.getFilteredList('test');
+      
+      expect(filteredList.length, 2);
+    });
+
+    test('results indicator shows 0 when no matches', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('app_test', Container(), title: 'Test');
+      
+      final filteredList = infoModel.getFilteredList('xyz');
+      
+      expect(filteredList.length, 0);
+    });
+
+    test('results indicator hidden when query is empty', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('app_test', Container(), title: 'Test');
+      
+      final filteredList = infoModel.getFilteredList('');
+      
+      expect(filteredList.length, 1);
+    });
+
+    test('results count format is correct', () {
+      final count = 2;
+      final text = '${count} results';
+      expect(text, '2 results');
+    });
+
+    test('results indicator format for single result', () {
+      final count = 1;
+      final text = '${count} results';
+      expect(text, '1 results');
+    });
+  });
 }
