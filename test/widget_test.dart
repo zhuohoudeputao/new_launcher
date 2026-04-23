@@ -669,10 +669,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: customTextSettingWidget(
-              key: 'TestKey',
-              value: 'TestValue',
-              onSubmitted: (_) {},
+            body: Builder(
+              builder: (context) => customTextSettingWidget(
+                context: context,
+                key: 'TestKey',
+                value: 'TestValue',
+                onSubmitted: (_) {},
+              ),
             ),
           ),
         ),
@@ -686,10 +689,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: customTextSettingWidget(
-              key: 'Test',
-              value: 'OldValue',
-              onSubmitted: (value) => submittedValue = value,
+            body: Builder(
+              builder: (context) => customTextSettingWidget(
+                context: context,
+                key: 'Test',
+                value: 'OldValue',
+                onSubmitted: (value) => submittedValue = value,
+              ),
             ),
           ),
         ),
@@ -706,10 +712,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: customTextSettingWidget(
-              key: 'IntKey',
-              value: 42,
-              onSubmitted: (_) {},
+            body: Builder(
+              builder: (context) => customTextSettingWidget(
+                context: context,
+                key: 'IntKey',
+                value: 42,
+                onSubmitted: (_) {},
+              ),
             ),
           ),
         ),
@@ -722,10 +731,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: customTextSettingWidget(
-              key: 'DoubleKey',
-              value: 3.14,
-              onSubmitted: (_) {},
+            body: Builder(
+              builder: (context) => customTextSettingWidget(
+                context: context,
+                key: 'DoubleKey',
+                value: 3.14,
+                onSubmitted: (_) {},
+              ),
             ),
           ),
         ),

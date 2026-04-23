@@ -399,6 +399,7 @@ class _WeatherCardState extends State<WeatherCard> {
     };
 
     return Card.filled(
+      color: Theme.of(context).cardColor,
       child: Padding(
         padding: EdgeInsets.all(12),
         child: Column(

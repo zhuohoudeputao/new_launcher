@@ -64,10 +64,12 @@ Widget customInfoWidget(
 }
 
 Widget customTextSettingWidget(
-    {required String key,
+    {required BuildContext context,
+    required String key,
     required var value,
     required void Function(String) onSubmitted}) {
   return Card(
+    color: Theme.of(context).cardColor,
     elevation: 0,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12),
@@ -130,6 +132,7 @@ class CustomBoolSettingWidgetState extends State<CustomBoolSettingWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Theme.of(context).cardColor,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -173,6 +176,7 @@ class _CardOpacitySliderState extends State<CardOpacitySlider> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Theme.of(context).cardColor,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -217,6 +221,7 @@ class WallpaperPickerButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Card.filled(
+      color: Theme.of(context).cardColor,
       child: ListTile(
         title: Text(
           label,
@@ -260,6 +265,7 @@ class _LogViewerWidgetState extends State<LogViewerWidget> {
     }
 
     return Card(
+      color: Theme.of(context).cardColor,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),

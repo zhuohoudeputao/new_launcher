@@ -277,6 +277,7 @@ class RecentlyUsedAppsCardState extends State<RecentlyUsedAppsCard> {
   Widget build(BuildContext context) {
     int length = context.watch<AppModel>().length;
     return Card.filled(
+      color: Theme.of(context).cardColor,
       child: Container(
         height: 80,
         child: ListView.builder(
@@ -302,6 +303,7 @@ class _AllAppsCardState extends State<AllAppsCard> {
   Widget build(BuildContext context) {
     final apps = context.watch<AllAppsModel>().apps;
     return Card.outlined(
+      color: Theme.of(context).cardColor,
       child: Container(
         height: 120,
         child: GridView.builder(
@@ -360,21 +362,24 @@ Widget _customButton(Widget icon, void Function() onPressed) {
 }
 
 Widget _buildAppCard(ApplicationWithIcon app) {
-  return Card(
-    elevation: 0,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: ListTile(
-      leading: Image.memory(
-        app.icon,
-        width: 40,
-        height: 40,
-        cacheWidth: 80,
+  return Builder(
+    builder: (context) => Card(
+      color: Theme.of(context).cardColor,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
-      title: Text(app.appName),
-      subtitle: Text(app.packageName, style: TextStyle(fontSize: 12)),
-      onTap: () => DeviceApps.openApp(app.packageName),
+      child: ListTile(
+        leading: Image.memory(
+          app.icon,
+          width: 40,
+          height: 40,
+          cacheWidth: 80,
+        ),
+        title: Text(app.appName),
+        subtitle: Text(app.packageName, style: TextStyle(fontSize: 12)),
+        onTap: () => DeviceApps.openApp(app.packageName),
+      ),
     ),
   );
 }
@@ -393,6 +398,7 @@ class _AppStatisticsCardState extends State<AppStatisticsCard> {
     final topApps = stats.mostUsedApps.take(5).toList();
     
     return Card.outlined(
+      color: Theme.of(context).cardColor,
       child: Padding(
         padding: EdgeInsets.all(8),
         child: Column(

@@ -20,10 +20,11 @@ The transparency feature allows users to adjust the opacity of info cards in the
    - Loads saved opacity on app startup
    - `_refreshTheme()` notifies both themeModel and infoModel
 
-2. **InfoCard** (`lib/ui.dart`)
-   - Stateful widget that uses `Theme.of(context).cardColor`
+2. **All Card Widgets** (`lib/ui.dart`, `lib/providers/*.dart`)
+   - All Card widgets explicitly use `color: Theme.of(context).cardColor`
+   - Card.filled and Card.outlined variants require explicit color property
    - Dynamically updates when theme changes
-   - Replaces the old `customInfoWidget` which used static color
+   - Builder widget used for standalone functions that need context
 
 3. **CardOpacitySlider** (`lib/ui.dart`)
    - UI widget for adjusting opacity in settings
@@ -42,31 +43,61 @@ The transparency feature allows users to adjust the opacity of info cards in the
 3. `_refreshTheme()` is called
 4. Theme provider is re-initialized with new opacity
 5. `infoModel.notifyListeners()` triggers rebuild of all cards
-6. All `InfoCard` widgets read new `ThemeData.cardColor`
+6. All Card widgets read new `ThemeData.cardColor`
 7. UI updates to show new opacity
 
 ### Code Example
 
 ```dart
-// InfoCard uses theme card color
-class InfoCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
+// Card.filled requires explicit color for transparency
+return Card.filled(
+  color: Theme.of(context).cardColor,
+  child: ListTile(...),
+);
+
+// Card.outlined also requires explicit color
+return Card.outlined(
+  color: Theme.of(context).cardColor,
+  child: Container(...),
+);
+
+// Standard Card uses theme card color
+return Card(
+  color: Theme.of(context).cardColor,
+  elevation: 0,
+  child: ListTile(...),
+);
+
+// Standalone functions use Builder to get context
+Widget _buildAppCard(ApplicationWithIcon app) {
+  return Builder(
+    builder: (context) => Card(
       color: Theme.of(context).cardColor,
-      // ...
-    );
-  }
+      child: ListTile(...),
+    ),
+  );
 }
 
 // Provider theme sets card color with opacity
-Color cardColor = Colors.white.withOpacity(Global.cardOpacity);
-
-// Old customInfoWidget wraps InfoCard
-Widget customInfoWidget({...}) {
-  return InfoCard(title: title, ...);
-}
+Color cardColor = colorScheme.surface.withValues(alpha: Global.cardOpacity);
 ```
+
+### Updated Widgets
+
+All card widgets have been updated to use `Theme.of(context).cardColor`:
+- SearchTextField (main.dart)
+- InfoCard (ui.dart)
+- customTextSettingWidget (ui.dart)
+- CustomBoolSettingWidget (ui.dart)
+- CardOpacitySlider (ui.dart)
+- WallpaperPickerButton (ui.dart)
+- LogViewerWidget (ui.dart)
+- DarkModeOptionSelector (data.dart)
+- RecentlyUsedAppsCard (provider_app.dart)
+- AllAppsCard (provider_app.dart)
+- AppStatisticsCard (provider_app.dart)
+- _buildAppCard (provider_app.dart)
+- WeatherCard (provider_weather.dart)
 
 ## Related Settings
 

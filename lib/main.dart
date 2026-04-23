@@ -162,6 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
             verticalDirection: VerticalDirection.up,
             children: <Widget>[
               Card.filled(
+                color: Theme.of(context).cardColor,
                 child: SearchTextField(),
               ),
               if (query.isNotEmpty && infoList.isNotEmpty)

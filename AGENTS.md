@@ -148,7 +148,9 @@ The app uses Material 3 design system with the following components:
 - `Card.filled()` - Primary content (search input, weather, recent apps)
 - `Card.outlined()` - Secondary content (all apps, app statistics)
 - Standard Card with `elevation: 0` - Settings items
+- All cards explicitly use `color: Theme.of(context).cardColor` for transparency support
 - Cards use `mainAxisSize: MainAxisSize.min` for dynamic sizing to prevent overflow
+- Standalone functions use Builder widget to access Theme context
 
 ### Buttons
 - `SegmentedButton` for theme mode selection (new Material 3 component)
