@@ -324,6 +324,17 @@ Settings auto-saved via `SharedPreferences`:
     - Fire icon with streak count display
     - Uses `Card.filled` for Material 3 style
     - Keywords: habit, track, daily, routine, streak, goal, habit tracker
+- **Meditation**: Meditation timer with breathing guide
+    - Preset durations: 1, 3, 5, 10, 15, 20, 30 minutes
+    - Optional breathing guide (4-4-4-4 pattern: Inhale, Hold, Exhale, Rest)
+    - Start/pause/resume controls
+    - Circular progress indicator
+    - Session completion tracking
+    - Total meditation time display
+    - Session history (up to 20 entries)
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `ActionChip`, `CircularProgressIndicator` for Material 3 style
+    - Keywords: meditation, meditate, relax, breath, calm, focus, zen, mindfulness
 
 ## Material 3 Design System
 
@@ -415,8 +426,9 @@ Test coverage includes:
 - Color Generator provider tests (provider existence, keywords, model state, color operations, HEX/RGB conversion)
 - Currency Converter provider tests (provider existence, keywords, model state, currency operations, widget rendering)
 - Habit provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
+- Meditation provider tests (provider existence, keywords, model state, timer operations, breathing guide, widget rendering)
 
-Total tests: 675 tests
+Total tests: 695 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -469,6 +481,7 @@ Technical documentation is available in `docs/`:
 - `currency_provider_fix.md` - Currency provider MultiProvider fix
 - `bookmarks_provider.md` - Bookmarks provider implementation
 - `habit_provider.md` - Habit tracker provider implementation
+- `meditation_provider.md` - Meditation timer provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice

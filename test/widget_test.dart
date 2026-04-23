@@ -24,6 +24,7 @@ import 'package:new_launcher/providers/provider_color.dart';
 import 'package:new_launcher/providers/provider_currency.dart';
 import 'package:new_launcher/providers/provider_bookmarks.dart';
 import 'package:new_launcher/providers/provider_habit.dart';
+import 'package:new_launcher/providers/provider_meditation.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2464,7 +2465,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 25);
+      expect(Global.providerList.length, 26);
     });
 
     test('Global.providerList names are correct', () {
@@ -3631,7 +3632,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 25);
+      expect(initCount, 26);
     });
   });
 
@@ -3940,7 +3941,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 25);
+      expect(Global.providerList.length, 26);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5266,7 +5267,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 25);
+      expect(Global.providerList.length, 26);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -7022,6 +7023,190 @@ void main() {
       expect(model.length, 0);
       model.addHabit('Test');
       expect(model.length, 1);
+    });
+  });
+
+  group('Meditation provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('MeditationModel is initialized correctly', () async {
+      final model = MeditationModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.history, isEmpty);
+      expect(model.totalMinutes, 0);
+    });
+
+    test('MeditationModel startMeditation works', () async {
+      final model = MeditationModel();
+      await model.init();
+      model.startMeditation(5);
+      expect(model.state, MeditationState.running);
+      expect(model.durationMinutes, 5);
+      expect(model.remainingSeconds, 300);
+      model.cancelMeditation();
+    });
+
+    test('MeditationModel pauseMeditation works', () async {
+      final model = MeditationModel();
+      await model.init();
+      model.startMeditation(5);
+      expect(model.state, MeditationState.running);
+      model.pauseMeditation();
+      expect(model.state, MeditationState.paused);
+      model.cancelMeditation();
+    });
+
+    test('MeditationModel resumeMeditation works', () async {
+      final model = MeditationModel();
+      await model.init();
+      model.startMeditation(5);
+      model.pauseMeditation();
+      expect(model.state, MeditationState.paused);
+      model.resumeMeditation();
+      expect(model.state, MeditationState.running);
+      model.cancelMeditation();
+    });
+
+    test('MeditationModel cancelMeditation works', () async {
+      final model = MeditationModel();
+      await model.init();
+      model.startMeditation(5);
+      expect(model.state, MeditationState.running);
+      model.cancelMeditation();
+      expect(model.state, MeditationState.idle);
+      expect(model.remainingSeconds, 0);
+    });
+
+    test('MeditationModel reset works', () async {
+      final model = MeditationModel();
+      await model.init();
+      model.startMeditation(5);
+      model.pauseMeditation();
+      model.reset();
+      expect(model.state, MeditationState.idle);
+    });
+
+    test('MeditationModel progress calculates correctly', () async {
+      final model = MeditationModel();
+      await model.init();
+      model.startMeditation(1);
+      expect(model.progress, 0);
+      model.cancelMeditation();
+    });
+
+    test('MeditationModel formattedTime works', () async {
+      final model = MeditationModel();
+      await model.init();
+      model.startMeditation(5);
+      expect(model.formattedTime, '05:00');
+      model.cancelMeditation();
+    });
+
+    test('MeditationModel breathingEnabled works', () async {
+      final model = MeditationModel();
+      await model.init();
+      expect(model.breathingEnabled, false);
+      model.setBreathingEnabled(true);
+      expect(model.breathingEnabled, true);
+    });
+
+    test('MeditationModel clearHistory works', () async {
+      final model = MeditationModel();
+      await model.init();
+      await model.clearHistory();
+      expect(model.history, isEmpty);
+      expect(model.totalMinutes, 0);
+    });
+
+    test('MeditationSession toJson and fromJson work', () {
+      final session = MeditationSession(
+        durationMinutes: 10,
+        completedAt: DateTime.now(),
+        breathingPattern: '4-4-4-4',
+      );
+      final json = session.toJson();
+      final restored = MeditationSession.fromJson(json);
+      expect(restored.durationMinutes, 10);
+      expect(restored.breathingPattern, '4-4-4-4');
+    });
+
+    testWidgets('MeditationCard renders loading state', (WidgetTester tester) async {
+      final model = MeditationModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: MeditationCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Meditation: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('MeditationCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = MeditationModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: MeditationCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Meditation Timer'), findsOneWidget);
+    });
+
+    test('MeditationCard widget exists', () {
+      expect(MeditationCard, isNotNull);
+    });
+
+    test('Global.providerList includes Meditation', () {
+      final hasMeditation = Global.providerList.any((p) => p.name == 'Meditation');
+      expect(hasMeditation, true);
+    });
+
+    test('providerMeditation exists', () {
+      expect(providerMeditation, isNotNull);
+      expect(providerMeditation.name, 'Meditation');
+    });
+
+    test('MeditationState enum has correct values', () {
+      expect(MeditationState.values.length, 4);
+      expect(MeditationState.idle.index, 0);
+      expect(MeditationState.running.index, 1);
+      expect(MeditationState.paused.index, 2);
+      expect(MeditationState.completed.index, 3);
+    });
+
+    test('BreathingPhase enum has correct values', () {
+      expect(BreathingPhase.values.length, 4);
+      expect(BreathingPhase.inhale.index, 0);
+      expect(BreathingPhase.hold.index, 1);
+      expect(BreathingPhase.exhale.index, 2);
+      expect(BreathingPhase.rest.index, 3);
+    });
+
+    test('MeditationModel breathingPhaseText works', () async {
+      final model = MeditationModel();
+      await model.init();
+      expect(model.breathingPhaseText, 'Inhale');
+    });
+
+    test('MeditationModel sessionCount works', () async {
+      final model = MeditationModel();
+      await model.init();
+      expect(model.sessionCount, 0);
     });
   });
 }
