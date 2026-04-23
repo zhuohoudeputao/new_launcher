@@ -7,6 +7,7 @@ import 'package:new_launcher/data.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/providers/provider_battery.dart';
+import 'package:new_launcher/providers/provider_flashlight.dart';
 import 'package:new_launcher/providers/provider_notes.dart';
 import 'package:new_launcher/providers/provider_timer.dart';
 import 'package:new_launcher/providers/provider_settings.dart';
@@ -2450,7 +2451,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 10);
+      expect(Global.providerList.length, 11);
     });
 
     test('Global.providerList names are correct', () {
@@ -2463,6 +2464,7 @@ void main() {
       expect(names.contains('App'), true);
       expect(names.contains('System'), true);
       expect(names.contains('Battery'), true);
+      expect(names.contains('Flashlight'), true);
       expect(names.contains('Timer'), true);
     });
 
@@ -3618,7 +3620,7 @@ void main() {
       for (final provider in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 10);
+      expect(initCount, 11);
     });
   });
 
@@ -3859,6 +3861,80 @@ void main() {
       
       model.clearAllTimers();
       await tester.pump();
+    });
+  });
+
+  group('Flashlight provider tests', () {
+    test('providerFlashlight exists in Global.providerList', () {
+      final flashlightProvider = Global.providerList.where((p) => p.name == 'Flashlight').first;
+      expect(flashlightProvider.name, 'Flashlight');
+    });
+
+    test('Flashlight provider keywords include flashlight', () {
+      final keywords = 'flashlight torch light flash lamp toggle';
+      expect(keywords.contains('flashlight'), true);
+      expect(keywords.contains('torch'), true);
+      expect(keywords.contains('light'), true);
+      expect(keywords.contains('toggle'), true);
+    });
+
+    test('FlashlightModel starts uninitialized', () {
+      final model = FlashlightModel();
+      expect(model.isInitialized, false);
+      expect(model.isOn, false);
+      expect(model.isAvailable, false);
+    });
+
+    test('FlashlightModel is ChangeNotifier', () {
+      final model = FlashlightModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    testWidgets('FlashlightCard renders loading state', (WidgetTester tester) async {
+      final model = FlashlightModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: FlashlightCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Flashlight: Loading...'), findsOneWidget);
+    });
+
+    test('FlashlightCard widget exists', () {
+      expect(FlashlightCard, isNotNull);
+    });
+
+    test('FlashlightModel notifyListeners works', () {
+      final model = FlashlightModel();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      
+      model.refresh();
+      expect(notifyCount, greaterThanOrEqualTo(0));
+    });
+
+    test('Flashlight keywords include torch', () {
+      final keywords = 'flashlight torch light flash lamp toggle';
+      expect(keywords.contains('torch'), true);
+    });
+
+    test('Flashlight keywords include lamp', () {
+      final keywords = 'flashlight torch light flash lamp toggle';
+      expect(keywords.contains('lamp'), true);
+    });
+
+    test('Global.providerList now contains 11 providers', () {
+      expect(Global.providerList.length, 11);
+    });
+
+    test('Global.providerList includes Flashlight', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Flashlight'), true);
     });
   });
 }

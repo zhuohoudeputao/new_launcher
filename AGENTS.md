@@ -148,6 +148,12 @@ Settings auto-saved via `SharedPreferences`:
   - Real-time battery state updates
   - Manual refresh button
   - Uses `Card.filled` for Material 3 style
+- **Flashlight**: Quick flashlight toggle control
+  - On/off status display
+  - Toggle switch for quick activation
+  - Availability check for devices without flashlight
+  - Uses `Card.filled` for Material 3 style
+  - Keywords: flashlight, torch, light, flash, lamp, toggle
 - **Timer**: Countdown timer functionality
   - Quick preset timers (1, 5, 10, 15, 30 minutes)
   - Custom timer input
@@ -211,6 +217,7 @@ Key packages (pubspec.yaml):
 - `image_picker: ^1.0.0` - Wallpaper selection
 - `path_provider: ^2.0.0` - File system paths
 - `battery_plus: ^6.0.0` - Battery status
+- `torch_light: ^1.0.0` - Flashlight control
 
 ## Testing
 
@@ -237,10 +244,11 @@ Test coverage includes:
 - SearchTextField tests (rendering, clear button visibility and behavior)
 - Pull-to-refresh tests (RefreshIndicator, scroll physics, provider refresh)
 - Battery provider tests (provider existence, keywords, model state, widget rendering)
+- Flashlight provider tests (provider existence, keywords, model state, widget rendering)
 - Notes provider tests (provider existence, keywords, model state, CRUD operations)
 - Timer provider tests (provider existence, keywords, model state, timer operations)
 
-Total tests: ~330 tests
+Total tests: ~341 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -275,6 +283,7 @@ Technical documentation is available in `docs/`:
 - `app_statistics_clear.md` - Clear statistics button feature
 - `pull_to_refresh.md` - Pull-to-refresh feature implementation
 - `battery_provider.md` - Battery status provider implementation
+- `flashlight_provider.md` - Flashlight toggle provider implementation
 - `notes_provider.md` - Notes provider implementation
 - `timer_provider.md` - Timer provider implementation
 
