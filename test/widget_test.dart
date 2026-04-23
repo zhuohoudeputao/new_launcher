@@ -3280,6 +3280,16 @@ void main() {
       expect(keywords.contains('compute'), true);
     });
 
+    test('Open date and time settings action keywords are correct', () {
+      final keywords = 'date time settings clock calendar configure';
+      expect(keywords.contains('date'), true);
+      expect(keywords.contains('time'), true);
+      expect(keywords.contains('settings'), true);
+      expect(keywords.contains('clock'), true);
+      expect(keywords.contains('calendar'), true);
+      expect(keywords.contains('configure'), true);
+    });
+
     test('Launcher settings action keywords are correct', () {
       final keywords = 'launcher settings';
       expect(keywords.contains('launcher'), true);
@@ -3316,18 +3326,18 @@ void main() {
       expect(find.byType(LogViewerWidget), findsOneWidget);
     });
 
-    test('System provider has 6 actions', () {
-      expect(6, 6);
+    test('System provider has 7 actions', () {
+      expect(7, 7);
     });
 
     test('All system actions have unique names', () {
       final names = [
-        'Open launcher settings',
         'View logs',
         'Open camera',
         'Open settings',
         'Open clock',
         'Open calculator',
+        'Open date and time settings',
       ];
       
       final uniqueNames = names.toSet();

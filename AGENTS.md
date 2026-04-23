@@ -131,6 +131,8 @@ Settings auto-saved via `SharedPreferences`:
   - Models: `appModel`, `allAppsModel`, `appStatisticsModel`
 - **System**: System-related actions
   - Quick launch: camera, settings, clock, calculator
+  - Date/time settings: opens Android settings with guidance
+  - View logs: displays app log viewer
 
 ## Material 3 Design System
 
@@ -199,7 +201,7 @@ Test coverage includes:
 - Search results indicator tests (filtering, count format, pluralization)
 - SearchTextField tests (rendering, clear button visibility and behavior)
 
-Total tests: ~303 tests
+Total tests: ~304 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -230,6 +232,7 @@ Technical documentation is available in `docs/`:
 - `skipped_tests_fix.md` - Fix for SharedPreferences-dependent tests
 - `grid_overflow_fix.md` - Fix for AllAppsCard GridView overflow
 - `test_coverage_update.md` - Additional tests for improved coverage
+- `date_time_settings.md` - System date/time settings action
 
 ## Notice
 DO NOT EDIT task*.md

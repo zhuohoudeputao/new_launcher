@@ -1,10 +1,3 @@
-/*
- * @Author: zhuohoudeputao
- * @LastEditors: zhuohoudeputao
- * @LastEditTime: 2020-07-12 02:23:00
- * @Description: file content
- */
-
 import 'package:flutter/material.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
@@ -109,6 +102,27 @@ Future<void> _provideActions() async {
           Global.infoModel.addInfo("Calculator", "No calculator app found", icon: Icon(Icons.calculate));
         } catch (e) {
           Global.loggerModel.error("Failed to open calculator: $e", source: "System");
+        }
+      },
+      times: List.generate(24, (index) => 0),
+    ),
+    MyAction(
+      name: 'Open date and time settings',
+      keywords: 'date time settings clock calendar configure',
+      action: () async {
+        try {
+          DeviceApps.openApp('com.android.settings');
+          Global.loggerModel.info("Opened settings for date/time configuration", source: "System");
+          Global.infoModel.addInfo(
+            "Date/Time",
+            "Settings opened",
+            subtitle: "Navigate to Date & Time section to configure",
+            icon: Icon(Icons.schedule),
+          );
+        } catch (e) {
+          Global.loggerModel.error("Failed to open settings: $e", source: "System");
+          Global.infoModel.addInfo("Date/Time", "Failed to open settings", 
+              subtitle: e.toString(), icon: Icon(Icons.schedule));
         }
       },
       times: List.generate(24, (index) => 0),
