@@ -387,7 +387,8 @@ Settings auto-saved via `SharedPreferences`:
     - Week number display at bottom
     - Sunday dates shown in red color
     - Automatic day change at midnight
-    - Uses `Card.filled` and `GridView` for Material 3 style
+    - CalendarModel for state management (ChangeNotifier pattern)
+    - Uses `Card.filled` for Material 3 style
     - Keywords: calendar, month, date, day, week, schedule
 - **Progress**: Goal/project progress tracker
     - Track progress on goals with percentage visualization
@@ -496,7 +497,7 @@ Test coverage includes:
 - Water provider tests (provider existence, keywords, model state, add/remove glasses, goal setting, progress, widget rendering)
 - Mood provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
 - Number Base Converter provider tests (provider existence, keywords, model state, conversion operations)
-- Calendar provider tests (provider existence, keywords, widget rendering, navigation buttons)
+- Calendar provider tests (provider existence, keywords, model state, navigation buttons, widget rendering)
 - Progress provider tests (provider existence, keywords, model state, CRUD operations, percentage calculation, widget rendering)
   
 Total tests: 823 tests
@@ -558,6 +559,7 @@ Technical documentation is available in `docs/`:
 - `expense_provider.md` - Expense tracker provider implementation
 - `numberbase_provider.md` - Number Base Converter provider implementation
 - `progress_provider.md` - Progress tracker provider implementation
+- `calendar_model.md` - CalendarModel implementation for provider pattern consistency
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks
 

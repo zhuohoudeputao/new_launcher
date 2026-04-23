@@ -8120,35 +8120,52 @@ void main() {
     });
 
     testWidgets('CalendarCard renders', (WidgetTester tester) async {
+      final model = CalendarModel();
+      model.init();
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: SingleChildScrollView(
-            child: CalendarCard(),
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: CalendarCard(),
+            ),
           ),
         ),
       ));
 
       expect(find.byType(Card), findsOneWidget);
+      model.dispose();
     });
 
     testWidgets('CalendarCard shows month navigation', (WidgetTester tester) async {
+      final model = CalendarModel();
+      model.init();
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: SingleChildScrollView(
-            child: CalendarCard(),
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: CalendarCard(),
+            ),
           ),
         ),
       ));
 
       expect(find.byIcon(Icons.chevron_left), findsOneWidget);
       expect(find.byIcon(Icons.chevron_right), findsOneWidget);
+      model.dispose();
     });
 
     testWidgets('CalendarCard shows weekday headers', (WidgetTester tester) async {
+      final model = CalendarModel();
+      model.init();
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: SingleChildScrollView(
-            child: CalendarCard(),
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: CalendarCard(),
+            ),
           ),
         ),
       ));
@@ -8158,13 +8175,19 @@ void main() {
       expect(find.text('T'), findsNWidgets(2));
       expect(find.text('W'), findsOneWidget);
       expect(find.text('F'), findsOneWidget);
+      model.dispose();
     });
 
     testWidgets('CalendarCard navigation buttons work', (WidgetTester tester) async {
+      final model = CalendarModel();
+      model.init();
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: SingleChildScrollView(
-            child: CalendarCard(),
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: CalendarCard(),
+            ),
           ),
         ),
       ));
@@ -8174,6 +8197,7 @@ void main() {
 
       await tester.tap(find.byIcon(Icons.chevron_right).first);
       await tester.pump();
+      model.dispose();
     });
   });
 

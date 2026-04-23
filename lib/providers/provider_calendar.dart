@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
+import 'package:provider/provider.dart';
+
+CalendarModel calendarModel = CalendarModel();
 
 MyProvider providerCalendar = MyProvider(
   name: "Calendar",
@@ -23,43 +26,77 @@ Future<void> _provideActions() async {
 }
 
 Future<void> _initActions() async {
-  _showCalendar();
+  calendarModel.init();
+  Global.infoModel.addInfoWidget(
+      "Calendar",
+      ChangeNotifierProvider.value(
+          value: calendarModel,
+          builder: (context, child) => CalendarCard()),
+      title: "Calendar");
 }
 
 Future<void> _update() async {
-  _showCalendar();
+  calendarModel.refresh();
 }
 
 void _showCalendar() {
   Global.infoModel.addInfoWidget("Calendar", CalendarCard(), title: "Calendar");
 }
 
-class CalendarCard extends StatefulWidget {
-  @override
-  State<CalendarCard> createState() => _CalendarCardState();
-}
-
-class _CalendarCardState extends State<CalendarCard> {
+class CalendarModel extends ChangeNotifier {
   DateTime _currentMonth = DateTime.now();
   Timer? _dayUpdateTimer;
   bool _disposed = false;
+  bool _isInitialized = false;
 
-  @override
-  void initState() {
-    super.initState();
+  bool get isInitialized => _isInitialized;
+  DateTime get currentMonth => _currentMonth;
+
+  void init() {
+    _currentMonth = DateTime.now();
+    _isInitialized = true;
+    _scheduleDayUpdate();
+    Global.loggerModel.info("Calendar initialized", source: "Calendar");
+    notifyListeners();
+  }
+
+  void _scheduleDayUpdate() {
     final now = DateTime.now();
     final midnight = DateTime(now.year, now.month, now.day + 1);
     final delay = midnight.difference(now);
+    _dayUpdateTimer?.cancel();
     _dayUpdateTimer = Timer(delay, () {
       if (!_disposed) {
-        setState(() {
-          _currentMonth = DateTime.now();
-        });
+        _currentMonth = DateTime.now();
+        notifyListeners();
+        _dayUpdateTimer?.cancel();
         _dayUpdateTimer = Timer.periodic(const Duration(hours: 1), (_) {
-          if (!_disposed) setState(() {});
+          if (!_disposed) {
+            _currentMonth = DateTime.now();
+            notifyListeners();
+          }
         });
       }
     });
+  }
+
+  void previousMonth() {
+    _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1);
+    notifyListeners();
+  }
+
+  void nextMonth() {
+    _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1);
+    notifyListeners();
+  }
+
+  void goToToday() {
+    _currentMonth = DateTime.now();
+    notifyListeners();
+  }
+
+  void refresh() {
+    notifyListeners();
   }
 
   @override
@@ -68,67 +105,17 @@ class _CalendarCardState extends State<CalendarCard> {
     _dayUpdateTimer?.cancel();
     super.dispose();
   }
+}
 
-  void _previousMonth() {
-    setState(() {
-      _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1);
-    });
-  }
-
-  void _nextMonth() {
-    setState(() {
-      _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1);
-    });
-  }
-
-  void _goToToday() {
-    setState(() {
-      _currentMonth = DateTime.now();
-    });
-  }
-
-  List<DateTime> _getDaysInMonth(DateTime month) {
-    final firstDay = DateTime(month.year, month.month, 1);
-    final lastDay = DateTime(month.year, month.month + 1, 0);
-    final days = <DateTime>[];
-
-    final startWeekday = firstDay.weekday % 7;
-    for (int i = 0; i < startWeekday; i++) {
-      days.add(DateTime(month.year, month.month, 1 - (startWeekday - i)));
-    }
-
-    for (int day = 1; day <= lastDay.day; day++) {
-      days.add(DateTime(month.year, month.month, day));
-    }
-
-    final endWeekday = lastDay.weekday % 7;
-    for (int i = 1; i < 7 - endWeekday; i++) {
-      days.add(DateTime(month.year, month.month + 1, i));
-    }
-
-    return days;
-  }
-
-  int _getWeekNumber(DateTime date) {
-    final firstDayOfYear = DateTime(date.year, 1, 1);
-    final days = date.difference(firstDayOfYear).inDays;
-    return ((days + firstDayOfYear.weekday - 1) / 7).floor() + 1;
-  }
-
-  String _getMonthName(int month) {
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return months[month - 1];
-  }
-
+class CalendarCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final calendar = context.watch<CalendarModel>();
     final colorScheme = Theme.of(context).colorScheme;
     final now = DateTime.now();
-    final days = _getDaysInMonth(_currentMonth);
-    final isCurrentMonth = _currentMonth.year == now.year && _currentMonth.month == now.month;
+    final currentMonth = calendar.currentMonth;
+    final days = _getDaysInMonth(currentMonth);
+    final isCurrentMonth = currentMonth.year == now.year && currentMonth.month == now.month;
     final weekNumber = _getWeekNumber(now);
 
     return Card.filled(
@@ -143,14 +130,14 @@ class _CalendarCardState extends State<CalendarCard> {
               children: [
                 IconButton(
                   icon: Icon(Icons.chevron_left),
-                  onPressed: _previousMonth,
+                  onPressed: calendar.previousMonth,
                 ),
                 GestureDetector(
-                  onTap: _goToToday,
+                  onTap: calendar.goToToday,
                   child: Column(
                     children: [
                       Text(
-                        '${_getMonthName(_currentMonth.month)} ${_currentMonth.year}',
+                        '${_getMonthName(currentMonth.month)} ${currentMonth.year}',
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       if (!isCurrentMonth)
@@ -163,7 +150,7 @@ class _CalendarCardState extends State<CalendarCard> {
                 ),
                 IconButton(
                   icon: Icon(Icons.chevron_right),
-                  onPressed: _nextMonth,
+                  onPressed: calendar.nextMonth,
                 ),
               ],
             ),
@@ -193,7 +180,7 @@ class _CalendarCardState extends State<CalendarCard> {
               itemBuilder: (context, index) {
                 final day = days[index];
                 final isToday = day.year == now.year && day.month == now.month && day.day == now.day;
-                final isCurrentMonthDay = day.month == _currentMonth.month;
+                final isCurrentMonthDay = day.month == currentMonth.month;
                 final isSunday = day.weekday == 7;
 
                 return Center(
@@ -240,5 +227,41 @@ class _CalendarCardState extends State<CalendarCard> {
         ),
       ),
     );
+  }
+
+  List<DateTime> _getDaysInMonth(DateTime month) {
+    final firstDay = DateTime(month.year, month.month, 1);
+    final lastDay = DateTime(month.year, month.month + 1, 0);
+    final days = <DateTime>[];
+
+    final startWeekday = firstDay.weekday % 7;
+    for (int i = 0; i < startWeekday; i++) {
+      days.add(DateTime(month.year, month.month, 1 - (startWeekday - i)));
+    }
+
+    for (int day = 1; day <= lastDay.day; day++) {
+      days.add(DateTime(month.year, month.month, day));
+    }
+
+    final endWeekday = lastDay.weekday % 7;
+    for (int i = 1; i < 7 - endWeekday; i++) {
+      days.add(DateTime(month.year, month.month + 1, i));
+    }
+
+    return days;
+  }
+
+  int _getWeekNumber(DateTime date) {
+    final firstDayOfYear = DateTime(date.year, 1, 1);
+    final days = date.difference(firstDayOfYear).inDays;
+    return ((days + firstDayOfYear.weekday - 1) / 7).floor() + 1;
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return months[month - 1];
   }
 }
