@@ -389,17 +389,6 @@ void main() {
       expect(times[currentHour], 1);
     });
 
-    test('suggestWidget is created correctly', () {
-      final action = MyAction(
-        name: 'TestAction',
-        keywords: 'test',
-        action: () {},
-        times: List.generate(24, (_) => 0),
-      );
-      
-      expect(action.suggestWidget, isA<Widget>());
-    });
-
     test('MyAction stores name correctly', () {
       final action = MyAction(
         name: 'MyActionName',
@@ -616,11 +605,6 @@ void main() {
   });
 
   group('ActionModel tests', () {
-    test('ActionModel starts empty', () {
-      final actionModel = ActionModel();
-      expect(actionModel.suggestList.isEmpty, true);
-    });
-
     test('addAction stores action in map', () async {
       final actionModel = ActionModel();
       final action = MyAction(
@@ -631,91 +615,26 @@ void main() {
       );
       
       await actionModel.addAction(action);
-      
-      actionModel.generateSuggestList('test');
-      await Future.delayed(const Duration(milliseconds: 350));
-      expect(actionModel.suggestList.length, 1);
     });
 
-    test('generateSuggestList filters actions by input', () async {
-      final actionModel = ActionModel();
-      final action1 = MyAction(
-        name: 'Weather',
-        keywords: 'weather forecast',
-        action: () {},
-        times: List.generate(24, (_) => 0),
-      );
-      final action2 = MyAction(
-        name: 'Time',
-        keywords: 'time clock',
-        action: () {},
-        times: List.generate(24, (_) => 0),
-      );
-      
-      actionModel.addAction(action1);
-      actionModel.addAction(action2);
-      
-      actionModel.generateSuggestList('weather');
-      await Future.delayed(const Duration(milliseconds: 350));
-      expect(actionModel.suggestList.length, 1);
-      
-      actionModel.generateSuggestList('time');
-      await Future.delayed(const Duration(milliseconds: 350));
-      expect(actionModel.suggestList.length, 1);
-      
-      actionModel.generateSuggestList('clock');
-      await Future.delayed(const Duration(milliseconds: 350));
-      expect(actionModel.suggestList.length, 1);
-    });
-
-    test('generateSuggestList returns all matching actions', () async {
-      final actionModel = ActionModel();
-      final action1 = MyAction(
-        name: 'Weather',
-        keywords: 'weather forecast',
-        action: () {},
-        times: List.generate(24, (_) => 0),
-      );
-      final action2 = MyAction(
-        name: 'Weather2',
-        keywords: 'weather today',
-        action: () {},
-        times: List.generate(24, (_) => 0),
-      );
-      
-      actionModel.addAction(action1);
-      actionModel.addAction(action2);
-      
-      actionModel.generateSuggestList('weather');
-      await Future.delayed(const Duration(milliseconds: 350));
-      expect(actionModel.suggestList.length, 2);
-    });
-
-    test('generateSuggestList debounces rapid calls', () async {
+    test('updateSearchQuery debounces rapid calls', () async {
       final actionModel = ActionModel();
       int notifyCount = 0;
       actionModel.addListener(() => notifyCount++);
       
-      final action = MyAction(
-        name: 'Test',
-        keywords: 'test',
-        action: () {},
-        times: List.generate(24, (_) => 0),
-      );
-      actionModel.addAction(action);
-      
-      actionModel.generateSuggestList('t');
-      actionModel.generateSuggestList('te');
-      actionModel.generateSuggestList('tes');
-      actionModel.generateSuggestList('test');
+      actionModel.updateSearchQuery('t');
+      actionModel.updateSearchQuery('te');
+      actionModel.updateSearchQuery('tes');
+      actionModel.updateSearchQuery('test');
       
       await Future.delayed(const Duration(milliseconds: 350));
       expect(notifyCount, 1);
+      expect(actionModel.searchQuery, 'test');
     });
 
     test('dispose cancels debounce timer', () async {
       final actionModel = ActionModel();
-      actionModel.generateSuggestList('test');
+      actionModel.updateSearchQuery('test');
       actionModel.dispose();
       
       await Future.delayed(const Duration(milliseconds: 350));
@@ -730,15 +649,16 @@ void main() {
       ];
       
       await actionModel.addActions(actions);
-      
-      actionModel.generateSuggestList('a');
-      await Future.delayed(const Duration(milliseconds: 350));
-      expect(actionModel.suggestList.length, 1);
     });
 
     test('inputBoxController exists', () {
       final actionModel = ActionModel();
       expect(actionModel.inputBoxController, isA<TextEditingController>());
+    });
+
+    test('searchQuery starts empty', () {
+      final actionModel = ActionModel();
+      expect(actionModel.searchQuery, '');
     });
   });
 
@@ -804,42 +724,6 @@ void main() {
       await tester.pump();
 
       expect(tapped, true);
-    });
-  });
-
-  group('customSuggestWidget tests', () {
-    testWidgets('renders name correctly', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: customSuggestWidget(
-              name: 'Suggest Action',
-              onPressed: () {},
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('Suggest Action'), findsOneWidget);
-    });
-
-    testWidgets('calls onPressed when pressed', (WidgetTester tester) async {
-      bool pressed = false;
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: customSuggestWidget(
-              name: 'Suggest Action',
-              onPressed: () => pressed = true,
-            ),
-          ),
-        ),
-      );
-
-      await tester.tap(find.byType(ElevatedButton));
-      await tester.pump();
-
-      expect(pressed, true);
     });
   });
 
@@ -1148,59 +1032,6 @@ void main() {
 
       expect(find.byType(Card), findsOneWidget);
       expect(find.text('TestKey'), findsOneWidget);
-    });
-  });
-
-  group('Material 3 Button tests', () {
-    testWidgets('customSuggestWidget uses ElevatedButton', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: customSuggestWidget(
-              name: 'Test Action',
-              onPressed: () {},
-            ),
-          ),
-        ),
-      );
-
-      expect(find.byType(ElevatedButton), findsOneWidget);
-      expect(find.text('Test Action'), findsOneWidget);
-    });
-
-    testWidgets('customSuggestButton has zero elevation', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: customSuggestWidget(
-              name: 'Test',
-              onPressed: () {},
-            ),
-          ),
-        ),
-      );
-
-      final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
-      expect(button.style?.elevation?.resolve({}), 0);
-    });
-
-    testWidgets('customSuggestButton onPressed works', (WidgetTester tester) async {
-      bool pressed = false;
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: customSuggestWidget(
-              name: 'Test',
-              onPressed: () => pressed = true,
-            ),
-          ),
-        ),
-      );
-
-      await tester.tap(find.byType(ElevatedButton));
-      await tester.pump();
-
-      expect(pressed, true);
     });
   });
 
@@ -1638,14 +1469,14 @@ void main() {
   group('ActionModel searchQuery tests', () {
     test('stores search query correctly after debounce', () async {
       final actionModel = ActionModel();
-      actionModel.generateSuggestList('test query');
+      actionModel.updateSearchQuery('test query');
       await Future.delayed(const Duration(milliseconds: 350));
       expect(actionModel.searchQuery, 'test query');
     });
 
     test('clears search query when empty after debounce', () async {
       final actionModel = ActionModel();
-      actionModel.generateSuggestList('');
+      actionModel.updateSearchQuery('');
       await Future.delayed(const Duration(milliseconds: 350));
       expect(actionModel.searchQuery, '');
     });
@@ -2638,127 +2469,20 @@ void main() {
       
       actionModel.addAction(action1);
       actionModel.addAction(action2);
-      
-      actionModel.generateSuggestList('test');
     });
 
-    test('generateSuggestList handles empty input', () async {
+    test('updateSearchQuery handles empty input', () async {
       final actionModel = ActionModel();
-      actionModel.generateSuggestList('');
+      actionModel.updateSearchQuery('');
       await Future.delayed(const Duration(milliseconds: 350));
-      expect(actionModel.suggestList.length, 0);
+      expect(actionModel.searchQuery, '');
     });
 
-    test('generateSuggestList handles whitespace input', () async {
+    test('updateSearchQuery handles whitespace input', () async {
       final actionModel = ActionModel();
-      actionModel.generateSuggestList('   ');
+      actionModel.updateSearchQuery('   ');
       await Future.delayed(const Duration(milliseconds: 350));
-      expect(actionModel.suggestList.length, 0);
-    });
-
-    test('runFirstAction does nothing with empty suggestList', () {
-      final actionModel = ActionModel();
-      actionModel.runFirstAction('test');
-      expect(actionModel.inputBoxController.text, '');
-    });
-
-    test('generateSuggestList sorts by frequency', () async {
-      final actionModel = ActionModel();
-      final currentHour = DateTime.now().hour;
-      
-      final times1 = List.generate(24, (_) => 0);
-      times1[currentHour] = 10;
-      
-      final times2 = List.generate(24, (_) => 0);
-      times2[currentHour] = 5;
-      
-      final times3 = List.generate(24, (_) => 0);
-      times3[currentHour] = 20;
-      
-      final action1 = MyAction(
-        name: 'Low',
-        keywords: 'test',
-        action: () {},
-        times: times1,
-      );
-      final action2 = MyAction(
-        name: 'Medium',
-        keywords: 'test',
-        action: () {},
-        times: times2,
-      );
-      final action3 = MyAction(
-        name: 'High',
-        keywords: 'test',
-        action: () {},
-        times: times3,
-      );
-      
-      actionModel.addAction(action1);
-      actionModel.addAction(action2);
-      actionModel.addAction(action3);
-      
-      actionModel.generateSuggestList('test');
-      await Future.delayed(const Duration(milliseconds: 350));
-      
-      expect(actionModel.suggestList.length, 3);
-    });
-
-    test('suggestList order reflects frequency descending', () async {
-      final actionModel = ActionModel();
-      final currentHour = DateTime.now().hour;
-      
-      final times1 = List.generate(24, (_) => 0);
-      times1[currentHour] = 1;
-      
-      final times2 = List.generate(24, (_) => 0);
-      times2[currentHour] = 100;
-      
-      final actionLow = MyAction(
-        name: 'ActionLow',
-        keywords: 'common',
-        action: () {},
-        times: times1,
-      );
-      final actionHigh = MyAction(
-        name: 'ActionHigh',
-        keywords: 'common',
-        action: () {},
-        times: times2,
-      );
-      
-      actionModel.addAction(actionLow);
-      actionModel.addAction(actionHigh);
-      
-      actionModel.generateSuggestList('common');
-      await Future.delayed(const Duration(milliseconds: 350));
-      
-      expect(actionModel.suggestList.length, 2);
-    });
-
-    test('actions with same frequency maintain stable order', () async {
-      final actionModel = ActionModel();
-      
-      final action1 = MyAction(
-        name: 'First',
-        keywords: 'same',
-        action: () {},
-        times: List.generate(24, (_) => 5),
-      );
-      final action2 = MyAction(
-        name: 'Second',
-        keywords: 'same',
-        action: () {},
-        times: List.generate(24, (_) => 5),
-      );
-      
-      actionModel.addAction(action1);
-      actionModel.addAction(action2);
-      
-      actionModel.generateSuggestList('same');
-      await Future.delayed(const Duration(milliseconds: 350));
-      
-      expect(actionModel.suggestList.length, 2);
+      expect(actionModel.searchQuery, '   ');
     });
   });
 
@@ -3391,34 +3115,6 @@ void main() {
     });
   });
 
-  group('ActionModel runFirstAction tests', () {
-    test('runFirstAction clears input box', () async {
-      final actionModel = ActionModel();
-      actionModel.inputBoxController.text = 'test input';
-      
-      actionModel.runFirstAction('');
-      
-      expect(actionModel.inputBoxController.text, '');
-    });
-
-    test('runFirstAction generates suggestion with space', () async {
-      final actionModel = ActionModel();
-      
-      actionModel.runFirstAction('');
-      
-      await Future.delayed(const Duration(milliseconds: 350));
-      expect(actionModel.searchQuery, ' ');
-    });
-
-    test('runFirstAction with empty suggestList does nothing', () {
-      final actionModel = ActionModel();
-      
-      actionModel.runFirstAction('test');
-      
-      expect(actionModel.suggestList.isEmpty, true);
-    });
-  });
-
   group('Search results indicator tests', () {
     test('results indicator shows count when query is not empty', () {
       final infoModel = InfoModel();
@@ -3585,14 +3281,9 @@ void main() {
       expect(settingsProvider.name, 'Settings');
     });
 
-    test('Settings provider has no actions', () async {
+    test('Settings provider has no actions', () {
       final settingsProvider = Global.providerList.where((p) => p.name == 'Settings').first;
       settingsProvider.provideActions();
-      
-      Global.actionModel.generateSuggestList('settings');
-      await Future.delayed(const Duration(milliseconds: 350));
-      
-      expect(Global.actionModel.suggestList.isEmpty, true);
     });
 
     test('Settings provider initActions adds settings widgets', () {

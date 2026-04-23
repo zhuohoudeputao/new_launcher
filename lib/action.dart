@@ -6,26 +6,13 @@
  */
 
 import 'package:flutter/material.dart';
-import 'ui.dart';
 
-/// [MyAction] class is representing the actions can be done by user.
 class MyAction {
-  /// the name or key of the action
   late String name;
-
-  /// use for search, combine as one string with blank between them
   late String _keywords;
-
-  /// Core action, what this action actually does.
-  /// This action will influence infoWidgets, So infoList will be global.
   late void Function() _action;
-  late List<int> _times; // 24 hours, every num means times in an hour
-  late Widget _suggestWidget; // Widget show in suggestList
-  Widget get suggestWidget {
-    return _suggestWidget;
-  }
+  late List<int> _times;
 
-  /// Initialization
   MyAction({
     required String name,
     required String keywords,
@@ -36,27 +23,19 @@ class MyAction {
     this._keywords = keywords.toLowerCase();
     this._action = action;
     this._times = times;
-    this._suggestWidget = customSuggestWidget(name: name, onPressed: action);
   }
 
-  // add '_' before the func to make it 'private'
-
-  /// call for action
   Future<void> action() async {
     _action.call();
     _frequencyIncre();
   }
 
-  /// get the frequency of this action in this hour
   int get frequency => _times[DateTime.now().hour];
 
-  /// when this action is taken, add frequency by 1
   Future<void> _frequencyIncre() async {
     _times[DateTime.now().hour] += 1;
   }
 
-  /// whether search string is in keywords
-  /// remember that keywords is lowercased
   bool canIdentifyBy(String searchStr) {
     return _keywords.contains(searchStr.toLowerCase());
   }

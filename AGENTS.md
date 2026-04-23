@@ -37,7 +37,7 @@ flutter.sdk=/home/linzuxuan/app/flutter
 - **Providers system**: `lib/providers/*.dart` - Each provider adds services (weather, apps, wallpaper, etc.)
 - **Data layer**: `lib/data.dart` - Contains `Global`, `ActionModel`, `InfoModel`, `SettingsModel`, `BackgroundImageModel`, `ThemeModel`
   - `InfoModel.addInfoWidgetsBatch()`: Batch add widgets with single notifyListeners for performance
-- **Action definition**: `lib/action.dart` - `MyAction` class with keywords, action function, and suggest widget
+- **Action definition**: `lib/action.dart` - `MyAction` class with keywords and action function
 
 ## Adding a New Provider
 
@@ -77,12 +77,13 @@ MyProvider providerExample = MyProvider(
 
 The search feature filters info cards based on user input:
 - `ActionModel.searchQuery` stores the current search text
+- `ActionModel.updateSearchQuery(input)` updates the search query with debouncing
 - `InfoModel.getFilteredList(query)` returns cards matching the query
 - Pass `title` parameter to `addInfoWidget()` to make cards searchable by title
 - Filtering matches against both key and title (case-insensitive)
 - `SearchTextField` widget provides clear button for quick input reset
   - Clear button appears when text is present
-  - Tapping clear removes text, resets suggestions, and dismisses keyboard
+  - Tapping clear removes text and dismisses keyboard
 
 ## Settings Storage
 
@@ -149,7 +150,6 @@ The app uses Material 3 design system with the following components:
 - Standard Card with `elevation: 0` - Settings items
 
 ### Buttons
-- `ElevatedButton` with `elevation: 0` for suggestions (Material 3 tonal style)
 - `SegmentedButton` for theme mode selection (new Material 3 component)
 
 ### Components Updated
@@ -187,7 +187,7 @@ unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && ~/app/flutter/bin/flutter
 Test coverage includes:
 - `MyAction` class (keyword matching, frequency tracking, midnight safety)
 - `MyProvider` class (constructor, initialization, SharedPreferences enabled check)
-- `ActionModel` class (action storage, suggestion generation, runFirstAction method)
+- `ActionModel` class (action storage, search query updates, debouncing)
 - `InfoModel` class (widget storage, filtering, batch operations)
 - `ThemeModel` and `BackgroundImageModel` (notifications)
 - `SettingsModel` class (save/load values, SharedPreferences integration)
@@ -201,7 +201,7 @@ Test coverage includes:
 - Search results indicator tests (filtering, count format, pluralization)
 - SearchTextField tests (rendering, clear button visibility and behavior)
 
-Total tests: ~304 tests
+Total tests: ~289 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

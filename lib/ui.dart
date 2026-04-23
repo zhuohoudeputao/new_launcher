@@ -63,19 +63,6 @@ Widget customInfoWidget(
   );
 }
 
-/// ``customSuggestWidget`` is designed for displaying a suggest action
-/// above the input box.
-Widget customSuggestWidget(
-    {required String name, required void Function() onPressed}) {
-  return ElevatedButton(
-    onPressed: onPressed,
-    style: ElevatedButton.styleFrom(
-      elevation: 0,
-    ),
-    child: Text(name),
-  );
-}
-
 Widget customTextSettingWidget(
     {required String key,
     required var value,

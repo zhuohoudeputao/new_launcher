@@ -171,10 +171,6 @@ class ActionModel with ChangeNotifier {
     _actionMap[action.name] = action;
   }
 
-  List<Widget> _suggestList = <Widget>[];
-
-  List<Widget> get suggestList => _suggestList;
-
   TextEditingController inputBoxController = TextEditingController();
 
   Future<void> init() async {
@@ -189,22 +185,10 @@ class ActionModel with ChangeNotifier {
     }
   }
 
-  void generateSuggestList(String input) {
+  void updateSearchQuery(String input) {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
       _searchQuery = input;
-      _suggestList.clear();
-      
-      final matchingActions = _actionMap.values
-          .where((action) => action.canIdentifyBy(input))
-          .toList();
-      
-      matchingActions.sort((a, b) => b.frequency.compareTo(a.frequency));
-      
-      for (MyAction action in matchingActions) {
-        _suggestList.add(action.suggestWidget);
-      }
-      
       notifyListeners();
     });
   }
@@ -212,21 +196,6 @@ class ActionModel with ChangeNotifier {
   void dispose() {
     _debounceTimer?.cancel();
     super.dispose();
-  }
-
-  void runFirstAction(String input) {
-    if (_suggestList.isNotEmpty) {
-      final widget = _suggestList[0];
-      if (widget is TextButton) {
-        widget.onPressed?.call();
-      }
-    } else {
-      Global.infoModel.addInfo("Help", "I don't know what to do",
-          subtitle: "Try type something else.", icon: Icon(Icons.help));
-    }
-    // some special care
-    inputBoxController.clear();
-    generateSuggestList(" ");
   }
 }
 

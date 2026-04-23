@@ -80,7 +80,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
 
   void _clearText() {
     _controller.clear();
-    Global.actionModel.generateSuggestList('');
+    Global.actionModel.updateSearchQuery('');
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
@@ -90,7 +90,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
     return TextField(
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        hintText: "Search... Try 'weather', 'camera', 'settings'",
+        hintText: "Search cards...",
         prefixIcon: Icon(Icons.search),
         suffixIcon: _hasText
             ? IconButton(
@@ -104,8 +104,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
         contentPadding: EdgeInsets.symmetric(horizontal: 20),
       ),
       controller: _controller,
-      onSubmitted: actionModel.runFirstAction,
-      onChanged: actionModel.generateSuggestList,
+      onChanged: actionModel.updateSearchQuery,
     );
   }
 }
@@ -194,7 +193,6 @@ class _MyHomePageState extends State<MyHomePage> {
     final actionModel = context.watch<ActionModel>();
     String query = actionModel.searchQuery;
     List<Widget> infoList = context.watch<InfoModel>().getFilteredList(query);
-    List<Widget> suggestList = actionModel.suggestList;
     
     _circularListController.itemCount = infoList.isEmpty ? 1 : infoList.length;
     
@@ -239,22 +237,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-              // Suggestion Area
-              Container(
-                height: 56.0,
-                padding: EdgeInsets.symmetric(vertical: 4),
-                child: ListView.builder(
-                  // suggestion displayer
-                  itemCount: suggestList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Selector<ActionModel, Widget>(
-                      selector: (context, provider) => suggestList[index],
-                      builder: (context, value, child) => suggestList[index],
-                    );
-                  },
-                  scrollDirection: Axis.horizontal,
-                ),
-              ),
 // Information Area
               Expanded(
                   child: GestureDetector(
