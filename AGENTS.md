@@ -186,7 +186,12 @@ Test coverage includes:
 - ColorScheme integration tests (Material 3 enabled, color generation)
 
 ### Test Configuration
-Tests use `SharedPreferences.setMockInitialValues({})` in `setUpAll()` for SharedPreferences-dependent tests.
+Tests use the following setup in `setUpAll()`:
+- `SharedPreferences.setMockInitialValues({})` for SharedPreferences-dependent tests
+- `TestWidgetsFlutterBinding.ensureInitialized()` for Flutter test framework
+- `Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png')` to mock network images
+
+Test assets are defined in `pubspec.yaml` under `flutter.assets`.
 
 ## Documentation
 
