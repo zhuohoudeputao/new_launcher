@@ -154,15 +154,18 @@ class TimerModel extends ChangeNotifier {
   }
 
   void cancelTimer(String id) {
-    final entry = _timers.firstWhere((t) => t.id == id, orElse: () => _timers.first);
-    entry.timer?.cancel();
-    _timers.removeWhere((t) => t.id == id);
+    final index = _timers.indexWhere((t) => t.id == id);
+    if (index == -1) return;
+    _timers[index].timer?.cancel();
+    _timers.removeAt(index);
     notifyListeners();
     Global.loggerModel.info("Timer cancelled", source: "Timer");
   }
 
   void pauseTimer(String id) {
-    final entry = _timers.firstWhere((t) => t.id == id, orElse: () => _timers.first);
+    final index = _timers.indexWhere((t) => t.id == id);
+    if (index == -1) return;
+    final entry = _timers[index];
     if (entry.isActive && entry.timer != null) {
       entry.timer!.cancel();
       entry.isActive = false;
@@ -172,7 +175,9 @@ class TimerModel extends ChangeNotifier {
   }
 
   void resumeTimer(String id) {
-    final entry = _timers.firstWhere((t) => t.id == id, orElse: () => _timers.first);
+    final index = _timers.indexWhere((t) => t.id == id);
+    if (index == -1) return;
+    final entry = _timers[index];
     if (!entry.isActive && entry.remainingSeconds > 0) {
       entry.timer = Timer.periodic(Duration(seconds: 1), (timer) {
         if (entry.remainingSeconds > 0) {

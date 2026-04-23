@@ -27,6 +27,13 @@ import 'package:new_launcher/providers/provider_color.dart';
 import 'package:new_launcher/providers/provider_currency.dart';
 import 'package:new_launcher/providers/provider_bookmarks.dart';
 import 'package:new_launcher/providers/provider_habit.dart';
+import 'package:new_launcher/providers/provider_meditation.dart';
+import 'package:new_launcher/providers/provider_water.dart';
+import 'package:new_launcher/providers/provider_mood.dart';
+import 'package:new_launcher/providers/provider_expense.dart';
+import 'package:new_launcher/providers/provider_numberbase.dart';
+import 'package:new_launcher/providers/provider_calendar.dart';
+import 'package:new_launcher/providers/provider_progress.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -128,6 +135,12 @@ ChangeNotifierProvider.value(value: colorModel),
             ChangeNotifierProvider.value(value: currencyModel),
             ChangeNotifierProvider.value(value: bookmarksModel),
             ChangeNotifierProvider.value(value: habitModel),
+            ChangeNotifierProvider.value(value: meditationModel),
+            ChangeNotifierProvider.value(value: waterModel),
+            ChangeNotifierProvider.value(value: moodModel),
+            ChangeNotifierProvider.value(value: expenseModel),
+            ChangeNotifierProvider.value(value: numberBaseModel),
+            ChangeNotifierProvider.value(value: progressModel),
            ],
           child: MyApp(),
          )));

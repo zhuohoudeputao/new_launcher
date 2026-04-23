@@ -292,11 +292,29 @@ class CurrencyCard extends StatefulWidget {
 
 class _CurrencyCardState extends State<CurrencyCard> {
   bool _showHistory = false;
+  late TextEditingController _inputController;
+
+  @override
+  void initState() {
+    super.initState();
+    _inputController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _inputController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final currency = context.watch<CurrencyModel>();
     final colorScheme = Theme.of(context).colorScheme;
+    
+    if (currency.inputValue != _inputController.text) {
+      _inputController.text = currency.inputValue;
+      _inputController.selection = TextSelection.collapsed(offset: currency.inputValue.length);
+    }
     
     if (!currency.isInitialized) {
       return Card.filled(
@@ -484,7 +502,7 @@ class _CurrencyCardState extends State<CurrencyCard> {
           filled: true,
           fillColor: colorScheme.surfaceContainerHighest,
         ),
-        controller: TextEditingController(text: currency.inputValue),
+        controller: _inputController,
         onChanged: (value) => currency.setInputValue(value),
       );
     } else {

@@ -559,6 +559,7 @@ Technical documentation is available in `docs/`:
 - `numberbase_provider.md` - Number Base Converter provider implementation
 - `progress_provider.md` - Progress tracker provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
+- `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks
 
 ## Notice
 DO NOT EDIT task*.md
