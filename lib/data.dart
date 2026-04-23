@@ -31,6 +31,7 @@ import 'package:new_launcher/providers/provider_pomodoro.dart';
 import 'package:new_launcher/providers/provider_clipboard.dart';
 import 'package:new_launcher/providers/provider_todo.dart';
 import 'package:new_launcher/providers/provider_qrcode.dart';
+import 'package:new_launcher/providers/provider_random.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -175,6 +176,7 @@ class Global {
     providerClipboard,
     providerTodo,
     providerQRCode,
+    providerRandom,
   ];
 
   //_______________________________________________________________________

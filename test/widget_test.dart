@@ -19,6 +19,7 @@ import 'package:new_launcher/providers/provider_pomodoro.dart';
 import 'package:new_launcher/providers/provider_clipboard.dart';
 import 'package:new_launcher/providers/provider_todo.dart';
 import 'package:new_launcher/providers/provider_qrcode.dart';
+import 'package:new_launcher/providers/provider_random.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2459,7 +2460,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 20);
+      expect(Global.providerList.length, 21);
     });
 
     test('Global.providerList names are correct', () {
@@ -3626,7 +3627,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 20);
+      expect(initCount, 21);
     });
   });
 
@@ -3934,8 +3935,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 20 providers', () {
-      expect(Global.providerList.length, 20);
+    test('Global.providerList now contains 21 providers', () {
+      expect(Global.providerList.length, 21);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5260,8 +5261,8 @@ void main() {
       expect(UnitConverterCard, isNotNull);
     });
 
-    test('Global.providerList now contains 20 providers', () {
-      expect(Global.providerList.length, 20);
+    test('Global.providerList now contains 21 providers', () {
+      expect(Global.providerList.length, 21);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -6026,6 +6027,245 @@ void main() {
     test('QRModel keywords are correct', () {
       expect(providerQRCode.name, 'QRCode');
       expect(providerQRCode.provideActions, isNotNull);
+    });
+  });
+
+  group('Random Generator provider tests', () {
+    test('RandomModel exists', () {
+      expect(randomModel, isNotNull);
+    });
+
+    test('RandomModel initial state', () {
+      final model = RandomModel();
+      expect(model.isInitialized, false);
+      expect(model.coinResult, '');
+      expect(model.diceResult, '');
+      expect(model.passwordResult, '');
+      expect(model.randomNumberResult, '');
+    });
+
+    test('RandomModel init sets initialized', () {
+      final model = RandomModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('RandomModel flipCoin works', () {
+      final model = RandomModel();
+      model.init();
+      final result = model.flipCoin();
+      expect(result, isIn(['Heads', 'Tails']));
+      expect(model.coinResult, isIn(['Heads', 'Tails']));
+    });
+
+    test('RandomModel rollDice works', () {
+      final model = RandomModel();
+      model.init();
+      final result = model.rollDice(6);
+      final resultInt = int.tryParse(result);
+      expect(resultInt, greaterThanOrEqualTo(1));
+      expect(resultInt, lessThanOrEqualTo(6));
+    });
+
+    test('RandomModel rollDice with different sides', () {
+      final model = RandomModel();
+      model.init();
+      
+      for (final sides in [4, 6, 8, 10, 12, 20, 100]) {
+        final result = model.rollDice(sides);
+        final resultInt = int.tryParse(result);
+        expect(resultInt, greaterThanOrEqualTo(1));
+        expect(resultInt, lessThanOrEqualTo(sides));
+        expect(model.diceSides, sides);
+      }
+    });
+
+    test('RandomModel generateRandomNumber works', () {
+      final model = RandomModel();
+      model.init();
+      final result = model.generateRandomNumber(1, 100);
+      final resultInt = int.tryParse(result);
+      expect(resultInt, greaterThanOrEqualTo(1));
+      expect(resultInt, lessThanOrEqualTo(100));
+      expect(model.randomNumberMin, 1);
+      expect(model.randomNumberMax, 100);
+    });
+
+    test('RandomModel generateRandomNumber with custom range', () {
+      final model = RandomModel();
+      model.init();
+      
+      for (final min in [10, -50, 0]) {
+        final max = min + 10;
+        final result = model.generateRandomNumber(min, max);
+        final resultInt = int.tryParse(result);
+        expect(resultInt, greaterThanOrEqualTo(min));
+        expect(resultInt, lessThanOrEqualTo(max));
+      }
+    });
+
+    test('RandomModel generatePassword works', () {
+      final model = RandomModel();
+      model.init();
+      final result = model.generatePassword(12);
+      expect(result.length, 12);
+      expect(model.passwordLength, 12);
+    });
+
+    test('RandomModel generatePassword with different lengths', () {
+      final model = RandomModel();
+      model.init();
+      
+      for (final length in [4, 8, 16, 32, 64]) {
+        final result = model.generatePassword(length);
+        expect(result.length, length);
+      }
+    });
+
+    test('RandomModel generatePassword with options', () {
+      final model = RandomModel();
+      model.init();
+      
+      final resultLower = model.generatePassword(20, lower: true, upper: false, numbers: false, symbols: false);
+      expect(resultLower.length, 20);
+      expect(model.passwordIncludeLower, true);
+      expect(model.passwordIncludeUpper, false);
+      expect(model.passwordIncludeNumbers, false);
+      expect(model.passwordIncludeSymbols, false);
+    });
+
+    test('RandomModel setPasswordLength works', () {
+      final model = RandomModel();
+      model.init();
+      
+      model.setPasswordLength(8);
+      expect(model.passwordLength, 8);
+      
+      model.setPasswordLength(100);
+      expect(model.passwordLength, 64);
+      
+      model.setPasswordLength(2);
+      expect(model.passwordLength, 4);
+    });
+
+    test('RandomModel setPasswordOptions works', () {
+      final model = RandomModel();
+      model.init();
+      
+      model.setPasswordOptions(lower: false, upper: true, numbers: true, symbols: false);
+      expect(model.passwordIncludeLower, false);
+      expect(model.passwordIncludeUpper, true);
+      expect(model.passwordIncludeNumbers, true);
+      expect(model.passwordIncludeSymbols, false);
+    });
+
+    test('RandomModel refresh calls notifyListeners', () {
+      final model = RandomModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    test('RandomModel flipCoin notifies listeners', () {
+      final model = RandomModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.flipCoin();
+      expect(notifyCount, 1);
+    });
+
+    test('RandomModel rollDice notifies listeners', () {
+      final model = RandomModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.rollDice(6);
+      expect(notifyCount, 1);
+    });
+
+    test('RandomModel generatePassword notifies listeners', () {
+      final model = RandomModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.generatePassword(12);
+      expect(notifyCount, 1);
+    });
+
+    test('RandomCard widget exists', () {
+      expect(RandomCard, isNotNull);
+    });
+
+    test('Global.providerList includes Random', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Random'), true);
+    });
+
+    test('providerRandom exists', () {
+      expect(providerRandom, isNotNull);
+      expect(providerRandom.name, 'Random');
+    });
+
+    testWidgets('RandomCard renders loading state', (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: randomModel,
+            builder: (context, child) => RandomCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('Random'), findsWidgets);
+    });
+
+    testWidgets('RandomCard renders initialized state', (tester) async {
+      final model = RandomModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => RandomCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('Random Generator'), findsWidgets);
+      expect(find.textContaining('Dice Roll'), findsWidgets);
+      expect(find.textContaining('Random Number'), findsWidgets);
+      expect(find.textContaining('Password Generator'), findsWidgets);
+    });
+
+    testWidgets('RandomCard renders with results', (tester) async {
+      final model = RandomModel();
+      model.init();
+      model.flipCoin();
+      model.rollDice(6);
+      model.generatePassword(12);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => RandomCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('Heads').evaluate().isNotEmpty || find.textContaining('Tails').evaluate().isNotEmpty, true);
+    });
+
+    test('RandomModel keywords are correct', () {
+      expect(providerRandom.name, 'Random');
+      expect(providerRandom.provideActions, isNotNull);
     });
   });
 }

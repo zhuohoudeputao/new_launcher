@@ -273,6 +273,15 @@ Settings auto-saved via `SharedPreferences`:
     - Uses `Card.filled` and `SegmentedButton` for Material 3 style
     - Uses `QrImageView` from qr_flutter package
     - Keywords: qr, qrcode, code, generate, barcode, scan, share
+- **Random**: Random generator utilities
+    - Coin flip: heads or tails with one tap
+    - Dice roll: D4, D6, D8, D10, D12, D20, D100 options
+    - Random number: custom min/max range generator
+    - Password generator: configurable length (4-64 chars)
+    - Password options: lowercase, uppercase, numbers, symbols
+    - Copy password to clipboard
+    - Uses `Card.filled`, `SegmentedButton`, `Slider`, `FilterChip` for Material 3 style
+    - Keywords: random, coin, dice, roll, flip, password, generate, number
 
 ## Material 3 Design System
 
@@ -360,7 +369,7 @@ Test coverage includes:
 - Todo provider tests (provider existence, keywords, model state, CRUD operations, priority handling)
 - QR Code provider tests (provider existence, keywords, model state, text operations, widget rendering)
 
-Total tests: 563 tests
+Total tests: 587 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
