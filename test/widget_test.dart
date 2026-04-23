@@ -14,6 +14,7 @@ import 'package:new_launcher/providers/provider_stopwatch.dart';
 import 'package:new_launcher/providers/provider_timer.dart';
 import 'package:new_launcher/providers/provider_worldclock.dart';
 import 'package:new_launcher/providers/provider_countdown.dart';
+import 'package:new_launcher/providers/provider_unitconverter.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2454,7 +2455,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 15);
+      expect(Global.providerList.length, 16);
     });
 
     test('Global.providerList names are correct', () {
@@ -3621,7 +3622,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 15);
+      expect(initCount, 16);
     });
   });
 
@@ -3929,8 +3930,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 15 providers', () {
-      expect(Global.providerList.length, 15);
+    test('Global.providerList now contains 16 providers', () {
+      expect(Global.providerList.length, 16);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -4862,6 +4863,420 @@ void main() {
     test('Global.providerList includes Countdown', () {
       final names = Global.providerList.map((p) => p.name).toList();
       expect(names.contains('Countdown'), true);
+    });
+  });
+
+  group('Unit Converter provider tests', () {
+    test('providerUnitConverter exists in Global.providerList', () {
+      final unitConverterProvider = Global.providerList.where((p) => p.name == 'UnitConverter').first;
+      expect(unitConverterProvider.name, 'UnitConverter');
+    });
+
+    test('Unit Converter keywords include convert', () {
+      final keywords = 'convert unit temperature length weight mass distance cm m km inch foot mile celsius fahrenheit kg lb gram ounce';
+      expect(keywords.contains('convert'), true);
+      expect(keywords.contains('unit'), true);
+      expect(keywords.contains('temperature'), true);
+      expect(keywords.contains('length'), true);
+      expect(keywords.contains('weight'), true);
+    });
+
+    test('Unit Converter keywords include celsius', () {
+      final keywords = 'convert unit temperature length weight mass distance cm m km inch foot mile celsius fahrenheit kg lb gram ounce';
+      expect(keywords.contains('celsius'), true);
+      expect(keywords.contains('fahrenheit'), true);
+    });
+
+    test('Unit Converter keywords include length units', () {
+      final keywords = 'convert unit temperature length weight mass distance cm m km inch foot mile celsius fahrenheit kg lb gram ounce';
+      expect(keywords.contains('cm'), true);
+      expect(keywords.contains('m'), true);
+      expect(keywords.contains('km'), true);
+      expect(keywords.contains('inch'), true);
+      expect(keywords.contains('foot'), true);
+      expect(keywords.contains('mile'), true);
+    });
+
+    test('Unit Converter keywords include weight units', () {
+      final keywords = 'convert unit temperature length weight mass distance cm m km inch foot mile celsius fahrenheit kg lb gram ounce';
+      expect(keywords.contains('kg'), true);
+      expect(keywords.contains('lb'), true);
+      expect(keywords.contains('gram'), true);
+      expect(keywords.contains('ounce'), true);
+    });
+
+    test('UnitConverterModel starts uninitialized', () {
+      final model = UnitConverterModel();
+      expect(model.isInitialized, false);
+    });
+
+    test('UnitConverterModel is ChangeNotifier', () {
+      final model = UnitConverterModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('UnitConverterModel init sets initialized', () {
+      final model = UnitConverterModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('UnitConverterModel default category is temperature', () {
+      final model = UnitConverterModel();
+      model.init();
+      expect(model.selectedCategory, ConversionCategory.temperature);
+    });
+
+    test('UnitConverterModel setCategory works', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setCategory(ConversionCategory.length);
+      expect(model.selectedCategory, ConversionCategory.length);
+      model.setCategory(ConversionCategory.weight);
+      expect(model.selectedCategory, ConversionCategory.weight);
+    });
+
+    test('UnitConverterModel setInputUnit works', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setInputUnit('fahrenheit');
+      expect(model.inputUnit, 'fahrenheit');
+    });
+
+    test('UnitConverterModel setOutputUnit works', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setOutputUnit('kelvin');
+      expect(model.outputUnit, 'kelvin');
+    });
+
+    test('UnitConverterModel setInputValue works', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setInputValue('100');
+      expect(model.inputValue, '100');
+    });
+
+    test('UnitConverterModel swapUnits works', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setInputUnit('celsius');
+      model.setOutputUnit('fahrenheit');
+      model.setInputValue('100');
+      model.swapUnits();
+      expect(model.inputUnit, 'fahrenheit');
+      expect(model.outputUnit, 'celsius');
+    });
+
+    test('UnitConverterModel clear works', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.clear();
+      expect(model.inputValue, '0');
+    });
+
+    test('UnitConverterModel temperature conversion celsius to fahrenheit', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setInputUnit('celsius');
+      model.setOutputUnit('fahrenheit');
+      model.setInputValue('0');
+      expect(model.outputValue, '32');
+    });
+
+    test('UnitConverterModel temperature conversion fahrenheit to celsius', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setInputUnit('fahrenheit');
+      model.setOutputUnit('celsius');
+      model.setInputValue('32');
+      expect(model.outputValue, '0');
+    });
+
+    test('UnitConverterModel temperature conversion celsius to kelvin', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setInputUnit('celsius');
+      model.setOutputUnit('kelvin');
+      model.setInputValue('0');
+      expect(model.outputValue, '273.15');
+    });
+
+    test('UnitConverterModel length conversion meter to kilometer', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setCategory(ConversionCategory.length);
+      model.setInputUnit('meter');
+      model.setOutputUnit('kilometer');
+      model.setInputValue('1000');
+      expect(model.outputValue, '1');
+    });
+
+    test('UnitConverterModel length conversion inch to centimeter', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setCategory(ConversionCategory.length);
+      model.setInputUnit('inch');
+      model.setOutputUnit('centimeter');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue).round(), 3);
+    });
+
+    test('UnitConverterModel length conversion foot to meter', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setCategory(ConversionCategory.length);
+      model.setInputUnit('foot');
+      model.setOutputUnit('meter');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue).round(), 0);
+    });
+
+    test('UnitConverterModel weight conversion kilogram to gram', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setCategory(ConversionCategory.weight);
+      model.setInputUnit('kilogram');
+      model.setOutputUnit('gram');
+      model.setInputValue('1');
+      expect(model.outputValue, '1000');
+    });
+
+    test('UnitConverterModel weight conversion pound to kilogram', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setCategory(ConversionCategory.weight);
+      model.setInputUnit('pound');
+      model.setOutputUnit('kilogram');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue).round(), 0);
+    });
+
+    test('UnitConverter static convert method works', () {
+      expect(UnitConverterModel.convert(0, 'celsius', 'fahrenheit'), 32);
+      expect(UnitConverterModel.convert(100, 'celsius', 'fahrenheit'), 212);
+      expect(UnitConverterModel.convert(1000, 'meter', 'kilometer'), 1);
+      expect(UnitConverterModel.convert(1, 'kilogram', 'gram'), 1000);
+    });
+
+    test('UnitConverter static convert same unit returns same value', () {
+      expect(UnitConverterModel.convert(50, 'celsius', 'celsius'), 50);
+      expect(UnitConverterModel.convert(100, 'meter', 'meter'), 100);
+    });
+
+    test('unitTypes contains all expected units', () {
+      expect(unitTypes.containsKey('celsius'), true);
+      expect(unitTypes.containsKey('fahrenheit'), true);
+      expect(unitTypes.containsKey('kelvin'), true);
+      expect(unitTypes.containsKey('meter'), true);
+      expect(unitTypes.containsKey('kilometer'), true);
+      expect(unitTypes.containsKey('centimeter'), true);
+      expect(unitTypes.containsKey('inch'), true);
+      expect(unitTypes.containsKey('foot'), true);
+      expect(unitTypes.containsKey('mile'), true);
+      expect(unitTypes.containsKey('kilogram'), true);
+      expect(unitTypes.containsKey('gram'), true);
+      expect(unitTypes.containsKey('pound'), true);
+      expect(unitTypes.containsKey('ounce'), true);
+    });
+
+    test('UnitType properties are correct', () {
+      final celsius = unitTypes['celsius']!;
+      expect(celsius.name, 'Celsius');
+      expect(celsius.symbol, '°C');
+      expect(celsius.category, ConversionCategory.temperature);
+      
+      final meter = unitTypes['meter']!;
+      expect(meter.name, 'Meter');
+      expect(meter.symbol, 'm');
+      expect(meter.category, ConversionCategory.length);
+      
+      final kg = unitTypes['kilogram']!;
+      expect(kg.name, 'Kilogram');
+      expect(kg.symbol, 'kg');
+      expect(kg.category, ConversionCategory.weight);
+    });
+
+    test('getUnitsForCategory returns correct units', () {
+      final tempUnits = getUnitsForCategory(ConversionCategory.temperature);
+      expect(tempUnits.contains('celsius'), true);
+      expect(tempUnits.contains('fahrenheit'), true);
+      expect(tempUnits.contains('kelvin'), true);
+      
+      final lengthUnits = getUnitsForCategory(ConversionCategory.length);
+      expect(lengthUnits.contains('meter'), true);
+      expect(lengthUnits.contains('kilometer'), true);
+      expect(lengthUnits.contains('inch'), true);
+      
+      final weightUnits = getUnitsForCategory(ConversionCategory.weight);
+      expect(weightUnits.contains('kilogram'), true);
+      expect(weightUnits.contains('gram'), true);
+      expect(weightUnits.contains('pound'), true);
+    });
+
+    test('ConversionHistory properties', () {
+      final history = ConversionHistory(
+        inputValue: 100,
+        inputUnit: 'celsius',
+        outputValue: 212,
+        outputUnit: 'fahrenheit',
+        category: ConversionCategory.temperature,
+        timestamp: DateTime.now(),
+      );
+      expect(history.inputValue, 100);
+      expect(history.inputUnit, 'celsius');
+      expect(history.outputValue, 212);
+      expect(history.outputUnit, 'fahrenheit');
+      expect(history.inputSymbol, '°C');
+      expect(history.outputSymbol, '°F');
+    });
+
+    test('UnitConverterModel history works', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      expect(model.hasHistory, true);
+      expect(model.history.length, 1);
+    });
+
+    test('UnitConverterModel clearHistory works', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      expect(model.hasHistory, true);
+      model.clearHistory();
+      expect(model.hasHistory, false);
+    });
+
+    test('UnitConverterModel history max limit', () {
+      final model = UnitConverterModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputValue('$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, UnitConverterModel.maxHistory);
+    });
+
+    test('UnitConverterModel availableUnits returns correct units', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setCategory(ConversionCategory.temperature);
+      expect(model.availableUnits.length, 3);
+      
+      model.setCategory(ConversionCategory.length);
+      expect(model.availableUnits.length, 8);
+      
+      model.setCategory(ConversionCategory.weight);
+      expect(model.availableUnits.length, 5);
+    });
+
+    test('UnitConverterModel refresh calls notifyListeners', () {
+      final model = UnitConverterModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    test('UnitConverterModel useHistoryEntry works', () {
+      final model = UnitConverterModel();
+      model.init();
+      
+      final entry = ConversionHistory(
+        inputValue: 100,
+        inputUnit: 'celsius',
+        outputValue: 212,
+        outputUnit: 'fahrenheit',
+        category: ConversionCategory.temperature,
+        timestamp: DateTime.now(),
+      );
+      
+      model.useHistoryEntry(entry);
+      expect(model.selectedCategory, ConversionCategory.temperature);
+      expect(model.inputUnit, 'celsius');
+      expect(model.outputUnit, 'fahrenheit');
+      expect(double.parse(model.inputValue), 100);
+    });
+
+    testWidgets('UnitConverterCard renders loading state', (tester) async {
+      final model = UnitConverterModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => UnitConverterCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Unit Converter: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('UnitConverterCard renders initialized state', (tester) async {
+      final model = UnitConverterModel();
+      model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => UnitConverterCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Unit Converter'), findsOneWidget);
+    });
+
+    testWidgets('UnitConverterCard shows category buttons', (tester) async {
+      final model = UnitConverterModel();
+      model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => UnitConverterCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Temp'), findsOneWidget);
+      expect(find.text('Length'), findsOneWidget);
+      expect(find.text('Weight'), findsOneWidget);
+    });
+
+    test('UnitConverterCard widget exists', () {
+      expect(UnitConverterCard, isNotNull);
+    });
+
+    test('Global.providerList now contains 16 providers', () {
+      expect(Global.providerList.length, 16);
+    });
+
+    test('Global.providerList includes UnitConverter', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('UnitConverter'), true);
+    });
+
+    test('UnitConverterModel handles invalid input', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setInputValue('invalid');
+      expect(model.outputValue, '0');
+    });
+
+    test('UnitConverterModel handles negative values', () {
+      final model = UnitConverterModel();
+      model.init();
+      model.setInputValue('-10');
+      expect(model.inputValue, '-10');
     });
   });
 }

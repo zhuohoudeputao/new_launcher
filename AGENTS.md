@@ -206,17 +206,29 @@ Settings auto-saved via `SharedPreferences`:
    - Uses `Card.filled` for Material 3 style
    - Keywords: world, clock, timezone, time, zone, add, remove
 - **Countdown**: Event countdown tracking
-   - Track countdowns to important dates
-   - Add countdowns with name and target date
-   - Optional time selection (hours/minutes)
-   - Edit and delete countdowns
-   - Maximum 10 countdowns stored
-   - Countdowns persisted via SharedPreferences
-   - Human-readable time display (days, hours, minutes)
-   - Expired countdown indication
-   - Color coding for urgency (days < 7 shows warning color)
-   - Uses `Card.filled` for Material 3 style
-   - Keywords: countdown, deadline, birthday, event, date, add
+    - Track countdowns to important dates
+    - Add countdowns with name and target date
+    - Optional time selection (hours/minutes)
+    - Edit and delete countdowns
+    - Maximum 10 countdowns stored
+    - Countdowns persisted via SharedPreferences
+    - Human-readable time display (days, hours, minutes)
+    - Expired countdown indication
+    - Color coding for urgency (days < 7 shows warning color)
+    - Uses `Card.filled` for Material 3 style
+    - Keywords: countdown, deadline, birthday, event, date, add
+- **UnitConverter**: Quick unit conversions
+    - Three categories: Temperature, Length, Weight
+    - Temperature units: Celsius, Fahrenheit, Kelvin
+    - Length units: Meter, Kilometer, Centimeter, Millimeter, Inch, Foot, Mile, Yard
+    - Weight units: Kilogram, Gram, Milligram, Pound, Ounce
+    - Real-time conversion as you type
+    - Swap input/output units with one tap
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history button with confirmation dialog
+    - Uses `Card.filled` and `SegmentedButton` for Material 3 style
+    - Keywords: convert, unit, temperature, length, weight, cm, m, km, inch, foot, mile, celsius, fahrenheit, kg, lb, gram, ounce
 
 ## Material 3 Design System
 
@@ -298,7 +310,7 @@ Test coverage includes:
 - World Clock provider tests (provider existence, keywords, model state, timezone operations)
 - Countdown provider tests (provider existence, keywords, model state, CRUD operations, time formatting)
 
-Total tests: 441 tests
+Total tests: 484 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -340,6 +352,7 @@ Technical documentation is available in `docs/`:
 - `calculator_provider.md` - Calculator provider implementation
 - `worldclock_provider.md` - World Clock provider implementation
 - `countdown_provider.md` - Countdown provider implementation
+- `unitconverter_provider.md` - Unit Converter provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice
