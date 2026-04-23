@@ -164,6 +164,14 @@ Settings auto-saved via `SharedPreferences`:
   - Circular progress indicator for countdown
   - Uses `Card.filled` for Material 3 style
   - Keywords: timer, countdown, alarm, clock, time
+- **Stopwatch**: Elapsed time tracking functionality
+  - Start/pause/resume controls
+  - Lap recording with time splits (max 20 laps)
+  - Lap history view toggle
+  - Reset with confirmation dialog
+  - 10ms precision display (MM:SS.ms format)
+  - Uses `Card.filled` for Material 3 style
+  - Keywords: stopwatch, lap, elapsed, time, clock
 - **Notes**: Quick notes for storing text snippets
   - Add, edit, and delete notes
   - Maximum 10 notes stored (oldest removed when limit exceeded)
@@ -255,9 +263,10 @@ Test coverage includes:
 - Flashlight provider tests (provider existence, keywords, model state, widget rendering)
 - Notes provider tests (provider existence, keywords, model state, CRUD operations)
 - Timer provider tests (provider existence, keywords, model state, timer operations)
+- Stopwatch provider tests (provider existence, keywords, model state, stopwatch operations)
 - Calculator provider tests (provider existence, keywords, model state, calculation operations)
 
-Total tests: ~368 tests
+Total tests: 398 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -295,6 +304,7 @@ Technical documentation is available in `docs/`:
 - `flashlight_provider.md` - Flashlight toggle provider implementation
 - `notes_provider.md` - Notes provider implementation
 - `timer_provider.md` - Timer provider implementation
+- `stopwatch_provider.md` - Stopwatch provider implementation
 - `calculator_provider.md` - Calculator provider implementation
 
 ## Notice

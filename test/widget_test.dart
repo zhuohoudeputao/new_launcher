@@ -10,6 +10,7 @@ import 'package:new_launcher/providers/provider_battery.dart';
 import 'package:new_launcher/providers/provider_calculator.dart';
 import 'package:new_launcher/providers/provider_flashlight.dart';
 import 'package:new_launcher/providers/provider_notes.dart';
+import 'package:new_launcher/providers/provider_stopwatch.dart';
 import 'package:new_launcher/providers/provider_timer.dart';
 import 'package:new_launcher/providers/provider_settings.dart';
 import 'package:new_launcher/action.dart';
@@ -2452,7 +2453,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 12);
+      expect(Global.providerList.length, 13);
     });
 
     test('Global.providerList names are correct', () {
@@ -2467,6 +2468,7 @@ void main() {
       expect(names.contains('Battery'), true);
       expect(names.contains('Flashlight'), true);
       expect(names.contains('Timer'), true);
+      expect(names.contains('Stopwatch'), true);
       expect(names.contains('Calculator'), true);
     });
 
@@ -3622,7 +3624,7 @@ void main() {
       for (final provider in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 12);
+      expect(initCount, 13);
     });
   });
 
@@ -3930,8 +3932,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 12 providers', () {
-      expect(Global.providerList.length, 12);
+    test('Global.providerList now contains 13 providers', () {
+      expect(Global.providerList.length, 13);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -4183,6 +4185,300 @@ void main() {
     test('Global.providerList includes Calculator', () {
       final names = Global.providerList.map((p) => p.name).toList();
       expect(names.contains('Calculator'), true);
+    });
+  });
+
+  group('Stopwatch provider tests', () {
+    test('providerStopwatch exists in Global.providerList', () {
+      final stopwatchProvider = Global.providerList.where((p) => p.name == 'Stopwatch').first;
+      expect(stopwatchProvider.name, 'Stopwatch');
+    });
+
+    test('Stopwatch provider keywords include stopwatch', () {
+      final keywords = 'stopwatch stopwatch lap elapsed time clock';
+      expect(keywords.contains('stopwatch'), true);
+      expect(keywords.contains('lap'), true);
+      expect(keywords.contains('elapsed'), true);
+      expect(keywords.contains('time'), true);
+    });
+
+    test('StopwatchModel starts uninitialized', () {
+      final model = StopwatchModel();
+      expect(model.isInitialized, false);
+      expect(model.elapsedMilliseconds, 0);
+      expect(model.isRunning, false);
+      expect(model.isStarted, false);
+    });
+
+    test('StopwatchModel is ChangeNotifier', () {
+      final model = StopwatchModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    test('StopwatchModel init sets initialized', () {
+      final model = StopwatchModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('StopwatchModel start works', () {
+      final model = StopwatchModel();
+      model.init();
+      model.start();
+      expect(model.isRunning, true);
+      model.reset();
+    });
+
+    test('StopwatchModel pause works', () {
+      final model = StopwatchModel();
+      model.init();
+      model.start();
+      expect(model.isRunning, true);
+      model.pause();
+      expect(model.isRunning, false);
+      model.reset();
+    });
+
+    test('StopwatchModel reset clears all', () async {
+      final model = StopwatchModel();
+      model.init();
+      model.start();
+      await Future.delayed(Duration(milliseconds: 100));
+      model.pause();
+      model.lap();
+      expect(model.elapsedMilliseconds > 0, true);
+      expect(model.hasLaps, true);
+      model.reset();
+      expect(model.elapsedMilliseconds, 0);
+      expect(model.isRunning, false);
+      expect(model.hasLaps, false);
+      expect(model.isStarted, false);
+    });
+
+    test('StopwatchModel lap works', () async {
+      final model = StopwatchModel();
+      model.init();
+      model.start();
+      await Future.delayed(Duration(milliseconds: 50));
+      model.lap();
+      expect(model.hasLaps, true);
+      expect(model.laps.length, 1);
+      model.reset();
+    });
+
+    test('StopwatchModel lap records correct data', () async {
+      final model = StopwatchModel();
+      model.init();
+      model.start();
+      await Future.delayed(Duration(milliseconds: 100));
+      model.lap();
+      expect(model.laps.first.lapNumber, 1);
+      expect(model.laps.first.elapsedMilliseconds > 0, true);
+      expect(model.laps.first.lapMilliseconds > 0, true);
+      model.reset();
+    });
+
+    test('StopwatchModel maxLaps limit works', () async {
+      final model = StopwatchModel();
+      model.init();
+      model.start();
+      for (int i = 0; i < 25; i++) {
+        await Future.delayed(Duration(milliseconds: 10));
+        model.lap();
+      }
+      expect(model.laps.length, StopwatchModel.maxLaps);
+      model.reset();
+    });
+
+    test('StopwatchModel clearLaps works', () async {
+      final model = StopwatchModel();
+      model.init();
+      model.start();
+      await Future.delayed(Duration(milliseconds: 50));
+      model.lap();
+      await Future.delayed(Duration(milliseconds: 50));
+      model.lap();
+      expect(model.hasLaps, true);
+      model.clearLaps();
+      expect(model.hasLaps, false);
+      model.reset();
+    });
+
+    test('StopwatchModel displayTime format at zero', () {
+      final model = StopwatchModel();
+      model.init();
+      expect(model.displayTime, '00:00.00');
+    });
+
+    test('StopwatchModel displayTime format after time elapsed', () async {
+      final model = StopwatchModel();
+      model.init();
+      model.start();
+      await Future.delayed(Duration(milliseconds: 1100));
+      model.pause();
+      expect(model.displayTime.contains('01'), true);
+      model.reset();
+    });
+
+    test('StopwatchModel displayTime shows minutes after 60 seconds', () async {
+      final model = StopwatchModel();
+      model.init();
+      expect(model.displayTime, '00:00.00');
+      model.reset();
+    });
+
+    test('LapEntry elapsedDisplay format', () {
+      final entry = LapEntry(
+        lapNumber: 1,
+        elapsedMilliseconds: 5000,
+        lapMilliseconds: 1000,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.elapsedDisplay, '00:05.00');
+    });
+
+    test('LapEntry lapDisplay format', () {
+      final entry = LapEntry(
+        lapNumber: 1,
+        elapsedMilliseconds: 5000,
+        lapMilliseconds: 1234,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.lapDisplay, '00:01.23');
+    });
+
+    test('LapEntry properties', () {
+      final entry = LapEntry(
+        lapNumber: 5,
+        elapsedMilliseconds: 10000,
+        lapMilliseconds: 2000,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.lapNumber, 5);
+      expect(entry.elapsedMilliseconds, 10000);
+      expect(entry.lapMilliseconds, 2000);
+    });
+
+    testWidgets('StopwatchCard renders loading state', (WidgetTester tester) async {
+      final model = StopwatchModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: StopwatchCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Stopwatch: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('StopwatchCard renders initialized state', (WidgetTester tester) async {
+      final model = StopwatchModel();
+      model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: StopwatchCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Stopwatch'), findsOneWidget);
+    });
+
+    testWidgets('StopwatchCard shows Start button', (WidgetTester tester) async {
+      final model = StopwatchModel();
+      model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: StopwatchCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Start'), findsOneWidget);
+    });
+
+    testWidgets('StopwatchCard shows Pause button when running', (WidgetTester tester) async {
+      final model = StopwatchModel();
+      model.init();
+      model.start();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: StopwatchCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Pause'), findsOneWidget);
+      model.reset();
+    });
+
+    test('StopwatchCard widget exists', () {
+      expect(StopwatchCard, isNotNull);
+    });
+
+    test('StopwatchModel refresh calls notifyListeners', () {
+      final model = StopwatchModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    test('StopwatchModel isStarted is false initially', () {
+      final model = StopwatchModel();
+      expect(model.isStarted, false);
+    });
+
+    test('StopwatchModel isStarted is true when elapsed > 0', () async {
+      final model = StopwatchModel();
+      model.init();
+      model.start();
+      await Future.delayed(Duration(milliseconds: 50));
+      model.pause();
+      expect(model.isStarted, true);
+      model.reset();
+    });
+
+    test('StopwatchModel lap when not started does nothing', () {
+      final model = StopwatchModel();
+      model.init();
+      model.lap();
+      expect(model.hasLaps, false);
+    });
+
+    test('StopwatchModel start when already running does nothing', () {
+      final model = StopwatchModel();
+      model.init();
+      model.start();
+      expect(model.isRunning, true);
+      model.start();
+      expect(model.isRunning, true);
+      model.reset();
+    });
+
+    test('StopwatchModel pause when not running does nothing', () {
+      final model = StopwatchModel();
+      model.init();
+      model.pause();
+      expect(model.isRunning, false);
+    });
+
+    test('Global.providerList includes Stopwatch', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Stopwatch'), true);
     });
   });
 }
