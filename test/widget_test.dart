@@ -12,8 +12,13 @@ import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
 import 'package:new_launcher/main.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
+  });
+
   group('CircularListController tests', () {
     test('constructor initializes with correct itemCount', () {
       final controller = CircularListController(itemCount: 5, itemExtent: 100);
@@ -290,27 +295,27 @@ void main() {
       await settingsModel.init();
       settingsModel.saveValue('TestBool', true);
       expect(settingsModel.settingList.any((w) => w is CustomBoolSettingWidget), true);
-    }, skip: 'Requires SharedPreferences plugin mock');
+    });
 
     test('saveValue creates correct widget for double', () async {
       final settingsModel = SettingsModel();
       await settingsModel.init();
       settingsModel.saveValue('TestDouble', 0.5);
       expect(settingsModel.settingList.length, greaterThan(0));
-    }, skip: 'Requires SharedPreferences plugin mock');
+    });
 
     test('getValue returns default for missing key', () async {
       final settingsModel = SettingsModel();
       await settingsModel.init();
       final value = await settingsModel.getValue('NonexistentKey', 'defaultValue');
       expect(value, 'defaultValue');
-    }, skip: 'Requires SharedPreferences plugin mock');
+    });
 
     test('init loads existing preferences', () async {
       final settingsModel = SettingsModel();
       await settingsModel.init();
       expect(settingsModel.settingList, isNotNull);
-    }, skip: 'Requires SharedPreferences plugin mock');
+    });
   });
 
   group('MyAction tests', () {
@@ -510,7 +515,7 @@ void main() {
       
       expect(provideCalled, true);
       expect(initCalled, true);
-    }, skip: 'Requires SharedPreferences plugin mock');
+    });
 
     test('MyProvider name can be used as settings key prefix', () {
       final provider = MyProvider(
@@ -1020,6 +1025,7 @@ void main() {
 
   group('Setting page tests', () {
     testWidgets('has back button', (WidgetTester tester) async {
+      await Global.settingsModel.init();
       await tester.pumpWidget(
         MaterialApp(
           home: MultiProvider(
@@ -1031,10 +1037,10 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(Duration(milliseconds: 100));
 
       expect(find.widgetWithIcon(AppBar, Icons.arrow_back), findsOneWidget);
-    }, skip: true);
+    });
 
     testWidgets('Setting page uses FadeTransition', (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -2132,13 +2138,13 @@ void main() {
     test('init method exists and can be called', () async {
       final statsModel = AppStatisticsModel();
       await statsModel.init();
-    }, skip: 'Requires SharedPreferences plugin mock');
+    });
 
     test('_saveStats is called after recordLaunch', () async {
       final statsModel = AppStatisticsModel();
       await statsModel.init();
       statsModel.recordLaunch('TestApp');
-    }, skip: 'Requires SharedPreferences plugin mock');
+    });
 
     test('_loadPersistedStats restores saved data', () async {
       final statsModel = AppStatisticsModel();
@@ -2150,7 +2156,7 @@ void main() {
       await newModel.init();
       
       expect(newModel.getLaunchCount('SavedApp'), 2);
-    }, skip: 'Requires SharedPreferences plugin mock');
+    });
 
     test('getLastLaunchTime returns null for unknown app', () {
       final statsModel = AppStatisticsModel();
