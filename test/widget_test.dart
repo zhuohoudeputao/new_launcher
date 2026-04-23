@@ -7,6 +7,7 @@ import 'package:new_launcher/data.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/providers/provider_battery.dart';
+import 'package:new_launcher/providers/provider_calculator.dart';
 import 'package:new_launcher/providers/provider_flashlight.dart';
 import 'package:new_launcher/providers/provider_notes.dart';
 import 'package:new_launcher/providers/provider_timer.dart';
@@ -2451,7 +2452,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 11);
+      expect(Global.providerList.length, 12);
     });
 
     test('Global.providerList names are correct', () {
@@ -2466,6 +2467,7 @@ void main() {
       expect(names.contains('Battery'), true);
       expect(names.contains('Flashlight'), true);
       expect(names.contains('Timer'), true);
+      expect(names.contains('Calculator'), true);
     });
 
     test('Global.cardOpacity defaults to 0.7', () {
@@ -3620,7 +3622,7 @@ void main() {
       for (final provider in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 11);
+      expect(initCount, 12);
     });
   });
 
@@ -3928,13 +3930,259 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 11 providers', () {
-      expect(Global.providerList.length, 11);
+    test('Global.providerList now contains 12 providers', () {
+      expect(Global.providerList.length, 12);
     });
 
     test('Global.providerList includes Flashlight', () {
       final names = Global.providerList.map((p) => p.name).toList();
       expect(names.contains('Flashlight'), true);
+    });
+  });
+
+  group('Calculator provider tests', () {
+    test('providerCalculator exists in Global.providerList', () {
+      final calculatorProvider = Global.providerList.where((p) => p.name == 'Calculator').first;
+      expect(calculatorProvider.name, 'Calculator');
+    });
+
+    test('Calculator provider keywords include calc', () {
+      final keywords = 'calc calculator math calculate equal';
+      expect(keywords.contains('calc'), true);
+      expect(keywords.contains('calculator'), true);
+      expect(keywords.contains('math'), true);
+      expect(keywords.contains('calculate'), true);
+      expect(keywords.contains('equal'), true);
+    });
+
+    test('CalculatorModel starts uninitialized', () {
+      final model = CalculatorModel();
+      expect(model.isInitialized, false);
+      expect(model.display, '0');
+      expect(model.expression, '');
+    });
+
+    test('CalculatorModel is ChangeNotifier', () {
+      final model = CalculatorModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    test('CalculatorModel init works', () {
+      final model = CalculatorModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('CalculatorModel inputDigit works', () {
+      final model = CalculatorModel();
+      model.inputDigit('1');
+      expect(model.display, '1');
+      model.inputDigit('2');
+      expect(model.display, '12');
+    });
+
+    test('CalculatorModel inputOperator works', () {
+      final model = CalculatorModel();
+      model.inputDigit('5');
+      model.inputOperator('+');
+      expect(model.expression, '5+');
+      expect(model.display, '0');
+    });
+
+    test('CalculatorModel inputDecimal works', () {
+      final model = CalculatorModel();
+      model.inputDigit('1');
+      model.inputDecimal();
+      expect(model.display, '1.');
+      model.inputDigit('5');
+      expect(model.display, '1.5');
+    });
+
+    test('CalculatorModel clear works', () {
+      final model = CalculatorModel();
+      model.inputDigit('1');
+      model.inputOperator('+');
+      model.inputDigit('2');
+      model.clear();
+      expect(model.display, '0');
+      expect(model.expression, '');
+    });
+
+    test('CalculatorModel deleteLastDigit works', () {
+      final model = CalculatorModel();
+      model.inputDigit('1');
+      model.inputDigit('2');
+      model.inputDigit('3');
+      expect(model.display, '123');
+      model.deleteLastDigit();
+      expect(model.display, '12');
+      model.deleteLastDigit();
+      expect(model.display, '1');
+      model.deleteLastDigit();
+      expect(model.display, '0');
+    });
+
+    test('CalculatorModel calculate addition', () {
+      final model = CalculatorModel();
+      model.inputDigit('5');
+      model.inputOperator('+');
+      model.inputDigit('3');
+      model.calculate();
+      expect(model.display, '8');
+    });
+
+    test('CalculatorModel calculate subtraction', () {
+      final model = CalculatorModel();
+      model.inputDigit('1');
+      model.inputDigit('0');
+      model.inputOperator('-');
+      model.inputDigit('3');
+      model.calculate();
+      expect(model.display, '7');
+    });
+
+    test('CalculatorModel calculate multiplication', () {
+      final model = CalculatorModel();
+      model.inputDigit('4');
+      model.inputOperator('×');
+      model.inputDigit('5');
+      model.calculate();
+      expect(model.display, '20');
+    });
+
+    test('CalculatorModel calculate division', () {
+      final model = CalculatorModel();
+      model.inputDigit('1');
+      model.inputDigit('0');
+      model.inputOperator('÷');
+      model.inputDigit('2');
+      model.calculate();
+      expect(model.display, '5');
+    });
+
+    test('CalculatorModel calculate division by zero', () {
+      final model = CalculatorModel();
+      model.inputDigit('5');
+      model.inputOperator('÷');
+      model.inputDigit('0');
+      model.calculate();
+      expect(model.display, 'Error');
+    });
+
+    test('CalculatorModel calculatePercent works', () {
+      final model = CalculatorModel();
+      model.inputDigit('5');
+      model.inputDigit('0');
+      model.calculatePercent();
+      expect(model.display, '0.5');
+    });
+
+    test('CalculatorModel toggleSign works', () {
+      final model = CalculatorModel();
+      model.inputDigit('5');
+      model.toggleSign();
+      expect(model.display, '-5');
+      model.toggleSign();
+      expect(model.display, '5');
+    });
+
+    test('CalculatorModel history works', () {
+      final model = CalculatorModel();
+      model.inputDigit('2');
+      model.inputOperator('+');
+      model.inputDigit('2');
+      model.calculate();
+      expect(model.hasHistory, true);
+      expect(model.history.length, 1);
+      expect(model.history[0].expression, '2+2');
+      expect(model.history[0].result, '4');
+    });
+
+    test('CalculatorModel clearHistory works', () {
+      final model = CalculatorModel();
+      model.inputDigit('2');
+      model.inputOperator('+');
+      model.inputDigit('2');
+      model.calculate();
+      expect(model.hasHistory, true);
+      model.clearHistory();
+      expect(model.hasHistory, false);
+    });
+
+    test('CalculatorModel history max limit', () {
+      final model = CalculatorModel();
+      for (int i = 0; i < 15; i++) {
+        model.clear();
+        model.inputDigit('1');
+        model.inputOperator('+');
+        model.inputDigit(i.toString().length == 1 ? i.toString() : '1');
+        model.calculate();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('CalculatorModel refresh calls notifyListeners', () {
+      final model = CalculatorModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    testWidgets('CalculatorCard renders loading state', (WidgetTester tester) async {
+      final model = CalculatorModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: CalculatorCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Calculator: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('CalculatorCard renders initialized state', (WidgetTester tester) async {
+      final model = CalculatorModel();
+      model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: CalculatorCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Calculator'), findsOneWidget);
+    });
+
+    test('CalculatorCard widget exists', () {
+      expect(CalculatorCard, isNotNull);
+    });
+
+    test('CalculationHistory has correct properties', () {
+      final history = CalculationHistory(
+        expression: '2+2',
+        result: '4',
+        timestamp: DateTime.now(),
+      );
+      expect(history.expression, '2+2');
+      expect(history.result, '4');
+    });
+
+    test('Calculator keywords include math', () {
+      final keywords = 'calc calculator math calculate equal';
+      expect(keywords.contains('math'), true);
+    });
+
+    test('Global.providerList includes Calculator', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Calculator'), true);
     });
   });
 }

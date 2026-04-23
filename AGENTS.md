@@ -171,6 +171,14 @@ Settings auto-saved via `SharedPreferences`:
   - Clear all notes button with confirmation dialog
   - Uses `Card.filled` for Material 3 style
   - Keywords: note, notes, text, memo, clipboard, write, quick
+- **Calculator**: Quick calculations directly in launcher
+  - Basic arithmetic operations (+, -, ×, ÷)
+  - Percentage and sign toggle
+  - Calculation history (up to 10 entries)
+  - Tap history entries to reuse results
+  - Clear history button with confirmation dialog
+  - Uses `Card.filled` for Material 3 style
+  - Keywords: calc, calculator, math, calculate, equal
 
 ## Material 3 Design System
 
@@ -247,8 +255,9 @@ Test coverage includes:
 - Flashlight provider tests (provider existence, keywords, model state, widget rendering)
 - Notes provider tests (provider existence, keywords, model state, CRUD operations)
 - Timer provider tests (provider existence, keywords, model state, timer operations)
+- Calculator provider tests (provider existence, keywords, model state, calculation operations)
 
-Total tests: ~341 tests
+Total tests: ~368 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -286,6 +295,7 @@ Technical documentation is available in `docs/`:
 - `flashlight_provider.md` - Flashlight toggle provider implementation
 - `notes_provider.md` - Notes provider implementation
 - `timer_provider.md` - Timer provider implementation
+- `calculator_provider.md` - Calculator provider implementation
 
 ## Notice
 DO NOT EDIT task*.md
