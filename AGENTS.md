@@ -335,6 +335,17 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `ActionChip`, `CircularProgressIndicator` for Material 3 style
     - Keywords: meditation, meditate, relax, breath, calm, focus, zen, mindfulness
+- **Water**: Daily water intake tracker
+    - Track daily water consumption in glasses
+    - Daily goal setting (default 8 glasses, adjustable 1-20)
+    - Progress bar with percentage visualization
+    - Add/remove glasses with quick buttons
+    - Goal reached celebration indicator
+    - Daily automatic reset
+    - History tracking for up to 30 days
+    - Water intake persisted via SharedPreferences
+    - Uses `Card.filled` and `LinearProgressIndicator` for Material 3 style
+    - Keywords: water, drink, hydration, glass, cup, intake, track, daily, health
 
 ## Material 3 Design System
 
@@ -427,8 +438,9 @@ Test coverage includes:
 - Currency Converter provider tests (provider existence, keywords, model state, currency operations, widget rendering)
 - Habit provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
 - Meditation provider tests (provider existence, keywords, model state, timer operations, breathing guide, widget rendering)
+- Water provider tests (provider existence, keywords, model state, add/remove glasses, goal setting, progress, widget rendering)
 
-Total tests: 695 tests
+Total tests: 711 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -482,6 +494,7 @@ Technical documentation is available in `docs/`:
 - `bookmarks_provider.md` - Bookmarks provider implementation
 - `habit_provider.md` - Habit tracker provider implementation
 - `meditation_provider.md` - Meditation timer provider implementation
+- `water_provider.md` - Water intake tracker provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice

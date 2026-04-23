@@ -25,6 +25,7 @@ import 'package:new_launcher/providers/provider_currency.dart';
 import 'package:new_launcher/providers/provider_bookmarks.dart';
 import 'package:new_launcher/providers/provider_habit.dart';
 import 'package:new_launcher/providers/provider_meditation.dart';
+import 'package:new_launcher/providers/provider_water.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2465,7 +2466,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 26);
+      expect(Global.providerList.length, 27);
     });
 
     test('Global.providerList names are correct', () {
@@ -3632,7 +3633,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 26);
+      expect(initCount, 27);
     });
   });
 
@@ -3941,7 +3942,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 26);
+      expect(Global.providerList.length, 27);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5267,7 +5268,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 26);
+      expect(Global.providerList.length, 27);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -7207,6 +7208,159 @@ void main() {
       final model = MeditationModel();
       await model.init();
       expect(model.sessionCount, 0);
+    });
+  });
+
+  group('Water provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('WaterModel is initialized correctly', () async {
+      final model = WaterModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.history.length, 1);
+      expect(model.todayGlasses, 0);
+    });
+
+    test('WaterModel addGlass works', () async {
+      final model = WaterModel();
+      await model.init();
+      expect(model.todayGlasses, 0);
+      model.addGlass();
+      expect(model.todayGlasses, 1);
+      model.addGlass();
+      expect(model.todayGlasses, 2);
+    });
+
+    test('WaterModel removeGlass works', () async {
+      final model = WaterModel();
+      await model.init();
+      model.addGlass();
+      model.addGlass();
+      expect(model.todayGlasses, 2);
+      model.removeGlass();
+      expect(model.todayGlasses, 1);
+      model.removeGlass();
+      expect(model.todayGlasses, 0);
+      model.removeGlass();
+      expect(model.todayGlasses, 0);
+    });
+
+    test('WaterModel setGoal works', () async {
+      final model = WaterModel();
+      await model.init();
+      expect(model.dailyGoal, WaterModel.defaultGoal);
+      model.setGoal(10);
+      expect(model.dailyGoal, 10);
+    });
+
+    test('WaterModel progress calculates correctly', () async {
+      final model = WaterModel();
+      await model.init();
+      model.setGoal(8);
+      model.addGlass();
+      model.addGlass();
+      expect(model.progress, 0.25);
+    });
+
+    test('WaterModel goalReached works', () async {
+      final model = WaterModel();
+      await model.init();
+      model.setGoal(3);
+      expect(model.goalReached, false);
+      model.addGlass();
+      model.addGlass();
+      model.addGlass();
+      expect(model.goalReached, true);
+    });
+
+    test('WaterModel clearHistory works', () async {
+      final model = WaterModel();
+      await model.init();
+      model.addGlass();
+      expect(model.todayGlasses, 1);
+      await model.clearHistory();
+      expect(model.history.length, 1);
+      expect(model.todayGlasses, 0);
+    });
+
+    test('WaterEntry toJson and fromJson work', () {
+      final entry = WaterEntry(
+        date: DateTime.now(),
+        glasses: 5,
+        goal: 8,
+      );
+      final json = entry.toJson();
+      final restored = WaterEntry.fromJson(json);
+      expect(restored.glasses, 5);
+      expect(restored.goal, 8);
+    });
+
+    test('WaterEntry getDayKey works', () {
+      final date = DateTime(2024, 1, 15);
+      final key = WaterEntry.getDayKey(date);
+      expect(key, '2024-1-15');
+    });
+
+    testWidgets('WaterCard renders loading state', (WidgetTester tester) async {
+      final model = WaterModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: WaterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Water Tracker: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('WaterCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WaterModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: WaterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Water Tracker'), findsOneWidget);
+      expect(find.text('0/8'), findsOneWidget);
+    });
+
+    test('WaterCard widget exists', () {
+      expect(WaterCard, isNotNull);
+    });
+
+    test('Global.providerList includes Water', () {
+      final hasWater = Global.providerList.any((p) => p.name == 'Water');
+      expect(hasWater, true);
+    });
+
+    test('providerWater exists', () {
+      expect(providerWater, isNotNull);
+      expect(providerWater.name, 'Water');
+    });
+
+    test('WaterModel maxHistoryDays limit', () async {
+      final model = WaterModel();
+      await model.init();
+      expect(WaterModel.maxHistoryDays, 30);
+    });
+
+    test('WaterModel defaultGoal constant', () {
+      expect(WaterModel.defaultGoal, 8);
     });
   });
 }
