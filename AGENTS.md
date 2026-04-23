@@ -346,6 +346,16 @@ Settings auto-saved via `SharedPreferences`:
     - Water intake persisted via SharedPreferences
     - Uses `Card.filled` and `LinearProgressIndicator` for Material 3 style
     - Keywords: water, drink, hydration, glass, cup, intake, track, daily, health
+- **Mood**: Daily mood and emotional well-being tracker
+    - Five mood levels: Very Sad, Sad, Neutral, Happy, Very Happy
+    - Emoji-based visual representation (😢, 😔, 😐, 😊, 😄)
+    - Positive streak tracking for consecutive positive days
+    - Most common mood and average mood statistics
+    - History tracking for up to 30 days
+    - Mood entries persisted via SharedPreferences
+    - History view with clear all option
+    - Uses `Card.filled` and `showModalBottomSheet` for Material 3 style
+    - Keywords: mood, emotion, feeling, happy, sad, track, daily, mental, health
 
 ## Material 3 Design System
 
@@ -439,8 +449,9 @@ Test coverage includes:
 - Habit provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
 - Meditation provider tests (provider existence, keywords, model state, timer operations, breathing guide, widget rendering)
 - Water provider tests (provider existence, keywords, model state, add/remove glasses, goal setting, progress, widget rendering)
+- Mood provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
 
-Total tests: 720 tests
+Total tests: 744 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

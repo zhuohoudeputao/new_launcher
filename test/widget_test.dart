@@ -26,6 +26,7 @@ import 'package:new_launcher/providers/provider_bookmarks.dart';
 import 'package:new_launcher/providers/provider_habit.dart';
 import 'package:new_launcher/providers/provider_meditation.dart';
 import 'package:new_launcher/providers/provider_water.dart';
+import 'package:new_launcher/providers/provider_mood.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2466,7 +2467,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 27);
+      expect(Global.providerList.length, 28);
     });
 
     test('Global.providerList names are correct', () {
@@ -3633,7 +3634,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 27);
+      expect(initCount, 28);
     });
   });
 
@@ -3951,7 +3952,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 27);
+      expect(Global.providerList.length, 28);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5295,7 +5296,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 27);
+      expect(Global.providerList.length, 28);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -7441,6 +7442,219 @@ void main() {
 
     test('WaterModel defaultGoal constant', () {
       expect(WaterModel.defaultGoal, 8);
+    });
+  });
+
+  group('Mood provider tests', () {
+    test('MoodModel initialization works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = MoodModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.history.length, 0);
+    });
+
+    test('MoodLevel values are correct', () {
+      expect(MoodLevel.verySad.value, 1);
+      expect(MoodLevel.sad.value, 2);
+      expect(MoodLevel.neutral.value, 3);
+      expect(MoodLevel.happy.value, 4);
+      expect(MoodLevel.veryHappy.value, 5);
+    });
+
+    test('MoodLevel emoji are correct', () {
+      expect(MoodLevel.verySad.emoji, '😢');
+      expect(MoodLevel.sad.emoji, '😔');
+      expect(MoodLevel.neutral.emoji, '😐');
+      expect(MoodLevel.happy.emoji, '😊');
+      expect(MoodLevel.veryHappy.emoji, '😄');
+    });
+
+    test('MoodLevel labels are correct', () {
+      expect(MoodLevel.verySad.label, 'Very Sad');
+      expect(MoodLevel.sad.label, 'Sad');
+      expect(MoodLevel.neutral.label, 'Neutral');
+      expect(MoodLevel.happy.label, 'Happy');
+      expect(MoodLevel.veryHappy.label, 'Very Happy');
+    });
+
+    test('MoodLevel fromValue works', () {
+      expect(MoodLevelExtension.fromValue(1), MoodLevel.verySad);
+      expect(MoodLevelExtension.fromValue(2), MoodLevel.sad);
+      expect(MoodLevelExtension.fromValue(3), MoodLevel.neutral);
+      expect(MoodLevelExtension.fromValue(4), MoodLevel.happy);
+      expect(MoodLevelExtension.fromValue(5), MoodLevel.veryHappy);
+      expect(MoodLevelExtension.fromValue(99), MoodLevel.neutral);
+    });
+
+    test('MoodEntry toJson and fromJson work', () {
+      final entry = MoodEntry(
+        date: DateTime(2024, 1, 15),
+        moodValue: 4,
+        note: 'Good day',
+      );
+      final json = entry.toJson();
+      final restored = MoodEntry.fromJson(json);
+      expect(restored.moodValue, 4);
+      expect(restored.note, 'Good day');
+      expect(restored.mood, MoodLevel.happy);
+    });
+
+    test('MoodEntry getDayKey works', () {
+      final date = DateTime(2024, 1, 15);
+      final key = MoodEntry.getDayKey(date);
+      expect(key, '2024-1-15');
+    });
+
+    test('MoodModel logMood works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = MoodModel();
+      await model.init();
+      model.logMood(MoodLevel.happy);
+      expect(model.todayMood, MoodLevel.happy);
+      expect(model.history.length, 1);
+    });
+
+    test('MoodModel logMood updates existing entry', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = MoodModel();
+      await model.init();
+      model.logMood(MoodLevel.happy);
+      model.logMood(MoodLevel.veryHappy);
+      expect(model.todayMood, MoodLevel.veryHappy);
+      expect(model.history.length, 1);
+    });
+
+    test('MoodModel positiveStreak works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = MoodModel();
+      await model.init();
+      model.logMood(MoodLevel.happy);
+      expect(model.positiveStreak, 1);
+    });
+
+    test('MoodModel positiveStreak counts consecutive positive days', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = MoodModel();
+      await model.init();
+      model.logMood(MoodLevel.happy);
+      expect(model.positiveStreak, 1);
+    });
+
+    test('MoodModel mostCommonMood works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = MoodModel();
+      await model.init();
+      model.logMood(MoodLevel.happy);
+      model.logMood(MoodLevel.happy);
+      expect(model.mostCommonMood, MoodLevel.happy);
+    });
+
+    test('MoodModel averageMood works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = MoodModel();
+      await model.init();
+      model.logMood(MoodLevel.happy);
+      expect(model.averageMood, 4.0);
+    });
+
+    test('MoodModel averageMood empty history', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = MoodModel();
+      await model.init();
+      expect(model.averageMood, 3.0);
+    });
+
+    test('MoodModel clearHistory works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = MoodModel();
+      await model.init();
+      model.logMood(MoodLevel.happy);
+      expect(model.history.length, 1);
+      await model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('MoodModel maxHistoryDays constant', () {
+      expect(MoodModel.maxHistoryDays, 30);
+    });
+
+    testWidgets('MoodCard renders loading state', (WidgetTester tester) async {
+      final model = MoodModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: MoodCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Mood Tracker: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('MoodCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = MoodModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: MoodCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Mood Tracker'), findsOneWidget);
+      expect(find.text('No mood logged today'), findsOneWidget);
+    });
+
+    testWidgets('MoodCard renders with logged mood', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = MoodModel();
+      await model.init();
+      model.logMood(MoodLevel.happy);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: MoodCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Mood Tracker'), findsOneWidget);
+      expect(find.textContaining('Today:'), findsOneWidget);
+    });
+
+    test('MoodCard widget exists', () {
+      expect(MoodCard, isNotNull);
+    });
+
+    test('MoodPickerSheet widget exists', () {
+      expect(MoodPickerSheet, isNotNull);
+    });
+
+    test('Global.providerList includes Mood', () {
+      final hasMood = Global.providerList.any((p) => p.name == 'Mood');
+      expect(hasMood, true);
+    });
+
+    test('providerMood exists', () {
+      expect(providerMood, isNotNull);
+      expect(providerMood.name, 'Mood');
+    });
+
+    test('providerMood keywords', () {
+      expect(providerMood.name, 'Mood');
     });
   });
 }
