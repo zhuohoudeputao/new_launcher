@@ -22,6 +22,7 @@ import 'package:new_launcher/providers/provider_qrcode.dart';
 import 'package:new_launcher/providers/provider_random.dart';
 import 'package:new_launcher/providers/provider_color.dart';
 import 'package:new_launcher/providers/provider_currency.dart';
+import 'package:new_launcher/providers/provider_bookmarks.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2462,7 +2463,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 23);
+      expect(Global.providerList.length, 24);
     });
 
     test('Global.providerList names are correct', () {
@@ -3629,7 +3630,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 23);
+      expect(initCount, 24);
     });
   });
 
@@ -3937,8 +3938,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 22 providers', () {
-      expect(Global.providerList.length, 23);
+    test('Global.providerList now contains 24 providers', () {
+      expect(Global.providerList.length, 24);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5263,8 +5264,8 @@ void main() {
       expect(UnitConverterCard, isNotNull);
     });
 
-    test('Global.providerList now contains 22 providers', () {
-      expect(Global.providerList.length, 23);
+    test('Global.providerList now contains 24 providers', () {
+      expect(Global.providerList.length, 24);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -6659,6 +6660,199 @@ void main() {
     test('CurrencyModel rates is empty before fetch', () {
       final model = CurrencyModel();
       expect(model.rates.length, 0);
+    });
+  });
+
+  group('Bookmarks provider tests', () {
+    test('providerBookmarks exists in Global.providerList', () {
+      final bookmarksProvider = Global.providerList.where((p) => p.name == 'Bookmarks').first;
+      expect(bookmarksProvider.name, 'Bookmarks');
+    });
+
+    test('Bookmarks provider keywords include bookmark', () {
+      final keywords = 'bookmark bookmarks url link website save quick';
+      expect(keywords.contains('bookmark'), true);
+      expect(keywords.contains('bookmarks'), true);
+      expect(keywords.contains('url'), true);
+      expect(keywords.contains('link'), true);
+    });
+
+    test('BookmarksModel starts uninitialized', () {
+      final model = BookmarksModel();
+      expect(model.isInitialized, false);
+      expect(model.bookmarks.isEmpty, true);
+    });
+
+    test('BookmarksModel is ChangeNotifier', () {
+      final model = BookmarksModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('Bookmark class works correctly', () {
+      final bookmark = Bookmark(url: 'https://example.com', title: 'Example');
+      expect(bookmark.url, 'https://example.com');
+      expect(bookmark.title, 'Example');
+    });
+
+    test('Bookmark toMap/fromMap works', () {
+      final bookmark = Bookmark(url: 'https://example.com', title: 'Example');
+      final map = bookmark.toMap();
+      final restored = Bookmark.fromMap(map);
+      expect(restored.url, bookmark.url);
+      expect(restored.title, bookmark.title);
+    });
+
+    test('Bookmark toJson/fromJson works', () {
+      final bookmark = Bookmark(url: 'https://example.com', title: 'Example');
+      final json = bookmark.toJson();
+      final restored = Bookmark.fromJson(json);
+      expect(restored.url, bookmark.url);
+      expect(restored.title, bookmark.title);
+    });
+
+    test('BookmarksModel addBookmark works correctly', () {
+      final model = BookmarksModel();
+      model.addBookmark('https://example.com', 'Example');
+      expect(model.bookmarks.length, 1);
+      expect(model.bookmarks.first.url, 'https://example.com');
+      expect(model.bookmarks.first.title, 'Example');
+      expect(model.hasBookmarks, true);
+    });
+
+    test('BookmarksModel addBookmark normalizes URL', () {
+      final model = BookmarksModel();
+      model.addBookmark('example.com', 'Example');
+      expect(model.bookmarks.first.url, 'https://example.com');
+    });
+
+    test('BookmarksModel addBookmark trims whitespace', () {
+      final model = BookmarksModel();
+      model.addBookmark('  https://example.com  ', '  Example  ');
+      expect(model.bookmarks.first.url, 'https://example.com');
+      expect(model.bookmarks.first.title, 'Example');
+    });
+
+    test('BookmarksModel addBookmark ignores empty URL', () {
+      final model = BookmarksModel();
+      model.addBookmark('   ', 'Title');
+      expect(model.bookmarks.isEmpty, true);
+    });
+
+    test('BookmarksModel addBookmark extracts title from URL', () {
+      final model = BookmarksModel();
+      model.addBookmark('https://www.google.com', '');
+      expect(model.bookmarks.first.title, 'Google');
+    });
+
+    test('BookmarksModel deleteBookmark works correctly', () {
+      final model = BookmarksModel();
+      model.addBookmark('https://example1.com', 'Example1');
+      model.addBookmark('https://example2.com', 'Example2');
+      expect(model.bookmarks.length, 2);
+      model.deleteBookmark(0);
+      expect(model.bookmarks.length, 1);
+      expect(model.bookmarks.first.url, 'https://example1.com');
+    });
+
+    test('BookmarksModel updateBookmark works correctly', () {
+      final model = BookmarksModel();
+      model.addBookmark('https://example.com', 'Example');
+      model.updateBookmark(0, 'https://updated.com', 'Updated');
+      expect(model.bookmarks.first.url, 'https://updated.com');
+      expect(model.bookmarks.first.title, 'Updated');
+    });
+
+    test('BookmarksModel updateBookmark deletes when empty URL', () {
+      final model = BookmarksModel();
+      model.addBookmark('https://example.com', 'Example');
+      model.updateBookmark(0, '  ', 'Title');
+      expect(model.bookmarks.isEmpty, true);
+    });
+
+    test('BookmarksModel clearAllBookmarks works', () {
+      final model = BookmarksModel();
+      model.addBookmark('https://example1.com', 'Example1');
+      model.addBookmark('https://example2.com', 'Example2');
+      model.addBookmark('https://example3.com', 'Example3');
+      expect(model.bookmarks.length, 3);
+      model.clearAllBookmarks();
+      expect(model.bookmarks.isEmpty, true);
+      expect(model.hasBookmarks, false);
+    });
+
+    test('BookmarksModel maxBookmarks limit works', () {
+      final model = BookmarksModel();
+      for (int i = 0; i < 20; i++) {
+        model.addBookmark('https://example$i.com', 'Example$i');
+      }
+      expect(model.bookmarks.length, BookmarksModel.maxBookmarks);
+    });
+
+    testWidgets('BookmarksCard renders loading state', (WidgetTester tester) async {
+      final model = BookmarksModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: BookmarksCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Bookmarks: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('BookmarksCard renders empty state', (WidgetTester tester) async {
+      final model = BookmarksModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: BookmarksCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Quick Bookmarks'), findsOneWidget);
+      expect(find.text('No bookmarks yet. Tap + to add.'), findsOneWidget);
+    });
+
+    test('BookmarksCard widget exists', () {
+      expect(BookmarksCard, isNotNull);
+    });
+
+    test('AddBookmarkDialog widget exists', () {
+      expect(AddBookmarkDialog, isNotNull);
+    });
+
+    test('EditBookmarkDialog widget exists', () {
+      expect(EditBookmarkDialog, isNotNull);
+    });
+
+    test('Global.providerList includes Bookmarks', () {
+      final hasBookmarks = Global.providerList.any((p) => p.name == 'Bookmarks');
+      expect(hasBookmarks, true);
+    });
+
+    test('providerBookmarks exists', () {
+      expect(providerBookmarks, isNotNull);
+      expect(providerBookmarks.name, 'Bookmarks');
+    });
+
+    test('BookmarksModel length getter works', () {
+      final model = BookmarksModel();
+      expect(model.length, 0);
+      model.addBookmark('https://example.com', 'Example');
+      expect(model.length, 1);
+    });
+
+    test('StringExtension capitalize works', () {
+      expect('google'.capitalize(), 'Google');
+      expect('example'.capitalize(), 'Example');
+      expect(''.capitalize(), '');
     });
   });
 }

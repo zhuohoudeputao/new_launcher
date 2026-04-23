@@ -25,6 +25,7 @@ import 'package:new_launcher/providers/provider_qrcode.dart';
 import 'package:new_launcher/providers/provider_random.dart';
 import 'package:new_launcher/providers/provider_color.dart';
 import 'package:new_launcher/providers/provider_currency.dart';
+import 'package:new_launcher/providers/provider_bookmarks.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -124,6 +125,7 @@ Global.init().then((value) => runApp(MultiProvider(
             ChangeNotifierProvider.value(value: randomModel),
 ChangeNotifierProvider.value(value: colorModel),
             ChangeNotifierProvider.value(value: currencyModel),
+            ChangeNotifierProvider.value(value: bookmarksModel),
            ],
           child: MyApp(),
          )));

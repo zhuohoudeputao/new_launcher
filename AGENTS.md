@@ -300,6 +300,17 @@ Settings auto-saved via `SharedPreferences`:
     - Manual refresh button
     - Uses `Card.filled` and `DropdownButton` for Material 3 style
     - Keywords: currency, exchange, rate, money, convert, dollar, euro, pound, yen, usd, eur, gbp, jpy, cny
+- **Bookmarks**: Quick URL/bookmark manager
+    - Add, edit, and delete bookmarks
+    - Open bookmarks in external browser
+    - Auto-normalize URLs (adds https:// if missing)
+    - Auto-extract title from URL domain
+    - Maximum 15 bookmarks stored (oldest removed when limit exceeded)
+    - Bookmarks persisted via SharedPreferences
+    - Long press to edit, tap to open
+    - Clear all bookmarks with confirmation dialog
+    - Uses `Card.filled` for Material 3 style
+    - Keywords: bookmark, bookmarks, url, link, website, save, quick
 
 ## Material 3 Design System
 
@@ -348,6 +359,7 @@ Key packages (pubspec.yaml):
 - `battery_plus: ^6.0.0` - Battery status
 - `torch_light: ^1.0.0` - Flashlight control
 - `qr_flutter: ^4.1.0` - QR code generation
+- `url_launcher: ^6.3.0` - URL/bookmark opening in external browser
 
 ## Testing
 
@@ -389,8 +401,9 @@ Test coverage includes:
 - Random Generator provider tests (provider existence, keywords, model state, coin flip, dice roll, password generation)
 - Color Generator provider tests (provider existence, keywords, model state, color operations, HEX/RGB conversion)
 - Currency Converter provider tests (provider existence, keywords, model state, currency operations, widget rendering)
+- Bookmarks provider tests (provider existence, keywords, model state, CRUD operations, URL normalization)
 
-Total tests: 631 tests
+Total tests: 659 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -441,6 +454,7 @@ Technical documentation is available in `docs/`:
 - `color_provider.md` - Color Generator provider implementation
 - `currency_provider.md` - Currency Converter provider implementation
 - `currency_provider_fix.md` - Currency provider MultiProvider fix
+- `bookmarks_provider.md` - Bookmarks provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice
