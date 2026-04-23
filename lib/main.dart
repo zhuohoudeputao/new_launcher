@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/providers/provider_app.dart';
+import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
 class SearchTextField extends StatefulWidget {
@@ -137,6 +138,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Future<void> _refreshAllProviders() async {
+    Global.loggerModel.info("Manual refresh triggered", source: "Main");
+    for (MyProvider provider in Global.providerList) {
+      try {
+        await provider.init();
+      } catch (e) {
+        Global.loggerModel.warning("Provider ${provider.name} refresh error: $e", source: "Main");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final actionModel = context.watch<ActionModel>();
@@ -181,21 +193,24 @@ class _MyHomePageState extends State<MyHomePage> {
                 onTap: () {
                   FocusScope.of(context).requestFocus(FocusNode());
                 },
-                child: ListView.builder(
-                  cacheExtent: 500,
-                  itemCount: infoList.length,
-                  addAutomaticKeepAlives: false,
-                  addRepaintBoundaries: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    final widget = infoList[infoList.length - index - 1];
-                    return Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      child: widget,
-                    );
-                  },
-                  scrollDirection: Axis.vertical,
-                  reverse: true,
-                  physics: BouncingScrollPhysics(),
+                child: RefreshIndicator(
+                  onRefresh: _refreshAllProviders,
+                  child: ListView.builder(
+                    cacheExtent: 500,
+                    itemCount: infoList.length,
+                    addAutomaticKeepAlives: false,
+                    addRepaintBoundaries: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      final widget = infoList[infoList.length - index - 1];
+                      return Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        child: widget,
+                      );
+                    },
+                    scrollDirection: Axis.vertical,
+                    reverse: true,
+                    physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                  ),
                 ),
               )),
             ],

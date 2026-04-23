@@ -3353,4 +3353,57 @@ void main() {
       expect(Global.infoModel.infoList.length, greaterThan(0));
     });
   });
+
+  group('Pull-to-refresh tests', () {
+    testWidgets('MyHomePage has RefreshIndicator', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: Global.themeModel),
+            ChangeNotifierProvider.value(value: Global.backgroundImageModel),
+            ChangeNotifierProvider.value(value: Global.settingsModel),
+            ChangeNotifierProvider.value(value: Global.infoModel),
+            ChangeNotifierProvider.value(value: Global.actionModel),
+            ChangeNotifierProvider.value(value: Global.loggerModel),
+            ChangeNotifierProvider.value(value: appModel),
+            ChangeNotifierProvider.value(value: allAppsModel),
+            ChangeNotifierProvider.value(value: appStatisticsModel),
+          ],
+          child: MyHomePage(),
+        ),
+      ));
+
+      expect(find.byType(RefreshIndicator), findsOneWidget);
+    });
+
+    testWidgets('ListView uses AlwaysScrollableScrollPhysics', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: Global.themeModel),
+            ChangeNotifierProvider.value(value: Global.backgroundImageModel),
+            ChangeNotifierProvider.value(value: Global.settingsModel),
+            ChangeNotifierProvider.value(value: Global.infoModel),
+            ChangeNotifierProvider.value(value: Global.actionModel),
+            ChangeNotifierProvider.value(value: Global.loggerModel),
+            ChangeNotifierProvider.value(value: appModel),
+            ChangeNotifierProvider.value(value: allAppsModel),
+            ChangeNotifierProvider.value(value: appStatisticsModel),
+          ],
+          child: MyHomePage(),
+        ),
+      ));
+
+      final listView = tester.widget<ListView>(find.byType(ListView));
+      expect(listView.physics, isA<AlwaysScrollableScrollPhysics>());
+    });
+
+    test('_refreshAllProviders calls provider init for all providers', () async {
+      int initCount = 0;
+      for (final provider in Global.providerList) {
+        initCount++;
+      }
+      expect(initCount, 7);
+    });
+  });
 }

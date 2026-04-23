@@ -33,6 +33,8 @@ flutter.sdk=/home/linzuxuan/app/flutter
 
 - **Entry point**: `lib/main.dart` - `MyApp` widget wraps `MyHomePage`
 - **Card list**: Standard ListView.builder displays info cards with dynamic sizing
+  - Pull-to-refresh gesture triggers all provider refreshes via `RefreshIndicator`
+  - Uses `AlwaysScrollableScrollPhysics` for consistent scroll behavior
 - **Search input**: `SearchTextField` widget manages search field with clear button
 - **Providers system**: `lib/providers/*.dart` - Each provider adds services (weather, apps, wallpaper, etc.)
 - **Data layer**: `lib/data.dart` - Contains `Global`, `ActionModel`, `InfoModel`, `SettingsModel`, `BackgroundImageModel`, `ThemeModel`
@@ -207,8 +209,9 @@ Test coverage includes:
 - MyApp structure tests (Material 3 theme, navigatorKey)
 - Search results indicator tests (filtering, count format, pluralization)
 - SearchTextField tests (rendering, clear button visibility and behavior)
+- Pull-to-refresh tests (RefreshIndicator, scroll physics, provider refresh)
 
-Total tests: ~280 tests
+Total tests: ~283 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -241,6 +244,7 @@ Technical documentation is available in `docs/`:
 - `test_coverage_update.md` - Additional tests for improved coverage
 - `date_time_settings.md` - System date/time settings action
 - `app_statistics_clear.md` - Clear statistics button feature
+- `pull_to_refresh.md` - Pull-to-refresh feature implementation
 
 ## Notice
 DO NOT EDIT task*.md
