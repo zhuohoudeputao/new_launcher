@@ -148,6 +148,13 @@ Settings auto-saved via `SharedPreferences`:
   - Real-time battery state updates
   - Manual refresh button
   - Uses `Card.filled` for Material 3 style
+- **Notes**: Quick notes for storing text snippets
+  - Add, edit, and delete notes
+  - Maximum 10 notes stored (oldest removed when limit exceeded)
+  - Notes persisted via SharedPreferences
+  - Clear all notes button with confirmation dialog
+  - Uses `Card.filled` for Material 3 style
+  - Keywords: note, notes, text, memo, clipboard, write, quick
 
 ## Material 3 Design System
 
@@ -220,8 +227,9 @@ Test coverage includes:
 - SearchTextField tests (rendering, clear button visibility and behavior)
 - Pull-to-refresh tests (RefreshIndicator, scroll physics, provider refresh)
 - Battery provider tests (provider existence, keywords, model state, widget rendering)
+- Notes provider tests (provider existence, keywords, model state, CRUD operations)
 
-Total tests: ~290 tests
+Total tests: ~307 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -256,6 +264,14 @@ Technical documentation is available in `docs/`:
 - `app_statistics_clear.md` - Clear statistics button feature
 - `pull_to_refresh.md` - Pull-to-refresh feature implementation
 - `battery_provider.md` - Battery status provider implementation
+- `notes_provider.md` - Notes provider implementation
 
 ## Notice
 DO NOT EDIT task*.md
+
+### Network Connection
+
+```shell
+export PUB_HOSTED_URL=https://mirrors.tuna.tsinghua.edu.cn/dart-pub
+export FLUTTER_STORAGE_BASE_URL=https://mirrors.tuna.tsinghua.edu.cn/flutter
+```

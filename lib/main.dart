@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/providers/provider_battery.dart';
+import 'package:new_launcher/providers/provider_notes.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -94,6 +95,7 @@ Global.init().then((value) => runApp(MultiProvider(
             ChangeNotifierProvider.value(value: allAppsModel),
             ChangeNotifierProvider.value(value: appStatisticsModel),
             ChangeNotifierProvider.value(value: batteryModel),
+            ChangeNotifierProvider.value(value: notesModel),
           ],
          child: MyApp(),
        )));

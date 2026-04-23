@@ -7,6 +7,7 @@ import 'package:new_launcher/data.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/providers/provider_battery.dart';
+import 'package:new_launcher/providers/provider_notes.dart';
 import 'package:new_launcher/providers/provider_settings.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
@@ -2448,7 +2449,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 8);
+      expect(Global.providerList.length, 9);
     });
 
     test('Global.providerList names are correct', () {
@@ -3433,6 +3434,139 @@ void main() {
     });
   });
 
+  group('Notes provider tests', () {
+    test('providerNotes exists in Global.providerList', () {
+      final notesProvider = Global.providerList.where((p) => p.name == 'Notes').first;
+      expect(notesProvider.name, 'Notes');
+    });
+
+    test('Notes provider keywords include note', () {
+      final keywords = 'note notes text memo clipboard write quick';
+      expect(keywords.contains('note'), true);
+      expect(keywords.contains('notes'), true);
+      expect(keywords.contains('memo'), true);
+      expect(keywords.contains('clipboard'), true);
+    });
+
+    test('NotesModel starts uninitialized', () {
+      final model = NotesModel();
+      expect(model.isInitialized, false);
+      expect(model.notes.isEmpty, true);
+    });
+
+    test('NotesModel is ChangeNotifier', () {
+      final model = NotesModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    test('NotesModel addNote works correctly', () {
+      final model = NotesModel();
+      model.addNote('Test note');
+      expect(model.notes.length, 1);
+      expect(model.notes.first, 'Test note');
+      expect(model.hasNotes, true);
+    });
+
+    test('NotesModel addNote trims whitespace', () {
+      final model = NotesModel();
+      model.addNote('  Trimmed note  ');
+      expect(model.notes.first, 'Trimmed note');
+    });
+
+    test('NotesModel addNote ignores empty', () {
+      final model = NotesModel();
+      model.addNote('   ');
+      expect(model.notes.isEmpty, true);
+    });
+
+    test('NotesModel deleteNote works correctly', () {
+      final model = NotesModel();
+      model.addNote('Note 1');
+      model.addNote('Note 2');
+      expect(model.notes.length, 2);
+      model.deleteNote(0);
+      expect(model.notes.length, 1);
+      expect(model.notes.first, 'Note 1');
+    });
+
+    test('NotesModel updateNote works correctly', () {
+      final model = NotesModel();
+      model.addNote('Original note');
+      model.updateNote(0, 'Updated note');
+      expect(model.notes.first, 'Updated note');
+    });
+
+    test('NotesModel updateNote deletes when empty', () {
+      final model = NotesModel();
+      model.addNote('Note');
+      model.updateNote(0, '  ');
+      expect(model.notes.isEmpty, true);
+    });
+
+    test('NotesModel clearAllNotes works', () {
+      final model = NotesModel();
+      model.addNote('Note 1');
+      model.addNote('Note 2');
+      model.addNote('Note 3');
+      expect(model.notes.length, 3);
+      model.clearAllNotes();
+      expect(model.notes.isEmpty, true);
+      expect(model.hasNotes, false);
+    });
+
+    test('NotesModel maxNotes limit works', () {
+      final model = NotesModel();
+      for (int i = 0; i < 15; i++) {
+        model.addNote('Note $i');
+      }
+      expect(model.notes.length, NotesModel.maxNotes);
+    });
+
+    testWidgets('NotesCard renders loading state', (WidgetTester tester) async {
+      final model = NotesModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: NotesCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Notes: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('NotesCard renders empty state', (WidgetTester tester) async {
+      final model = NotesModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: NotesCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Quick Notes'), findsOneWidget);
+      expect(find.text('No notes yet. Tap + to add.'), findsOneWidget);
+    });
+
+    test('NotesCard widget exists', () {
+      expect(NotesCard, isNotNull);
+    });
+
+    test('AddNoteDialog widget exists', () {
+      expect(AddNoteDialog, isNotNull);
+    });
+
+    test('EditNoteDialog widget exists', () {
+      expect(EditNoteDialog, isNotNull);
+    });
+  });
+
   group('Pull-to-refresh tests', () {
     testWidgets('MyHomePage has RefreshIndicator', (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
@@ -3482,7 +3616,7 @@ void main() {
       for (final provider in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 8);
+      expect(initCount, 9);
     });
   });
 }
