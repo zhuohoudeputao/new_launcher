@@ -403,6 +403,10 @@ Technical documentation is available in `docs/`:
 - `worldclock_provider.md` - World Clock provider implementation
 - `countdown_provider.md` - Countdown provider implementation
 - `unitconverter_provider.md` - Unit Converter provider implementation
+- `pomodoro_provider.md` - Pomodoro timer provider implementation
+- `clipboard_provider.md` - Clipboard history provider implementation
+- `todo_provider.md` - Todo/task list provider implementation
+- `qrcode_provider.md` - QR code generator provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice
