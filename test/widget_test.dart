@@ -3875,6 +3875,15 @@ void main() {
       model.clearAllTimers();
       await tester.pump();
     });
+
+    test('TimerModel refresh method works', () {
+      final model = TimerModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
   });
 
   group('Flashlight provider tests', () {
@@ -4195,6 +4204,15 @@ void main() {
       final names = Global.providerList.map((p) => p.name).toList();
       expect(names.contains('Calculator'), true);
     });
+
+    test('CalculatorModel refresh method works', () {
+      final model = CalculatorModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
   });
 
   group('Stopwatch provider tests', () {
@@ -4488,6 +4506,15 @@ void main() {
     test('Global.providerList includes Stopwatch', () {
       final names = Global.providerList.map((p) => p.name).toList();
       expect(names.contains('Stopwatch'), true);
+    });
+
+    test('StopwatchModel refresh method works', () {
+      final model = StopwatchModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
     });
   });
 
@@ -5289,6 +5316,15 @@ void main() {
       model.setInputValue('-10');
       expect(model.inputValue, '-10');
     });
+
+    test('UnitConverterModel refresh method works', () {
+      final model = UnitConverterModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
   });
 
   group('Pomodoro provider tests', () {
@@ -6034,6 +6070,15 @@ void main() {
       expect(providerQRCode.name, 'QRCode');
       expect(providerQRCode.provideActions, isNotNull);
     });
+
+    test('QRModel refresh method works', () {
+      final model = QRModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
   });
 
   group('Random Generator provider tests', () {
@@ -6273,6 +6318,15 @@ void main() {
       expect(providerRandom.name, 'Random');
       expect(providerRandom.provideActions, isNotNull);
     });
+
+    test('RandomModel refresh method works', () {
+      final model = RandomModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
   });
 
   group('Color Generator provider tests', () {
@@ -6472,6 +6526,15 @@ void main() {
       expect(model.green, 0);
       expect(model.blue, 255);
     });
+
+    test('ColorModel refresh method works', () {
+      final model = ColorModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
   });
 
   group('Currency Converter provider tests', () {
@@ -6663,6 +6726,14 @@ void main() {
     test('CurrencyModel rates is empty before fetch', () {
       final model = CurrencyModel();
       expect(model.rates.length, 0);
+    });
+
+    test('CurrencyModel refresh method works', () {
+      final model = CurrencyModel();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
     });
   });
 

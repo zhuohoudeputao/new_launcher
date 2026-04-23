@@ -440,7 +440,7 @@ Test coverage includes:
 - Meditation provider tests (provider existence, keywords, model state, timer operations, breathing guide, widget rendering)
 - Water provider tests (provider existence, keywords, model state, add/remove glasses, goal setting, progress, widget rendering)
 
-Total tests: 712 tests
+Total tests: 720 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
