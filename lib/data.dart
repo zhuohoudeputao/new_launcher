@@ -42,6 +42,7 @@ import 'package:new_launcher/providers/provider_mood.dart';
 import 'package:new_launcher/providers/provider_expense.dart';
 import 'package:new_launcher/providers/provider_numberbase.dart';
 import 'package:new_launcher/providers/provider_calendar.dart';
+import 'package:new_launcher/providers/provider_progress.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -197,6 +198,7 @@ class Global {
     providerExpense,
     providerNumberBase,
     providerCalendar,
+    providerProgress,
   ];
 
   //_______________________________________________________________________

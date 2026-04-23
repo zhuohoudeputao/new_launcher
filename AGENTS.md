@@ -389,6 +389,18 @@ Settings auto-saved via `SharedPreferences`:
     - Automatic day change at midnight
     - Uses `Card.filled` and `GridView` for Material 3 style
     - Keywords: calendar, month, date, day, week, schedule
+- **Progress**: Goal/project progress tracker
+    - Track progress on goals with percentage visualization
+    - Linear progress bar with color coding
+    - Increment/decrement buttons for quick updates
+    - Add, edit, and delete progress items
+    - Maximum 15 progress items stored (oldest removed when limit exceeded)
+    - Progress items persisted via SharedPreferences
+    - Completed/total count display
+    - Average progress calculation
+    - Color coding for progress levels (100% green, 75%+ teal, 50%+ secondary)
+    - Uses `Card.filled` and `LinearProgressIndicator` for Material 3 style
+    - Keywords: progress, track, goal, project, percentage, completion, goal tracker
 
 ## Material 3 Design System
 
@@ -485,8 +497,9 @@ Test coverage includes:
 - Mood provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
 - Number Base Converter provider tests (provider existence, keywords, model state, conversion operations)
 - Calendar provider tests (provider existence, keywords, widget rendering, navigation buttons)
+- Progress provider tests (provider existence, keywords, model state, CRUD operations, percentage calculation, widget rendering)
   
-Total tests: 798 tests
+Total tests: 823 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -544,6 +557,7 @@ Technical documentation is available in `docs/`:
 - `mood_provider.md` - Mood tracker provider implementation
 - `expense_provider.md` - Expense tracker provider implementation
 - `numberbase_provider.md` - Number Base Converter provider implementation
+- `progress_provider.md` - Progress tracker provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice

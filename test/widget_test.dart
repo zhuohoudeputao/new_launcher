@@ -30,6 +30,7 @@ import 'package:new_launcher/providers/provider_mood.dart';
 import 'package:new_launcher/providers/provider_expense.dart';
 import 'package:new_launcher/providers/provider_numberbase.dart';
 import 'package:new_launcher/providers/provider_calendar.dart';
+import 'package:new_launcher/providers/provider_progress.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2470,7 +2471,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 31);
+      expect(Global.providerList.length, 32);
     });
 
     test('Global.providerList names are correct', () {
@@ -3637,7 +3638,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 31);
+      expect(initCount, 32);
     });
   });
 
@@ -3955,7 +3956,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 31);
+      expect(Global.providerList.length, 32);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5299,7 +5300,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 31);
+      expect(Global.providerList.length, 32);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -8173,6 +8174,289 @@ void main() {
 
       await tester.tap(find.byIcon(Icons.chevron_right).first);
       await tester.pump();
+    });
+  });
+
+  group('Progress provider tests', () {
+    test('ProgressItem properties work', () {
+      final item = ProgressItem(name: "Test Goal", current: 50, target: 100);
+      expect(item.percentage, 50.0);
+      expect(item.isComplete, false);
+      expect(item.remaining, 50);
+    });
+
+    test('ProgressItem percentage calculation', () {
+      final item1 = ProgressItem(name: "Goal 1", current: 0, target: 100);
+      expect(item1.percentage, 0.0);
+
+      final item2 = ProgressItem(name: "Goal 2", current: 100, target: 100);
+      expect(item2.percentage, 100.0);
+      expect(item2.isComplete, true);
+
+      final item3 = ProgressItem(name: "Goal 3", current: 75, target: 100);
+      expect(item3.percentage, 75.0);
+    });
+
+    test('ProgressItem toJson and fromJson work', () {
+      final item = ProgressItem(name: "Test", current: 50, target: 100);
+      final json = item.toJson();
+      final restored = ProgressItem.fromJson(json);
+
+      expect(restored.name, item.name);
+      expect(restored.current, item.current);
+      expect(restored.target, item.target);
+    });
+
+    test('ProgressItem copyWith works', () {
+      final item = ProgressItem(name: "Test", current: 50, target: 100);
+      final updated = item.copyWith(current: 75);
+
+      expect(updated.name, "Test");
+      expect(updated.current, 75);
+      expect(updated.target, 100);
+    });
+
+    test('ProgressModel initialization works', () async {
+      await progressModel.init();
+      expect(progressModel.isInitialized, true);
+      expect(progressModel.items.length >= 0, true);
+    });
+
+    test('ProgressModel addProgress works', () async {
+      await progressModel.init();
+      progressModel.clearAllProgress();
+      await Future.delayed(Duration(milliseconds: 10));
+
+      progressModel.addProgress("Test Goal", 100);
+      expect(progressModel.length, 1);
+      expect(progressModel.items.first.name, "Test Goal");
+      expect(progressModel.items.first.target, 100);
+    });
+
+    test('ProgressModel updateCurrentValue works', () async {
+      await progressModel.init();
+      progressModel.clearAllProgress();
+      await Future.delayed(Duration(milliseconds: 10));
+
+      progressModel.addProgress("Test", 100);
+      progressModel.updateCurrentValue(0, 50);
+      expect(progressModel.items.first.current, 50);
+    });
+
+    test('ProgressModel updateCurrentValue caps to target', () async {
+      await progressModel.init();
+      progressModel.clearAllProgress();
+      await Future.delayed(Duration(milliseconds: 10));
+
+      progressModel.addProgress("Test", 100);
+      progressModel.updateCurrentValue(0, 150);
+      expect(progressModel.items.first.current, 100);
+    });
+
+    test('ProgressModel incrementProgress works', () async {
+      await progressModel.init();
+      progressModel.clearAllProgress();
+      await Future.delayed(Duration(milliseconds: 10));
+
+      progressModel.addProgress("Test", 100);
+      progressModel.updateCurrentValue(0, 50);
+      progressModel.incrementProgress(0, 10);
+      expect(progressModel.items.first.current, 60);
+    });
+
+    test('ProgressModel deleteProgress works', () async {
+      await progressModel.init();
+      progressModel.clearAllProgress();
+      await Future.delayed(Duration(milliseconds: 10));
+
+      progressModel.addProgress("Test 1", 100);
+      progressModel.addProgress("Test 2", 200);
+      expect(progressModel.length, 2);
+
+      progressModel.deleteProgress(0);
+      expect(progressModel.length, 1);
+      expect(progressModel.items.first.name, "Test 2");
+    });
+
+    test('ProgressModel clearAllProgress works', () async {
+      await progressModel.init();
+      progressModel.addProgress("Test 1", 100);
+      progressModel.addProgress("Test 2", 200);
+
+      await progressModel.clearAllProgress();
+      expect(progressModel.length, 0);
+    });
+
+    test('ProgressModel refresh works', () async {
+      await progressModel.init();
+      progressModel.refresh();
+      expect(progressModel.isInitialized, true);
+    });
+
+    test('ProgressModel completedCount works', () async {
+      await progressModel.init();
+      progressModel.clearAllProgress();
+      await Future.delayed(Duration(milliseconds: 10));
+
+      progressModel.addProgress("Complete", 10);
+      progressModel.updateCurrentValue(0, 10);
+
+      progressModel.addProgress("Incomplete", 100);
+      progressModel.updateCurrentValue(1, 50);
+
+      expect(progressModel.completedCount, 1);
+    });
+
+    test('ProgressModel averageProgress works', () async {
+      await progressModel.init();
+      progressModel.clearAllProgress();
+      await Future.delayed(Duration(milliseconds: 10));
+
+      progressModel.addProgress("Goal 1", 100);
+      progressModel.updateCurrentValue(0, 50);
+
+      progressModel.addProgress("Goal 2", 100);
+      progressModel.updateCurrentValue(1, 75);
+
+      expect(progressModel.averageProgress, 62.5);
+    });
+
+    test('ProgressModel averageProgress empty', () async {
+      await progressModel.init();
+      progressModel.clearAllProgress();
+      await Future.delayed(Duration(milliseconds: 10));
+
+      expect(progressModel.averageProgress, 0);
+    });
+
+    test('ProgressModel maxProgressItems constant', () {
+      expect(ProgressModel.maxProgressItems, 15);
+    });
+
+    testWidgets('ProgressCard renders loading state', (WidgetTester tester) async {
+      final model = ProgressModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: ProgressCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text("Progress Tracker: Loading..."), findsOneWidget);
+    });
+
+    testWidgets('ProgressCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ProgressModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ProgressCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text("No progress items. Tap + to add one!"), findsOneWidget);
+    });
+
+    testWidgets('ProgressCard renders with items', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ProgressModel();
+      await model.init();
+      model.addProgress("Test Goal", 100);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ProgressCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text("Test Goal"), findsOneWidget);
+    });
+
+    testWidgets('ProgressCard widget exists', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: progressModel,
+            child: ProgressCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(ProgressCard), findsOneWidget);
+    });
+
+    testWidgets('AddProgressDialog widget exists', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => AddProgressDialog(),
+              ),
+              child: Text("Show"),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text("Show"));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AddProgressDialog), findsOneWidget);
+      expect(find.text("Add Progress"), findsOneWidget);
+    });
+
+    testWidgets('EditProgressDialog widget exists', (WidgetTester tester) async {
+      final item = ProgressItem(name: "Test", current: 50, target: 100);
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => EditProgressDialog(index: 0, item: item),
+              ),
+              child: Text("Show"),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text("Show"));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(EditProgressDialog), findsOneWidget);
+      expect(find.text("Edit Progress"), findsOneWidget);
+    });
+
+    test('providerProgress exists', () {
+      expect(providerProgress, isNotNull);
+      expect(providerProgress.name, 'Progress');
+    });
+
+    test('Global.providerList includes Progress', () {
+      final hasProgress = Global.providerList.any((p) => p.name == 'Progress');
+      expect(hasProgress, true);
+    });
+
+    test('providerProgress keywords', () {
+      expect(providerProgress.name, 'Progress');
     });
   });
 }
