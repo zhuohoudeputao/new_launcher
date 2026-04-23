@@ -28,6 +28,7 @@ import 'package:new_launcher/providers/provider_meditation.dart';
 import 'package:new_launcher/providers/provider_water.dart';
 import 'package:new_launcher/providers/provider_mood.dart';
 import 'package:new_launcher/providers/provider_expense.dart';
+import 'package:new_launcher/providers/provider_numberbase.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2468,7 +2469,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 29);
+      expect(Global.providerList.length, 30);
     });
 
     test('Global.providerList names are correct', () {
@@ -3635,7 +3636,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 29);
+      expect(initCount, 30);
     });
   });
 
@@ -3953,7 +3954,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 29);
+      expect(Global.providerList.length, 30);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5297,7 +5298,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 29);
+      expect(Global.providerList.length, 30);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -7860,6 +7861,244 @@ void main() {
 
     test('providerExpense keywords', () {
       expect(providerExpense.name, 'Expense');
+    });
+  });
+
+  group('NumberBase provider tests', () {
+    test('NumberBaseModel initialization works', () {
+      final model = NumberBaseModel();
+      model.init();
+      expect(model.isLoading, false);
+      expect(model.inputValue, '');
+      expect(model.inputBase, 'decimal');
+      expect(model.outputBase, 'binary');
+    });
+
+    test('NumberBaseType values are correct', () {
+      expect(numberBaseTypes['binary']?.name, 'Binary');
+      expect(numberBaseTypes['binary']?.suffix, 'BIN');
+      expect(numberBaseTypes['binary']?.radix, 2);
+      expect(numberBaseTypes['octal']?.name, 'Octal');
+      expect(numberBaseTypes['octal']?.suffix, 'OCT');
+      expect(numberBaseTypes['octal']?.radix, 8);
+      expect(numberBaseTypes['decimal']?.name, 'Decimal');
+      expect(numberBaseTypes['decimal']?.suffix, 'DEC');
+      expect(numberBaseTypes['decimal']?.radix, 10);
+      expect(numberBaseTypes['hexadecimal']?.name, 'Hexadecimal');
+      expect(numberBaseTypes['hexadecimal']?.suffix, 'HEX');
+      expect(numberBaseTypes['hexadecimal']?.radix, 16);
+    });
+
+    test('getAllBases returns correct list', () {
+      final bases = getAllBases();
+      expect(bases.length, 4);
+      expect(bases.contains('binary'), true);
+      expect(bases.contains('octal'), true);
+      expect(bases.contains('decimal'), true);
+      expect(bases.contains('hexadecimal'), true);
+    });
+
+    test('NumberBaseModel setInputValue works', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputValue('255');
+      expect(model.inputValue, '255');
+    });
+
+    test('NumberBaseModel setInputValue sanitizes for binary', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputBase('binary');
+      model.setInputValue('1234');
+      expect(model.inputValue, '1');
+    });
+
+    test('NumberBaseModel setInputValue sanitizes for hexadecimal', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputBase('hexadecimal');
+      model.setInputValue('ABCDEF123');
+      expect(model.inputValue, 'ABCDEF123');
+    });
+
+    test('NumberBaseModel setInputBase works', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputBase('hexadecimal');
+      expect(model.inputBase, 'hexadecimal');
+    });
+
+    test('NumberBaseModel setOutputBase works', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setOutputBase('octal');
+      expect(model.outputBase, 'octal');
+    });
+
+    test('NumberBaseModel conversion decimal to binary', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputBase('decimal');
+      model.setOutputBase('binary');
+      model.setInputValue('10');
+      expect(model.outputValue, '1010');
+    });
+
+    test('NumberBaseModel conversion decimal to hexadecimal', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputBase('decimal');
+      model.setOutputBase('hexadecimal');
+      model.setInputValue('255');
+      expect(model.outputValue, 'FF');
+    });
+
+    test('NumberBaseModel conversion binary to decimal', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputBase('binary');
+      model.setOutputBase('decimal');
+      model.setInputValue('11111111');
+      expect(model.outputValue, '255');
+    });
+
+    test('NumberBaseModel conversion hexadecimal to decimal', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputBase('hexadecimal');
+      model.setOutputBase('decimal');
+      model.setInputValue('FF');
+      expect(model.outputValue, '255');
+    });
+
+    test('NumberBaseModel conversion octal to decimal', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputBase('octal');
+      model.setOutputBase('decimal');
+      model.setInputValue('377');
+      expect(model.outputValue, '255');
+    });
+
+    test('NumberBaseModel swapBases works', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputBase('decimal');
+      model.setOutputBase('binary');
+      model.setInputValue('10');
+      model.swapBases();
+      expect(model.inputBase, 'binary');
+      expect(model.outputBase, 'decimal');
+      expect(model.inputValue, '1010');
+    });
+
+    test('NumberBaseModel addToHistory works', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputValue('255');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history.first.inputValue, '255');
+    });
+
+    test('NumberBaseModel history limit', () {
+      final model = NumberBaseModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputValue('$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, NumberBaseModel.maxHistoryLength);
+    });
+
+    test('NumberBaseModel applyFromHistory works', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputValue('255');
+      model.setInputBase('decimal');
+      model.setOutputBase('hexadecimal');
+      model.addToHistory();
+      model.setInputValue('100');
+      model.applyFromHistory(model.history.first);
+      expect(model.inputValue, '255');
+      expect(model.inputBase, 'decimal');
+      expect(model.outputBase, 'hexadecimal');
+    });
+
+    test('NumberBaseModel clearHistory works', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputValue('255');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('NumberBaseModel refresh works', () {
+      final model = NumberBaseModel();
+      model.init();
+      model.refresh();
+      expect(model.isLoading, false);
+    });
+
+    test('NumberBaseModel maxHistoryLength constant', () {
+      expect(NumberBaseModel.maxHistoryLength, 10);
+    });
+
+    testWidgets('NumberBaseCard renders empty state', (WidgetTester tester) async {
+      final model = NumberBaseModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: NumberBaseCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Number Base Converter'), findsOneWidget);
+    });
+
+    testWidgets('NumberBaseCard renders with input', (WidgetTester tester) async {
+      final model = NumberBaseModel();
+      model.init();
+      model.setInputValue('255');
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: NumberBaseCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Number Base Converter'), findsOneWidget);
+    });
+
+    test('NumberBaseCard widget exists', () {
+      expect(NumberBaseCard, isNotNull);
+    });
+
+    test('Global.providerList includes NumberBase', () {
+      final hasNumberBase = Global.providerList.any((p) => p.name == 'NumberBase');
+      expect(hasNumberBase, true);
+    });
+
+    test('providerNumberBase exists', () {
+      expect(providerNumberBase, isNotNull);
+      expect(providerNumberBase.name, 'NumberBase');
+    });
+
+    test('providerNumberBase keywords', () {
+      expect(providerNumberBase.name, 'NumberBase');
     });
   });
 }

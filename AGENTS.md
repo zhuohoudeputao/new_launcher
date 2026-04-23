@@ -369,6 +369,16 @@ Settings auto-saved via `SharedPreferences`:
     - Expenses persisted via SharedPreferences
     - Uses `Card.filled` and `ChoiceChip` for Material 3 style
     - Keywords: expense, money, spend, cost, budget, track, finance, wallet
+- **NumberBase**: Number base converter for programmers
+    - Convert between binary, octal, decimal, and hexadecimal
+    - Real-time conversion as you type
+    - Input sanitization based on selected base
+    - Swap input/output bases with one tap
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Uses `Card.filled` and `DropdownButton` for Material 3 style
+    - Keywords: convert, number, base, binary, octal, decimal, hex, hexadecimal, bin, oct, dec
 
 ## Material 3 Design System
 
@@ -463,9 +473,9 @@ Test coverage includes:
 - Meditation provider tests (provider existence, keywords, model state, timer operations, breathing guide, widget rendering)
 - Water provider tests (provider existence, keywords, model state, add/remove glasses, goal setting, progress, widget rendering)
 - Mood provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
-- Expense provider tests (provider existence, keywords, model state, CRUD operations, category totals, widget rendering)
-
-Total tests: 765 tests
+- Number Base Converter provider tests (provider existence, keywords, model state, conversion operations)
+  
+Total tests: 791 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -520,6 +530,9 @@ Technical documentation is available in `docs/`:
 - `habit_provider.md` - Habit tracker provider implementation
 - `meditation_provider.md` - Meditation timer provider implementation
 - `water_provider.md` - Water intake tracker provider implementation
+- `mood_provider.md` - Mood tracker provider implementation
+- `expense_provider.md` - Expense tracker provider implementation
+- `numberbase_provider.md` - Number Base Converter provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice
