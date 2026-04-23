@@ -229,6 +229,19 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history button with confirmation dialog
     - Uses `Card.filled` and `SegmentedButton` for Material 3 style
     - Keywords: convert, unit, temperature, length, weight, cm, m, km, inch, foot, mile, celsius, fahrenheit, kg, lb, gram, ounce
+- **Pomodoro**: Productivity timer using Pomodoro Technique
+    - Work sessions (default 25 minutes)
+    - Short breaks (5 minutes after each work session)
+    - Long breaks (15 minutes after 4 work sessions)
+    - Circular progress indicator
+    - Completed session counter
+    - Pause/resume controls
+    - Skip current phase option
+    - Customizable durations via settings dialog
+    - Session history (up to 20 entries)
+    - Phase-specific colors and icons
+    - Uses `Card.filled` and `CircularProgressIndicator` for Material 3 style
+    - Keywords: pomodoro, timer, productivity, work, break, focus, session
 
 ## Material 3 Design System
 
@@ -309,8 +322,10 @@ Test coverage includes:
 - Calculator provider tests (provider existence, keywords, model state, calculation operations)
 - World Clock provider tests (provider existence, keywords, model state, timezone operations)
 - Countdown provider tests (provider existence, keywords, model state, CRUD operations, time formatting)
+- Unit Converter provider tests (provider existence, keywords, model state, conversion operations)
+- Pomodoro provider tests (provider existence, keywords, model state, timer operations, phase transitions)
 
-Total tests: 484 tests
+Total tests: 507 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

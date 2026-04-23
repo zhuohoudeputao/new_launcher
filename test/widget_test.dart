@@ -15,6 +15,7 @@ import 'package:new_launcher/providers/provider_timer.dart';
 import 'package:new_launcher/providers/provider_worldclock.dart';
 import 'package:new_launcher/providers/provider_countdown.dart';
 import 'package:new_launcher/providers/provider_unitconverter.dart';
+import 'package:new_launcher/providers/provider_pomodoro.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2455,7 +2456,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 16);
+      expect(Global.providerList.length, 17);
     });
 
     test('Global.providerList names are correct', () {
@@ -3622,7 +3623,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 16);
+      expect(initCount, 17);
     });
   });
 
@@ -3930,8 +3931,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 16 providers', () {
-      expect(Global.providerList.length, 16);
+    test('Global.providerList now contains 17 providers', () {
+      expect(Global.providerList.length, 17);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5256,8 +5257,8 @@ void main() {
       expect(UnitConverterCard, isNotNull);
     });
 
-    test('Global.providerList now contains 16 providers', () {
-      expect(Global.providerList.length, 16);
+    test('Global.providerList now contains 17 providers', () {
+      expect(Global.providerList.length, 17);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -5277,6 +5278,221 @@ void main() {
       model.init();
       model.setInputValue('-10');
       expect(model.inputValue, '-10');
+    });
+  });
+
+  group('Pomodoro provider tests', () {
+    test('providerPomodoro exists', () {
+      expect(providerPomodoro, isNotNull);
+      expect(providerPomodoro.name, 'Pomodoro');
+    });
+
+    test('PomodoroModel exists', () {
+      expect(pomodoroModel, isNotNull);
+    });
+
+    test('PomodoroPhase enum has correct values', () {
+      expect(PomodoroPhase.values.length, 3);
+      expect(PomodoroPhase.work.index, 0);
+      expect(PomodoroPhase.shortBreak.index, 1);
+      expect(PomodoroPhase.longBreak.index, 2);
+    });
+
+    test('PomodoroSession toJson and fromJson work', () {
+      final session = PomodoroSession(
+        startTime: DateTime(2024, 1, 1, 10, 30),
+        phase: PomodoroPhase.work,
+        durationMinutes: 25,
+      );
+      final json = session.toJson();
+      expect(json['startTime'], '2024-01-01T10:30:00.000');
+      expect(json['phase'], 0);
+      expect(json['durationMinutes'], 25);
+
+      final restored = PomodoroSession.fromJson(json);
+      expect(restored.startTime, DateTime(2024, 1, 1, 10, 30));
+      expect(restored.phase, PomodoroPhase.work);
+      expect(restored.durationMinutes, 25);
+    });
+
+    test('PomodoroModel default values are correct', () {
+      final model = PomodoroModel();
+      expect(model.workDuration, 25);
+      expect(model.shortBreakDuration, 5);
+      expect(model.longBreakDuration, 15);
+      expect(model.completedSessions, 0);
+      expect(model.currentPhase, PomodoroPhase.work);
+      expect(model.isRunning, false);
+      expect(model.isPaused, false);
+    });
+
+    test('PomodoroModel init initializes correctly', () async {
+      final model = PomodoroModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.remainingSeconds, 25 * 60);
+    });
+
+    test('PomodoroModel start sets isRunning', () async {
+      final model = PomodoroModel();
+      await model.init();
+      model.start();
+      expect(model.isRunning, true);
+      expect(model.isPaused, false);
+      model.stop();
+    });
+
+    test('PomodoroModel pause and resume work', () async {
+      final model = PomodoroModel();
+      await model.init();
+      model.start();
+      expect(model.isRunning, true);
+      model.pause();
+      expect(model.isPaused, true);
+      model.resume();
+      expect(model.isPaused, false);
+      model.stop();
+    });
+
+    test('PomodoroModel stop resets state', () async {
+      final model = PomodoroModel();
+      await model.init();
+      model.start();
+      model.stop();
+      expect(model.isRunning, false);
+      expect(model.isPaused, false);
+    });
+
+    test('PomodoroModel formatTime returns correct format', () async {
+      final model = PomodoroModel();
+      await model.init();
+      model.remainingSeconds = 1500;
+      expect(model.formatTime(), '25:00');
+      model.remainingSeconds = 300;
+      expect(model.formatTime(), '05:00');
+      model.remainingSeconds = 90;
+      expect(model.formatTime(), '01:30');
+    });
+
+    test('PomodoroModel getProgress returns correct value', () async {
+      final model = PomodoroModel();
+      await model.init();
+      model.currentPhase = PomodoroPhase.work;
+      model.remainingSeconds = 1500;
+      expect(model.getProgress(), 0.0);
+      model.remainingSeconds = 750;
+      expect(model.getProgress(), closeTo(0.5, 0.01));
+      model.remainingSeconds = 0;
+      expect(model.getProgress(), 1.0);
+    });
+
+    test('PomodoroModel getPhaseLabel returns correct labels', () async {
+      final model = PomodoroModel();
+      model.currentPhase = PomodoroPhase.work;
+      expect(model.getPhaseLabel(), 'Work');
+      model.currentPhase = PomodoroPhase.shortBreak;
+      expect(model.getPhaseLabel(), 'Short Break');
+      model.currentPhase = PomodoroPhase.longBreak;
+      expect(model.getPhaseLabel(), 'Long Break');
+    });
+
+    test('PomodoroModel getPhaseIcon returns correct icons', () async {
+      final model = PomodoroModel();
+      model.currentPhase = PomodoroPhase.work;
+      expect(model.getPhaseIcon(), Icons.work);
+      model.currentPhase = PomodoroPhase.shortBreak;
+      expect(model.getPhaseIcon(), Icons.coffee);
+      model.currentPhase = PomodoroPhase.longBreak;
+      expect(model.getPhaseIcon(), Icons.weekend);
+    });
+
+    test('PomodoroModel updateSettings works', () async {
+      final model = PomodoroModel();
+      await model.init();
+      model.updateSettings(30, 10, 20);
+      expect(model.workDuration, 30);
+      expect(model.shortBreakDuration, 10);
+      expect(model.longBreakDuration, 20);
+      expect(model.remainingSeconds, 30 * 60);
+    });
+
+    test('PomodoroModel resetCompletedSessions works', () async {
+      final model = PomodoroModel();
+      await model.init();
+      model.completedSessions = 5;
+      model.resetCompletedSessions();
+      expect(model.completedSessions, 0);
+    });
+
+    test('PomodoroModel clearHistory works', () async {
+      final model = PomodoroModel();
+      await model.init();
+      model.clearHistory();
+      expect(model.hasHistory, false);
+      expect(model.sessionHistory.isEmpty, true);
+    });
+
+    test('PomodoroModel currentPhaseDuration returns correct values', () async {
+      final model = PomodoroModel();
+      model.currentPhase = PomodoroPhase.work;
+      expect(model.currentPhaseDuration, 25);
+      model.currentPhase = PomodoroPhase.shortBreak;
+      expect(model.currentPhaseDuration, 5);
+      model.currentPhase = PomodoroPhase.longBreak;
+      expect(model.currentPhaseDuration, 15);
+    });
+
+    test('PomodoroCard renders loading state', () {
+      expect(PomodoroCard, isNotNull);
+    });
+
+    test('PomodoroCard widget exists', () {
+      expect(PomodoroCard, isNotNull);
+    });
+
+    test('Global.providerList includes Pomodoro', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Pomodoro'), true);
+    });
+
+    testWidgets('PomodoroCard shows correct time format', (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: pomodoroModel,
+            builder: (context, child) => PomodoroCard(),
+          ),
+        ),
+      ));
+
+      await pomodoroModel.init();
+      pomodoroModel.remainingSeconds = 1500;
+      await tester.pump();
+    });
+
+    test('PomodoroModel history max limit', () async {
+      final model = PomodoroModel();
+      await model.init();
+
+      for (int i = 0; i < 25; i++) {
+        final session = PomodoroSession(
+          startTime: DateTime.now(),
+          phase: PomodoroPhase.work,
+          durationMinutes: 25,
+        );
+        model.addTestSession(session);
+      }
+
+      expect(model.sessionHistory.length, 20);
+    });
+
+    test('PomodoroModel refresh calls notifyListeners', () async {
+      final model = PomodoroModel();
+      await model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      await model.refresh();
+      expect(notifyCount, 1);
     });
   });
 }
