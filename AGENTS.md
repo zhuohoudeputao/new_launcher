@@ -196,15 +196,27 @@ Settings auto-saved via `SharedPreferences`:
   - Uses `Card.filled` for Material 3 style
   - Keywords: calc, calculator, math, calculate, equal
 - **WorldClock**: Multiple timezone display
-  - Shows time in up to 10 configured timezones
-  - Day/night icon indicators (sun/moon)
-  - Time period labels (morning, afternoon, evening, night)
-  - Add timezone via dialog with (+) button
-  - Remove timezone by swipe gesture or long press
-  - Default timezones: New York, London, Tokyo
-  - 14 supported timezones worldwide
-  - Uses `Card.filled` for Material 3 style
-  - Keywords: world, clock, timezone, time, zone, add, remove
+   - Shows time in up to 10 configured timezones
+   - Day/night icon indicators (sun/moon)
+   - Time period labels (morning, afternoon, evening, night)
+   - Add timezone via dialog with (+) button
+   - Remove timezone by swipe gesture or long press
+   - Default timezones: New York, London, Tokyo
+   - 14 supported timezones worldwide
+   - Uses `Card.filled` for Material 3 style
+   - Keywords: world, clock, timezone, time, zone, add, remove
+- **Countdown**: Event countdown tracking
+   - Track countdowns to important dates
+   - Add countdowns with name and target date
+   - Optional time selection (hours/minutes)
+   - Edit and delete countdowns
+   - Maximum 10 countdowns stored
+   - Countdowns persisted via SharedPreferences
+   - Human-readable time display (days, hours, minutes)
+   - Expired countdown indication
+   - Color coding for urgency (days < 7 shows warning color)
+   - Uses `Card.filled` for Material 3 style
+   - Keywords: countdown, deadline, birthday, event, date, add
 
 ## Material 3 Design System
 
@@ -284,8 +296,9 @@ Test coverage includes:
 - Stopwatch provider tests (provider existence, keywords, model state, stopwatch operations)
 - Calculator provider tests (provider existence, keywords, model state, calculation operations)
 - World Clock provider tests (provider existence, keywords, model state, timezone operations)
+- Countdown provider tests (provider existence, keywords, model state, CRUD operations, time formatting)
 
-Total tests: 417 tests
+Total tests: 441 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -326,6 +339,7 @@ Technical documentation is available in `docs/`:
 - `stopwatch_provider.md` - Stopwatch provider implementation
 - `calculator_provider.md` - Calculator provider implementation
 - `worldclock_provider.md` - World Clock provider implementation
+- `countdown_provider.md` - Countdown provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice

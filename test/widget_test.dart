@@ -13,6 +13,7 @@ import 'package:new_launcher/providers/provider_notes.dart';
 import 'package:new_launcher/providers/provider_stopwatch.dart';
 import 'package:new_launcher/providers/provider_timer.dart';
 import 'package:new_launcher/providers/provider_worldclock.dart';
+import 'package:new_launcher/providers/provider_countdown.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2453,7 +2454,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 14);
+      expect(Global.providerList.length, 15);
     });
 
     test('Global.providerList names are correct', () {
@@ -3620,7 +3621,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 14);
+      expect(initCount, 15);
     });
   });
 
@@ -3928,8 +3929,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 14 providers', () {
-      expect(Global.providerList.length, 14);
+    test('Global.providerList now contains 15 providers', () {
+      expect(Global.providerList.length, 15);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -4612,6 +4613,255 @@ void main() {
     test('Global.providerList includes WorldClock', () {
       final names = Global.providerList.map((p) => p.name).toList();
       expect(names.contains('WorldClock'), true);
+    });
+  });
+
+  group('Countdown provider tests', () {
+    test('providerCountdown exists in Global.providerList', () {
+      final countdownProvider = Global.providerList.where((p) => p.name == 'Countdown').first;
+      expect(countdownProvider.name, 'Countdown');
+    });
+
+    test('Countdown provider keywords include countdown', () {
+      final keywords = 'countdown deadline birthday event date add';
+      expect(keywords.contains('countdown'), true);
+    });
+
+    test('Countdown provider keywords include deadline', () {
+      final keywords = 'countdown deadline birthday event date add';
+      expect(keywords.contains('deadline'), true);
+    });
+
+    test('Countdown provider keywords include birthday', () {
+      final keywords = 'countdown deadline birthday event date add';
+      expect(keywords.contains('birthday'), true);
+    });
+
+    test('CountdownModel starts uninitialized', () {
+      final model = CountdownModel();
+      expect(model.isInitialized, false);
+    });
+
+    test('CountdownModel is ChangeNotifier', () {
+      final model = CountdownModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    test('CountdownModel init sets initialized', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      await model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('CountdownModel addCountdown works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      await model.init();
+      
+      model.addCountdown('Birthday', DateTime.now().add(Duration(days: 30)));
+      expect(model.length, 1);
+      expect(model.countdowns[0].name, 'Birthday');
+    });
+
+    test('CountdownModel addCountdown does not add empty name', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      await model.init();
+      
+      model.addCountdown('', DateTime.now().add(Duration(days: 30)));
+      expect(model.length, 0);
+    });
+
+    test('CountdownModel updateCountdown works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      await model.init();
+      
+      model.addCountdown('Birthday', DateTime.now().add(Duration(days: 30)));
+      model.updateCountdown(0, 'Vacation', DateTime.now().add(Duration(days: 60)));
+      expect(model.countdowns[0].name, 'Vacation');
+    });
+
+    test('CountdownModel deleteCountdown works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      await model.init();
+      
+      model.addCountdown('Birthday', DateTime.now().add(Duration(days: 30)));
+      model.addCountdown('Vacation', DateTime.now().add(Duration(days: 60)));
+      expect(model.length, 2);
+      
+      model.deleteCountdown(0);
+      expect(model.length, 1);
+    });
+
+    test('CountdownModel clearAllCountdowns works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      await model.init();
+      
+      model.addCountdown('Birthday', DateTime.now().add(Duration(days: 30)));
+      model.addCountdown('Vacation', DateTime.now().add(Duration(days: 60)));
+      expect(model.length, 2);
+      
+      model.clearAllCountdowns();
+      expect(model.length, 0);
+    });
+
+    test('CountdownModel maxCountdowns is 10', () {
+      expect(CountdownModel.maxCountdowns, 10);
+    });
+
+    test('CountdownModel max limit works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      await model.init();
+      
+      for (int i = 0; i < 15; i++) {
+        model.addCountdown('Event $i', DateTime.now().add(Duration(days: i + 1)));
+      }
+      expect(model.length, 10);
+    });
+
+    test('CountdownEntry properties', () {
+      final entry = CountdownEntry(
+        name: 'Test Event',
+        targetDate: DateTime(2026, 12, 25),
+        createdAt: DateTime(2026, 1, 1),
+      );
+      expect(entry.name, 'Test Event');
+      expect(entry.targetDate, DateTime(2026, 12, 25));
+      expect(entry.createdAt, DateTime(2026, 1, 1));
+    });
+
+    test('CountdownEntry toJson and fromJson', () {
+      final entry = CountdownEntry(
+        name: 'Test Event',
+        targetDate: DateTime(2026, 12, 25),
+        createdAt: DateTime(2026, 1, 1),
+      );
+      final json = entry.toJson();
+      final fromJson = CountdownEntry.fromJson(json);
+      expect(fromJson.name, entry.name);
+      expect(fromJson.targetDate, entry.targetDate);
+      expect(fromJson.createdAt, entry.createdAt);
+    });
+
+    test('CountdownModel getRemainingTime works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      await model.init();
+      
+      final targetDate = DateTime.now().add(Duration(days: 5, hours: 1));
+      final entry = CountdownEntry(
+        name: 'Event',
+        targetDate: targetDate,
+        createdAt: DateTime.now(),
+      );
+      
+      final remaining = model.getRemainingTime(entry);
+      expect(remaining.inDays, greaterThanOrEqualTo(4));
+    });
+
+    test('CountdownModel getRemainingTime returns zero for past dates', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      await model.init();
+      
+      final entry = CountdownEntry(
+        name: 'Past Event',
+        targetDate: DateTime.now().subtract(Duration(days: 1)),
+        createdAt: DateTime.now().subtract(Duration(days: 2)),
+      );
+      
+      final remaining = model.getRemainingTime(entry);
+      expect(remaining, Duration.zero);
+    });
+
+    test('CountdownModel isExpired works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      await model.init();
+      
+      final futureEntry = CountdownEntry(
+        name: 'Future Event',
+        targetDate: DateTime.now().add(Duration(days: 1)),
+        createdAt: DateTime.now(),
+      );
+      expect(model.isExpired(futureEntry), false);
+      
+      final pastEntry = CountdownEntry(
+        name: 'Past Event',
+        targetDate: DateTime.now().subtract(Duration(days: 1)),
+        createdAt: DateTime.now().subtract(Duration(days: 2)),
+      );
+      expect(model.isExpired(pastEntry), true);
+    });
+
+    test('CountdownModel formatRemainingTime works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      await model.init();
+      
+      final entry = CountdownEntry(
+        name: 'Event',
+        targetDate: DateTime.now().add(Duration(days: 5, hours: 3)),
+        createdAt: DateTime.now(),
+      );
+      
+      final formatted = model.formatRemainingTime(entry);
+      expect(formatted.contains('d'), true);
+    });
+
+    test('CountdownModel formatRemainingTime returns Expired for past dates', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      await model.init();
+      
+      final entry = CountdownEntry(
+        name: 'Past Event',
+        targetDate: DateTime.now().subtract(Duration(days: 1)),
+        createdAt: DateTime.now().subtract(Duration(days: 2)),
+      );
+      
+      final formatted = model.formatRemainingTime(entry);
+      expect(formatted, 'Expired');
+    });
+
+    testWidgets('CountdownCard renders loading state', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CountdownModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => CountdownCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Countdowns: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('CountdownCard widget exists', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: countdownModel,
+            builder: (context, child) => CountdownCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.byType(CountdownCard), findsOneWidget);
+    });
+
+    test('Global.providerList includes Countdown', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Countdown'), true);
     });
   });
 }

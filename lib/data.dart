@@ -25,6 +25,7 @@ import 'package:new_launcher/providers/provider_time.dart';
 import 'package:new_launcher/providers/provider_wallpaper.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
 import 'package:new_launcher/providers/provider_worldclock.dart';
+import 'package:new_launcher/providers/provider_countdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -163,6 +164,7 @@ class Global {
     providerStopwatch,
     providerCalculator,
     providerWorldClock,
+    providerCountdown,
   ];
 
   //_______________________________________________________________________
