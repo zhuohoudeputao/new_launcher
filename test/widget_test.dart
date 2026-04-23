@@ -32,6 +32,7 @@ import 'package:new_launcher/providers/provider_numberbase.dart';
 import 'package:new_launcher/providers/provider_calendar.dart';
 import 'package:new_launcher/providers/provider_progress.dart';
 import 'package:new_launcher/providers/provider_anniversary.dart';
+import 'package:new_launcher/providers/provider_sleep.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2472,7 +2473,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 33);
+      expect(Global.providerList.length, 34);
     });
 
     test('Global.providerList names are correct', () {
@@ -3639,7 +3640,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 33);
+      expect(initCount, 34);
     });
   });
 
@@ -3957,7 +3958,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 33);
+      expect(Global.providerList.length, 34);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5301,7 +5302,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 33);
+      expect(Global.providerList.length, 34);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -8828,6 +8829,370 @@ void main() {
       expect(model.length, 0);
       model.addAnniversary('Test', 6, 15, null);
       expect(model.length, 1);
+    });
+  });
+
+  group('Sleep provider tests', () {
+    test('SleepQuality enum has correct values', () {
+      expect(SleepQuality.values.length, 5);
+      expect(SleepQuality.terrible.value, 1);
+      expect(SleepQuality.poor.value, 2);
+      expect(SleepQuality.fair.value, 3);
+      expect(SleepQuality.good.value, 4);
+      expect(SleepQuality.excellent.value, 5);
+    });
+
+    test('SleepQuality emoji works', () {
+      expect(SleepQuality.terrible.emoji, '😫');
+      expect(SleepQuality.poor.emoji, '😴');
+      expect(SleepQuality.fair.emoji, '😐');
+      expect(SleepQuality.good.emoji, '😊');
+      expect(SleepQuality.excellent.emoji, '😄');
+    });
+
+    test('SleepQuality label works', () {
+      expect(SleepQuality.terrible.label, 'Terrible');
+      expect(SleepQuality.poor.label, 'Poor');
+      expect(SleepQuality.fair.label, 'Fair');
+      expect(SleepQuality.good.label, 'Good');
+      expect(SleepQuality.excellent.label, 'Excellent');
+    });
+
+    test('SleepQuality fromValue works', () {
+      expect(SleepQualityExtension.fromValue(1), SleepQuality.terrible);
+      expect(SleepQualityExtension.fromValue(2), SleepQuality.poor);
+      expect(SleepQualityExtension.fromValue(3), SleepQuality.fair);
+      expect(SleepQualityExtension.fromValue(4), SleepQuality.good);
+      expect(SleepQualityExtension.fromValue(5), SleepQuality.excellent);
+      expect(SleepQualityExtension.fromValue(0), SleepQuality.fair);
+      expect(SleepQualityExtension.fromValue(6), SleepQuality.fair);
+    });
+
+    test('SleepEntry properties work', () {
+      final entry = SleepEntry(
+        date: DateTime(2026, 4, 24),
+        hours: 7.5,
+        qualityValue: 4,
+        note: 'Good sleep',
+      );
+      expect(entry.date, DateTime(2026, 4, 24));
+      expect(entry.hours, 7.5);
+      expect(entry.qualityValue, 4);
+      expect(entry.note, 'Good sleep');
+      expect(entry.quality, SleepQuality.good);
+    });
+
+    test('SleepEntry formatHours works', () {
+      final entry1 = SleepEntry(date: DateTime.now(), hours: 7.0, qualityValue: 3);
+      expect(entry1.formatHours(), '7h');
+
+      final entry2 = SleepEntry(date: DateTime.now(), hours: 7.5, qualityValue: 3);
+      expect(entry2.formatHours(), '7h 30m');
+
+      final entry3 = SleepEntry(date: DateTime.now(), hours: 8.25, qualityValue: 3);
+      expect(entry3.formatHours(), '8h 15m');
+    });
+
+    test('SleepEntry toJson and fromJson work', () {
+      final entry = SleepEntry(
+        date: DateTime(2026, 4, 24),
+        hours: 7.5,
+        qualityValue: 4,
+        note: 'Test note',
+      );
+      final json = entry.toJson();
+      final restored = SleepEntry.fromJson(json);
+
+      expect(restored.date, entry.date);
+      expect(restored.hours, entry.hours);
+      expect(restored.qualityValue, entry.qualityValue);
+      expect(restored.note, entry.note);
+    });
+
+    test('SleepEntry getDayKey works', () {
+      final date = DateTime(2026, 4, 24);
+      final key = SleepEntry.getDayKey(date);
+      expect(key, '2026-4-24');
+    });
+
+    test('SleepModel initialization works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.history.length, 0);
+    });
+
+    test('SleepModel logSleep works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      model.logSleep(7.5, SleepQuality.good);
+      expect(model.history.length, 1);
+      expect(model.history.first.hours, 7.5);
+      expect(model.history.first.qualityValue, 4);
+    });
+
+    test('SleepModel logSleep with custom date works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      final customDate = DateTime(2026, 4, 20);
+      model.logSleep(8.0, SleepQuality.excellent, customDate: customDate);
+      expect(model.history.length, 1);
+      expect(model.history.first.date.day, 20);
+    });
+
+    test('SleepModel logSleep updates existing entry', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      final yesterday = DateTime.now().subtract(Duration(days: 1));
+      model.logSleep(7.0, SleepQuality.fair);
+      model.logSleep(8.0, SleepQuality.good);
+
+      expect(model.history.length, 1);
+      expect(model.history.first.hours, 8.0);
+    });
+
+    test('SleepModel deleteEntry works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      model.logSleep(7.0, SleepQuality.good, customDate: DateTime.now().subtract(Duration(days: 2)));
+      model.logSleep(8.0, SleepQuality.excellent, customDate: DateTime.now().subtract(Duration(days: 1)));
+
+      expect(model.history.length, 2);
+      model.deleteEntry(0);
+      expect(model.history.length, 1);
+    });
+
+    test('SleepModel clearHistory works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      model.logSleep(7.0, SleepQuality.good);
+      model.logSleep(8.0, SleepQuality.excellent, customDate: DateTime.now().subtract(Duration(days: 2)));
+
+      await model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('SleepModel averageHours works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      model.logSleep(7.0, SleepQuality.good, customDate: DateTime.now().subtract(Duration(days: 2)));
+      model.logSleep(8.0, SleepQuality.excellent, customDate: DateTime.now().subtract(Duration(days: 1)));
+
+      expect(model.averageHours, 7.5);
+    });
+
+    test('SleepModel averageHours empty returns 0', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      expect(model.averageHours, 0);
+    });
+
+    test('SleepModel averageQuality works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      model.logSleep(7.0, SleepQuality.good, customDate: DateTime.now().subtract(Duration(days: 2)));
+      model.logSleep(8.0, SleepQuality.excellent, customDate: DateTime.now().subtract(Duration(days: 1)));
+
+      expect(model.averageQuality, 4.5);
+    });
+
+    test('SleepModel averageQualityLevel works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      model.logSleep(7.0, SleepQuality.good, customDate: DateTime.now().subtract(Duration(days: 2)));
+      model.logSleep(8.0, SleepQuality.good, customDate: DateTime.now().subtract(Duration(days: 1)));
+
+      expect(model.averageQualityLevel, SleepQuality.good);
+    });
+
+    test('SleepModel nightsGoalMet works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      model.logSleep(6.0, SleepQuality.fair, customDate: DateTime.now().subtract(Duration(days: 3)));
+      model.logSleep(7.0, SleepQuality.good, customDate: DateTime.now().subtract(Duration(days: 2)));
+      model.logSleep(8.0, SleepQuality.excellent, customDate: DateTime.now().subtract(Duration(days: 1)));
+
+      expect(model.nightsGoalMet, 2);
+    });
+
+    test('SleepModel hasHistory getter works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      expect(model.hasHistory, false);
+      model.logSleep(7.0, SleepQuality.good);
+      expect(model.hasHistory, true);
+    });
+
+    test('SleepModel lastNightEntry getter works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      model.logSleep(8.0, SleepQuality.good);
+      expect(model.lastNightEntry, isNotNull);
+      expect(model.lastNightEntry!.hours, 8.0);
+    });
+
+    test('SleepModel maxHistoryDays constant', () {
+      expect(SleepModel.maxHistoryDays, 30);
+    });
+
+    test('SleepModel max limit works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+
+      for (int i = 0; i < 35; i++) {
+        model.logSleep(7.0, SleepQuality.good, customDate: DateTime.now().subtract(Duration(days: i)));
+      }
+      expect(model.history.length, 30);
+    });
+
+    testWidgets('SleepCard renders loading state', (WidgetTester tester) async {
+      final model = SleepModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: SleepCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Sleep Tracker: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('SleepCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      await sleepModel.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: sleepModel,
+              child: SleepCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Sleep Tracker'), findsOneWidget);
+      expect(find.text('No sleep logged for last night'), findsOneWidget);
+    });
+
+    testWidgets('SleepCard renders with sleep data', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SleepModel();
+      await model.init();
+      model.logSleep(8.0, SleepQuality.good);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: SleepCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Sleep Tracker'), findsOneWidget);
+      expect(find.text('8h'), findsOneWidget);
+    });
+
+    testWidgets('SleepCard widget exists', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: sleepModel,
+            child: SleepCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(SleepCard), findsOneWidget);
+    });
+
+    testWidgets('SleepLogDialog widget exists', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => SleepLogDialog(),
+              ),
+              child: Text("Show"),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text("Show"));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SleepLogDialog), findsOneWidget);
+      expect(find.text("Log Sleep"), findsOneWidget);
+    });
+
+    test('providerSleep exists', () {
+      expect(providerSleep, isNotNull);
+      expect(providerSleep.name, 'Sleep');
+    });
+
+    test('Global.providerList includes Sleep', () {
+      final hasSleep = Global.providerList.any((p) => p.name == 'Sleep');
+      expect(hasSleep, true);
+    });
+
+    test('Sleep provider keywords include sleep', () {
+      final keywords = 'sleep rest nap bed track night hours quality bedtime';
+      expect(keywords.contains('sleep'), true);
+    });
+
+    test('Sleep provider keywords include bedtime', () {
+      final keywords = 'sleep rest nap bed track night hours quality bedtime';
+      expect(keywords.contains('bedtime'), true);
+    });
+
+    test('Sleep provider keywords include hours', () {
+      final keywords = 'sleep rest nap bed track night hours quality bedtime';
+      expect(keywords.contains('hours'), true);
+    });
+
+    test('SleepModel is ChangeNotifier', () {
+      final model = SleepModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('sleepModel global instance exists', () {
+      expect(sleepModel, isNotNull);
     });
   });
 }

@@ -413,6 +413,18 @@ Settings auto-saved via `SharedPreferences`:
     - Color coding for urgency (today shows celebration color)
     - Uses `Card.filled` for Material 3 style
     - Keywords: anniversary, birthday, recurring, event, date, add
+- **Sleep**: Sleep duration and quality tracker
+    - Track sleep hours (0-12 hours, 0.5-hour increments)
+    - Five quality levels with emoji indicators: Terrible 😫, Poor 😴, Fair 😐, Good 😊, Excellent 😄
+    - Optional notes for each sleep entry
+    - Log sleep for custom dates (within 30 days)
+    - Statistics: average hours, average quality, nights meeting 7-hour goal
+    - Delete individual entries via history view
+    - Clear all history with confirmation dialog
+    - Maximum 30 entries stored (oldest removed when limit exceeded)
+    - Sleep entries persisted via SharedPreferences
+    - Uses `Card.filled` and `Slider` for Material 3 style
+    - Keywords: sleep, rest, nap, bed, track, night, hours, quality, bedtime
 
 ## Material 3 Design System
 
@@ -510,8 +522,10 @@ Test coverage includes:
 - Number Base Converter provider tests (provider existence, keywords, model state, conversion operations)
 - Calendar provider tests (provider existence, keywords, model state, navigation buttons, widget rendering)
 - Progress provider tests (provider existence, keywords, model state, CRUD operations, percentage calculation, widget rendering)
+- Anniversary provider tests (provider existence, keywords, model state, CRUD operations, time formatting, widget rendering)
+- Sleep provider tests (provider existence, keywords, model state, sleep logging, statistics calculations, widget rendering)
   
-Total tests: 854 tests
+Total tests: 889 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -571,6 +585,7 @@ Technical documentation is available in `docs/`:
 - `numberbase_provider.md` - Number Base Converter provider implementation
 - `progress_provider.md` - Progress tracker provider implementation
 - `anniversary_provider.md` - Anniversary provider implementation
+- `sleep_provider.md` - Sleep tracker provider implementation
 - `calendar_model.md` - CalendarModel implementation for provider pattern consistency
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks
