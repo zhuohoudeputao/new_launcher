@@ -440,6 +440,7 @@ Technical documentation is available in `docs/`:
 - `random_provider.md` - Random Generator provider implementation
 - `color_provider.md` - Color Generator provider implementation
 - `currency_provider.md` - Currency Converter provider implementation
+- `currency_provider_fix.md` - Currency provider MultiProvider fix
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice
