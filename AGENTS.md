@@ -291,6 +291,15 @@ Settings auto-saved via `SharedPreferences`:
     - Light/dark color detection
     - Uses `Card.filled` and `SelectableText` for Material 3 style
     - Keywords: color, random, hex, rgb, picker, palette, generate
+- **Currency**: Currency converter with real-time exchange rates
+    - 20 supported currencies (USD, EUR, GBP, JPY, CNY, AUD, CAD, CHF, etc.)
+    - Real-time rates from Frankfurter API
+    - Swap currencies with one tap
+    - Conversion history (up to 10 entries)
+    - Rate caching for 1 hour
+    - Manual refresh button
+    - Uses `Card.filled` and `DropdownButton` for Material 3 style
+    - Keywords: currency, exchange, rate, money, convert, dollar, euro, pound, yen, usd, eur, gbp, jpy, cny
 
 ## Material 3 Design System
 
@@ -379,8 +388,9 @@ Test coverage includes:
 - QR Code provider tests (provider existence, keywords, model state, text operations, widget rendering)
 - Random Generator provider tests (provider existence, keywords, model state, coin flip, dice roll, password generation)
 - Color Generator provider tests (provider existence, keywords, model state, color operations, HEX/RGB conversion)
+- Currency Converter provider tests (provider existence, keywords, model state, currency operations, widget rendering)
 
-Total tests: 609 tests
+Total tests: 631 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -429,6 +439,7 @@ Technical documentation is available in `docs/`:
 - `qrcode_provider.md` - QR code generator provider implementation
 - `random_provider.md` - Random Generator provider implementation
 - `color_provider.md` - Color Generator provider implementation
+- `currency_provider.md` - Currency Converter provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice

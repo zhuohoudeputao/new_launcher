@@ -21,6 +21,7 @@ import 'package:new_launcher/providers/provider_todo.dart';
 import 'package:new_launcher/providers/provider_qrcode.dart';
 import 'package:new_launcher/providers/provider_random.dart';
 import 'package:new_launcher/providers/provider_color.dart';
+import 'package:new_launcher/providers/provider_currency.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2461,7 +2462,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 22);
+      expect(Global.providerList.length, 23);
     });
 
     test('Global.providerList names are correct', () {
@@ -3628,7 +3629,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 22);
+      expect(initCount, 23);
     });
   });
 
@@ -3936,8 +3937,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 21 providers', () {
-      expect(Global.providerList.length, 22);
+    test('Global.providerList now contains 22 providers', () {
+      expect(Global.providerList.length, 23);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5262,8 +5263,8 @@ void main() {
       expect(UnitConverterCard, isNotNull);
     });
 
-    test('Global.providerList now contains 21 providers', () {
-      expect(Global.providerList.length, 22);
+    test('Global.providerList now contains 22 providers', () {
+      expect(Global.providerList.length, 23);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -6466,6 +6467,198 @@ void main() {
       expect(model.red, 255);
       expect(model.green, 0);
       expect(model.blue, 255);
+    });
+  });
+
+  group('Currency Converter provider tests', () {
+    test('CurrencyModel exists', () {
+      expect(currencyModel, isNotNull);
+      expect(currencyModel, isA<CurrencyModel>());
+    });
+
+    test('CurrencyModel init works', () {
+      final model = CurrencyModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('CurrencyModel default values', () {
+      final model = CurrencyModel();
+      model.init();
+      expect(model.fromCurrency, 'USD');
+      expect(model.toCurrency, 'EUR');
+      expect(model.inputValue, '1');
+    });
+
+    test('CurrencyModel setInputValue works', () {
+      final model = CurrencyModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      
+      model.setInputValue('100');
+      expect(model.inputValue, '100');
+      expect(notifyCount, 1);
+    });
+
+    test('CurrencyModel setFromCurrency works', () {
+      final model = CurrencyModel();
+      model.init();
+      
+      model.setFromCurrency('EUR');
+      expect(model.fromCurrency, 'EUR');
+      expect(model.toCurrency, isNot('EUR'));
+    });
+
+    test('CurrencyModel setToCurrency works', () {
+      final model = CurrencyModel();
+      model.init();
+      
+      model.setToCurrency('GBP');
+      expect(model.toCurrency, 'GBP');
+      expect(model.fromCurrency, isNot('GBP'));
+    });
+
+    test('CurrencyModel swapCurrencies changes both', () {
+      final model = CurrencyModel();
+      model.init();
+      final originalFrom = model.fromCurrency;
+      final originalTo = model.toCurrency;
+      
+      model.swapCurrencies();
+      expect(model.fromCurrency, originalTo);
+      expect(model.toCurrency, originalFrom);
+    });
+
+    test('CurrencyModel clear resets input', () {
+      final model = CurrencyModel();
+      model.init();
+      
+      model.setInputValue('500');
+      model.clear();
+      expect(model.inputValue, '1');
+    });
+
+    test('CurrencyModel clearHistory works', () {
+      final model = CurrencyModel();
+      model.init();
+      
+      model.clearHistory();
+      expect(model.history.length, 0);
+      expect(model.hasHistory, false);
+    });
+
+    test('CurrencyModel refresh calls notifyListeners', () {
+      final model = CurrencyModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      
+      model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    test('CurrencyModel availableCurrencies contains common currencies', () {
+      final model = CurrencyModel();
+      model.init();
+      
+      expect(model.availableCurrencies.contains('USD'), true);
+      expect(model.availableCurrencies.contains('EUR'), true);
+      expect(model.availableCurrencies.contains('GBP'), true);
+      expect(model.availableCurrencies.contains('JPY'), true);
+      expect(model.availableCurrencies.contains('CNY'), true);
+    });
+
+    test('ConversionHistory inputName works', () {
+      final entry = CurrencyConversionHistory(
+        inputValue: 100,
+        inputCurrency: 'USD',
+        outputValue: 85,
+        outputCurrency: 'EUR',
+        timestamp: DateTime.now(),
+      );
+      
+      expect(entry.inputName, 'US Dollar');
+      expect(entry.outputName, 'Euro');
+    });
+
+    test('getCommonCurrencies returns list', () {
+      final currencies = getCommonCurrencies();
+      expect(currencies.length, greaterThan(10));
+      expect(currencies.contains('USD'), true);
+      expect(currencies.contains('EUR'), true);
+    });
+
+    test('currencyInfo contains major currencies', () {
+      expect(currencyInfo['USD'], 'US Dollar');
+      expect(currencyInfo['EUR'], 'Euro');
+      expect(currencyInfo['GBP'], 'British Pound');
+      expect(currencyInfo['JPY'], 'Japanese Yen');
+      expect(currencyInfo['CNY'], 'Chinese Yuan');
+    });
+
+    testWidgets('CurrencyCard widget exists', (tester) async {
+      final model = CurrencyModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => CurrencyCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('Currency'), findsWidgets);
+    });
+
+    test('Global.providerList includes Currency', () {
+      final hasCurrency = Global.providerList.any((p) => p.name == 'Currency');
+      expect(hasCurrency, true);
+    });
+
+    test('providerCurrency exists', () {
+      expect(providerCurrency, isNotNull);
+      expect(providerCurrency.name, 'Currency');
+    });
+
+    testWidgets('CurrencyCard renders initialized state', (tester) async {
+      final model = CurrencyModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => CurrencyCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('Currency Converter'), findsWidgets);
+    });
+
+    test('CurrencyModel keywords are correct', () {
+      expect(providerCurrency.name, 'Currency');
+      expect(providerCurrency.provideActions, isNotNull);
+    });
+
+    test('CurrencyModel isLoading default is false', () {
+      final model = CurrencyModel();
+      expect(model.isLoading, false);
+    });
+
+    test('CurrencyModel error default is null', () {
+      final model = CurrencyModel();
+      expect(model.error, null);
+    });
+
+    test('CurrencyModel rates is empty before fetch', () {
+      final model = CurrencyModel();
+      expect(model.rates.length, 0);
     });
   });
 }
