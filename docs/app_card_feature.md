@@ -54,6 +54,16 @@ ChangeNotifierProvider.value(value: allAppsModel),
 
 ## Implementation Details
 
+### Android Permission
+
+For Android 11+ (API level 30+), the `QUERY_ALL_PACKAGES` permission is required to enumerate all installed apps. Add to `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+```
+
+Without this permission, the `device_apps` package can only see a limited set of apps that explicitly declare visibility to your app.
+
 ### App Enumeration
 
 ```dart
@@ -93,7 +103,7 @@ Each app card:
 ### ListView Performance Optimization
 
 The main ListView.builder uses:
-- `itemExtent: 80`: Fixed item height for better scroll performance
+- Dynamic item height (cards size themselves based on content)
 - `addRepaintBoundaries: true`: Caches rendered widgets
 - `cacheExtent: 500`: Pre-caches items for smoother scrolling
 

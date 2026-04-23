@@ -130,6 +130,7 @@ Settings auto-saved via `SharedPreferences`:
   - `AppStatisticsCard`: Card.outlined with dynamic height statistics display
   - RepaintBoundary and cacheWidth for icon performance
   - Models: `appModel`, `allAppsModel`, `appStatisticsModel`
+  - Requires `QUERY_ALL_PACKAGES` permission for Android 11+ to enumerate all apps
 - **System**: System-related actions
   - Quick launch: camera, settings, clock, calculator
   - Date/time settings: opens Android settings with guidance
