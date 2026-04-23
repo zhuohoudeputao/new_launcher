@@ -8,11 +8,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:new_launcher/ui.dart';
-import 'package:new_launcher/setting.dart';
 import 'package:new_launcher/logger.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/providers/provider_app.dart';
+import 'package:new_launcher/providers/provider_settings.dart';
 import 'package:new_launcher/providers/provider_system.dart';
 import 'package:new_launcher/providers/provider_theme.dart';
 import 'package:new_launcher/providers/provider_time.dart';
@@ -92,22 +92,6 @@ class Global {
     final opacity = await settingsModel.getValue("CardOpacity", 0.7);
     cardOpacityValue = opacity is double ? opacity : 0.7;
     await settingsModel.getValue("WallpaperPicker", true);
-    _addSettingsToInfo();
-  }
-
-  static void _addSettingsToInfo() {
-    infoModel.addInfoWidget(
-        "Settings",
-        customInfoWidget(
-          title: "Settings",
-          icon: Icon(Icons.settings),
-          onTap: () {
-            navigatorKey.currentState?.push(
-              MaterialPageRoute(builder: (context) => Setting()),
-            );
-          },
-        ),
-        title: "Settings");
   }
 
   static Future<void> refreshTheme() async {
@@ -157,6 +141,7 @@ class Global {
   //____________________________________________________________MyProviders
   /// A list for storing providers
   static List<MyProvider> providerList = [
+    providerSettings,
     providerWallpaper,
     providerTheme,
     providerTime,

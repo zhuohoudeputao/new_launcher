@@ -7,6 +7,7 @@ import 'package:new_launcher/data.dart';
 import 'package:new_launcher/setting.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
 import 'package:new_launcher/providers/provider_app.dart';
+import 'package:new_launcher/providers/provider_settings.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2657,11 +2658,12 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 6);
+      expect(Global.providerList.length, 7);
     });
 
     test('Global.providerList names are correct', () {
       final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Settings'), true);
       expect(names.contains('Wallpaper'), true);
       expect(names.contains('Theme'), true);
       expect(names.contains('Time'), true);
@@ -3676,6 +3678,87 @@ void main() {
       
       final clearButton = tester.widget<IconButton>(find.byType(IconButton));
       expect(clearButton.tooltip, 'Clear search');
+    });
+  });
+
+  group('Settings provider tests', () {
+    test('providerSettings exists in Global.providerList', () {
+      final settingsProvider = Global.providerList.where((p) => p.name == 'Settings').first;
+      expect(settingsProvider.name, 'Settings');
+    });
+
+    test('Settings provider has correct actions', () async {
+      final settingsProvider = Global.providerList.where((p) => p.name == 'Settings').first;
+      settingsProvider.provideActions();
+      
+      Global.actionModel.generateSuggestList('settings');
+      await Future.delayed(const Duration(milliseconds: 350));
+      
+      expect(Global.actionModel.suggestList.isNotEmpty, true);
+    });
+
+    test('Settings provider initActions adds SettingsCard', () {
+      final settingsProvider = Global.providerList.where((p) => p.name == 'Settings').first;
+      settingsProvider.initActions();
+      
+      expect(Global.infoModel.infoList.any((w) => w is SettingsCard), true);
+    });
+
+    test('Open settings action keywords are correct', () async {
+      Global.addActions([
+        MyAction(
+          name: 'Open settings',
+          keywords: 'settings launcher configuration options preferences',
+          action: () {},
+          times: List.generate(24, (index) => 0),
+        ),
+      ]);
+      
+      Global.actionModel.generateSuggestList('settings');
+      await Future.delayed(const Duration(milliseconds: 350));
+      
+      expect(Global.actionModel.suggestList.isNotEmpty, true);
+      
+      Global.actionModel.generateSuggestList('preferences');
+      await Future.delayed(const Duration(milliseconds: 350));
+      
+      expect(Global.actionModel.suggestList.isNotEmpty, true);
+    });
+  });
+
+  group('SettingsCard tests', () {
+    testWidgets('SettingsCard renders correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SettingsCard(),
+        ),
+      ));
+      
+      expect(find.text('Settings'), findsOneWidget);
+      expect(find.text('Tap to customize launcher'), findsOneWidget);
+      expect(find.byIcon(Icons.settings), findsOneWidget);
+      expect(find.byIcon(Icons.chevron_right), findsOneWidget);
+    });
+
+    testWidgets('SettingsCard uses Card.filled', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SettingsCard(),
+        ),
+      ));
+      
+      expect(find.byType(Card), findsOneWidget);
+    });
+
+    testWidgets('SettingsCard is tappable', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SettingsCard(),
+        ),
+      ));
+      
+      final settingsCard = tester.widget<ListTile>(find.byType(ListTile));
+      expect(settingsCard.onTap, isNotNull);
     });
   });
 }

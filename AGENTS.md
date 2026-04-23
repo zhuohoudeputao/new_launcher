@@ -102,6 +102,11 @@ Settings auto-saved via `SharedPreferences`:
 
 ## Providers
 
+- **Settings**: Launcher configuration and settings access
+  - `SettingsCard`: Card.filled with Material 3 styling
+  - Settings icon, title, subtitle, and chevron right
+  - Tap to navigate to settings page
+  - Action: "Open settings" with keywords: settings, launcher, configuration, options, preferences
 - **Weather**: Fetches weather using Open-Meteo API with geolocator
   - Current temperature, wind speed, weather condition
   - Location name display (city, country)
@@ -194,7 +199,7 @@ Test coverage includes:
 - Search results indicator tests (filtering, count format, pluralization)
 - SearchTextField tests (rendering, clear button visibility and behavior)
 
-Total tests: ~307 tests
+Total tests: ~314 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -212,6 +217,7 @@ Technical documentation is available in `docs/`:
 - `search_feature.md` - Search feature implementation
 - `search_clear_button.md` - Search clear button widget implementation
 - `search_results_pluralization.md` - Search results pluralization fix
+- `settings_provider.md` - Settings provider implementation
 - `theme_feature.md` - Theme management
 - `wallpaper_feature.md` - Wallpaper handling
 - `weather_service.md` - Weather API integration
