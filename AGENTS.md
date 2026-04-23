@@ -148,6 +148,16 @@ Settings auto-saved via `SharedPreferences`:
   - Real-time battery state updates
   - Manual refresh button
   - Uses `Card.filled` for Material 3 style
+- **Timer**: Countdown timer functionality
+  - Quick preset timers (1, 5, 10, 15, 30 minutes)
+  - Custom timer input
+  - Pause/resume timer controls
+  - Clear all timers with confirmation
+  - Timer completion notification via SnackBar
+  - Maximum 5 concurrent timers
+  - Circular progress indicator for countdown
+  - Uses `Card.filled` for Material 3 style
+  - Keywords: timer, countdown, alarm, clock, time
 - **Notes**: Quick notes for storing text snippets
   - Add, edit, and delete notes
   - Maximum 10 notes stored (oldest removed when limit exceeded)
@@ -228,8 +238,9 @@ Test coverage includes:
 - Pull-to-refresh tests (RefreshIndicator, scroll physics, provider refresh)
 - Battery provider tests (provider existence, keywords, model state, widget rendering)
 - Notes provider tests (provider existence, keywords, model state, CRUD operations)
+- Timer provider tests (provider existence, keywords, model state, timer operations)
 
-Total tests: ~307 tests
+Total tests: ~330 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -265,6 +276,7 @@ Technical documentation is available in `docs/`:
 - `pull_to_refresh.md` - Pull-to-refresh feature implementation
 - `battery_provider.md` - Battery status provider implementation
 - `notes_provider.md` - Notes provider implementation
+- `timer_provider.md` - Timer provider implementation
 
 ## Notice
 DO NOT EDIT task*.md

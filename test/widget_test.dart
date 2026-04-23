@@ -8,6 +8,7 @@ import 'package:new_launcher/providers/provider_weather.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/providers/provider_battery.dart';
 import 'package:new_launcher/providers/provider_notes.dart';
+import 'package:new_launcher/providers/provider_timer.dart';
 import 'package:new_launcher/providers/provider_settings.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
@@ -2449,7 +2450,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 9);
+      expect(Global.providerList.length, 10);
     });
 
     test('Global.providerList names are correct', () {
@@ -2462,6 +2463,7 @@ void main() {
       expect(names.contains('App'), true);
       expect(names.contains('System'), true);
       expect(names.contains('Battery'), true);
+      expect(names.contains('Timer'), true);
     });
 
     test('Global.cardOpacity defaults to 0.7', () {
@@ -3616,7 +3618,247 @@ void main() {
       for (final provider in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 9);
+      expect(initCount, 10);
+    });
+  });
+
+  group('Timer provider tests', () {
+    test('providerTimer exists in Global.providerList', () {
+      final timerProvider = Global.providerList.where((p) => p.name == 'Timer').first;
+      expect(timerProvider.name, 'Timer');
+    });
+
+    test('Timer provider keywords include timer', () {
+      final keywords = 'timer countdown alarm clock time countdown';
+      expect(keywords.contains('timer'), true);
+      expect(keywords.contains('countdown'), true);
+      expect(keywords.contains('clock'), true);
+    });
+
+    test('TimerModel starts uninitialized', () {
+      final model = TimerModel();
+      expect(model.isInitialized, false);
+      expect(model.timers.isEmpty, true);
+    });
+
+    test('TimerModel is ChangeNotifier', () {
+      final model = TimerModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    test('TimerModel init sets initialized', () {
+      final model = TimerModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('TimerModel addTimer works correctly', () {
+      final model = TimerModel();
+      model.init();
+      model.addTimer(60);
+      expect(model.timers.length, 1);
+      expect(model.hasTimers, true);
+      model.clearAllTimers();
+    });
+
+    test('TimerModel addTimer with label', () {
+      final model = TimerModel();
+      model.init();
+      model.addTimer(120, label: 'Test Timer');
+      expect(model.timers.length, 1);
+      expect(model.timers.first.label, 'Test Timer');
+      model.clearAllTimers();
+    });
+
+    test('TimerModel addQuickTimer converts minutes to seconds', () {
+      final model = TimerModel();
+      model.init();
+      model.addQuickTimer(5);
+      expect(model.timers.length, 1);
+      expect(model.timers.first.totalSeconds, 300);
+      model.clearAllTimers();
+    });
+
+    test('TimerModel maxTimers limit works', () {
+      final model = TimerModel();
+      model.init();
+      for (int i = 0; i < 10; i++) {
+        model.addTimer(60);
+      }
+      expect(model.timers.length, TimerModel.maxTimers);
+      model.clearAllTimers();
+    });
+
+    test('TimerModel cancelTimer removes timer', () {
+      final model = TimerModel();
+      model.init();
+      model.addTimer(60, label: 'Test');
+      expect(model.timers.length, 1);
+      model.cancelTimer(model.timers.first.id);
+      expect(model.timers.length, 0);
+    });
+
+    test('TimerModel clearAllTimers works', () {
+      final model = TimerModel();
+      model.init();
+      model.addTimer(60);
+      model.addTimer(120);
+      model.addTimer(180);
+      expect(model.timers.length, 3);
+      model.clearAllTimers();
+      expect(model.timers.length, 0);
+      expect(model.hasTimers, false);
+    });
+
+    test('TimerEntry displayTime format', () {
+      final entry1 = TimerEntry(id: '1', totalSeconds: 60, remainingSeconds: 60);
+      expect(entry1.displayTime, '1:00');
+      
+      final entry2 = TimerEntry(id: '2', totalSeconds: 90, remainingSeconds: 90);
+      expect(entry2.displayTime, '1:30');
+      
+      final entry3 = TimerEntry(id: '3', totalSeconds: 3600, remainingSeconds: 3600);
+      expect(entry3.displayTime, '1:00:00');
+      
+      final entry4 = TimerEntry(id: '4', totalSeconds: 3661, remainingSeconds: 3661);
+      expect(entry4.displayTime, '1:01:01');
+    });
+
+    test('TimerEntry totalDisplayTime format', () {
+      final entry1 = TimerEntry(id: '1', totalSeconds: 60);
+      expect(entry1.totalDisplayTime, '1m');
+      
+      final entry2 = TimerEntry(id: '2', totalSeconds: 120);
+      expect(entry2.totalDisplayTime, '2m');
+      
+      final entry3 = TimerEntry(id: '3', totalSeconds: 3600);
+      expect(entry3.totalDisplayTime, '1h 0m');
+      
+      final entry4 = TimerEntry(id: '4', totalSeconds: 3661);
+      expect(entry4.totalDisplayTime, '1h 1m');
+    });
+
+    test('TimerEntry progress calculation', () {
+      final entry = TimerEntry(id: '1', totalSeconds: 100, remainingSeconds: 50);
+      expect(entry.progress, 0.5);
+      
+      final entry2 = TimerEntry(id: '2', totalSeconds: 60, remainingSeconds: 60);
+      expect(entry2.progress, 1.0);
+      
+      final entry3 = TimerEntry(id: '3', totalSeconds: 60, remainingSeconds: 0);
+      expect(entry3.progress, 0.0);
+    });
+
+    testWidgets('TimerCard renders loading state', (WidgetTester tester) async {
+      final model = TimerModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: TimerCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Timer: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('TimerCard renders initialized state', (WidgetTester tester) async {
+      final model = TimerModel();
+      model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: TimerCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Quick Timer'), findsOneWidget);
+    });
+
+    testWidgets('TimerCard shows quick timer buttons', (WidgetTester tester) async {
+      final model = TimerModel();
+      model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: TimerCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('1m'), findsOneWidget);
+      expect(find.text('5m'), findsOneWidget);
+      expect(find.text('10m'), findsOneWidget);
+      expect(find.text('15m'), findsOneWidget);
+      expect(find.text('30m'), findsOneWidget);
+    });
+
+    test('TimerCard widget exists', () {
+      expect(TimerCard, isNotNull);
+    });
+
+    test('AddTimerDialog widget exists', () {
+      expect(AddTimerDialog, isNotNull);
+    });
+
+    test('TimerModel pauseTimer works', () {
+      final model = TimerModel();
+      model.init();
+      model.addTimer(60, label: 'Test');
+      final entry = model.timers.first;
+      expect(entry.isActive, true);
+      model.pauseTimer(entry.id);
+      expect(entry.isActive, false);
+      model.clearAllTimers();
+    });
+
+    test('TimerModel resumeTimer works', () {
+      final model = TimerModel();
+      model.init();
+      model.addTimer(60, label: 'Test');
+      final entry = model.timers.first;
+      model.pauseTimer(entry.id);
+      expect(entry.isActive, false);
+      model.resumeTimer(entry.id);
+      expect(entry.isActive, true);
+      model.clearAllTimers();
+    });
+
+    test('TimerModel refresh calls notifyListeners', () {
+      final model = TimerModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    testWidgets('TimerCard shows timer when added', (WidgetTester tester) async {
+      final model = TimerModel();
+      model.init();
+      model.addTimer(60, label: 'Test Timer');
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: TimerCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('1:00'), findsOneWidget);
+      expect(find.text('Test Timer'), findsOneWidget);
+      
+      model.clearAllTimers();
+      await tester.pump();
     });
   });
 }

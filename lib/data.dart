@@ -14,6 +14,7 @@ import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/providers/provider_battery.dart';
 import 'package:new_launcher/providers/provider_notes.dart';
+import 'package:new_launcher/providers/provider_timer.dart';
 import 'package:new_launcher/providers/provider_settings.dart';
 import 'package:new_launcher/providers/provider_system.dart';
 import 'package:new_launcher/providers/provider_theme.dart';
@@ -153,6 +154,7 @@ class Global {
     providerSystem,
     providerBattery,
     providerNotes,
+    providerTimer,
   ];
 
   //_______________________________________________________________________
