@@ -29,6 +29,7 @@ import 'package:new_launcher/providers/provider_water.dart';
 import 'package:new_launcher/providers/provider_mood.dart';
 import 'package:new_launcher/providers/provider_expense.dart';
 import 'package:new_launcher/providers/provider_numberbase.dart';
+import 'package:new_launcher/providers/provider_calendar.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2469,7 +2470,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 30);
+      expect(Global.providerList.length, 31);
     });
 
     test('Global.providerList names are correct', () {
@@ -3636,7 +3637,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 30);
+      expect(initCount, 31);
     });
   });
 
@@ -3954,7 +3955,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 30);
+      expect(Global.providerList.length, 31);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5298,7 +5299,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 30);
+      expect(Global.providerList.length, 31);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -8099,6 +8100,79 @@ void main() {
 
     test('providerNumberBase keywords', () {
       expect(providerNumberBase.name, 'NumberBase');
+    });
+  });
+
+  group('Calendar provider tests', () {
+    test('providerCalendar exists', () {
+      expect(providerCalendar, isNotNull);
+      expect(providerCalendar.name, 'Calendar');
+    });
+
+    test('Global.providerList includes Calendar', () {
+      final hasCalendar = Global.providerList.any((p) => p.name == 'Calendar');
+      expect(hasCalendar, true);
+    });
+
+    test('providerCalendar keywords', () {
+      expect(providerCalendar.name, 'Calendar');
+    });
+
+    testWidgets('CalendarCard renders', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: CalendarCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(Card), findsOneWidget);
+    });
+
+    testWidgets('CalendarCard shows month navigation', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: CalendarCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byIcon(Icons.chevron_left), findsOneWidget);
+      expect(find.byIcon(Icons.chevron_right), findsOneWidget);
+    });
+
+    testWidgets('CalendarCard shows weekday headers', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: CalendarCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('S'), findsNWidgets(2));
+      expect(find.text('M'), findsOneWidget);
+      expect(find.text('T'), findsNWidgets(2));
+      expect(find.text('W'), findsOneWidget);
+      expect(find.text('F'), findsOneWidget);
+    });
+
+    testWidgets('CalendarCard navigation buttons work', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: CalendarCard(),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.byIcon(Icons.chevron_left).first);
+      await tester.pump();
+
+      await tester.tap(find.byIcon(Icons.chevron_right).first);
+      await tester.pump();
     });
   });
 }

@@ -379,6 +379,16 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled` and `DropdownButton` for Material 3 style
     - Keywords: convert, number, base, binary, octal, decimal, hex, hexadecimal, bin, oct, dec
+- **Calendar**: Monthly calendar widget for date visualization
+    - Full month calendar grid display
+    - Navigate between months with left/right buttons
+    - Today's date highlighted with primary color circle
+    - Tap month title to return to current month
+    - Week number display at bottom
+    - Sunday dates shown in red color
+    - Automatic day change at midnight
+    - Uses `Card.filled` and `GridView` for Material 3 style
+    - Keywords: calendar, month, date, day, week, schedule
 
 ## Material 3 Design System
 
@@ -474,8 +484,9 @@ Test coverage includes:
 - Water provider tests (provider existence, keywords, model state, add/remove glasses, goal setting, progress, widget rendering)
 - Mood provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
 - Number Base Converter provider tests (provider existence, keywords, model state, conversion operations)
+- Calendar provider tests (provider existence, keywords, widget rendering, navigation buttons)
   
-Total tests: 791 tests
+Total tests: 798 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
