@@ -56,8 +56,6 @@ class CalculatorModel extends ChangeNotifier {
   bool _isInitialized = false;
   final List<CalculationHistory> _history = [];
   static const int maxHistory = 10;
-  String _lastOperator = '';
-  double? _lastOperand;
 
   String get display => _display;
   String get expression => _expression;
@@ -109,8 +107,6 @@ class CalculatorModel extends ChangeNotifier {
   void clear() {
     _display = '0';
     _expression = '';
-    _lastOperator = '';
-    _lastOperand = null;
     notifyListeners();
     Global.loggerModel.info("Calculator cleared", source: "Calculator");
   }

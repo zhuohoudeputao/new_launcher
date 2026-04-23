@@ -81,5 +81,5 @@ Future<void> _provideTheme() async {
     ),
   ));
   
-  Global.infoModel.notifyListeners();
+  Global.infoModel.refresh();
 }

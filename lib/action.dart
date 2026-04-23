@@ -5,8 +5,6 @@
  * @Description: file content
  */
 
-import 'package:flutter/material.dart';
-
 class MyAction {
   late String name;
   late String _keywords;

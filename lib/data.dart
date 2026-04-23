@@ -104,8 +104,8 @@ class Global {
   static Future<void> refreshTheme() async {
     final provider = Global.providerList.firstWhere((p) => p.name == "Theme");
     await provider.init();
-    Global.themeModel.notifyListeners();
-    Global.infoModel.notifyListeners();
+    Global.themeModel.refresh();
+    Global.infoModel.refresh();
   }
 
   //_____________________________________________________________Opacity
@@ -263,6 +263,10 @@ class InfoModel with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void refresh() {
+    notifyListeners();
+  }
 }
 
 class ThemeModel with ChangeNotifier {
@@ -271,6 +275,10 @@ class ThemeModel with ChangeNotifier {
 
   set themeData(ThemeData value) {
     _themeData = value;
+    notifyListeners();
+  }
+
+  void refresh() {
     notifyListeners();
   }
 }

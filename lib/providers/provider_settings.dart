@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/ui.dart';

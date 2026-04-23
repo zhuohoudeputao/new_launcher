@@ -12,7 +12,6 @@ import 'package:new_launcher/providers/provider_flashlight.dart';
 import 'package:new_launcher/providers/provider_notes.dart';
 import 'package:new_launcher/providers/provider_stopwatch.dart';
 import 'package:new_launcher/providers/provider_timer.dart';
-import 'package:new_launcher/providers/provider_settings.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2519,10 +2518,6 @@ void main() {
         times: List.generate(24, (_) => 0),
       );
       
-      final hour1 = DateTime.now().hour;
-      final hour2 = (hour1 + 1) % 24;
-      final hour3 = (hour1 + 5) % 24;
-      
       expect(action.frequency >= 0, true);
     });
   });
@@ -2584,7 +2579,7 @@ void main() {
   group('SettingsModel tests (non-SharedPreferences)', () {
     test('SettingsModel is ChangeNotifier', () {
       final settingsModel = SettingsModel();
-      expect(settingsModel is ChangeNotifier, true);
+      expect(settingsModel, isA<ChangeNotifier>());
     });
   });
 
@@ -2607,7 +2602,7 @@ void main() {
   group('ThemeModel tests', () {
     test('default theme is ThemeData', () {
       final model = ThemeModel();
-      expect(model.themeData is ThemeData, true);
+      expect(model.themeData, isA<ThemeData>());
     });
 
     test('set themeData notifies listeners', () {
@@ -3387,7 +3382,7 @@ void main() {
 
     test('BatteryModel is ChangeNotifier', () {
       final model = BatteryModel();
-      expect(model is ChangeNotifier, true);
+      expect(model, isA<ChangeNotifier>());
     });
 
     testWidgets('BatteryCard renders loading state', (WidgetTester tester) async {
@@ -3464,7 +3459,7 @@ void main() {
 
     test('NotesModel is ChangeNotifier', () {
       final model = NotesModel();
-      expect(model is ChangeNotifier, true);
+      expect(model, isA<ChangeNotifier>());
     });
 
     test('NotesModel addNote works correctly', () {
@@ -3621,7 +3616,7 @@ void main() {
 
     test('_refreshAllProviders calls provider init for all providers', () async {
       int initCount = 0;
-      for (final provider in Global.providerList) {
+      for (final _ in Global.providerList) {
         initCount++;
       }
       expect(initCount, 13);
@@ -3649,7 +3644,7 @@ void main() {
 
     test('TimerModel is ChangeNotifier', () {
       final model = TimerModel();
-      expect(model is ChangeNotifier, true);
+      expect(model, isA<ChangeNotifier>());
     });
 
     test('TimerModel init sets initialized', () {
@@ -3891,7 +3886,7 @@ void main() {
 
     test('FlashlightModel is ChangeNotifier', () {
       final model = FlashlightModel();
-      expect(model is ChangeNotifier, true);
+      expect(model, isA<ChangeNotifier>());
     });
 
     testWidgets('FlashlightCard renders loading state', (WidgetTester tester) async {
@@ -3966,7 +3961,7 @@ void main() {
 
     test('CalculatorModel is ChangeNotifier', () {
       final model = CalculatorModel();
-      expect(model is ChangeNotifier, true);
+      expect(model, isA<ChangeNotifier>());
     });
 
     test('CalculatorModel init works', () {
@@ -4212,7 +4207,7 @@ void main() {
 
     test('StopwatchModel is ChangeNotifier', () {
       final model = StopwatchModel();
-      expect(model is ChangeNotifier, true);
+      expect(model, isA<ChangeNotifier>());
     });
 
     test('StopwatchModel init sets initialized', () {

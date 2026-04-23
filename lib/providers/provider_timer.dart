@@ -209,7 +209,6 @@ class TimerCard extends StatefulWidget {
 
 class _TimerCardState extends State<TimerCard> {
   final List<int> _quickMinutes = [1, 5, 10, 15, 30];
-  int? _selectedMinutes;
 
   @override
   Widget build(BuildContext context) {
