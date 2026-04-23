@@ -20,6 +20,7 @@ import 'package:new_launcher/providers/provider_clipboard.dart';
 import 'package:new_launcher/providers/provider_todo.dart';
 import 'package:new_launcher/providers/provider_qrcode.dart';
 import 'package:new_launcher/providers/provider_random.dart';
+import 'package:new_launcher/providers/provider_color.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2460,7 +2461,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 21);
+      expect(Global.providerList.length, 22);
     });
 
     test('Global.providerList names are correct', () {
@@ -3627,7 +3628,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 21);
+      expect(initCount, 22);
     });
   });
 
@@ -3936,7 +3937,7 @@ void main() {
     });
 
     test('Global.providerList now contains 21 providers', () {
-      expect(Global.providerList.length, 21);
+      expect(Global.providerList.length, 22);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5262,7 +5263,7 @@ void main() {
     });
 
     test('Global.providerList now contains 21 providers', () {
-      expect(Global.providerList.length, 21);
+      expect(Global.providerList.length, 22);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -6266,6 +6267,205 @@ void main() {
     test('RandomModel keywords are correct', () {
       expect(providerRandom.name, 'Random');
       expect(providerRandom.provideActions, isNotNull);
+    });
+  });
+
+  group('Color Generator provider tests', () {
+    test('ColorModel exists', () {
+      expect(colorModel, isNotNull);
+    });
+
+    test('ColorModel initial state', () {
+      final model = ColorModel();
+      expect(model.isInitialized, false);
+      expect(model.currentColor, Colors.blue);
+      expect(model.hexColor, "#2196F3");
+      expect(model.rgbColor, "33, 150, 243");
+    });
+
+    test('ColorModel init sets initialized', () {
+      final model = ColorModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('ColorModel generateRandomColor works', () {
+      final model = ColorModel();
+      model.init();
+      model.generateRandomColor();
+      expect(model.hexColor.isNotEmpty, true);
+      expect(model.rgbColor.isNotEmpty, true);
+      expect(model.red >= 0 && model.red <= 255, true);
+      expect(model.green >= 0 && model.green <= 255, true);
+      expect(model.blue >= 0 && model.blue <= 255, true);
+    });
+
+    test('ColorModel setColorFromHex works', () {
+      final model = ColorModel();
+      model.init();
+      model.setColorFromHex("FF0000");
+      expect(model.hexColor, "#FF0000");
+      expect(model.red, 255);
+      expect(model.green, 0);
+      expect(model.blue, 0);
+    });
+
+    test('ColorModel setColorFromRGB works', () {
+      final model = ColorModel();
+      model.init();
+      model.setColorFromRGB(0, 255, 0);
+      expect(model.green, 255);
+      expect(model.red, 0);
+      expect(model.blue, 0);
+    });
+
+    test('ColorModel isLightColor works', () {
+      final model = ColorModel();
+      model.init();
+      model.setColorFromRGB(255, 255, 255);
+      expect(model.isLightColor(), true);
+      
+      model.setColorFromRGB(0, 0, 0);
+      expect(model.isLightColor(), false);
+    });
+
+    test('ColorModel getContrastColor works', () {
+      final model = ColorModel();
+      model.init();
+      model.setColorFromRGB(255, 255, 255);
+      expect(model.getContrastColor(), Colors.black);
+      
+      model.setColorFromRGB(0, 0, 0);
+      expect(model.getContrastColor(), Colors.white);
+    });
+
+    test('ColorModel refresh calls notifyListeners', () {
+      final model = ColorModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    test('ColorModel generateRandomColor notifies listeners', () {
+      final model = ColorModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.generateRandomColor();
+      expect(notifyCount, 1);
+    });
+
+    test('ColorModel setColorFromHex notifies listeners', () {
+      final model = ColorModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.setColorFromHex("00FF00");
+      expect(notifyCount, 1);
+    });
+
+    test('ColorModel setColorFromRGB notifies listeners', () {
+      final model = ColorModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.setColorFromRGB(128, 128, 128);
+      expect(notifyCount, 1);
+    });
+
+    test('ColorCard widget exists', () {
+      expect(ColorCard, isNotNull);
+    });
+
+    test('Global.providerList includes Color', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Color'), true);
+    });
+
+    test('providerColor exists', () {
+      expect(providerColor, isNotNull);
+      expect(providerColor.name, 'Color');
+    });
+
+    testWidgets('ColorCard renders loading state', (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: colorModel,
+            builder: (context, child) => ColorCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('Color'), findsWidgets);
+    });
+
+    testWidgets('ColorCard renders initialized state', (tester) async {
+      final model = ColorModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => ColorCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('Color Generator'), findsWidgets);
+      expect(find.textContaining('HEX:'), findsWidgets);
+      expect(find.textContaining('RGB:'), findsWidgets);
+    });
+
+    testWidgets('ColorCard renders with custom color', (tester) async {
+      final model = ColorModel();
+      model.init();
+      model.setColorFromHex("FF5733");
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => ColorCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+      expect(find.textContaining('#FF5733'), findsWidgets);
+    });
+
+    test('ColorModel keywords are correct', () {
+      expect(providerColor.name, 'Color');
+      expect(providerColor.provideActions, isNotNull);
+    });
+
+    test('ColorModel hex format is correct', () {
+      final model = ColorModel();
+      model.init();
+      model.setColorFromRGB(255, 128, 0);
+      expect(model.hexColor, "#FF8000");
+    });
+
+    test('ColorModel rgb format is correct', () {
+      final model = ColorModel();
+      model.init();
+      model.setColorFromRGB(100, 150, 200);
+      expect(model.rgbColor, "100, 150, 200");
+    });
+
+    test('ColorModel clamp RGB values', () {
+      final model = ColorModel();
+      model.init();
+      model.setColorFromRGB(300, -50, 500);
+      expect(model.red, 255);
+      expect(model.green, 0);
+      expect(model.blue, 255);
     });
   });
 }

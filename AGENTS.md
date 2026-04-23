@@ -282,6 +282,15 @@ Settings auto-saved via `SharedPreferences`:
     - Copy password to clipboard
     - Uses `Card.filled`, `SegmentedButton`, `Slider`, `FilterChip` for Material 3 style
     - Keywords: random, coin, dice, roll, flip, password, generate, number
+- **Color**: Color generator utilities
+    - Random color generation with one tap
+    - HEX color input and display
+    - RGB color input and display
+    - Copy HEX/RGB values to clipboard
+    - Color preview with contrast text
+    - Light/dark color detection
+    - Uses `Card.filled` and `SelectableText` for Material 3 style
+    - Keywords: color, random, hex, rgb, picker, palette, generate
 
 ## Material 3 Design System
 
@@ -368,8 +377,10 @@ Test coverage includes:
 - Clipboard provider tests (provider existence, keywords, model state, CRUD operations)
 - Todo provider tests (provider existence, keywords, model state, CRUD operations, priority handling)
 - QR Code provider tests (provider existence, keywords, model state, text operations, widget rendering)
+- Random Generator provider tests (provider existence, keywords, model state, coin flip, dice roll, password generation)
+- Color Generator provider tests (provider existence, keywords, model state, color operations, HEX/RGB conversion)
 
-Total tests: 587 tests
+Total tests: 609 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -416,6 +427,8 @@ Technical documentation is available in `docs/`:
 - `clipboard_provider.md` - Clipboard history provider implementation
 - `todo_provider.md` - Todo/task list provider implementation
 - `qrcode_provider.md` - QR code generator provider implementation
+- `random_provider.md` - Random Generator provider implementation
+- `color_provider.md` - Color Generator provider implementation
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice

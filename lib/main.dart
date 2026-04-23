@@ -23,6 +23,7 @@ import 'package:new_launcher/providers/provider_clipboard.dart';
 import 'package:new_launcher/providers/provider_todo.dart';
 import 'package:new_launcher/providers/provider_qrcode.dart';
 import 'package:new_launcher/providers/provider_random.dart';
+import 'package:new_launcher/providers/provider_color.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -120,6 +121,7 @@ Global.init().then((value) => runApp(MultiProvider(
             ChangeNotifierProvider.value(value: todoModel),
             ChangeNotifierProvider.value(value: qrModel),
             ChangeNotifierProvider.value(value: randomModel),
+            ChangeNotifierProvider.value(value: colorModel),
            ],
          child: MyApp(),
         )));
