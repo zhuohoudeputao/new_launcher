@@ -29,6 +29,14 @@ flutter.sdk=/home/linzuxuan/app/flutter
 
 **Note**: The system Flutter (`/usr/lib/flutter`) has gradle cache issues. Use the local flutter at `~/app/flutter` instead.
 
+### Minimum SDK Version
+The app requires Android 6.0 (API 23) or higher due to the `torch_light` plugin requirement. This is set in `android/app/build.gradle`:
+```gradle
+minSdkVersion 23
+```
+
+See `docs/min_sdk_version_fix.md` for details.
+
 ## Architecture
 
 - **Entry point**: `lib/main.dart` - `MyApp` widget wraps `MyHomePage`
@@ -306,6 +314,7 @@ Technical documentation is available in `docs/`:
 - `timer_provider.md` - Timer provider implementation
 - `stopwatch_provider.md` - Stopwatch provider implementation
 - `calculator_provider.md` - Calculator provider implementation
+- `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 
 ## Notice
 DO NOT EDIT task*.md
