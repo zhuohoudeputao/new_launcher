@@ -70,8 +70,10 @@ Without this permission, the `device_apps` package can only see a limited set of
 final apps = await DeviceApps.getInstalledApplications(
     includeSystemApps: true,
     includeAppIcons: true,
-    onlyAppsWithLaunchIntent: false);
+    onlyAppsWithLaunchIntent: true);
 ```
+
+The `onlyAppsWithLaunchIntent: true` parameter filters out apps without launch intent (system services, background processes, etc.), showing only apps that can be launched by the user.
 
 ### Individual App Cards
 
