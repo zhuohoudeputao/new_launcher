@@ -33,6 +33,7 @@ flutter.sdk=/home/linzuxuan/app/flutter
 
 - **Entry point**: `lib/main.dart` - `MyApp` widget wraps `MyHomePage`
 - **Card list**: `CircularListController` in main.dart handles circular scrolling
+- **Search input**: `SearchTextField` widget manages search field with clear button
 - **Providers system**: `lib/providers/*.dart` - Each provider adds services (weather, apps, wallpaper, etc.)
 - **Data layer**: `lib/data.dart` - Contains `Global`, `ActionModel`, `InfoModel`, `SettingsModel`, `BackgroundImageModel`, `ThemeModel`
   - `InfoModel.addInfoWidgetsBatch()`: Batch add widgets with single notifyListeners for performance
@@ -79,6 +80,9 @@ The search feature filters info cards based on user input:
 - `InfoModel.getFilteredList(query)` returns cards matching the query
 - Pass `title` parameter to `addInfoWidget()` to make cards searchable by title
 - Filtering matches against both key and title (case-insensitive)
+- `SearchTextField` widget provides clear button for quick input reset
+  - Clear button appears when text is present
+  - Tapping clear removes text, resets suggestions, and dismisses keyboard
 
 ## Settings Storage
 
@@ -188,8 +192,9 @@ Test coverage includes:
 - MyHomePage structure tests (PopScope, TextField, Card, CircularListController)
 - MyApp structure tests (Material 3 theme, navigatorKey)
 - Search results indicator tests (filtering, count format)
+- SearchTextField tests (rendering, clear button visibility and behavior)
 
-Total tests: ~285 tests
+Total tests: ~305 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -202,8 +207,10 @@ Test assets are defined in `pubspec.yaml` under `flutter.assets`.
 ## Documentation
 
 Technical documentation is available in `docs/`:
+- `automatic_loop.md` - Automatic development loop process
 - `critical_bug_fixes.md` - Bug fixes and code cleanup history
 - `search_feature.md` - Search feature implementation
+- `search_clear_button.md` - Search clear button widget implementation
 - `theme_feature.md` - Theme management
 - `wallpaper_feature.md` - Wallpaper handling
 - `weather_service.md` - Weather API integration

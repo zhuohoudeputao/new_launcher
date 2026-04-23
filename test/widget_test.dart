@@ -3561,4 +3561,109 @@ void main() {
       expect(text, '1 results');
     });
   });
+
+  group('SearchTextField tests', () {
+    testWidgets('SearchTextField renders with search icon', (WidgetTester tester) async {
+      Global.actionModel.inputBoxController.clear();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: Global.actionModel,
+            child: SearchTextField(),
+          ),
+        ),
+      ));
+      
+      expect(find.byIcon(Icons.search), findsOneWidget);
+      expect(find.byType(TextField), findsOneWidget);
+    });
+
+    testWidgets('Clear button not visible when text is empty', (WidgetTester tester) async {
+      Global.actionModel.inputBoxController.clear();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: Global.actionModel,
+            child: SearchTextField(),
+          ),
+        ),
+      ));
+      
+      expect(find.byIcon(Icons.clear), findsNothing);
+    });
+
+    testWidgets('Clear button appears when text is entered', (WidgetTester tester) async {
+      Global.actionModel.inputBoxController.clear();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: Global.actionModel,
+            child: SearchTextField(),
+          ),
+        ),
+      ));
+      
+      await tester.enterText(find.byType(TextField), 'test');
+      await tester.pump(const Duration(milliseconds: 350));
+      
+      expect(find.byIcon(Icons.clear), findsOneWidget);
+    });
+
+    testWidgets('Clear button clears text when pressed', (WidgetTester tester) async {
+      Global.actionModel.inputBoxController.clear();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: Global.actionModel,
+            child: SearchTextField(),
+          ),
+        ),
+      ));
+      
+      await tester.enterText(find.byType(TextField), 'test');
+      await tester.pump(const Duration(milliseconds: 350));
+      
+      expect(find.text('test'), findsOneWidget);
+      
+      await tester.tap(find.byIcon(Icons.clear));
+      await tester.pump(const Duration(milliseconds: 350));
+      
+      expect(find.text('test'), findsNothing);
+      expect(Global.actionModel.inputBoxController.text, '');
+    });
+
+    testWidgets('SearchTextField has correct hintText', (WidgetTester tester) async {
+      Global.actionModel.inputBoxController.clear();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: Global.actionModel,
+            child: SearchTextField(),
+          ),
+        ),
+      ));
+      
+      final textField = tester.widget<TextField>(find.byType(TextField));
+      expect(textField.decoration?.hintText, contains('Search'));
+    });
+
+    testWidgets('Clear button has tooltip', (WidgetTester tester) async {
+      Global.actionModel.inputBoxController.clear();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: Global.actionModel,
+            child: SearchTextField(),
+          ),
+        ),
+      ));
+      
+      await tester.enterText(find.byType(TextField), 'test');
+      await tester.pump(const Duration(milliseconds: 350));
+      
+      final clearButton = tester.widget<IconButton>(find.byType(IconButton));
+      expect(clearButton.tooltip, 'Clear search');
+    });
+  });
 }

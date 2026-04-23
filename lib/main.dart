@@ -48,6 +48,68 @@ class CircularListController extends ScrollController {
   }
 }
 
+class SearchTextField extends StatefulWidget {
+  @override
+  State<SearchTextField> createState() => _SearchTextFieldState();
+}
+
+class _SearchTextFieldState extends State<SearchTextField> {
+  late TextEditingController _controller;
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = Global.actionModel.inputBoxController;
+    _hasText = _controller.text.isNotEmpty;
+    _controller.addListener(_onTextChange);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onTextChange);
+    super.dispose();
+  }
+
+  void _onTextChange() {
+    final hasText = _controller.text.isNotEmpty;
+    if (hasText != _hasText) {
+      setState(() => _hasText = hasText);
+    }
+  }
+
+  void _clearText() {
+    _controller.clear();
+    Global.actionModel.generateSuggestList('');
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final actionModel = context.watch<ActionModel>();
+    return TextField(
+      keyboardType: TextInputType.text,
+      decoration: InputDecoration(
+        hintText: "Search... Try 'weather', 'camera', 'settings'",
+        prefixIcon: Icon(Icons.search),
+        suffixIcon: _hasText
+            ? IconButton(
+                icon: Icon(Icons.clear),
+                onPressed: _clearText,
+                tooltip: "Clear search",
+              )
+            : null,
+        border: InputBorder.none,
+        filled: true,
+        contentPadding: EdgeInsets.symmetric(horizontal: 20),
+      ),
+      controller: _controller,
+      onSubmitted: actionModel.runFirstAction,
+      onChanged: actionModel.generateSuggestList,
+    );
+  }
+}
+
 void main() {
   // remove the shadow of status bar
   SystemUiOverlayStyle systemUiOverlayStyle =
@@ -163,19 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               // Input Box with Search Icon
               Card.filled(
-                child: TextField(
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    hintText: "Search... Try 'weather', 'camera', 'settings'",
-                    prefixIcon: Icon(Icons.search),
-                    border: InputBorder.none,
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                  ),
-                  controller: context.watch<ActionModel>().inputBoxController,
-                  onSubmitted: context.watch<ActionModel>().runFirstAction,
-                  onChanged: context.watch<ActionModel>().generateSuggestList,
-                ),
+                child: SearchTextField(),
               ),
               // Result count indicator
               if (query.isNotEmpty && infoList.isNotEmpty)
