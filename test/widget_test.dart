@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/data.dart';
-import 'package:new_launcher/setting.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/providers/provider_settings.dart';
@@ -288,25 +287,6 @@ void main() {
   });
 
   group('SettingsModel tests', () {
-    test('settingList is initially empty', () {
-      final settingsModel = SettingsModel();
-      expect(settingsModel.settingList.length, 0);
-    });
-
-    test('saveValue creates correct widget for bool', () async {
-      final settingsModel = SettingsModel();
-      await settingsModel.init();
-      settingsModel.saveValue('TestBool', true);
-      expect(settingsModel.settingList.any((w) => w is CustomBoolSettingWidget), true);
-    });
-
-    test('saveValue creates correct widget for double', () async {
-      final settingsModel = SettingsModel();
-      await settingsModel.init();
-      settingsModel.saveValue('TestDouble', 0.5);
-      expect(settingsModel.settingList.length, greaterThan(0));
-    });
-
     test('getValue returns default for missing key', () async {
       final settingsModel = SettingsModel();
       await settingsModel.init();
@@ -314,10 +294,17 @@ void main() {
       expect(value, 'defaultValue');
     });
 
-    test('init loads existing preferences', () async {
+    test('init initializes', () async {
       final settingsModel = SettingsModel();
       await settingsModel.init();
-      expect(settingsModel.settingList, isNotNull);
+    });
+
+    test('saveValue saves to SharedPreferences', () async {
+      final settingsModel = SettingsModel();
+      await settingsModel.init();
+      settingsModel.saveValue('TestKey', 'TestValue');
+      final value = await settingsModel.getValue('TestKey', '');
+      expect(value, 'TestValue');
     });
   });
 
@@ -1023,100 +1010,6 @@ void main() {
     test('getWeatherIcon handles drizzle', () {
       expect(getWeatherIcon("Light drizzle"), Icons.water_drop);
       expect(getWeatherIcon("Dense drizzle"), Icons.water_drop);
-    });
-  });
-
-  group('Setting page tests', () {
-    testWidgets('has back button', (WidgetTester tester) async {
-      await Global.settingsModel.init();
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider.value(value: Global.settingsModel),
-              ChangeNotifierProvider.value(value: Global.backgroundImageModel),
-            ],
-            child: Setting(),
-          ),
-        ),
-      );
-      await tester.pump(Duration(milliseconds: 100));
-
-      expect(find.widgetWithIcon(AppBar, Icons.arrow_back), findsOneWidget);
-    });
-
-    testWidgets('Setting page uses FadeTransition', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider.value(value: Global.settingsModel),
-              ChangeNotifierProvider.value(value: Global.backgroundImageModel),
-            ],
-            child: Setting(),
-          ),
-        ),
-      );
-
-      expect(find.byType(FadeTransition), findsWidgets);
-    });
-
-    testWidgets('Setting page has animation controller', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider.value(value: Global.settingsModel),
-              ChangeNotifierProvider.value(value: Global.backgroundImageModel),
-            ],
-            child: Setting(),
-          ),
-        ),
-      );
-
-      await tester.pump(Duration(milliseconds: 100));
-      expect(find.byType(Setting), findsOneWidget);
-    });
-
-    testWidgets('Setting items use TweenAnimationBuilder', (WidgetTester tester) async {
-      await Global.settingsModel.init();
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider.value(value: Global.settingsModel),
-              ChangeNotifierProvider.value(value: Global.backgroundImageModel),
-            ],
-            child: Setting(),
-          ),
-        ),
-      );
-
-      Global.settingsModel.saveValue('TestSetting', true);
-      Global.settingsModel.notifyListeners();
-      for (int i = 0; i < 10; i++) {
-        await tester.pump(Duration(milliseconds: 100));
-      }
-      
-      expect(Global.settingsModel.settingList.length, greaterThan(0));
-      expect(find.byType(TweenAnimationBuilder), findsWidgets);
-    }, skip: true);
-
-    testWidgets('Setting title is animated', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider.value(value: Global.settingsModel),
-              ChangeNotifierProvider.value(value: Global.backgroundImageModel),
-            ],
-            child: Setting(),
-          ),
-        ),
-      );
-
-      await tester.pump();
-      expect(find.text('Settings'), findsOneWidget);
     });
   });
 
@@ -2889,11 +2782,6 @@ void main() {
   });
 
   group('SettingsModel tests (non-SharedPreferences)', () {
-    test('settingList returns empty list initially', () {
-      final settingsModel = SettingsModel();
-      expect(settingsModel.settingList.isEmpty, true);
-    });
-
     test('SettingsModel is ChangeNotifier', () {
       final settingsModel = SettingsModel();
       expect(settingsModel is ChangeNotifier, true);
@@ -3687,78 +3575,21 @@ void main() {
       expect(settingsProvider.name, 'Settings');
     });
 
-    test('Settings provider has correct actions', () async {
+    test('Settings provider has no actions', () async {
       final settingsProvider = Global.providerList.where((p) => p.name == 'Settings').first;
       settingsProvider.provideActions();
       
       Global.actionModel.generateSuggestList('settings');
       await Future.delayed(const Duration(milliseconds: 350));
       
-      expect(Global.actionModel.suggestList.isNotEmpty, true);
+      expect(Global.actionModel.suggestList.isEmpty, true);
     });
 
-    test('Settings provider initActions adds SettingsCard', () {
+    test('Settings provider initActions adds settings widgets', () {
       final settingsProvider = Global.providerList.where((p) => p.name == 'Settings').first;
       settingsProvider.initActions();
       
-      expect(Global.infoModel.infoList.any((w) => w is SettingsCard), true);
-    });
-
-    test('Open settings action keywords are correct', () async {
-      Global.addActions([
-        MyAction(
-          name: 'Open settings',
-          keywords: 'settings launcher configuration options preferences',
-          action: () {},
-          times: List.generate(24, (index) => 0),
-        ),
-      ]);
-      
-      Global.actionModel.generateSuggestList('settings');
-      await Future.delayed(const Duration(milliseconds: 350));
-      
-      expect(Global.actionModel.suggestList.isNotEmpty, true);
-      
-      Global.actionModel.generateSuggestList('preferences');
-      await Future.delayed(const Duration(milliseconds: 350));
-      
-      expect(Global.actionModel.suggestList.isNotEmpty, true);
-    });
-  });
-
-  group('SettingsCard tests', () {
-    testWidgets('SettingsCard renders correctly', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: SettingsCard(),
-        ),
-      ));
-      
-      expect(find.text('Settings'), findsOneWidget);
-      expect(find.text('Tap to customize launcher'), findsOneWidget);
-      expect(find.byIcon(Icons.settings), findsOneWidget);
-      expect(find.byIcon(Icons.chevron_right), findsOneWidget);
-    });
-
-    testWidgets('SettingsCard uses Card.filled', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: SettingsCard(),
-        ),
-      ));
-      
-      expect(find.byType(Card), findsOneWidget);
-    });
-
-    testWidgets('SettingsCard is tappable', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: SettingsCard(),
-        ),
-      ));
-      
-      final settingsCard = tester.widget<ListTile>(find.byType(ListTile));
-      expect(settingsCard.onTap, isNotNull);
+      expect(Global.infoModel.infoList.length, greaterThan(0));
     });
   });
 }

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
-import 'package:new_launcher/setting.dart';
+import 'package:new_launcher/ui.dart';
+import 'package:new_launcher/providers/provider_wallpaper.dart';
 
 MyProvider providerSettings = MyProvider(
     name: "Settings",
@@ -11,58 +12,45 @@ MyProvider providerSettings = MyProvider(
     update: _update);
 
 Future<void> _provideActions() async {
-  Global.addActions([
-    MyAction(
-      name: 'Open settings',
-      keywords: 'settings launcher configuration options preferences',
-      action: () {
-        navigatorKey.currentState?.push(
-            MaterialPageRoute(builder: (BuildContext context) => Setting()));
-      },
-      times: List.generate(24, (index) => 0),
-    ),
-  ]);
 }
 
 Future<void> _initActions() async {
+  final themeMode = await Global.getValue("Theme.Mode", "system");
   Global.infoModel.addInfoWidget(
-      "SettingsCard",
-      SettingsCard(),
-      title: "Settings");
+      "ThemeMode",
+      DarkModeOptionSelector(
+        currentMode: themeMode as String,
+        onChanged: (newMode) {
+          Global.settingsModel.saveValue("Theme.Mode", newMode);
+          Global.refreshTheme();
+        },
+      ),
+      title: "Theme Mode");
+  
+  final cardOpacity = await Global.getValue("CardOpacity", 0.7);
+  Global.infoModel.addInfoWidget(
+      "CardOpacity",
+      CardOpacitySlider(
+        value: cardOpacity as double,
+        onChanged: (newValue) async {
+          Global.cardOpacityValue = newValue;
+          Global.settingsModel.saveValue("CardOpacity", newValue);
+          await Global.refreshTheme();
+        },
+      ),
+      title: "Card Opacity");
+  
+  Global.infoModel.addInfoWidget(
+      "WallpaperPicker",
+      WallpaperPickerButton(
+        label: "Change Wallpaper",
+        onTap: () async {
+          await pickWallpaperFromGallery();
+        },
+      ),
+      title: "Wallpaper");
 }
 
 Future<void> _update() async {
-  Global.infoModel.addInfoWidget(
-      "SettingsCard",
-      SettingsCard(),
-      title: "Settings");
-}
-
-class SettingsCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    
-    return Card.filled(
-      child: ListTile(
-        leading: Icon(
-          Icons.settings,
-          color: colorScheme.primary,
-        ),
-        title: Text(
-          "Settings",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text("Tap to customize launcher"),
-        trailing: Icon(
-          Icons.chevron_right,
-          color: colorScheme.onSurface.withValues(alpha: 0.5),
-        ),
-        onTap: () {
-          navigatorKey.currentState?.push(
-              MaterialPageRoute(builder: (BuildContext context) => Setting()));
-        },
-      ),
-    );
-  }
+  _initActions();
 }

@@ -295,20 +295,10 @@ class ThemeModel with ChangeNotifier {
 
 class SettingsModel with ChangeNotifier {
   SharedPreferences? _prefs;
-  Map<String, Widget> _settingMap = <String, Widget>{};
 
   Future init() async {
     _prefs = await SharedPreferences.getInstance();
-    final keys = _prefs?.getKeys() ?? <String>{};
-    for (String key in keys) {
-      final value = _prefs?.get(key);
-      if (value != null) {
-        _addSettingWidget(key, value);
-      }
-    }
   }
-
-  List<Widget> get settingList => _settingMap.values.toList();
 
   void saveValue(String key, var value) {
     final prefs = _prefs;
@@ -324,7 +314,6 @@ class SettingsModel with ChangeNotifier {
     } else if (value is List<String>) {
       prefs.setStringList(key, value);
     }
-    _addSettingWidget(key, value);
     _triggerProviderUpdate(key);
   }
 
@@ -348,67 +337,6 @@ class SettingsModel with ChangeNotifier {
       saveValue(key, defaultValue);
       return defaultValue;
     }
-  }
-
-  void _addSettingWidget(String key, var value) {
-    if (key == "WallpaperPicker") {
-      _settingMap[key] = WallpaperPickerButton(
-        label: "Change Wallpaper",
-        onTap: () async {
-          await pickWallpaperFromGallery();
-        },
-      );
-    } else if (key == "Theme.Mode" && value is String) {
-      _settingMap[key] = DarkModeOptionSelector(
-        currentMode: value,
-        onChanged: (newMode) {
-          saveValue(key, newMode);
-          Global.refreshTheme();
-        },
-      );
-    } else if (key == "CardOpacity" && value is double) {
-      _settingMap[key] = CardOpacitySlider(
-          value: value,
-          onChanged: (newValue) async {
-            Global.cardOpacityValue = newValue;
-            saveValue(key, newValue);
-            await Global.refreshTheme();
-            notifyListeners();
-          });
-    } else if (value is String) {
-      _settingMap[key] = customTextSettingWidget(
-          key: key,
-          value: value,
-          onSubmitted: (newValue) {
-            saveValue(key, newValue);
-          });
-    } else if (value is bool) {
-      _settingMap[key] = CustomBoolSettingWidget(
-          settingKey: key,
-          value: value,
-          onChanged: (newValue) {
-            saveValue(key, newValue);
-            if (key.startsWith("Theme.")) {
-              Global.refreshTheme();
-            }
-          });
-    } else if (value is double) {
-      _settingMap[key] = customTextSettingWidget(
-          key: key,
-          value: value,
-          onSubmitted: (newValue) {
-            saveValue(key, double.parse(newValue));
-          });
-    } else if (value is int) {
-      _settingMap[key] = customTextSettingWidget(
-          key: key,
-          value: value,
-          onSubmitted: (newValue) {
-            saveValue(key, int.parse(newValue));
-          });
-    } else if (value is List<String>) {
-    }
-    notifyListeners();
   }
 }
 
