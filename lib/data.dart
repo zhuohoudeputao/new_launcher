@@ -84,6 +84,7 @@ import 'package:new_launcher/providers/provider_2048.dart';
 import 'package:new_launcher/providers/provider_wordle.dart';
 import 'package:new_launcher/providers/provider_typingtest.dart';
 import 'package:new_launcher/providers/provider_simon.dart';
+import 'package:new_launcher/providers/provider_sequence.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -281,6 +282,7 @@ class Global {
     providerWordle,
     providerTypingTest,
     providerSimon,
+    providerSequence,
   ];
 
   //_______________________________________________________________________

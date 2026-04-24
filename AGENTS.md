@@ -894,6 +894,22 @@ Settings auto-saved via `SharedPreferences`:
     - Reset stats with confirmation dialog
     - Uses `Card.filled`, `GridView`, `GestureDetector` for Material 3 style
     - Keywords: simon, memory, sequence, color, pattern, game, play, repeat
+- **Sequence**: Number sequence generator
+    - Generate various mathematical sequences
+    - Fibonacci sequence: 0, 1, 1, 2, 3, 5, 8...
+    - Prime numbers: 2, 3, 5, 7, 11, 13...
+    - Arithmetic sequences with customizable start and step
+    - Geometric sequences with customizable start and ratio
+    - Triangular numbers: 1, 3, 6, 10, 15...
+    - Square numbers: 1, 4, 9, 16, 25...
+    - Factorials: 1, 2, 6, 24, 120...
+    - Adjustable term count (1-50)
+    - Sequence display with sum calculation
+    - Copy sequence to clipboard
+    - History tracking (up to 10 sequences)
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `Slider`, `ActionChip` for Material 3 style
+    - Keywords: sequence, fibonacci, prime, arithmetic, geometric, generate, math, numbers
 
 ## Material 3 Design System
 
@@ -1028,8 +1044,9 @@ Test coverage includes:
 - Wordle provider tests (provider existence, keywords, model state, letter operations, guess evaluation, statistics, history, widget rendering)
 - TypingTest provider tests (provider existence, keywords, model state, typing operations, WPM calculation, accuracy, history, widget rendering)
 - Simon provider tests (provider existence, keywords, model state, game operations, statistics, history, widget rendering)
-  
-Total tests: 1944 tests
+- Sequence provider tests (provider existence, keywords, model state, Fibonacci generation, prime generation, arithmetic/geometric sequences, triangular/square/factorial, history, widget rendering)
+
+Total tests: 1976 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

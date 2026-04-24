@@ -72,6 +72,7 @@ import 'package:new_launcher/providers/provider_2048.dart';
 import 'package:new_launcher/providers/provider_wordle.dart';
 import 'package:new_launcher/providers/provider_typingtest.dart';
 import 'package:new_launcher/providers/provider_simon.dart';
+import 'package:new_launcher/providers/provider_sequence.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2512,7 +2513,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 73);
+      expect(Global.providerList.length, 74);
     });
 
     test('Global.providerList names are correct', () {
@@ -3679,7 +3680,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 73);
+      expect(initCount, 74);
     });
   });
 
@@ -3997,7 +3998,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 73);
+      expect(Global.providerList.length, 74);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5341,7 +5342,7 @@ test('Global.providerList contains all providers (71 total)', () {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 73);
+      expect(Global.providerList.length, 74);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -19978,6 +19979,277 @@ test('WordleModel submitGuess works', () async {
     test('Global.providerList includes Simon', () {
       final hasSimon = Global.providerList.any((p) => p.name == 'Simon');
       expect(hasSimon, true);
+    });
+  });
+
+  group('Sequence Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('SequenceEntry properties', () {
+      final entry = SequenceEntry(
+        type: SequenceType.fibonacci,
+        numbers: [0, 1, 1, 2, 3],
+        timestamp: DateTime.now(),
+        description: 'Fibonacci (5 terms)',
+      );
+      expect(entry.type, SequenceType.fibonacci);
+      expect(entry.numbers, [0, 1, 1, 2, 3]);
+      expect(entry.description, 'Fibonacci (5 terms)');
+    });
+
+    test('SequenceModel default values', () {
+      final model = SequenceModel();
+      expect(model.isInitialized, false);
+      expect(model.selectedType, SequenceType.fibonacci);
+      expect(model.sequenceCount, 10);
+      expect(model.generationCount, 0);
+      expect(model.history.isEmpty, true);
+    });
+
+    test('SequenceModel init', () {
+      final model = SequenceModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.currentSequence.isNotEmpty, true);
+    });
+
+    test('SequenceModel generateFibonacci', () {
+      final model = SequenceModel();
+      model.generateFibonacci(10);
+      expect(model.currentSequence, [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]);
+      expect(model.selectedType, SequenceType.fibonacci);
+    });
+
+    test('SequenceModel generateFibonacci small count', () {
+      final model = SequenceModel();
+      model.generateFibonacci(5);
+      expect(model.currentSequence, [0, 1, 1, 2, 3]);
+    });
+
+    test('SequenceModel generatePrimeNumbers', () {
+      final model = SequenceModel();
+      model.generatePrimeNumbers(10);
+      expect(model.currentSequence, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
+      expect(model.selectedType, SequenceType.prime);
+    });
+
+    test('SequenceModel generatePrimeNumbers small count', () {
+      final model = SequenceModel();
+      model.generatePrimeNumbers(5);
+      expect(model.currentSequence, [2, 3, 5, 7, 11]);
+    });
+
+    test('SequenceModel generateArithmetic', () {
+      final model = SequenceModel();
+      model.generateArithmetic(1, 2, 10);
+      expect(model.currentSequence, [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]);
+      expect(model.selectedType, SequenceType.arithmetic);
+      expect(model.arithmeticStart, 1);
+      expect(model.arithmeticStep, 2);
+    });
+
+    test('SequenceModel generateArithmetic custom', () {
+      final model = SequenceModel();
+      model.generateArithmetic(5, 3, 5);
+      expect(model.currentSequence, [5, 8, 11, 14, 17]);
+    });
+
+    test('SequenceModel generateGeometric', () {
+      final model = SequenceModel();
+      model.generateGeometric(1, 2, 10);
+      expect(model.currentSequence, [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]);
+      expect(model.selectedType, SequenceType.geometric);
+      expect(model.geometricStart, 1);
+      expect(model.geometricRatio, 2);
+    });
+
+    test('SequenceModel generateGeometric custom', () {
+      final model = SequenceModel();
+      model.generateGeometric(3, 2, 5);
+      expect(model.currentSequence, [3, 6, 12, 24, 48]);
+    });
+
+    test('SequenceModel generateTriangular', () {
+      final model = SequenceModel();
+      model.generateTriangular(10);
+      expect(model.currentSequence, [1, 3, 6, 10, 15, 21, 28, 36, 45, 55]);
+      expect(model.selectedType, SequenceType.triangular);
+    });
+
+    test('SequenceModel generateSquare', () {
+      final model = SequenceModel();
+      model.generateSquare(10);
+      expect(model.currentSequence, [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]);
+      expect(model.selectedType, SequenceType.square);
+    });
+
+    test('SequenceModel generateFactorial', () {
+      final model = SequenceModel();
+      model.generateFactorial(10);
+      expect(model.currentSequence, [1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800]);
+      expect(model.selectedType, SequenceType.factorial);
+    });
+
+    test('SequenceModel generateFactorial small count', () {
+      final model = SequenceModel();
+      model.generateFactorial(5);
+      expect(model.currentSequence, [1, 2, 6, 24, 120]);
+    });
+
+    test('SequenceModel setSequenceCount', () {
+      final model = SequenceModel();
+      model.setSequenceCount(20);
+      expect(model.sequenceCount, 20);
+      model.setSequenceCount(100);
+      expect(model.sequenceCount, 50);
+      model.setSequenceCount(0);
+      expect(model.sequenceCount, 1);
+    });
+
+    test('SequenceModel setSelectedType', () {
+      final model = SequenceModel();
+      model.setSelectedType(SequenceType.prime);
+      expect(model.selectedType, SequenceType.prime);
+    });
+
+    test('SequenceModel clearHistory', () {
+      final model = SequenceModel();
+      model.generateFibonacci(5);
+      model.generatePrimeNumbers(5);
+      expect(model.history.length, 2);
+      model.clearHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('SequenceModel removeFromHistory', () {
+      final model = SequenceModel();
+      model.generateFibonacci(5);
+      model.generatePrimeNumbers(5);
+      expect(model.history.length, 2);
+      model.removeFromHistory(0);
+      expect(model.history.length, 1);
+    });
+
+    test('SequenceModel loadFromHistory', () {
+      final model = SequenceModel();
+      model.generateFibonacci(5);
+      model.generatePrimeNumbers(5);
+      expect(model.selectedType, SequenceType.prime);
+      model.loadFromHistory(1);
+      expect(model.selectedType, SequenceType.fibonacci);
+    });
+
+    test('SequenceModel history respects max limit', () {
+      expect(SequenceModel.maxHistory, 10);
+      final model = SequenceModel();
+      for (int i = 0; i < 15; i++) {
+        model.generateFibonacci(5);
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('SequenceModel currentSequenceDisplay', () {
+      final model = SequenceModel();
+      model.generateFibonacci(5);
+      expect(model.currentSequenceDisplay, '0, 1, 1, 2, 3');
+    });
+
+    test('SequenceModel currentSequenceSum', () {
+      final model = SequenceModel();
+      model.generateFibonacci(5);
+      expect(model.currentSequenceSum, 'Sum: 7');
+    });
+
+    test('SequenceModel refresh calls notifyListeners', () {
+      final model = SequenceModel();
+      bool notified = false;
+      model.addListener(() {
+        notified = true;
+      });
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('SequenceType enum values', () {
+      expect(SequenceType.values.length, 7);
+      expect(SequenceType.values.contains(SequenceType.fibonacci), true);
+      expect(SequenceType.values.contains(SequenceType.prime), true);
+      expect(SequenceType.values.contains(SequenceType.arithmetic), true);
+      expect(SequenceType.values.contains(SequenceType.geometric), true);
+      expect(SequenceType.values.contains(SequenceType.triangular), true);
+      expect(SequenceType.values.contains(SequenceType.square), true);
+      expect(SequenceType.values.contains(SequenceType.factorial), true);
+    });
+
+    test('providerSequence exists', () {
+      expect(providerSequence, isNotNull);
+      expect(providerSequence.name, 'Sequence');
+    });
+
+    test('providerSequence keywords', () {
+      expect(providerSequence.name, 'Sequence');
+      final action = MyAction(
+        name: 'Generate Sequence',
+        keywords: 'sequence fibonacci prime arithmetic geometric generate math numbers',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      expect(action.canIdentifyBy('sequence'), true);
+      expect(action.canIdentifyBy('fibonacci'), true);
+      expect(action.canIdentifyBy('prime'), true);
+      expect(action.canIdentifyBy('arithmetic'), true);
+      expect(action.canIdentifyBy('geometric'), true);
+    });
+
+    test('SequenceCard renders loading state', () {
+      final model = SequenceModel();
+      expect(model.isInitialized, false);
+    });
+
+    testWidgets('SequenceCard renders initialized state', (WidgetTester tester) async {
+      final model = SequenceModel();
+      model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SequenceCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Sequence Generator'), findsOneWidget);
+    });
+
+    testWidgets('SequenceCard shows sequence display', (WidgetTester tester) async {
+      final model = SequenceModel();
+      model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SequenceCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.textContaining('0, 1'), findsWidgets);
+    });
+
+    test('SequenceCard widget exists', () {
+      expect(SequenceCard, isNotNull);
+    });
+
+    test('Global.providerList includes Sequence', () {
+      final hasSequence = Global.providerList.any((p) => p.name == 'Sequence');
+      expect(hasSequence, true);
+    });
+
+    tearDownAll(() {
+      sequenceModel.clearHistory();
     });
   });
 }
