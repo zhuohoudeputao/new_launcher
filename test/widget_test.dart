@@ -51,6 +51,7 @@ import 'package:new_launcher/providers/provider_debt.dart';
 import 'package:new_launcher/providers/provider_interval_timer.dart';
 import 'package:new_launcher/providers/provider_textencoder.dart';
 import 'package:new_launcher/providers/provider_morse.dart';
+import 'package:new_launcher/providers/provider_timestamp.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2491,7 +2492,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 52);
+      expect(Global.providerList.length, 53);
     });
 
     test('Global.providerList names are correct', () {
@@ -3658,7 +3659,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 52);
+      expect(initCount, 53);
     });
   });
 
@@ -3975,8 +3976,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (50 total)', () {
-      expect(Global.providerList.length, 52);
+test('Global.providerList contains all providers (51 total)', () {
+      expect(Global.providerList.length, 53);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5319,8 +5320,8 @@ test('Global.providerList contains all providers (50 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (50 total)', () {
-      expect(Global.providerList.length, 52);
+test('Global.providerList contains all providers (51 total)', () {
+      expect(Global.providerList.length, 53);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -14868,6 +14869,277 @@ test('Global.providerList contains all providers (50 total)', () {
       model.setInputText(".- .-.-.- -...");
       expect(model.outputText, "A.B");
       expect(model.error, null);
+    });
+  });
+
+  group('Timestamp provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('providerTimestamp exists in Global.providerList', () {
+      expect(Global.providerList.any((p) => p.name == 'Timestamp'), true);
+    });
+
+    test('TimestampModel initializes correctly', () {
+      final model = TimestampModel();
+      model.init();
+      expect(model.inputValue, '');
+      expect(model.outputValue, '');
+      expect(model.inputType, 'timestamp');
+      expect(model.history.length, 0);
+      expect(model.isLoading, false);
+      expect(model.error, null);
+    });
+
+    test('TimestampModel converts milliseconds timestamp to datetime', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputType('timestamp');
+      model.setInputValue('1609459200000');
+      expect(model.outputValue, '2021-01-01 00:00:00');
+      expect(model.error, null);
+    });
+
+    test('TimestampModel converts seconds timestamp to datetime', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputType('timestamp');
+      model.setInputValue('1609459200');
+      expect(model.outputValue, '2021-01-01 00:00:00');
+      expect(model.error, null);
+    });
+
+    test('TimestampModel converts datetime to timestamp', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputType('datetime');
+      model.setInputValue('2021-01-01 00:00:00');
+      expect(model.outputValue.isNotEmpty, true);
+      expect(model.error, null);
+    });
+
+    test('TimestampModel handles invalid timestamp', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputType('timestamp');
+      model.setInputValue('abc');
+      expect(model.outputValue, '');
+      expect(model.error, 'Invalid timestamp');
+    });
+
+    test('TimestampModel handles invalid datetime format', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputType('datetime');
+      model.setInputValue('invalid-date');
+      expect(model.outputValue, '');
+      expect(model.error, 'Invalid datetime format');
+    });
+
+    test('TimestampModel empty input produces empty output', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputValue('');
+      expect(model.outputValue, '');
+      expect(model.error, null);
+    });
+
+    test('TimestampModel swapInputType works', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputType('timestamp');
+      model.setInputValue('1609459200000');
+      expect(model.inputType, 'timestamp');
+      model.swapInputType();
+      expect(model.inputType, 'datetime');
+      expect(model.inputValue, '2021-01-01 00:00:00');
+    });
+
+    test('TimestampModel swapInputType from datetime to timestamp', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputType('datetime');
+      model.setInputValue('2021-01-01 00:00:00');
+      expect(model.inputType, 'datetime');
+      expect(model.outputValue.isNotEmpty, true);
+      model.swapInputType();
+      expect(model.inputType, 'timestamp');
+      expect(model.inputValue.isNotEmpty, true);
+    });
+
+    test('TimestampModel setCurrentTimestamp works', () {
+      final model = TimestampModel();
+      model.init();
+      model.setCurrentTimestamp();
+      expect(model.inputType, 'timestamp');
+      expect(model.inputValue.isNotEmpty, true);
+      expect(int.tryParse(model.inputValue), isNotNull);
+      expect(model.outputValue.isNotEmpty, true);
+    });
+
+    test('TimestampModel addToHistory works', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputValue('1609459200000');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].inputValue, '1609459200000');
+      expect(model.history[0].inputType, 'timestamp');
+      expect(model.history[0].outputValue, '2021-01-01 00:00:00');
+    });
+
+    test('TimestampModel addToHistory limits to 10 entries', () {
+      final model = TimestampModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputValue('${1609459200000 + i * 1000}');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('TimestampModel addToHistory does not add empty input', () {
+      final model = TimestampModel();
+      model.init();
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('TimestampModel applyFromHistory works', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputValue('1609459200000');
+      model.addToHistory();
+      model.clearInput();
+      model.applyFromHistory(model.history[0]);
+      expect(model.inputValue, '1609459200000');
+      expect(model.inputType, 'timestamp');
+      expect(model.outputValue, '2021-01-01 00:00:00');
+    });
+
+    test('TimestampModel clearHistory works', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputValue('1609459200000');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('TimestampModel clearInput works', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputValue('1609459200000');
+      model.clearInput();
+      expect(model.inputValue, '');
+      expect(model.outputValue, '');
+      expect(model.error, null);
+    });
+
+    test('TimestampModel setInputType triggers conversion', () {
+      final model = TimestampModel();
+      model.init();
+      model.setInputValue('1609459200000');
+      expect(model.outputValue, '2021-01-01 00:00:00');
+      model.setInputType('datetime');
+      expect(model.outputValue, '');
+    });
+
+    test('TimestampModel refresh notifies listeners', () {
+      final model = TimestampModel();
+      model.init();
+      int notificationCount = 0;
+      model.addListener(() => notificationCount++);
+      model.refresh();
+      expect(notificationCount, 1);
+    });
+
+    test('TimestampModel currentTimestamp returns valid value', () {
+      final model = TimestampModel();
+      model.init();
+      int ts = model.currentTimestamp;
+      expect(ts > 0, true);
+      expect(DateTime.fromMillisecondsSinceEpoch(ts).year, DateTime.now().year);
+    });
+
+    testWidgets('TimestampCard renders loading state', (WidgetTester tester) async {
+      final model = TimestampModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: TimestampCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Timestamp Converter'), findsOneWidget);
+    });
+
+    testWidgets('TimestampCard renders initialized state', (WidgetTester tester) async {
+      final model = TimestampModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: TimestampCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Timestamp Converter'), findsOneWidget);
+    });
+
+    testWidgets('TimestampCard shows output after input', (WidgetTester tester) async {
+      final model = TimestampModel();
+      model.init();
+      model.setInputValue('1609459200000');
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: TimestampCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Timestamp Converter'), findsOneWidget);
+    });
+
+    testWidgets('TimestampCard shows error on invalid input', (WidgetTester tester) async {
+      final model = TimestampModel();
+      model.init();
+      model.setInputValue('abc');
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: TimestampCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Timestamp Converter'), findsOneWidget);
+    });
+
+    test('Timestamp keywords are registered', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'Timestamp');
+      expect(provider.name, 'Timestamp');
     });
   });
 }

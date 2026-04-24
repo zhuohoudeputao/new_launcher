@@ -645,6 +645,19 @@ Settings auto-saved via `SharedPreferences`:
     - Unknown characters shown as '?' in output
     - Uses `Card.filled` and `SegmentedButton` for Material 3 style
     - Keywords: morse, code, encode, decode, dot, dash, signal, telegraph, convert
+- **Timestamp**: Unix timestamp converter
+    - Convert Unix timestamp to readable datetime
+    - Convert datetime string to Unix timestamp
+    - Automatically detects milliseconds vs seconds timestamps
+    - Use current timestamp with one tap
+    - Swap timestamp/datetime input with one tap
+    - Uses UTC timezone for consistent conversions
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Clear input button
+    - Uses `Card.filled` and `SegmentedButton` for Material 3 style
+    - Keywords: timestamp, unix, datetime, epoch, time, convert, date
 
 ## Material 3 Design System
 
@@ -761,7 +774,7 @@ Test coverage includes:
 - Debt provider tests (provider existence, keywords, model state, CRUD operations, owed tracking, history, widget rendering)
 - Interval Timer provider tests (provider existence, keywords, model state, presets, phase operations, timer controls, widget rendering)
   
-Total tests: 1420 tests
+Total tests: 1445 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
