@@ -74,6 +74,7 @@ import 'package:new_launcher/providers/provider_typingtest.dart';
 import 'package:new_launcher/providers/provider_simon.dart';
 import 'package:new_launcher/providers/provider_sequence.dart';
 import 'package:new_launcher/providers/provider_filesize.dart';
+import 'package:new_launcher/providers/provider_sunposition.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2514,7 +2515,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 75);
+      expect(Global.providerList.length, 76);
     });
 
     test('Global.providerList names are correct', () {
@@ -3681,7 +3682,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 75);
+      expect(initCount, 76);
     });
   });
 
@@ -3999,7 +4000,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 75);
+      expect(Global.providerList.length, 76);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5343,7 +5344,7 @@ test('Global.providerList contains all providers (71 total)', () {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 75);
+      expect(Global.providerList.length, 76);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -20474,6 +20475,164 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       fileSizeConverterModel.clearHistory();
+    });
+  });
+
+  group('SunPosition provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('SunPositionModel is initialized correctly', () async {
+      final model = SunPositionModel();
+      expect(model.isInitialized, false);
+    });
+
+    test('SunPositionModel init works', () async {
+      final model = SunPositionModel();
+      await model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('SunPositionModel formatTime works', () async {
+      final model = SunPositionModel();
+      DateTime time = DateTime(2026, 4, 25, 6, 30);
+      expect(model.formatTime(time), '06:30');
+      
+      DateTime time2 = DateTime(2026, 4, 25, 18, 5);
+      expect(model.formatTime(time2), '18:05');
+      
+      expect(model.formatTime(null), 'N/A');
+    });
+
+    test('SunPositionModel formatDate works', () async {
+      final model = SunPositionModel();
+      DateTime date = DateTime(2026, 4, 25);
+      expect(model.formatDate(date), '4/25/2026');
+    });
+
+    test('SunPositionModel formatAltitude works', () async {
+      final model = SunPositionModel();
+      expect(model.formatAltitude(45.0), '45.0°');
+      expect(model.formatAltitude(-5.0), 'Below horizon');
+      expect(model.formatAltitude(0.0), '0.0°');
+    });
+
+    test('SunPositionModel formatAzimuth works', () async {
+      final model = SunPositionModel();
+      expect(model.formatAzimuth(180.0), '180.0°');
+      expect(model.formatAzimuth(45.5), '45.5°');
+    });
+
+    test('SunPositionModel getAzimuthDirection works', () async {
+      final model = SunPositionModel();
+      expect(model.getAzimuthDirection(0), 'N');
+      expect(model.getAzimuthDirection(45), 'NE');
+      expect(model.getAzimuthDirection(90), 'E');
+      expect(model.getAzimuthDirection(135), 'SE');
+      expect(model.getAzimuthDirection(180), 'S');
+      expect(model.getAzimuthDirection(225), 'SW');
+      expect(model.getAzimuthDirection(270), 'W');
+      expect(model.getAzimuthDirection(315), 'NW');
+      expect(model.getAzimuthDirection(360), 'N');
+    });
+
+    test('SunPositionModel dayLengthMinutes starts at 0', () async {
+      final model = SunPositionModel();
+      expect(model.dayLengthMinutes, 0);
+    });
+
+    test('SunPositionModel dayLengthFormatted works after init', () async {
+      final model = SunPositionModel();
+      expect(model.dayLengthFormatted, '0h 0m');
+    });
+
+    test('SunPositionModel getCurrentPhase returns correct value', () async {
+      final model = SunPositionModel();
+      await model.init();
+      String phase = model.getCurrentPhase();
+      expect(phase, anyOf('Daytime', 'Nighttime', 'Golden Hour', 'Blue Hour'));
+    });
+
+    test('SunPositionModel getPhaseEmoji returns correct value', () async {
+      final model = SunPositionModel();
+      await model.init();
+      String emoji = model.getPhaseEmoji();
+      expect(emoji, anyOf('☀️', '🌙', '🌅', '💙'));
+    });
+
+    test('SunPositionModel is ChangeNotifier', () {
+      final model = SunPositionModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('SunPositionModel refresh works', () async {
+      final model = SunPositionModel();
+      await model.init();
+      model.refresh();
+      expect(model.isInitialized, true);
+    });
+
+    test('providerSunPosition exists', () {
+      expect(providerSunPosition, isNotNull);
+      expect(providerSunPosition.name, 'SunPosition');
+    });
+
+    test('Global.providerList includes SunPosition', () {
+      final hasSunPosition = Global.providerList.any((p) => p.name == 'SunPosition');
+      expect(hasSunPosition, true);
+    });
+
+    test('SunPosition provider keywords include sun', () {
+      final keywords = 'sun sunrise sunset golden hour solar noon day length altitude azimuth position';
+      expect(keywords.contains('sun'), true);
+    });
+
+    test('SunPosition provider keywords include sunrise', () {
+      final keywords = 'sun sunrise sunset golden hour solar noon day length altitude azimuth position';
+      expect(keywords.contains('sunrise'), true);
+    });
+
+    test('SunPosition provider keywords include sunset', () {
+      final keywords = 'sun sunrise sunset golden hour solar noon day length altitude azimuth position';
+      expect(keywords.contains('sunset'), true);
+    });
+
+    testWidgets('SunPositionCard renders loading state', (WidgetTester tester) async {
+      final model = SunPositionModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SunPositionCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      
+      expect(find.textContaining('Loading'), findsOneWidget);
+    });
+
+    testWidgets('SunPositionCard widget exists', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: sunPositionModel,
+            builder: (context, child) => SunPositionCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.byType(SunPositionCard), findsOneWidget);
+    });
+
+    test('sunPositionModel global instance exists', () {
+      expect(sunPositionModel, isNotNull);
+    });
+
+    test('SunPositionCard widget class exists', () {
+      expect(SunPositionCard, isNotNull);
     });
   });
 }

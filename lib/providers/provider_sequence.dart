@@ -364,7 +364,6 @@ class SequenceCard extends StatefulWidget {
 
 class _SequenceCardState extends State<SequenceCard> {
   bool _showHistory = false;
-  bool _showSettings = false;
 
   @override
   Widget build(BuildContext context) {

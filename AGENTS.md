@@ -921,6 +921,21 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `DropdownButton`, `TextField` for Material 3 style
     - Keywords: filesize, size, bytes, kb, mb, gb, tb, pb, converter, file, storage, data
+- **SunPosition**: Sun position and golden hour calculator
+    - Sunrise and sunset times for current location
+    - Golden hour times (morning and evening) for photographers
+    - Blue hour times (pre-sunrise and post-sunset) for photographers
+    - Solar noon calculation
+    - Day length display
+    - Sun position (altitude and azimuth)
+    - Compass direction from azimuth
+    - Current phase detection (Daytime, Nighttime, Golden Hour, Blue Hour)
+    - Phase emoji indicators (☀️, 🌙, 🌅, 💙)
+    - Date selector to view past/future sun positions
+    - "Today" quick action button
+    - Location-based calculations using geolocator
+    - Uses `Card.filled`, `ActionChip`, `showDatePicker` for Material 3 style
+    - Keywords: sun, sunrise, sunset, golden, hour, solar, noon, day, length, altitude, azimuth, position
 
 ## Material 3 Design System
 
@@ -1057,8 +1072,9 @@ Test coverage includes:
 - Simon provider tests (provider existence, keywords, model state, game operations, statistics, history, widget rendering)
 - Sequence provider tests (provider existence, keywords, model state, Fibonacci generation, prime generation, arithmetic/geometric sequences, triangular/square/factorial, history, widget rendering)
 - FileSizeConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
+- SunPosition provider tests (provider existence, keywords, model state, time formatting, azimuth direction, day length, phase detection, widget rendering)
 
-Total tests: 2001 tests
+Total tests: 2023 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
