@@ -94,6 +94,7 @@ import 'package:new_launcher/providers/provider_speed.dart';
 import 'package:new_launcher/providers/provider_volume.dart';
 import 'package:new_launcher/providers/provider_angle.dart';
 import 'package:new_launcher/providers/provider_prime.dart';
+import 'package:new_launcher/providers/provider_ascii.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -301,6 +302,7 @@ class Global {
     providerVolumeConverter,
     providerAngleConverter,
     providerPrime,
+    providerAsciiConverter,
   ];
 
   //_______________________________________________________________________

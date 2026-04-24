@@ -1008,6 +1008,17 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `TextField` for Material 3 style
     - Keywords: prime, number, check, factor, math, divisor, isprime, prime factor
+- **Ascii**: ASCII code converter for developers
+    - Convert text to ASCII codes (e.g., "Hello" → "72 101 108 108 111")
+    - Convert ASCII codes to text (e.g., "72 101 108 108 111" → "Hello")
+    - Swap between encode/decode modes with one tap
+    - Interactive ASCII table reference (printable characters 32-126)
+    - Tap ASCII table entries to add characters/codes to input
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `GridView` for Material 3 style
+    - Keywords: ascii, converter, encode, decode, character, code, text, char, table
 
 ## Material 3 Design System
 
@@ -1153,7 +1164,7 @@ Test coverage includes:
 - AngleConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - Prime provider tests (provider existence, keywords, model state, prime checking, prime factor finding, history, widget rendering)
 
-Total tests: 2252 tests
+Total tests: 2273 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

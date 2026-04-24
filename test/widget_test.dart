@@ -82,6 +82,7 @@ import 'package:new_launcher/providers/provider_speed.dart';
 import 'package:new_launcher/providers/provider_volume.dart';
 import 'package:new_launcher/providers/provider_angle.dart';
 import 'package:new_launcher/providers/provider_prime.dart';
+import 'package:new_launcher/providers/provider_ascii.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2522,7 +2523,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 83);
+      expect(Global.providerList.length, 84);
     });
 
     test('Global.providerList names are correct', () {
@@ -3689,7 +3690,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 83);
+      expect(initCount, 84);
     });
   });
 
@@ -4006,8 +4007,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 83);
+test('Global.providerList contains all providers (84 total)', () {
+      expect(Global.providerList.length, 84);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5350,8 +5351,8 @@ test('Global.providerList contains all providers (71 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 83);
+test('Global.providerList contains all providers (84 total)', () {
+      expect(Global.providerList.length, 84);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -22794,6 +22795,226 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       primeModel.clearHistory();
+    });
+  });
+
+  group('Ascii Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('providerAsciiConverter exists in Global.providerList', () {
+      final asciiProvider = Global.providerList.where((p) => p.name == 'Ascii').first;
+      expect(asciiProvider, isNotNull);
+      expect(asciiProvider.name, 'Ascii');
+    });
+
+    test('AsciiModel initializes correctly', () {
+      final model = AsciiModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.inputText, '');
+      expect(model.outputText, '');
+      expect(model.mode, 'encode');
+      expect(model.showReference, false);
+    });
+
+    test('AsciiModel textToAscii static method works', () {
+      expect(AsciiModel.textToAscii('Hello'), '72 101 108 108 111');
+      expect(AsciiModel.textToAscii('A'), '65');
+      expect(AsciiModel.textToAscii(''), '');
+      expect(AsciiModel.textToAscii('ABC'), '65 66 67');
+      expect(AsciiModel.textToAscii('123'), '49 50 51');
+    });
+
+    test('AsciiModel asciiToText static method works', () {
+      expect(AsciiModel.asciiToText('72 101 108 108 111'), 'Hello');
+      expect(AsciiModel.asciiToText('65'), 'A');
+      expect(AsciiModel.asciiToText(''), '');
+      expect(AsciiModel.asciiToText('65 66 67'), 'ABC');
+      expect(AsciiModel.asciiToText('49 50 51'), '123');
+    });
+
+    test('AsciiModel asciiToText handles invalid input', () {
+      expect(AsciiModel.asciiToText('abc'), 'Invalid ASCII codes');
+      expect(AsciiModel.asciiToText('999'), '');
+      expect(AsciiModel.asciiToText('256'), '');
+    });
+
+    test('AsciiModel setInputText in encode mode works', () {
+      final model = AsciiModel();
+      model.init();
+      model.setInputText('Hello');
+      expect(model.inputText, 'Hello');
+      expect(model.outputText, '72 101 108 108 111');
+    });
+
+    test('AsciiModel setInputText in decode mode works', () {
+      final model = AsciiModel();
+      model.init();
+      model.swapMode();
+      expect(model.mode, 'decode');
+      model.setInputText('72 101 108 108 111');
+      expect(model.inputText, '72 101 108 108 111');
+      expect(model.outputText, 'Hello');
+    });
+
+    test('AsciiModel swapMode works', () {
+      final model = AsciiModel();
+      model.init();
+      model.setInputText('Hello');
+      expect(model.mode, 'encode');
+      model.swapMode();
+      expect(model.mode, 'decode');
+      expect(model.inputText, '72 101 108 108 111');
+      expect(model.outputText, 'Hello');
+    });
+
+    test('AsciiModel clearInput works', () {
+      final model = AsciiModel();
+      model.init();
+      model.setInputText('Hello');
+      model.clearInput();
+      expect(model.inputText, '');
+      expect(model.outputText, '');
+    });
+
+    test('AsciiModel toggleReference works', () {
+      final model = AsciiModel();
+      model.init();
+      expect(model.showReference, false);
+      model.toggleReference();
+      expect(model.showReference, true);
+      model.toggleReference();
+      expect(model.showReference, false);
+    });
+
+    test('AsciiModel history works', () {
+      final model = AsciiModel();
+      model.init();
+      model.setInputText('Hello');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0]['input'], 'Hello');
+      expect(model.history[0]['output'], '72 101 108 108 111');
+      expect(model.history[0]['mode'], 'encode');
+    });
+
+    test('AsciiModel clearHistory works', () {
+      final model = AsciiModel();
+      model.init();
+      model.setInputText('Hello');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history, []);
+    });
+
+    test('AsciiModel history max limit', () {
+      final model = AsciiModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputText('Test$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('AsciiModel loadFromHistory works', () {
+      final model = AsciiModel();
+      model.init();
+      model.setInputText('Hello');
+      model.addToHistory();
+      model.clearInput();
+      model.loadFromHistory(model.history[0]);
+      expect(model.inputText, 'Hello');
+      expect(model.outputText, '72 101 108 108 111');
+      expect(model.mode, 'encode');
+    });
+
+    test('AsciiModel refresh calls notifyListeners', () {
+      final model = AsciiModel();
+      model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('AsciiModel getAsciiTable returns correct data', () {
+      final table = AsciiModel.getAsciiTable();
+      expect(table.length, 95);
+      expect(table[0]['code'], '32');
+      expect(table[0]['char'], ' ');
+      expect(table[0]['name'], 'Space');
+      expect(table[64]['code'], '96');
+      expect(table[64]['char'], '`');
+      expect(table[64]['name'], 'Backtick');
+      expect(table[65]['code'], '97');
+      expect(table[65]['char'], 'a');
+    });
+
+    testWidgets('AsciiCard renders loading state', (WidgetTester tester) async {
+      final model = AsciiModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: AsciiCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('AsciiCard renders initialized state', (WidgetTester tester) async {
+      final model = AsciiModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: AsciiCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('ASCII Converter'), findsOneWidget);
+      expect(find.byType(SegmentedButton<String>), findsOneWidget);
+      expect(find.byType(TextField), findsOneWidget);
+    });
+
+    testWidgets('AsciiCard shows input field', (WidgetTester tester) async {
+      final model = AsciiModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: AsciiCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsOneWidget);
+    });
+
+    test('AsciiCard widget exists', () {
+      expect(AsciiCard, isNotNull);
+    });
+
+    test('Global.providerList includes Ascii', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Ascii'), true);
+    });
+
+    tearDownAll(() {
+      asciiModel.clearHistory();
     });
   });
 }
