@@ -292,15 +292,40 @@
         "\u001b[0m$ \u001b[0munset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && ~/app/flutter/bin/flutter test 2>&1 | grep -E \"^Test failed|^Expected|^Actual|^Which\" | head -20",
         "\u001b[0m$ \u001b[0munset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && ~/app/flutter/bin/flutter test --reporter expanded 2>&1 | grep -E \"FAIL|passed\" | tail -20"
       ]
+    },
+    {
+      "iteration": 12,
+      "startedAt": "2026-04-24T18:17:14.157Z",
+      "endedAt": "2026-04-24T18:21:36.132Z",
+      "durationMs": 254154,
+      "agent": "opencode",
+      "model": "",
+      "toolsUsed": {},
+      "filesModified": [
+        "AGENTS.md",
+        "docs/reactiontime_state_fix.md",
+        "lib/providers/provider_reactiontime.dart",
+        "test/widget_test.dart"
+      ],
+      "exitCode": 0,
+      "completionDetected": true,
+      "errors": [
+        "E/AndroidRuntime(28196): FATAL EXCEPTION: main",
+        "E/AndroidRuntime(28196): java.lang.RuntimeException: android.app.BackgroundServiceStartNotAllowedException: Not allowed to start service Intent { xflg=0x4 cmp=com.google.android.GoogleCameraEng/com.go",
+        "E/AndroidRuntime(28196): Caused by: android.app.BackgroundServiceStartNotAllowedException: Not allowed to start service Intent { xflg=0x4 cmp=com.google.android.GoogleCameraEng/com.google.android.apps",
+        "The following TestFailure was thrown running a test:",
+        "Test failed. See exception logs above.",
+        "00:13 +1607 -1: ReactionTime Provider tests ReactionTimeCard shows stats row                                                                                                                           \r"
+      ]
     }
   ],
-  "totalDurationMs": 6507296,
+  "totalDurationMs": 6761450,
   "struggleIndicators": {
     "repeatedErrors": {
       "I/flutter (11166): [ERROR] 2026-04-24T23:57:45.682722 - Network error: ClientException with SocketEx": 1,
       "\u001b[0m$ \u001b[0munset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && ~/app/flutter/bin/flutter test --no": 1,
-      "Test failed. See exception logs above.": 1,
-      "The following TestFailure was thrown running a test:": 1,
+      "Test failed. See exception logs above.": 2,
+      "The following TestFailure was thrown running a test:": 2,
       "00:12 +1429 -14: Timestamp provider tests TimestampCard shows error on invalid input                ": 1,
       "00:12 +1426 -12: Timestamp provider tests TimestampModel refresh notifies listeners                 ": 1,
       "00:12 +1424 -6: Timestamp provider tests TimestampModel setCurrentTimestamp works                   ": 1,
@@ -343,8 +368,11 @@
       "[WARN] 2026-04-25T02:01:23.428346 - Processing error: FormatException: Invalid character (at charact": 1,
       "\u001b[91m\u001b[1mError: \u001b[0mFound multiple matches for oldString. Provide more surrounding context to make t": 1,
       "lib/providers/provider_reactiontime.dart:314:22: Error: The type 'ReactionState' is not exhaustively": 1,
-      "00:13 +1607 -1: ReactionTime Provider tests ReactionTimeCard shows stats row                        ": 1,
-      "00:12 +1607 -1: ReactionTime Provider tests ReactionTimeCard shows stats row                        ": 1
+      "00:13 +1607 -1: ReactionTime Provider tests ReactionTimeCard shows stats row                        ": 2,
+      "00:12 +1607 -1: ReactionTime Provider tests ReactionTimeCard shows stats row                        ": 1,
+      "E/AndroidRuntime(28196): FATAL EXCEPTION: main": 1,
+      "E/AndroidRuntime(28196): java.lang.RuntimeException: android.app.BackgroundServiceStartNotAllowedExc": 1,
+      "E/AndroidRuntime(28196): Caused by: android.app.BackgroundServiceStartNotAllowedException: Not allow": 1
     },
     "noProgressIterations": 0,
     "shortIterations": 0
