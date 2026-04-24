@@ -57,9 +57,11 @@ class BatteryModel extends ChangeNotifier {
       Global.loggerModel.info("Battery initialized: $level%, state: $state", source: "Battery");
       
       _battery.onBatteryStateChanged.listen((BatteryState state) {
-        _state = state;
-        notifyListeners();
-        Global.loggerModel.info("Battery state changed: $state", source: "Battery");
+        if (_state != state) {
+          _state = state;
+          notifyListeners();
+          Global.loggerModel.info("Battery state changed: $state", source: "Battery");
+        }
       });
       
       notifyListeners();

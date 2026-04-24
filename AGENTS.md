@@ -811,6 +811,7 @@ Technical documentation is available in `docs/`:
 - `critical_bug_fixes_iteration49.md` - Critical bug fix for missing Parking, Gratitude, Debt models in MultiProvider
 - `interval_timer_provider.md` - Interval Timer (HIIT/Tabata) provider implementation for workout intervals
 - `app_limit_removal.md` - Removal of 20 app limit in info widget list
+- `battery_listener_optimization.md` - Battery state listener optimization to prevent excessive notifications
 
 ## Notice
 DO NOT EDIT task*.md
