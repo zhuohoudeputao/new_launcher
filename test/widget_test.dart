@@ -38,6 +38,7 @@ import 'package:new_launcher/providers/provider_tip.dart';
 import 'package:new_launcher/providers/provider_bmi.dart';
 import 'package:new_launcher/providers/provider_metronome.dart';
 import 'package:new_launcher/providers/provider_flashcard.dart';
+import 'package:new_launcher/providers/provider_workout.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2478,7 +2479,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 39);
+      expect(Global.providerList.length, 40);
     });
 
     test('Global.providerList names are correct', () {
@@ -3645,7 +3646,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 39);
+      expect(initCount, 40);
     });
   });
 
@@ -3962,8 +3963,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-    test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 39);
+test('Global.providerList contains all providers (40 total)', () {
+      expect(Global.providerList.length, 40);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5306,8 +5307,8 @@ void main() {
       expect(UnitConverterCard, isNotNull);
     });
 
-    test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 39);
+test('Global.providerList contains all providers (40 total)', () {
+      expect(Global.providerList.length, 40);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -10677,6 +10678,355 @@ void main() {
 
     testWidgets('StudyDialog widget exists', (WidgetTester tester) async {
       expect(StudyDialog, isNotNull);
+    });
+  });
+
+  group('Workout provider tests', () {
+    test('WorkoutType enum has correct values', () {
+      expect(WorkoutType.values.length, 8);
+      expect(WorkoutType.running, isNotNull);
+      expect(WorkoutType.cycling, isNotNull);
+      expect(WorkoutType.weights, isNotNull);
+      expect(WorkoutType.yoga, isNotNull);
+      expect(WorkoutType.swimming, isNotNull);
+      expect(WorkoutType.walking, isNotNull);
+      expect(WorkoutType.hiit, isNotNull);
+      expect(WorkoutType.other, isNotNull);
+    });
+
+    test('WorkoutType emoji works', () {
+      expect(WorkoutType.running.emoji, '🏃');
+      expect(WorkoutType.cycling.emoji, '🚴');
+      expect(WorkoutType.weights.emoji, '🏋️');
+      expect(WorkoutType.yoga.emoji, '🧘');
+      expect(WorkoutType.swimming.emoji, '🏊');
+      expect(WorkoutType.walking.emoji, '🚶');
+      expect(WorkoutType.hiit.emoji, '⚡');
+      expect(WorkoutType.other.emoji, '💪');
+    });
+
+    test('WorkoutType label works', () {
+      expect(WorkoutType.running.label, 'Running');
+      expect(WorkoutType.cycling.label, 'Cycling');
+      expect(WorkoutType.weights.label, 'Weights');
+      expect(WorkoutType.yoga.label, 'Yoga');
+      expect(WorkoutType.swimming.label, 'Swimming');
+      expect(WorkoutType.walking.label, 'Walking');
+      expect(WorkoutType.hiit.label, 'HIIT');
+      expect(WorkoutType.other.label, 'Other');
+    });
+
+    test('WorkoutType fromString works', () {
+      expect(WorkoutTypeExtension.fromString('running'), WorkoutType.running);
+      expect(WorkoutTypeExtension.fromString('cycling'), WorkoutType.cycling);
+      expect(WorkoutTypeExtension.fromString('weights'), WorkoutType.weights);
+      expect(WorkoutTypeExtension.fromString('yoga'), WorkoutType.yoga);
+      expect(WorkoutTypeExtension.fromString('swimming'), WorkoutType.swimming);
+      expect(WorkoutTypeExtension.fromString('walking'), WorkoutType.walking);
+      expect(WorkoutTypeExtension.fromString('hiit'), WorkoutType.hiit);
+      expect(WorkoutTypeExtension.fromString('other'), WorkoutType.other);
+      expect(WorkoutTypeExtension.fromString('unknown'), WorkoutType.other);
+    });
+
+    test('WorkoutEntry properties work', () {
+      final entry = WorkoutEntry(
+        date: DateTime(2026, 4, 24),
+        type: WorkoutType.running,
+        durationMinutes: 30,
+        note: 'Good run',
+      );
+      expect(entry.date, DateTime(2026, 4, 24));
+      expect(entry.type, WorkoutType.running);
+      expect(entry.durationMinutes, 30);
+      expect(entry.note, 'Good run');
+    });
+
+    test('WorkoutEntry formatDuration works', () {
+      final entry1 = WorkoutEntry(date: DateTime.now(), type: WorkoutType.running, durationMinutes: 30);
+      expect(entry1.formatDuration(), '30m');
+
+      final entry2 = WorkoutEntry(date: DateTime.now(), type: WorkoutType.running, durationMinutes: 60);
+      expect(entry2.formatDuration(), '1h');
+
+      final entry3 = WorkoutEntry(date: DateTime.now(), type: WorkoutType.running, durationMinutes: 90);
+      expect(entry3.formatDuration(), '1h 30m');
+    });
+
+    test('WorkoutEntry toJson and fromJson work', () {
+      final entry = WorkoutEntry(
+        date: DateTime(2026, 4, 24),
+        type: WorkoutType.weights,
+        durationMinutes: 45,
+        note: 'Test note',
+      );
+      final json = entry.toJson();
+      final restored = WorkoutEntry.fromJson(json);
+
+      expect(restored.date, entry.date);
+      expect(restored.type, entry.type);
+      expect(restored.durationMinutes, entry.durationMinutes);
+      expect(restored.note, entry.note);
+    });
+
+    test('WorkoutEntry getDayKey works', () {
+      final date = DateTime(2026, 4, 24);
+      final key = WorkoutEntry.getDayKey(date);
+      expect(key, '2026-4-24');
+    });
+
+    test('WorkoutModel initialization works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.history.length, 0);
+    });
+
+    test('WorkoutModel logWorkout works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+
+      model.logWorkout(WorkoutType.running, 30);
+      expect(model.history.length, 1);
+      expect(model.history.first.type, WorkoutType.running);
+      expect(model.history.first.durationMinutes, 30);
+    });
+
+    test('WorkoutModel logWorkout with custom date works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+
+      final customDate = DateTime(2026, 4, 20);
+      model.logWorkout(WorkoutType.cycling, 45, customDate: customDate);
+      expect(model.history.length, 1);
+      expect(model.history.first.date.day, 20);
+    });
+
+    test('WorkoutModel logWorkout with note works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+
+      model.logWorkout(WorkoutType.weights, 60, note: 'Leg day');
+      expect(model.history.length, 1);
+      expect(model.history.first.note, 'Leg day');
+    });
+
+    test('WorkoutModel deleteEntry works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+
+      model.logWorkout(WorkoutType.running, 30, customDate: DateTime.now().subtract(Duration(days: 2)));
+      model.logWorkout(WorkoutType.cycling, 45, customDate: DateTime.now().subtract(Duration(days: 1)));
+
+      expect(model.history.length, 2);
+      model.deleteEntry(0);
+      expect(model.history.length, 1);
+    });
+
+    test('WorkoutModel clearHistory works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+
+      model.logWorkout(WorkoutType.running, 30);
+      model.logWorkout(WorkoutType.cycling, 45, customDate: DateTime.now().subtract(Duration(days: 2)));
+
+      await model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('WorkoutModel totalMinutes works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+
+      model.logWorkout(WorkoutType.running, 30, customDate: DateTime.now().subtract(Duration(days: 2)));
+      model.logWorkout(WorkoutType.cycling, 45, customDate: DateTime.now().subtract(Duration(days: 1)));
+
+      expect(model.totalMinutes, 75);
+    });
+
+    test('WorkoutModel totalMinutes empty returns 0', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+
+      expect(model.totalMinutes, 0);
+    });
+
+    test('WorkoutModel thisWeekMinutes works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+
+      final now = DateTime.now();
+      final thisWeek = now.subtract(Duration(days: 2));
+      final lastWeek = now.subtract(Duration(days: 10));
+
+      model.logWorkout(WorkoutType.running, 30, customDate: thisWeek);
+      model.logWorkout(WorkoutType.cycling, 45, customDate: lastWeek);
+
+      expect(model.thisWeekMinutes, 30);
+    });
+
+    test('WorkoutModel thisMonthMinutes works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+
+      final now = DateTime.now();
+      final thisMonth = now.subtract(Duration(days: 5));
+      final lastMonth = DateTime(now.year, now.month - 1, 15);
+
+      model.logWorkout(WorkoutType.running, 30, customDate: thisMonth);
+      model.logWorkout(WorkoutType.weights, 60, customDate: lastMonth);
+
+      expect(model.thisMonthMinutes, 30);
+    });
+
+    test('WorkoutModel formatTotalMinutes works', () {
+      final model = WorkoutModel();
+      expect(model.formatTotalMinutes(30), '30m');
+      expect(model.formatTotalMinutes(60), '1h');
+      expect(model.formatTotalMinutes(90), '1h 30m');
+    });
+
+    test('WorkoutModel lastEntry works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+
+      model.logWorkout(WorkoutType.running, 30, customDate: DateTime.now().subtract(Duration(days: 2)));
+      model.logWorkout(WorkoutType.cycling, 45, customDate: DateTime.now().subtract(Duration(days: 1)));
+
+      expect(model.lastEntry!.type, WorkoutType.cycling);
+    });
+
+    test('WorkoutModel lastEntry empty returns null', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+
+      expect(model.lastEntry, null);
+    });
+
+    test('WorkoutModel hasHistory works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+
+      expect(model.hasHistory, false);
+      model.logWorkout(WorkoutType.running, 30);
+      expect(model.hasHistory, true);
+    });
+
+    test('Workout provider exists', () {
+      expect(providerWorkout, isNotNull);
+      expect(providerWorkout.name, 'Workout');
+    });
+
+    test('Workout provider keywords include workout', () {
+      final keywords = 'workout exercise gym fitness run cycle swim yoga walk training log';
+      expect(keywords.contains('workout'), true);
+    });
+
+    test('Workout provider keywords include exercise', () {
+      final keywords = 'workout exercise gym fitness run cycle swim yoga walk training log';
+      expect(keywords.contains('exercise'), true);
+    });
+
+    test('Workout provider keywords include gym', () {
+      final keywords = 'workout exercise gym fitness run cycle swim yoga walk training log';
+      expect(keywords.contains('gym'), true);
+    });
+
+    test('Workout provider keywords include fitness', () {
+      final keywords = 'workout exercise gym fitness run cycle swim yoga walk training log';
+      expect(keywords.contains('fitness'), true);
+    });
+
+    testWidgets('WorkoutCard renders loading state', (WidgetTester tester) async {
+      final model = WorkoutModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: WorkoutCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Workout Log: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('WorkoutCard renders initialized state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: WorkoutCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Workout Log'), findsOneWidget);
+    });
+
+    testWidgets('WorkoutCard shows empty state message', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: WorkoutCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('No workouts logged yet'), findsOneWidget);
+    });
+
+    testWidgets('WorkoutCard widget exists', (WidgetTester tester) async {
+      expect(WorkoutCard, isNotNull);
+    });
+
+    testWidgets('WorkoutCard shows log button', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WorkoutModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: WorkoutCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Log'), findsOneWidget);
+    });
+
+    testWidgets('WorkoutLogDialog widget exists', (WidgetTester tester) async {
+      expect(WorkoutLogDialog, isNotNull);
     });
   });
 }

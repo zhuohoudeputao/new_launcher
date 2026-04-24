@@ -481,6 +481,17 @@ Settings auto-saved via `SharedPreferences`:
     - Decks persisted via SharedPreferences
     - Uses `Card.filled` for Material 3 style
     - Keywords: flashcard, flash, cards, study, learn, memorize, quiz, deck, review
+- **Workout**: Fitness and exercise tracking
+    - 8 workout types: Running (🏃), Cycling (🚴), Weights (🏋️), Yoga (🧘), Swimming (🏊), Walking (🚶), HIIT (⚡), Other (💪)
+    - Duration tracking (5-180 minutes with slider)
+    - Optional notes for each session
+    - Log workouts for custom dates (within 30 days)
+    - Statistics: weekly/monthly total minutes, session count
+    - History view with delete option (up to 100 entries)
+    - Clear all workouts with confirmation dialog
+    - Workouts persisted via SharedPreferences
+    - Uses `Card.filled` and `Wrap` for Material 3 style
+    - Keywords: workout, exercise, gym, fitness, run, cycle, swim, yoga, walk, training, log
 
 ## Material 3 Design System
 
@@ -585,8 +596,9 @@ Test coverage includes:
 - BMI Calculator provider tests (provider existence, keywords, model state, BMI calculation, unit switching, history, widget rendering)
 - Metronome provider tests (provider existence, keywords, model state, BPM operations, time signature, tap tempo, history, widget rendering)
 - Flashcard provider tests (provider existence, keywords, model state, CRUD operations for decks and cards, study tracking, widget rendering)
+- Workout provider tests (provider existence, keywords, model state, workout logging, statistics calculations, widget rendering)
   
-Total tests: 1053 tests
+Total tests: 1086 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -652,6 +664,7 @@ Technical documentation is available in `docs/`:
 - `bmi_provider.md` - BMI Calculator provider implementation for health tracking
 - `metronome_provider.md` - Metronome provider implementation for musicians
 - `flashcard_provider.md` - Flashcard provider implementation for studying/memorization
+- `workout_provider.md` - Workout provider implementation for fitness/exercise tracking
 - `calendar_model.md` - CalendarModel implementation for provider pattern consistency
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks

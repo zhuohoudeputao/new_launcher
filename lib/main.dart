@@ -41,6 +41,7 @@ import 'package:new_launcher/providers/provider_tip.dart';
 import 'package:new_launcher/providers/provider_bmi.dart';
 import 'package:new_launcher/providers/provider_metronome.dart';
 import 'package:new_launcher/providers/provider_flashcard.dart';
+import 'package:new_launcher/providers/provider_workout.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -156,6 +157,7 @@ ChangeNotifierProvider.value(value: tipModel),
             ChangeNotifierProvider.value(value: bmiModel),
             ChangeNotifierProvider.value(value: metronomeModel),
             ChangeNotifierProvider.value(value: flashcardModel),
+            ChangeNotifierProvider.value(value: workoutModel),
             ],
           child: MyApp(),
          )));
