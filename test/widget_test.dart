@@ -2509,7 +2509,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 69);
+      expect(Global.providerList.length, 70);
     });
 
     test('Global.providerList names are correct', () {
@@ -3676,7 +3676,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 69);
+      expect(initCount, 70);
     });
   });
 
@@ -3993,8 +3993,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (69 total)', () {
-      expect(Global.providerList.length, 69);
+test('Global.providerList contains all providers (70 total)', () {
+      expect(Global.providerList.length, 70);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5337,8 +5337,8 @@ test('Global.providerList contains all providers (69 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (69 total)', () {
-      expect(Global.providerList.length, 69);
+test('Global.providerList contains all providers (70 total)', () {
+      expect(Global.providerList.length, 70);
     });
 
     test('Global.providerList includes UnitConverter', () {
