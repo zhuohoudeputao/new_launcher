@@ -841,6 +841,22 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `GridView` for Material 3 style
     - Keywords: minesweeper, mine, bomb, puzzle, grid, reveal, flag, game
+- **Game2048**: Classic 2048 number puzzle game
+    - Slide tiles in 4 directions (up, down, left, right) on a 4x4 grid
+    - Tiles merge when same numbers collide, doubling the value
+    - Goal is to create a tile with 2048 or higher
+    - New tiles (2 or 4) appear after each move
+    - Score tracking based on merged tile values
+    - Highest tile tracking during gameplay
+    - Game over detection when no moves possible
+    - Win detection when 2048 tile is reached
+    - Best score and best tile tracking across sessions
+    - Move count tracking
+    - History tracking (up to 10 entries)
+    - Reset stats with confirmation dialog
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `GridView`, `IconButton` for Material 3 style
+    - Keywords: 2048, game, puzzle, number, tile, slide, merge
 
 ## Material 3 Design System
 
@@ -971,8 +987,9 @@ Test coverage includes:
 - Hangman provider tests (provider existence, keywords, model state, letter guessing, win/lose detection, statistics, history, widget rendering)
 - Sudoku provider tests (provider existence, keywords, model state, difficulty settings, grid operations, statistics, history, widget rendering)
 - Minesweeper provider tests (provider existence, keywords, model state, difficulty settings, grid operations, cell operations, statistics, history, widget rendering)
+- Game2048 provider tests (provider existence, keywords, model state, grid operations, move operations, statistics, history, widget rendering)
   
-Total tests: 1851 tests
+Total tests: 1875 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

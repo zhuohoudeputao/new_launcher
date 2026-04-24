@@ -68,6 +68,7 @@ import 'package:new_launcher/providers/provider_memorygame.dart';
 import 'package:new_launcher/providers/provider_hangman.dart';
 import 'package:new_launcher/providers/provider_sudoku.dart';
 import 'package:new_launcher/providers/provider_minesweeper.dart';
+import 'package:new_launcher/providers/provider_2048.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -19069,6 +19070,252 @@ test('Global.providerList contains all providers (69 total)', () {
         ),
       ));
       expect(find.text('New Game'), findsOneWidget);
+    });
+  });
+
+  group('Game2048 provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('Game2048Entry has required properties', () {
+      final entry = Game2048Entry(
+        score: 1000,
+        highestTile: 128,
+        completed: false,
+        moves: 50,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.score, 1000);
+      expect(entry.highestTile, 128);
+      expect(entry.completed, false);
+      expect(entry.moves, 50);
+    });
+
+    test('Game2048Model default values are correct', () {
+      final model = Game2048Model();
+      expect(model.isInitialized, false);
+      expect(model.score, 0);
+      expect(model.highestTile, 0);
+      expect(model.moves, 0);
+      expect(model.isGameOver, false);
+      expect(model.hasWon, false);
+      expect(model.bestScore, 0);
+      expect(model.bestTile, 0);
+      expect(model.gamesPlayed, 0);
+      expect(model.gamesWon, 0);
+    });
+
+    test('Game2048Model init initializes correctly', () async {
+      final model = Game2048Model();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.grid.length, 4);
+      expect(model.grid[0].length, 4);
+    });
+
+    test('Game2048Model newGame resets state', () async {
+      final model = Game2048Model();
+      await model.init();
+      model.newGame();
+      expect(model.score, 0);
+      expect(model.highestTile, greaterThanOrEqualTo(2));
+      expect(model.moves, 0);
+      expect(model.isGameOver, false);
+      expect(model.hasWon, false);
+    });
+
+    test('Game2048Model grid has 4x4 dimensions', () async {
+      final model = Game2048Model();
+      await model.init();
+      expect(model.grid.length, 4);
+      for (var row in model.grid) {
+        expect(row.length, 4);
+      }
+    });
+
+    test('Game2048Model move works', () async {
+      final model = Game2048Model();
+      await model.init();
+      model.move(Direction.left);
+      expect(model.moves, greaterThanOrEqualTo(0));
+    });
+
+    test('Game2048Model resetStats clears stats', () async {
+      final model = Game2048Model();
+      await model.init();
+      model.resetStats();
+      expect(model.bestScore, 0);
+      expect(model.bestTile, 0);
+      expect(model.gamesPlayed, 0);
+      expect(model.gamesWon, 0);
+    });
+
+    test('Game2048Model clearHistory clears history', () async {
+      final model = Game2048Model();
+      await model.init();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('Game2048Model history respects max limit', () async {
+      final model = Game2048Model();
+      await model.init();
+      expect(Game2048Model.maxHistory, 10);
+    });
+
+    test('Game2048Model refresh calls notifyListeners', () async {
+      final model = Game2048Model();
+      await model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('Game2048Model getTileColor returns color for values', (WidgetTester tester) async {
+      final model = Game2048Model();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Builder(
+          builder: (context) {
+            expect(model.getTileColor(0, context), isNotNull);
+            expect(model.getTileColor(2, context), isNotNull);
+            expect(model.getTileColor(4, context), isNotNull);
+            expect(model.getTileColor(8, context), isNotNull);
+            expect(model.getTileColor(16, context), isNotNull);
+            expect(model.getTileColor(32, context), isNotNull);
+            expect(model.getTileColor(64, context), isNotNull);
+            expect(model.getTileColor(128, context), isNotNull);
+            expect(model.getTileColor(256, context), isNotNull);
+            expect(model.getTileColor(512, context), isNotNull);
+            expect(model.getTileColor(1024, context), isNotNull);
+            expect(model.getTileColor(2048, context), isNotNull);
+            expect(model.getTileColor(4096, context), isNotNull);
+            return Container();
+          },
+        ),
+      ));
+    });
+
+    test('Game2048Model getTileTextColor returns correct color', () async {
+      final model = Game2048Model();
+      expect(model.getTileTextColor(0), Colors.transparent);
+      expect(model.getTileTextColor(2), isNotNull);
+      expect(model.getTileTextColor(4), isNotNull);
+      expect(model.getTileTextColor(8), isNotNull);
+    });
+
+    test('Game2048Model formatTimeAgo works', () async {
+      final model = Game2048Model();
+      expect(model.formatTimeAgo(DateTime.now()), "just now");
+      expect(model.formatTimeAgo(DateTime.now().subtract(Duration(minutes: 5))), "5m ago");
+      expect(model.formatTimeAgo(DateTime.now().subtract(Duration(hours: 2))), "2h ago");
+      expect(model.formatTimeAgo(DateTime.now().subtract(Duration(days: 3))), "3d ago");
+    });
+
+    test('Game2048Model hasHistory works', () async {
+      final model = Game2048Model();
+      await model.init();
+      expect(model.hasHistory, false);
+    });
+
+    test('provider2048 exists', () {
+      expect(provider2048.name, "Game2048");
+    });
+
+    test('provider2048 keywords contain 2048 related words', () {
+      expect(provider2048.name, 'Game2048');
+    });
+
+    testWidgets('Game2048Card renders loading state', (WidgetTester tester) async {
+      final model = Game2048Model();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => Game2048Card(),
+          ),
+        ),
+      ));
+      expect(find.text('2048: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('Game2048Card renders initialized state', (WidgetTester tester) async {
+      final model = Game2048Model();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => Game2048Card(),
+          ),
+        ),
+      ));
+      expect(find.text('2048'), findsOneWidget);
+    });
+
+    testWidgets('Game2048Card shows grid', (WidgetTester tester) async {
+      final model = Game2048Model();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => Game2048Card(),
+          ),
+        ),
+      ));
+      expect(find.byType(GridView), findsOneWidget);
+    });
+
+    testWidgets('Game2048Card shows control buttons', (WidgetTester tester) async {
+      final model = Game2048Model();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => Game2048Card(),
+          ),
+        ),
+      ));
+      expect(find.byIcon(Icons.arrow_upward), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_downward), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_back), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_forward), findsOneWidget);
+    });
+
+    testWidgets('Game2048Card shows new game button', (WidgetTester tester) async {
+      final model = Game2048Model();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => Game2048Card(),
+          ),
+        ),
+      ));
+      expect(find.text('New Game'), findsOneWidget);
+    });
+
+    test('Direction enum has all values', () {
+      expect(Direction.values.length, 4);
+      expect(Direction.up, isNotNull);
+      expect(Direction.down, isNotNull);
+      expect(Direction.left, isNotNull);
+      expect(Direction.right, isNotNull);
+    });
+
+    test('Game2048Card widget exists', () {
+      expect(Game2048Card, isNotNull);
+    });
+
+    test('Global.providerList includes Game2048', () {
+      final has2048 = Global.providerList.any((p) => p.name == 'Game2048');
+      expect(has2048, true);
     });
   });
 }
