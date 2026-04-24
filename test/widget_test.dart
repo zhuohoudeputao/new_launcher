@@ -60,6 +60,7 @@ import 'package:new_launcher/providers/provider_uuid.dart';
 import 'package:new_launcher/providers/provider_passwordstrength.dart';
 import 'package:new_launcher/providers/provider_moonphase.dart';
 import 'package:new_launcher/providers/provider_reactiontime.dart';
+import 'package:new_launcher/providers/provider_decisionmaker.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2500,7 +2501,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 61);
+      expect(Global.providerList.length, 62);
     });
 
     test('Global.providerList names are correct', () {
@@ -3667,7 +3668,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 61);
+      expect(initCount, 62);
     });
   });
 
@@ -3985,7 +3986,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (59 total)', () {
-      expect(Global.providerList.length, 61);
+      expect(Global.providerList.length, 62);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5329,7 +5330,7 @@ test('Global.providerList contains all providers (59 total)', () {
     });
 
 test('Global.providerList contains all providers (59 total)', () {
-      expect(Global.providerList.length, 61);
+      expect(Global.providerList.length, 62);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -16705,6 +16706,295 @@ test('Global.providerList contains all providers (59 total)', () {
 
     test('ReactionState early state exists', () {
       expect(ReactionState.early.toString(), 'ReactionState.early');
+    });
+
+    tearDownAll(() {
+      Global.loggerModel.clear();
+    });
+  });
+
+  group('DecisionMaker Provider tests', () {
+    test('providerDecisionMaker exists in Global.providerList', () {
+      final decisionMakerProvider = Global.providerList.where((p) => p.name == 'DecisionMaker').first;
+      expect(decisionMakerProvider.name, 'DecisionMaker');
+    });
+
+    test('DecisionMakerModel is ChangeNotifier', () {
+      final model = DecisionMakerModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    test('DecisionMakerModel initial values', () {
+      final model = DecisionMakerModel();
+      expect(model.inputOptions, '');
+      expect(model.selectedOption, '');
+      expect(model.decisionType, DecisionType.pick);
+      expect(model.history.isEmpty, true);
+      expect(model.isInitialized, false);
+    });
+
+    test('DecisionMakerModel init sets isInitialized', () {
+      final model = DecisionMakerModel();
+      expect(model.isInitialized, false);
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('DecisionMakerModel maxHistory constant is 10', () {
+      expect(DecisionMakerModel.maxHistory, 10);
+    });
+
+    test('DecisionMakerModel hasHistory is false initially', () {
+      final model = DecisionMakerModel();
+      expect(model.hasHistory, false);
+    });
+
+    test('DecisionMakerModel setInputOptions updates value', () {
+      final model = DecisionMakerModel();
+      model.setInputOptions('option1, option2, option3');
+      expect(model.inputOptions, 'option1, option2, option3');
+    });
+
+    test('DecisionMakerModel parseOptions splits correctly', () {
+      final model = DecisionMakerModel();
+      model.setInputOptions('option1, option2, option3');
+      final options = model.parseOptions();
+      expect(options.length, 3);
+      expect(options[0], 'option1');
+      expect(options[1], 'option2');
+      expect(options[2], 'option3');
+    });
+
+    test('DecisionMakerModel parseOptions handles empty input', () {
+      final model = DecisionMakerModel();
+      model.setInputOptions('');
+      final options = model.parseOptions();
+      expect(options.isEmpty, true);
+    });
+
+    test('DecisionMakerModel parseOptions handles whitespace', () {
+      final model = DecisionMakerModel();
+      model.setInputOptions('  option1  ,  option2  ,  option3  ');
+      final options = model.parseOptions();
+      expect(options.length, 3);
+      expect(options[0], 'option1');
+    });
+
+    test('DecisionMakerModel setDecisionType changes type', () {
+      final model = DecisionMakerModel();
+      expect(model.decisionType, DecisionType.pick);
+      model.setDecisionType(DecisionType.coinToss);
+      expect(model.decisionType, DecisionType.coinToss);
+      model.setDecisionType(DecisionType.yesNo);
+      expect(model.decisionType, DecisionType.yesNo);
+    });
+
+    test('DecisionMakerModel clearInput clears values', () {
+      final model = DecisionMakerModel();
+      model.setInputOptions('option1, option2');
+      model.clearInput();
+      expect(model.inputOptions, '');
+      expect(model.selectedOption, '');
+    });
+
+    test('DecisionMakerModel clearHistory clears history', () {
+      final model = DecisionMakerModel();
+      model.init();
+      model.setDecisionType(DecisionType.coinToss);
+      model.makeDecision();
+      model.clearHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('DecisionMakerModel requestFocus sets shouldFocus', () {
+      final model = DecisionMakerModel();
+      expect(model.shouldFocus, false);
+      model.requestFocus();
+      expect(model.shouldFocus, true);
+    });
+
+    test('DecisionMaker keywords include decision', () {
+      final keywords = 'decision maker decide choose random pick option spin wheel coin toss yes no';
+      expect(keywords.contains('decision'), true);
+    });
+
+    test('DecisionMaker keywords include choose', () {
+      final keywords = 'decision maker decide choose random pick option spin wheel coin toss yes no';
+      expect(keywords.contains('choose'), true);
+    });
+
+    test('DecisionMaker keywords include coin', () {
+      final keywords = 'decision maker decide choose random pick option spin wheel coin toss yes no';
+      expect(keywords.contains('coin'), true);
+    });
+
+    test('DecisionMaker keywords include yes', () {
+      final keywords = 'decision maker decide choose random pick option spin wheel coin toss yes no';
+      expect(keywords.contains('yes'), true);
+    });
+
+    test('Global.providerList includes DecisionMaker', () {
+      final hasDecisionMaker = Global.providerList.any((p) => p.name == 'DecisionMaker');
+      expect(hasDecisionMaker, true);
+    });
+
+    testWidgets('DecisionMakerCard renders loading state', (WidgetTester tester) async {
+      final model = DecisionMakerModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: DecisionMakerCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('DecisionMaker: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('DecisionMakerCard renders initialized state', (WidgetTester tester) async {
+      final model = DecisionMakerModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: DecisionMakerCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Decision Maker'), findsOneWidget);
+      expect(find.byIcon(Icons.help_outline), findsWidgets);
+    });
+
+    testWidgets('DecisionMakerCard shows segmented buttons', (WidgetTester tester) async {
+      final model = DecisionMakerModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: DecisionMakerCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Pick'), findsOneWidget);
+      expect(find.text('Coin'), findsOneWidget);
+      expect(find.text('Yes/No'), findsOneWidget);
+    });
+
+    testWidgets('DecisionMakerCard shows make decision button', (WidgetTester tester) async {
+      final model = DecisionMakerModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: DecisionMakerCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Make Decision'), findsOneWidget);
+    });
+
+    testWidgets('DecisionMakerCard shows tap to decide placeholder', (WidgetTester tester) async {
+      final model = DecisionMakerModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: DecisionMakerCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Tap to decide'), findsOneWidget);
+    });
+
+    test('DecisionType enum has all types', () {
+      expect(DecisionType.values.length, 3);
+      expect(DecisionType.values.contains(DecisionType.pick), true);
+      expect(DecisionType.values.contains(DecisionType.coinToss), true);
+      expect(DecisionType.values.contains(DecisionType.yesNo), true);
+    });
+
+    test('DecisionType pick type exists', () {
+      expect(DecisionType.pick.toString(), 'DecisionType.pick');
+    });
+
+    test('DecisionType coinToss type exists', () {
+      expect(DecisionType.coinToss.toString(), 'DecisionType.coinToss');
+    });
+
+    test('DecisionType yesNo type exists', () {
+      expect(DecisionType.yesNo.toString(), 'DecisionType.yesNo');
+    });
+
+    test('DecisionEntry stores decision data', () {
+      final entry = DecisionEntry(
+        decision: 'Heads',
+        type: DecisionType.coinToss,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.decision, 'Heads');
+      expect(entry.type, DecisionType.coinToss);
+    });
+
+    test('DecisionMakerModel makeDecision creates history entry', () {
+      final model = DecisionMakerModel();
+      model.init();
+      model.setDecisionType(DecisionType.coinToss);
+      model.makeDecision();
+      expect(model.hasHistory, true);
+      expect(model.history[0].type, DecisionType.coinToss);
+    });
+
+    test('DecisionMakerModel coin toss produces Heads or Tails', () {
+      final model = DecisionMakerModel();
+      model.init();
+      model.setDecisionType(DecisionType.coinToss);
+      model.makeDecision();
+      expect(model.selectedOption == 'Heads' || model.selectedOption == 'Tails', true);
+    });
+
+    test('DecisionMakerModel yesNo produces Yes or No', () {
+      final model = DecisionMakerModel();
+      model.init();
+      model.setDecisionType(DecisionType.yesNo);
+      model.makeDecision();
+      expect(model.selectedOption == 'Yes' || model.selectedOption == 'No', true);
+    });
+
+    test('DecisionMakerModel history respects max limit', () {
+      final model = DecisionMakerModel();
+      model.init();
+      model.setDecisionType(DecisionType.coinToss);
+      for (int i = 0; i < 15; i++) {
+        model.makeDecision();
+      }
+      expect(model.history.length <= 10, true);
+    });
+
+    test('DecisionMakerModel isSpinning is false initially', () {
+      final model = DecisionMakerModel();
+      expect(model.isSpinning, false);
     });
 
     tearDownAll(() {

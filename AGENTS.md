@@ -746,6 +746,17 @@ Settings auto-saved via `SharedPreferences`:
     - Reaction time persisted in history via SharedPreferences
     - Uses `Card.filled`, `GestureDetector`, circular button for Material 3 style
     - Keywords: reaction, time, reflex, speed, test, tap, quick, fast, response
+- **DecisionMaker**: Decision making utility for random choices
+    - Three decision modes: Pick from options, Coin toss, Yes/No
+    - Pick mode: Enter comma-separated options for random selection
+    - Spinning animation for 3+ options before result
+    - Coin toss: Quick Heads/Tails flip
+    - Yes/No: Quick Yes/No decision
+    - Decision history tracking (up to 10 entries)
+    - Timestamp display (just now, Xm ago, Xh ago, Xd ago)
+    - Clear all history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
+    - Keywords: decision, maker, decide, choose, random, pick, option, spin, wheel, coin, toss, yes, no
 
 ## Material 3 Design System
 
@@ -868,8 +879,9 @@ Test coverage includes:
 - PasswordStrength provider tests (provider existence, keywords, model state, password analysis, strength scoring, feedback, history, widget rendering)
 - MoonPhase provider tests (provider existence, keywords, model state, moon age calculation, illumination percentage, phase name/emoji validation, next new/full moon, date operations, widget rendering)
 - ReactionTime provider tests (provider existence, keywords, model state, reaction time operations, history, widget rendering)
+- DecisionMaker provider tests (provider existence, keywords, model state, decision operations, history, widget rendering)
   
-Total tests: 1613 tests
+Total tests: 1647 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
