@@ -8952,7 +8952,6 @@ void main() {
       final model = SleepModel();
       await model.init();
 
-      final yesterday = DateTime.now().subtract(Duration(days: 1));
       model.logSleep(7.0, SleepQuality.fair);
       model.logSleep(8.0, SleepQuality.good);
 
