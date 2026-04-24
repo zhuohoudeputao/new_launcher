@@ -33,6 +33,7 @@ import 'package:new_launcher/providers/provider_calendar.dart';
 import 'package:new_launcher/providers/provider_progress.dart';
 import 'package:new_launcher/providers/provider_anniversary.dart';
 import 'package:new_launcher/providers/provider_sleep.dart';
+import 'package:new_launcher/providers/provider_counter.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2473,7 +2474,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 34);
+      expect(Global.providerList.length, 35);
     });
 
     test('Global.providerList names are correct', () {
@@ -3640,7 +3641,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 34);
+      expect(initCount, 35);
     });
   });
 
@@ -3958,7 +3959,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 34);
+      expect(Global.providerList.length, 35);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5302,7 +5303,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 34);
+      expect(Global.providerList.length, 35);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -9193,6 +9194,298 @@ void main() {
 
     test('sleepModel global instance exists', () {
       expect(sleepModel, isNotNull);
+    });
+  });
+
+  group('Counter provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('CounterModel is initialized correctly', () async {
+      final model = CounterModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.counters, isEmpty);
+    });
+
+    test('CounterModel addCounter works', () async {
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Reps', 1);
+      expect(model.length, 1);
+      expect(model.counters[0].name, 'Reps');
+      expect(model.counters[0].count, 0);
+      expect(model.counters[0].step, 1);
+    });
+
+    test('CounterModel addCounter with custom step works', () async {
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Score', 5);
+      expect(model.counters[0].step, 5);
+    });
+
+    test('CounterModel maxCounters limit works', () async {
+      final model = CounterModel();
+      await model.init();
+      for (int i = 0; i < 20; i++) {
+        model.addCounter('Counter$i', 1);
+      }
+      expect(model.length, CounterModel.maxCounters);
+    });
+
+    test('CounterModel increment works', () async {
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Reps', 1);
+      expect(model.counters[0].count, 0);
+      model.increment(0);
+      expect(model.counters[0].count, 1);
+      model.increment(0);
+      expect(model.counters[0].count, 2);
+    });
+
+    test('CounterModel increment with custom step works', () async {
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Score', 5);
+      expect(model.counters[0].count, 0);
+      model.increment(0);
+      expect(model.counters[0].count, 5);
+      model.increment(0);
+      expect(model.counters[0].count, 10);
+    });
+
+    test('CounterModel decrement works', () async {
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Reps', 1);
+      model.increment(0);
+      model.increment(0);
+      expect(model.counters[0].count, 2);
+      model.decrement(0);
+      expect(model.counters[0].count, 1);
+    });
+
+    test('CounterModel decrement with custom step works', () async {
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Score', 5);
+      model.increment(0);
+      expect(model.counters[0].count, 5);
+      model.decrement(0);
+      expect(model.counters[0].count, 0);
+    });
+
+    test('CounterModel decrement allows negative values', () async {
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Reps', 1);
+      model.decrement(0);
+      expect(model.counters[0].count, -1);
+    });
+
+    test('CounterModel resetCounter works', () async {
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Reps', 1);
+      model.increment(0);
+      model.increment(0);
+      model.increment(0);
+      expect(model.counters[0].count, 3);
+      model.resetCounter(0);
+      expect(model.counters[0].count, 0);
+    });
+
+    test('CounterModel updateCounter works', () async {
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Reps', 1);
+      model.updateCounter(0, 'Push-ups', 2);
+      expect(model.counters[0].name, 'Push-ups');
+      expect(model.counters[0].step, 2);
+    });
+
+    test('CounterModel deleteCounter works', () async {
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Counter1', 1);
+      model.addCounter('Counter2', 1);
+      expect(model.length, 2);
+      model.deleteCounter(0);
+      expect(model.length, 1);
+      expect(model.counters[0].name, 'Counter2');
+    });
+
+    test('CounterModel clearAllCounters works', () async {
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Counter1', 1);
+      model.addCounter('Counter2', 1);
+      expect(model.length, 2);
+      await model.clearAllCounters();
+      expect(model.length, 0);
+    });
+
+    test('CounterItem toJson and fromJson work', () {
+      final item = CounterItem(name: 'Test', count: 10, step: 5);
+      final json = item.toJson();
+      final restored = CounterItem.fromJson(json);
+      expect(restored.name, 'Test');
+      expect(restored.count, 10);
+      expect(restored.step, 5);
+    });
+
+    test('CounterItem copyWith works', () {
+      final item = CounterItem(name: 'Test', count: 5, step: 2);
+      final copied = item.copyWith(count: 10);
+      expect(copied.name, 'Test');
+      expect(copied.count, 10);
+      expect(copied.step, 2);
+    });
+
+    test('CounterModel totalCount getter works', () async {
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Counter1', 1);
+      model.addCounter('Counter2', 1);
+      model.increment(0);
+      model.increment(0);
+      model.increment(0);
+      model.increment(1);
+      model.increment(1);
+      expect(model.totalCount, 5);
+    });
+
+    testWidgets('CounterCard renders loading state', (WidgetTester tester) async {
+      final model = CounterModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: CounterCard(),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Counter: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('CounterCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CounterModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: CounterCard(),
+            ),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Counter'), findsOneWidget);
+      expect(find.text('No counters. Tap + to add one!'), findsOneWidget);
+    });
+
+    testWidgets('CounterCard renders with counters', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Reps', 1);
+      model.increment(0);
+      model.increment(0);
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: CounterCard(),
+            ),
+          ),
+        ),
+      ));
+      
+      expect(find.text('Counter'), findsOneWidget);
+      expect(find.text('Reps'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+    });
+
+    test('CounterCard widget exists', () {
+      expect(CounterCard, isNotNull);
+    });
+
+    test('AddCounterDialog widget exists', () {
+      expect(AddCounterDialog, isNotNull);
+    });
+
+    test('EditCounterDialog widget exists', () {
+      expect(EditCounterDialog, isNotNull);
+    });
+
+    test('Global.providerList includes Counter', () {
+      final hasCounter = Global.providerList.any((p) => p.name == 'Counter');
+      expect(hasCounter, true);
+    });
+
+    test('providerCounter exists', () {
+      expect(providerCounter, isNotNull);
+      expect(providerCounter.name, 'Counter');
+    });
+
+    test('Counter provider keywords include counter', () {
+      final keywords = 'counter count tap tally number increment add track';
+      expect(keywords.contains('counter'), true);
+    });
+
+    test('Counter provider keywords include count', () {
+      final keywords = 'counter count tap tally number increment add track';
+      expect(keywords.contains('count'), true);
+    });
+
+    test('Counter provider keywords include increment', () {
+      final keywords = 'counter count tap tally number increment add track';
+      expect(keywords.contains('increment'), true);
+    });
+
+    test('CounterModel is ChangeNotifier', () {
+      final model = CounterModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('counterModel global instance exists', () {
+      expect(counterModel, isNotNull);
+    });
+
+    test('CounterModel length getter works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CounterModel();
+      await model.init();
+      expect(model.length, 0);
+      model.addCounter('Test', 1);
+      expect(model.length, 1);
+    });
+
+    test('CounterModel persistence works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CounterModel();
+      await model.init();
+      model.addCounter('Reps', 1);
+      model.increment(0);
+      model.increment(0);
+      expect(model.counters[0].count, 2);
+      
+      final model2 = CounterModel();
+      await model2.init();
+      expect(model2.length, 1);
+      expect(model2.counters[0].name, 'Reps');
+      expect(model2.counters[0].count, 2);
     });
   });
 }

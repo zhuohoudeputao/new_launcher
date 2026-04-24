@@ -425,6 +425,18 @@ Settings auto-saved via `SharedPreferences`:
     - Sleep entries persisted via SharedPreferences
     - Uses `Card.filled` and `Slider` for Material 3 style
     - Keywords: sleep, rest, nap, bed, track, night, hours, quality, bedtime
+- **Counter**: Multiple named counters for tracking
+    - Create multiple named counters (up to 15)
+    - Custom step values for increment/decrement (default: 1)
+    - Increment (+) and decrement (-) buttons
+    - Reset individual counters to zero
+    - Edit counter name and step via long press
+    - Delete counters via edit dialog
+    - Total count display (sum of all counters)
+    - Clear all counters with confirmation dialog
+    - Counters persisted via SharedPreferences
+    - Uses `Card.filled` for Material 3 style
+    - Keywords: counter, count, tap, tally, number, increment, add, track
 
 ## Material 3 Design System
 
@@ -524,8 +536,9 @@ Test coverage includes:
 - Progress provider tests (provider existence, keywords, model state, CRUD operations, percentage calculation, widget rendering)
 - Anniversary provider tests (provider existence, keywords, model state, CRUD operations, time formatting, widget rendering)
 - Sleep provider tests (provider existence, keywords, model state, sleep logging, statistics calculations, widget rendering)
+- Counter provider tests (provider existence, keywords, model state, CRUD operations, increment/decrement, persistence, widget rendering)
   
-Total tests: 889 tests
+Total tests: 920 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -586,6 +599,7 @@ Technical documentation is available in `docs/`:
 - `progress_provider.md` - Progress tracker provider implementation
 - `anniversary_provider.md` - Anniversary provider implementation
 - `sleep_provider.md` - Sleep tracker provider implementation
+- `counter_provider.md` - Counter provider implementation for multiple named counters
 - `calendar_model.md` - CalendarModel implementation for provider pattern consistency
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks
