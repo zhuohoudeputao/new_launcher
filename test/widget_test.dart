@@ -47,6 +47,7 @@ import 'package:new_launcher/providers/provider_caffeine.dart';
 import 'package:new_launcher/providers/provider_subscription.dart';
 import 'package:new_launcher/providers/provider_parking.dart';
 import 'package:new_launcher/providers/provider_gratitude.dart';
+import 'package:new_launcher/providers/provider_debt.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2487,7 +2488,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 48);
+      expect(Global.providerList.length, 49);
     });
 
     test('Global.providerList names are correct', () {
@@ -3654,7 +3655,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 48);
+      expect(initCount, 49);
     });
   });
 
@@ -3971,8 +3972,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (48 total)', () {
-      expect(Global.providerList.length, 48);
+test('Global.providerList contains all providers (49 total)', () {
+      expect(Global.providerList.length, 49);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5315,8 +5316,8 @@ test('Global.providerList contains all providers (48 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (48 total)', () {
-      expect(Global.providerList.length, 48);
+test('Global.providerList contains all providers (49 total)', () {
+      expect(Global.providerList.length, 49);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -13316,6 +13317,223 @@ test('Global.providerList contains all providers (48 total)', () {
     test('providerGratitude exists', () {
       expect(providerGratitude, isNotNull);
       expect(providerGratitude.name, 'Gratitude');
+    });
+  });
+
+  group('Debt provider tests', () {
+    setUpAll(() {
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('DebtModel initializes correctly', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = DebtModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.entries, isEmpty);
+    });
+
+    test('DebtModel addEntry works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = DebtModel();
+      await model.init();
+      model.addEntry(
+        personName: 'John',
+        amount: 50.0,
+        isOwedToMe: true,
+      );
+      expect(model.entries.length, 1);
+      expect(model.unpaidCount, 1);
+      expect(model.totalOwedToMe, 50.0);
+    });
+
+    test('DebtModel owed to me vs owed by me', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = DebtModel();
+      await model.init();
+      model.addEntry(personName: 'John', amount: 100.0, isOwedToMe: true);
+      model.addEntry(personName: 'Jane', amount: 30.0, isOwedToMe: false);
+      expect(model.totalOwedToMe, 100.0);
+      expect(model.totalOwedByMe, 30.0);
+      expect(model.netBalance, 70.0);
+    });
+
+    test('DebtModel max entries limit', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = DebtModel();
+      await model.init();
+      for (int i = 0; i < DebtModel.maxEntries + 5; i++) {
+        model.addEntry(personName: 'Person $i', amount: 10.0, isOwedToMe: true);
+      }
+      expect(model.entries.length, DebtModel.maxEntries);
+    });
+
+    test('DebtModel markAsPaid works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = DebtModel();
+      await model.init();
+      model.addEntry(personName: 'John', amount: 50.0, isOwedToMe: true);
+      expect(model.unpaidCount, 1);
+      final entryId = model.entries.first.id;
+      model.markAsPaid(entryId);
+      expect(model.unpaidCount, 0);
+      expect(model.paidCount, 1);
+    });
+
+    test('DebtModel markAsUnpaid works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = DebtModel();
+      await model.init();
+      model.addEntry(personName: 'John', amount: 50.0, isOwedToMe: true);
+      final entryId = model.entries.first.id;
+      model.markAsPaid(entryId);
+      expect(model.paidCount, 1);
+      model.markAsUnpaid(entryId);
+      expect(model.unpaidCount, 1);
+      expect(model.paidCount, 0);
+    });
+
+    test('DebtModel deleteEntry works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = DebtModel();
+      await model.init();
+      model.addEntry(personName: 'John', amount: 50.0, isOwedToMe: true);
+      expect(model.entries.length, 1);
+      final entryId = model.entries.first.id;
+      model.deleteEntry(entryId);
+      expect(model.entries, isEmpty);
+    });
+
+    test('DebtModel clearAll works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = DebtModel();
+      await model.init();
+      model.addEntry(personName: 'John', amount: 50.0, isOwedToMe: true);
+      model.addEntry(personName: 'Jane', amount: 30.0, isOwedToMe: false);
+      expect(model.entries.length, 2);
+      await model.clearAll();
+      expect(model.entries, isEmpty);
+    });
+
+    test('DebtEntry overdue detection', () {
+      final overdueEntry = DebtEntry(
+        id: '1',
+        personName: 'John',
+        amount: 50.0,
+        isOwedToMe: true,
+        date: DateTime.now(),
+        dueDate: DateTime.now().subtract(Duration(days: 1)),
+      );
+      expect(overdueEntry.isOverdue(), true);
+      expect(overdueEntry.daysUntilDue(), -1);
+    });
+
+    test('DebtEntry not overdue', () {
+      final futureEntry = DebtEntry(
+        id: '1',
+        personName: 'John',
+        amount: 50.0,
+        isOwedToMe: true,
+        date: DateTime.now(),
+        dueDate: DateTime.now().add(Duration(days: 10)),
+      );
+      expect(futureEntry.isOverdue(), false);
+      expect(futureEntry.daysUntilDue() >= 9, true);
+    });
+
+    test('DebtEntry toJson/fromJson works', () {
+      final entry = DebtEntry(
+        id: 'test-id',
+        personName: 'John',
+        amount: 50.0,
+        isOwedToMe: true,
+        date: DateTime(2026, 4, 24, 10, 30),
+        dueDate: DateTime(2026, 5, 1),
+        description: 'Lunch money',
+        isPaid: false,
+      );
+      final json = entry.toJson();
+      final restored = DebtEntry.fromJson(json);
+      expect(restored.id, 'test-id');
+      expect(restored.personName, 'John');
+      expect(restored.amount, 50.0);
+      expect(restored.isOwedToMe, true);
+      expect(restored.description, 'Lunch money');
+      expect(restored.isPaid, false);
+    });
+
+    testWidgets('DebtCard renders loading state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = DebtModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: DebtCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Debt Tracker: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('DebtCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = DebtModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: DebtCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('No unpaid debts'), findsOneWidget);
+    });
+
+    testWidgets('DebtCard renders entries', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = DebtModel();
+      await model.init();
+      model.addEntry(personName: 'John', amount: 50.0, isOwedToMe: true);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: DebtCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('John'), findsOneWidget);
+      expect(find.text('\$50.00'), findsWidgets);
+    });
+
+    test('DebtCard widget exists', () {
+      expect(DebtCard, isNotNull);
+    });
+
+    test('AddDebtDialog widget exists', () {
+      expect(AddDebtDialog, isNotNull);
+    });
+
+    test('Global.providerList includes Debt', () {
+      final hasDebt = Global.providerList.any((p) => p.name == 'Debt');
+      expect(hasDebt, true);
+    });
+
+    test('providerDebt exists', () {
+      expect(providerDebt, isNotNull);
+      expect(providerDebt.name, 'Debt');
     });
   });
 }

@@ -592,6 +592,17 @@ Settings auto-saved via `SharedPreferences`:
     - Heart icon with pink color for visual appeal
     - Uses `Card.filled` for Material 3 style
     - Keywords: gratitude, grateful, thanks, thankful, appreciation, journal, daily, positive
+- **Debt**: Debt/loan tracker for managing money owed
+    - Track debts owed to you and debts owed by you
+    - Optional due dates with overdue detection
+    - Mark debts as paid/unpaid
+    - Net balance calculation (owed to me - owed by me)
+    - Overdue debt alerts with badge indicator
+    - History view with all debt entries
+    - Maximum 20 entries stored (oldest removed when limit exceeded)
+    - Debt entries persisted via SharedPreferences
+    - Uses `Card.filled` and `SegmentedButton` for Material 3 style
+    - Keywords: debt, loan, money, owe, borrow, lend, tracker, owed
 
 ## Material 3 Design System
 
@@ -706,7 +717,7 @@ Test coverage includes:
 - Parking provider tests (provider existence, keywords, model state, entry operations, meter controls, widget rendering)
 - Gratitude provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
   
-Total tests: 1270 tests
+Total tests: 1288 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
