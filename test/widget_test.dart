@@ -49,6 +49,7 @@ import 'package:new_launcher/providers/provider_parking.dart';
 import 'package:new_launcher/providers/provider_gratitude.dart';
 import 'package:new_launcher/providers/provider_debt.dart';
 import 'package:new_launcher/providers/provider_interval_timer.dart';
+import 'package:new_launcher/providers/provider_textencoder.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2489,7 +2490,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 50);
+      expect(Global.providerList.length, 51);
     });
 
     test('Global.providerList names are correct', () {
@@ -3656,7 +3657,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 50);
+      expect(initCount, 51);
     });
   });
 
@@ -3974,7 +3975,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (50 total)', () {
-      expect(Global.providerList.length, 50);
+      expect(Global.providerList.length, 51);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5318,7 +5319,7 @@ test('Global.providerList contains all providers (50 total)', () {
     });
 
 test('Global.providerList contains all providers (50 total)', () {
-      expect(Global.providerList.length, 50);
+      expect(Global.providerList.length, 51);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -13788,6 +13789,594 @@ test('Global.providerList contains all providers (50 total)', () {
     test('providerIntervalTimer exists', () {
       expect(providerIntervalTimer, isNotNull);
       expect(providerIntervalTimer.name, 'IntervalTimer');
+    });
+  });
+
+  group('TextEncoder provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('TextEncoderModel initializes correctly', () {
+      final model = TextEncoderModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.inputText, "");
+      expect(model.outputText, "");
+      expect(model.mode, "base64");
+      expect(model.operation, "encode");
+      expect(model.error, null);
+      expect(model.history.length, 0);
+    });
+
+    test('TextEncoderModel modes exist', () {
+      expect(TextEncoderModel.modes, contains('base64'));
+      expect(TextEncoderModel.modes, contains('url'));
+      expect(TextEncoderModel.modes, contains('html'));
+      expect(TextEncoderModel.modes, contains('json'));
+      expect(TextEncoderModel.modes.length, 4);
+    });
+
+    test('TextEncoderModel operations exist', () {
+      expect(TextEncoderModel.operations, contains('encode'));
+      expect(TextEncoderModel.operations, contains('decode'));
+      expect(TextEncoderModel.operations.length, 2);
+    });
+
+    test('TextEncoderModel setMode works', () {
+      final model = TextEncoderModel();
+      model.setInputText("test");
+      model.setMode('url');
+      expect(model.mode, 'url');
+    });
+
+    test('TextEncoderModel setMode ignores invalid mode', () {
+      final model = TextEncoderModel();
+      model.setInputText("test");
+      model.setMode('invalid');
+      expect(model.mode, 'base64');
+    });
+
+    test('TextEncoderModel setOperation works', () {
+      final model = TextEncoderModel();
+      model.setInputText("test");
+      model.setOperation('decode');
+      expect(model.operation, 'decode');
+    });
+
+    test('TextEncoderModel setOperation ignores invalid operation', () {
+      final model = TextEncoderModel();
+      model.setInputText("test");
+      model.setOperation('invalid');
+      expect(model.operation, 'encode');
+    });
+
+    test('TextEncoderModel Base64 encode works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('base64');
+      model.setOperation('encode');
+      model.setInputText("Hello World");
+      expect(model.outputText, "SGVsbG8gV29ybGQ=");
+      expect(model.error, null);
+    });
+
+    test('TextEncoderModel Base64 decode works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('base64');
+      model.setOperation('decode');
+      model.setInputText("SGVsbG8gV29ybGQ=");
+      expect(model.outputText, "Hello World");
+      expect(model.error, null);
+    });
+
+    test('TextEncoderModel Base64 decode invalid input shows error', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('base64');
+      model.setOperation('decode');
+      model.setInputText("!!!invalid base64!!!");
+      expect(model.error, isNotNull);
+      expect(model.outputText, "");
+    });
+
+    test('TextEncoderModel URL encode works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('url');
+      model.setOperation('encode');
+      model.setInputText("hello world");
+      expect(model.outputText, "hello%20world");
+      expect(model.error, null);
+    });
+
+    test('TextEncoderModel URL decode works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('url');
+      model.setOperation('decode');
+      model.setInputText("hello%20world");
+      expect(model.outputText, "hello world");
+      expect(model.error, null);
+    });
+
+    test('TextEncoderModel URL encode special chars', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('url');
+      model.setOperation('encode');
+      model.setInputText("test?key=value&foo=bar");
+      expect(model.outputText, contains('%3F'));
+      expect(model.outputText, contains('%3D'));
+      expect(model.outputText, contains('%26'));
+    });
+
+    test('TextEncoderModel HTML encode works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('html');
+      model.setOperation('encode');
+      model.setInputText("<div>Test</div>");
+      expect(model.outputText, "&lt;div&gt;Test&lt;/div&gt;");
+      expect(model.error, null);
+    });
+
+    test('TextEncoderModel HTML decode works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('html');
+      model.setOperation('decode');
+      model.setInputText("&lt;div&gt;Test&lt;/div&gt;");
+      expect(model.outputText, "<div>Test</div>");
+      expect(model.error, null);
+    });
+
+    test('TextEncoderModel HTML encode ampersand', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('html');
+      model.setOperation('encode');
+      model.setInputText("Tom&Jerry");
+      expect(model.outputText, "Tom&amp;Jerry");
+    });
+
+    test('TextEncoderModel HTML encode quotes', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('html');
+      model.setOperation('encode');
+      model.setInputText("Say \"Hello\"");
+      expect(model.outputText, contains('&quot;'));
+    });
+
+    test('TextEncoderModel HTML decode numeric entities', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('html');
+      model.setOperation('decode');
+      model.setInputText("&#65;&#66;&#67;");
+      expect(model.outputText, "ABC");
+    });
+
+    test('TextEncoderModel HTML decode hex entities', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('html');
+      model.setOperation('decode');
+      model.setInputText("&#x41;&#x42;&#x43;");
+      expect(model.outputText, "ABC");
+    });
+
+    test('TextEncoderModel JSON escape works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('json');
+      model.setOperation('encode');
+      model.setInputText("Line1\nLine2");
+      expect(model.outputText, "Line1\\nLine2");
+      expect(model.error, null);
+    });
+
+    test('TextEncoderModel JSON unescape works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('json');
+      model.setOperation('decode');
+      model.setInputText("Line1\\nLine2");
+      expect(model.outputText, "Line1\nLine2");
+      expect(model.error, null);
+    });
+
+    test('TextEncoderModel JSON escape quotes', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('json');
+      model.setOperation('encode');
+      model.setInputText("Say \"Hello\"");
+      expect(model.outputText, contains('\\"'));
+    });
+
+    test('TextEncoderModel JSON escape backslash', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('json');
+      model.setOperation('encode');
+      model.setInputText("path\\to\\file");
+      expect(model.outputText, "path\\\\to\\\\file");
+    });
+
+    test('TextEncoderModel JSON unescape tab', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('json');
+      model.setOperation('decode');
+      model.setInputText("Tab\\tHere");
+      expect(model.outputText, "Tab\tHere");
+    });
+
+    test('TextEncoderModel swapOperation works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("test");
+      model.setOperation('encode');
+      model.swapOperation();
+      expect(model.operation, 'decode');
+      model.swapOperation();
+      expect(model.operation, 'encode');
+    });
+
+    test('TextEncoderModel clearInput works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("test");
+      model.clearInput();
+      expect(model.inputText, "");
+      expect(model.outputText, "");
+      expect(model.error, null);
+    });
+
+    test('TextEncoderModel empty input produces empty output', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("");
+      expect(model.outputText, "");
+      expect(model.error, null);
+    });
+
+    test('TextEncoderModel addToHistory works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("Hello");
+      expect(model.outputText, isNotEmpty);
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].input, "Hello");
+      expect(model.history[0].mode, "base64");
+      expect(model.history[0].operation, "encode");
+    });
+
+    test('TextEncoderModel addToHistory limits to 10 entries', () {
+      final model = TextEncoderModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputText("Test $i");
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('TextEncoderModel addToHistory does not add on error', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('base64');
+      model.setOperation('decode');
+      model.setInputText("!!!invalid!!!");
+      expect(model.error, isNotNull);
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('TextEncoderModel loadFromHistory works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("Hello");
+      model.addToHistory();
+      model.clearInput();
+      model.loadFromHistory(0);
+      expect(model.inputText, "Hello");
+      expect(model.mode, "base64");
+      expect(model.operation, "encode");
+    });
+
+    test('TextEncoderModel loadFromHistory ignores invalid index', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("Hello");
+      model.addToHistory();
+      model.clearInput();
+      model.loadFromHistory(999);
+      expect(model.inputText, "");
+    });
+
+    test('TextEncoderModel clearHistory works', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("Hello");
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('TextEncoderModel getModeLabel works', () {
+      final model = TextEncoderModel();
+      expect(model.getModeLabel('base64'), 'Base64');
+      expect(model.getModeLabel('url'), 'URL');
+      expect(model.getModeLabel('html'), 'HTML');
+      expect(model.getModeLabel('json'), 'JSON');
+    });
+
+    test('TextEncoderModel getOperationLabel works', () {
+      final model = TextEncoderModel();
+      expect(model.getOperationLabel('encode'), 'Encode');
+      expect(model.getOperationLabel('decode'), 'Decode');
+    });
+
+    testWidgets('TextEncoderCard renders loading state', (WidgetTester tester) async {
+      final model = TextEncoderModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: TextEncoderCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Text Encoder: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('TextEncoderCard renders initialized state', (WidgetTester tester) async {
+      final model = TextEncoderModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: TextEncoderCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Text Encoder/Decoder'), findsOneWidget);
+      expect(find.text('Base64'), findsOneWidget);
+      expect(find.text('URL'), findsOneWidget);
+      expect(find.text('HTML'), findsOneWidget);
+      expect(find.text('JSON'), findsOneWidget);
+    });
+
+    testWidgets('TextEncoderCard shows output after input', (WidgetTester tester) async {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("Hello");
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: TextEncoderCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Output:'), findsOneWidget);
+      expect(find.text('SGVsbG8='), findsOneWidget);
+    });
+
+    testWidgets('TextEncoderCard shows error for invalid input', (WidgetTester tester) async {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('base64');
+      model.setOperation('decode');
+      model.setInputText("!!!invalid!!!");
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: TextEncoderCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Output:'), findsNothing);
+      expect(model.error, isNotNull);
+    });
+
+    test('TextEncoderCard widget exists', () {
+      expect(TextEncoderCard, isNotNull);
+    });
+
+    test('Global.providerList includes TextEncoder', () {
+      final hasTextEncoder = Global.providerList.any((p) => p.name == 'TextEncoder');
+      expect(hasTextEncoder, true);
+    });
+
+    test('providerTextEncoder exists', () {
+      expect(providerTextEncoder, isNotNull);
+      expect(providerTextEncoder.name, 'TextEncoder');
+    });
+
+    test('TextEncoder model is initialized on provider init', () async {
+      final model = TextEncoderModel();
+      await providerTextEncoder.init();
+      expect(model.isInitialized, false);
+      textEncoderModel.init();
+      expect(textEncoderModel.isInitialized, true);
+    });
+
+    test('TextEncoderModel refresh works', () {
+      final model = TextEncoderModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    test('TextEncoderModel notifies on setInputText', () {
+      final model = TextEncoderModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.setInputText("test");
+      expect(notifyCount, 1);
+    });
+
+    test('TextEncoderModel notifies on setMode', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("test");
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.setMode('url');
+      expect(notifyCount, 1);
+    });
+
+    test('TextEncoderModel notifies on setOperation', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("test");
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.setOperation('decode');
+      expect(notifyCount, 1);
+    });
+
+    test('TextEncoderModel notifies on swapOperation', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("test");
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.swapOperation();
+      expect(notifyCount, 1);
+    });
+
+    test('TextEncoderModel notifies on clearInput', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("test");
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.clearInput();
+      expect(notifyCount, 1);
+    });
+
+    test('TextEncoderModel notifies on addToHistory', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("test");
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.addToHistory();
+      expect(notifyCount, 1);
+    });
+
+    test('TextEncoderModel notifies on clearHistory', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setInputText("test");
+      model.addToHistory();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.clearHistory();
+      expect(notifyCount, 1);
+    });
+
+    test('TextEncoderModel history entry has correct timestamp', () {
+      final model = TextEncoderModel();
+      model.init();
+      final before = DateTime.now();
+      model.setInputText("test");
+      model.addToHistory();
+      final after = DateTime.now();
+      expect(model.history[0].timestamp, isNotNull);
+      expect(model.history[0].timestamp.millisecondsSinceEpoch, greaterThanOrEqualTo(before.millisecondsSinceEpoch));
+      expect(model.history[0].timestamp.millisecondsSinceEpoch, lessThanOrEqualTo(after.millisecondsSinceEpoch));
+    });
+
+    test('TextEncoderModel history preserves mode and operation', () {
+      final model = TextEncoderModel();
+      model.init();
+      model.setMode('url');
+      model.setOperation('decode');
+      model.setInputText("test%20space");
+      model.addToHistory();
+      expect(model.history[0].mode, 'url');
+      expect(model.history[0].operation, 'decode');
+    });
+
+    test('TextEncoderModel Base64 roundtrip', () {
+      final model = TextEncoderModel();
+      model.init();
+      final original = "Test string with special chars: !@#%^&*()";
+      model.setMode('base64');
+      model.setOperation('encode');
+      model.setInputText(original);
+      final encoded = model.outputText;
+      model.setOperation('decode');
+      model.setInputText(encoded);
+      expect(model.outputText, original);
+    });
+
+    test('TextEncoderModel URL roundtrip', () {
+      final model = TextEncoderModel();
+      model.init();
+      final original = "Hello World! Test 123";
+      model.setMode('url');
+      model.setOperation('encode');
+      model.setInputText(original);
+      final encoded = model.outputText;
+      model.setOperation('decode');
+      model.setInputText(encoded);
+      expect(model.outputText, original);
+    });
+
+    test('TextEncoderModel HTML roundtrip basic', () {
+      final model = TextEncoderModel();
+      model.init();
+      final original = "<div>Hello & World</div>";
+      model.setMode('html');
+      model.setOperation('encode');
+      model.setInputText(original);
+      final encoded = model.outputText;
+      model.setOperation('decode');
+      model.setInputText(encoded);
+      expect(model.outputText, original);
+    });
+
+    test('TextEncoderModel JSON roundtrip', () {
+      final model = TextEncoderModel();
+      model.init();
+      final original = "Line1\nLine2\tTabbed";
+      model.setMode('json');
+      model.setOperation('encode');
+      model.setInputText(original);
+      final encoded = model.outputText;
+      model.setOperation('decode');
+      model.setInputText(encoded);
+      expect(model.outputText, original);
     });
   });
 }

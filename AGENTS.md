@@ -617,6 +617,20 @@ Settings auto-saved via `SharedPreferences`:
     - Total time display
     - Uses `Card.filled`, `ActionChip`, `CircularProgressIndicator` for Material 3 style
     - Keywords: interval, timer, hiit, tabata, workout, circuit, training
+- **TextEncoder**: Text encoding/decoding utilities for developers
+    - Base64 encode/decode
+    - URL encode/decode (percent-encoding)
+    - HTML encode/decode (entity encoding)
+    - JSON escape/unescape (string escaping)
+    - Swap encode/decode operation with one tap
+    - Real-time encoding as you type
+    - Encoding history (up to 10 entries)
+    - Tap history entries to reuse previous encodings
+    - Clear history with confirmation dialog
+    - Copy output to clipboard
+    - Error handling for invalid input
+    - Uses `Card.filled` and `SegmentedButton` for Material 3 style
+    - Keywords: encode, decode, base64, url, html, json, escape, text, string, convert
 
 ## Material 3 Design System
 
@@ -733,7 +747,7 @@ Test coverage includes:
 - Debt provider tests (provider existence, keywords, model state, CRUD operations, owed tracking, history, widget rendering)
 - Interval Timer provider tests (provider existence, keywords, model state, presets, phase operations, timer controls, widget rendering)
   
-Total tests: 1313 tests
+Total tests: 1370 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
