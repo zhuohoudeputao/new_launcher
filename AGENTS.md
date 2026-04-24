@@ -603,6 +603,18 @@ Settings auto-saved via `SharedPreferences`:
     - Debt entries persisted via SharedPreferences
     - Uses `Card.filled` and `SegmentedButton` for Material 3 style
     - Keywords: debt, loan, money, owe, borrow, lend, tracker, owed
+- **IntervalTimer**: HIIT/Tabata workout interval timer
+    - Preset workout intervals: Tabata (20s/10s), HIIT 30/10, HIIT 45/15, Circuit 60/30, EMOM
+    - Custom work/rest durations (5-300s work, 0-120s rest)
+    - Custom sets (1-20 rounds)
+    - Work/rest phase indicators with color coding
+    - Circular progress indicator for phase countdown
+    - Total progress bar showing overall workout progress
+    - Skip phase option to advance through intervals
+    - Pause/resume/stop controls
+    - Total time display
+    - Uses `Card.filled`, `ActionChip`, `CircularProgressIndicator` for Material 3 style
+    - Keywords: interval, timer, hiit, tabata, workout, circuit, training
 
 ## Material 3 Design System
 
@@ -716,8 +728,10 @@ Test coverage includes:
 - Subscription provider tests (provider existence, keywords, model state, CRUD operations, renewal calculations, cost totals, widget rendering)
 - Parking provider tests (provider existence, keywords, model state, entry operations, meter controls, widget rendering)
 - Gratitude provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
+- Debt provider tests (provider existence, keywords, model state, CRUD operations, owed tracking, history, widget rendering)
+- Interval Timer provider tests (provider existence, keywords, model state, presets, phase operations, timer controls, widget rendering)
   
-Total tests: 1288 tests
+Total tests: 1313 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -793,6 +807,7 @@ Technical documentation is available in `docs/`:
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks
 - `critical_bug_fixes_iteration32.md` - Critical bug fix for missing Anniversary model in MultiProvider
 - `critical_bug_fixes_iteration49.md` - Critical bug fix for missing Parking, Gratitude, Debt models in MultiProvider
+- `interval_timer_provider.md` - Interval Timer (HIIT/Tabata) provider implementation for workout intervals
 
 ## Notice
 DO NOT EDIT task*.md

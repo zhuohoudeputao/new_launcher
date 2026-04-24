@@ -48,6 +48,7 @@ import 'package:new_launcher/providers/provider_subscription.dart';
 import 'package:new_launcher/providers/provider_parking.dart';
 import 'package:new_launcher/providers/provider_gratitude.dart';
 import 'package:new_launcher/providers/provider_debt.dart';
+import 'package:new_launcher/providers/provider_interval_timer.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2488,7 +2489,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 49);
+      expect(Global.providerList.length, 50);
     });
 
     test('Global.providerList names are correct', () {
@@ -3655,7 +3656,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 49);
+      expect(initCount, 50);
     });
   });
 
@@ -3972,8 +3973,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (49 total)', () {
-      expect(Global.providerList.length, 49);
+test('Global.providerList contains all providers (50 total)', () {
+      expect(Global.providerList.length, 50);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5316,8 +5317,8 @@ test('Global.providerList contains all providers (49 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (49 total)', () {
-      expect(Global.providerList.length, 49);
+test('Global.providerList contains all providers (50 total)', () {
+      expect(Global.providerList.length, 50);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -13538,6 +13539,255 @@ test('Global.providerList contains all providers (49 total)', () {
     test('providerDebt exists', () {
       expect(providerDebt, isNotNull);
       expect(providerDebt.name, 'Debt');
+    });
+  });
+
+  group('Interval Timer provider tests', () {
+    setUpAll(() {
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('IntervalTimerModel initializes correctly', () {
+      final model = IntervalTimerModel();
+      expect(model.workDuration, 30);
+      expect(model.restDuration, 10);
+      expect(model.sets, 4);
+      expect(model.isRunning, false);
+      expect(model.isPaused, false);
+      expect(model.currentSet, 1);
+      expect(model.currentPhase, IntervalPhase.work);
+    });
+
+    test('IntervalTimerModel presets exist', () {
+      final model = IntervalTimerModel();
+      expect(model.presets.length, 5);
+      expect(model.presets[0].name, 'Tabata');
+      expect(model.presets[0].work, 20);
+      expect(model.presets[0].rest, 10);
+      expect(model.presets[0].sets, 8);
+    });
+
+    test('IntervalTimerModel applyPreset works', () {
+      final model = IntervalTimerModel();
+      model.applyPreset(model.presets[0]);
+      expect(model.workDuration, 20);
+      expect(model.restDuration, 10);
+      expect(model.sets, 8);
+      expect(model.isRunning, false);
+    });
+
+    test('IntervalTimerModel setWorkDuration works', () {
+      final model = IntervalTimerModel();
+      model.setWorkDuration(45);
+      expect(model.workDuration, 45);
+      model.setWorkDuration(5);
+      expect(model.workDuration, 5);
+      model.setWorkDuration(300);
+      expect(model.workDuration, 300);
+    });
+
+    test('IntervalTimerModel setWorkDuration ignores invalid values', () {
+      final model = IntervalTimerModel();
+      model.setWorkDuration(30);
+      model.setWorkDuration(4);
+      expect(model.workDuration, 30);
+      model.setWorkDuration(301);
+      expect(model.workDuration, 30);
+    });
+
+    test('IntervalTimerModel setRestDuration works', () {
+      final model = IntervalTimerModel();
+      model.setRestDuration(15);
+      expect(model.restDuration, 15);
+      model.setRestDuration(0);
+      expect(model.restDuration, 0);
+      model.setRestDuration(120);
+      expect(model.restDuration, 120);
+    });
+
+    test('IntervalTimerModel setRestDuration ignores invalid values', () {
+      final model = IntervalTimerModel();
+      model.setRestDuration(10);
+      model.setRestDuration(-1);
+      expect(model.restDuration, 10);
+      model.setRestDuration(121);
+      expect(model.restDuration, 10);
+    });
+
+    test('IntervalTimerModel setSets works', () {
+      final model = IntervalTimerModel();
+      model.setSets(10);
+      expect(model.sets, 10);
+      model.setSets(1);
+      expect(model.sets, 1);
+      model.setSets(20);
+      expect(model.sets, 20);
+    });
+
+    test('IntervalTimerModel setSets ignores invalid values', () {
+      final model = IntervalTimerModel();
+      model.setSets(4);
+      model.setSets(0);
+      expect(model.sets, 4);
+      model.setSets(21);
+      expect(model.sets, 4);
+    });
+
+    test('IntervalTimerModel totalDuration calculation', () {
+      final model = IntervalTimerModel();
+      model.setWorkDuration(30);
+      model.setRestDuration(10);
+      model.setSets(4);
+      expect(model.totalDuration, 160);
+      model.setRestDuration(0);
+      expect(model.totalDuration, 120);
+    });
+
+    test('IntervalTimerModel progress starts at 0', () {
+      final model = IntervalTimerModel();
+      expect(model.progress, 0);
+    });
+
+    test('IntervalTimerModel isWorkPhase true initially', () {
+      final model = IntervalTimerModel();
+      expect(model.isWorkPhase, true);
+    });
+
+    test('IntervalTimerModel isActive false initially', () {
+      final model = IntervalTimerModel();
+      expect(model.isActive, false);
+    });
+
+    test('IntervalTimerModel start works', () {
+      final model = IntervalTimerModel();
+      model.start();
+      expect(model.isRunning, true);
+      expect(model.isPaused, false);
+      expect(model.currentSet, 1);
+      model.stop();
+    });
+
+    test('IntervalTimerModel pause works', () async {
+      final model = IntervalTimerModel();
+      model.start();
+      await Future.delayed(Duration(milliseconds: 100));
+      model.pause();
+      expect(model.isRunning, true);
+      expect(model.isPaused, true);
+      model.stop();
+    });
+
+    test('IntervalTimerModel resume works', () async {
+      final model = IntervalTimerModel();
+      model.start();
+      await Future.delayed(Duration(milliseconds: 100));
+      model.pause();
+      expect(model.isPaused, true);
+      model.resume();
+      expect(model.isRunning, true);
+      expect(model.isPaused, false);
+      model.stop();
+    });
+
+    test('IntervalTimerModel stop works', () async {
+      final model = IntervalTimerModel();
+      model.start();
+      await Future.delayed(Duration(milliseconds: 100));
+      model.stop();
+      expect(model.isRunning, false);
+      expect(model.isPaused, false);
+      expect(model.currentSet, 1);
+      expect(model.currentPhase, IntervalPhase.work);
+    });
+
+    test('IntervalTimerModel resetToStart works', () {
+      final model = IntervalTimerModel();
+      model.currentSet = 5;
+      model.currentPhase = IntervalPhase.rest;
+      model.remainingSeconds = 5;
+      model.totalElapsedSeconds = 100;
+      model.resetToStart();
+      expect(model.currentSet, 1);
+      expect(model.currentPhase, IntervalPhase.work);
+      expect(model.remainingSeconds, model.workDuration);
+      expect(model.totalElapsedSeconds, 0);
+    });
+
+    test('IntervalTimerModel skipPhase works', () async {
+      final model = IntervalTimerModel();
+      model.setWorkDuration(5);
+      model.setRestDuration(3);
+      model.setSets(2);
+      model.start();
+      model.skipPhase();
+      expect(model.currentPhase, IntervalPhase.rest);
+      model.skipPhase();
+      expect(model.currentSet, 2);
+      expect(model.currentPhase, IntervalPhase.work);
+      model.stop();
+    });
+
+    test('IntervalPreset creation', () {
+      final preset = IntervalPreset(name: 'Custom', work: 30, rest: 15, sets: 6);
+      expect(preset.name, 'Custom');
+      expect(preset.work, 30);
+      expect(preset.rest, 15);
+      expect(preset.sets, 6);
+    });
+
+    testWidgets('IntervalTimerCard renders setup state', (WidgetTester tester) async {
+      final model = IntervalTimerModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: IntervalTimerCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Interval Timer'), findsOneWidget);
+      expect(find.text('Presets:'), findsOneWidget);
+      expect(find.text('Tabata'), findsOneWidget);
+    });
+
+    testWidgets('IntervalTimerCard renders running state', (WidgetTester tester) async {
+      final model = IntervalTimerModel();
+      model.start();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: IntervalTimerCard(),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+
+      expect(find.text('Interval Timer'), findsOneWidget);
+      expect(find.textContaining('WORK'), findsOneWidget);
+      model.stop();
+    });
+
+    test('IntervalTimerCard widget exists', () {
+      expect(IntervalTimerCard, isNotNull);
+    });
+
+    test('Global.providerList includes IntervalTimer', () {
+      final hasIntervalTimer = Global.providerList.any((p) => p.name == 'IntervalTimer');
+      expect(hasIntervalTimer, true);
+    });
+
+    test('providerIntervalTimer exists', () {
+      expect(providerIntervalTimer, isNotNull);
+      expect(providerIntervalTimer.name, 'IntervalTimer');
     });
   });
 }
