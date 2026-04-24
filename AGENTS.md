@@ -690,6 +690,17 @@ Settings auto-saved via `SharedPreferences`:
     - Reset button to clear all inputs
     - Uses `Card.filled`, `SegmentedButton`, `Slider`, `Chip` for Material 3 style
     - Keywords: days, calculator, date, difference, between, add, subtract, calculate
+- **LoremIpsum**: Lorem Ipsum placeholder text generator
+    - Generate placeholder text for designers and developers
+    - Configurable word count (10-500 words)
+    - Configurable paragraph count (1-10 paragraphs)
+    - Option to start with classic "Lorem ipsum dolor sit amet..."
+    - Regenerate text with one tap
+    - Selectable text for easy copying
+    - History of generated texts (up to 10 entries)
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `Slider`, `FilterChip`, `ElevatedButton` for Material 3 style
+    - Keywords: loremipsum, lorem, ipsum, placeholder, text, generate, dummy, sample
 
 ## Material 3 Design System
 
@@ -807,8 +818,9 @@ Test coverage includes:
 - Interval Timer provider tests (provider existence, keywords, model state, presets, phase operations, timer controls, widget rendering)
 - TextCase provider tests (provider existence, keywords, model state, case conversions, history, widget rendering)
 - DaysCalculator provider tests (provider existence, keywords, model state, date operations, history, widget rendering)
+- LoremIpsum provider tests (provider existence, keywords, model state, text generation, paragraph handling, history, widget rendering)
   
-Total tests: 1508 tests
+Total tests: 1525 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

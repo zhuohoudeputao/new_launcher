@@ -55,6 +55,7 @@ import 'package:new_launcher/providers/provider_timestamp.dart';
 import 'package:new_launcher/providers/provider_textcase.dart';
 import 'package:new_launcher/providers/provider_wordcounter.dart';
 import 'package:new_launcher/providers/provider_dayscalculator.dart';
+import 'package:new_launcher/providers/provider_loremipsum.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2495,7 +2496,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 55);
+      expect(Global.providerList.length, 57);
     });
 
     test('Global.providerList names are correct', () {
@@ -3662,7 +3663,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 55);
+      expect(initCount, 57);
     });
   });
 
@@ -3979,8 +3980,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (55 total)', () {
-      expect(Global.providerList.length, 55);
+test('Global.providerList contains all providers (57 total)', () {
+      expect(Global.providerList.length, 57);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5323,8 +5324,8 @@ test('Global.providerList contains all providers (55 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (55 total)', () {
-      expect(Global.providerList.length, 55);
+test('Global.providerList contains all providers (57 total)', () {
+      expect(Global.providerList.length, 57);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -15753,6 +15754,176 @@ test('Global.providerList contains all providers (55 total)', () {
     test('DaysCalculator keywords are registered', () {
       final provider = Global.providerList.firstWhere((p) => p.name == 'DaysCalculator');
       expect(provider.name, 'DaysCalculator');
+    });
+  });
+
+  group('LoremIpsum provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('providerLoremIpsum exists in Global.providerList', () {
+      expect(Global.providerList.any((p) => p.name == 'LoremIpsum'), true);
+    });
+
+    test('LoremIpsumModel initializes correctly', () {
+      final model = LoremIpsumModel();
+      expect(model.isInitialized, false);
+      expect(model.generatedText, '');
+      expect(model.wordCount, 50);
+      expect(model.paragraphCount, 1);
+      expect(model.startWithClassic, true);
+    });
+
+    test('LoremIpsumModel init generates text', () {
+      final model = LoremIpsumModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.generatedText.isNotEmpty, true);
+    });
+
+    test('LoremIpsumModel setWordCount works', () {
+      final model = LoremIpsumModel();
+      model.setWordCount(100);
+      expect(model.wordCount, 100);
+      model.setWordCount(5);
+      expect(model.wordCount, 10);
+      model.setWordCount(600);
+      expect(model.wordCount, 500);
+    });
+
+    test('LoremIpsumModel setParagraphCount works', () {
+      final model = LoremIpsumModel();
+      model.setParagraphCount(5);
+      expect(model.paragraphCount, 5);
+      model.setParagraphCount(0);
+      expect(model.paragraphCount, 1);
+      model.setParagraphCount(15);
+      expect(model.paragraphCount, 10);
+    });
+
+    test('LoremIpsumModel setStartWithClassic works', () {
+      final model = LoremIpsumModel();
+      model.setStartWithClassic(false);
+      expect(model.startWithClassic, false);
+      model.setStartWithClassic(true);
+      expect(model.startWithClassic, true);
+    });
+
+    test('LoremIpsumModel generate produces text with correct structure', () {
+      final model = LoremIpsumModel();
+      model.setWordCount(50);
+      model.setParagraphCount(1);
+      model.setStartWithClassic(true);
+      model.generate();
+      
+      expect(model.generatedText.isNotEmpty, true);
+      expect(model.generatedText.contains('Lorem ipsum'), true);
+    });
+
+    test('LoremIpsumModel generate with multiple paragraphs', () {
+      final model = LoremIpsumModel();
+      model.setWordCount(30);
+      model.setParagraphCount(3);
+      model.setStartWithClassic(true);
+      model.generate();
+      
+      final paragraphs = model.generatedText.split('\n\n');
+      expect(paragraphs.length, 3);
+    });
+
+    test('LoremIpsumModel generate without classic start', () {
+      final model = LoremIpsumModel();
+      model.setStartWithClassic(false);
+      model.generate();
+      
+      expect(model.generatedText.isNotEmpty, true);
+    });
+
+    test('LoremIpsumModel addToHistory works', () {
+      final model = LoremIpsumModel();
+      model.init();
+      model.addToHistory();
+      expect(model.history.length, 1);
+    });
+
+    test('LoremIpsumModel history max length is 10', () {
+      final model = LoremIpsumModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('LoremIpsumModel removeFromHistory works', () {
+      final model = LoremIpsumModel();
+      model.init();
+      model.addToHistory();
+      model.addToHistory();
+      expect(model.history.length, 2);
+      model.removeFromHistory(0);
+      expect(model.history.length, 1);
+    });
+
+    test('LoremIpsumModel clearHistory works', () {
+      final model = LoremIpsumModel();
+      model.init();
+      model.addToHistory();
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('LoremIpsumModel refresh notifies listeners', () {
+      final model = LoremIpsumModel();
+      var notified = false;
+      model.addListener(() {
+        notified = true;
+      });
+      model.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('LoremIpsumCard renders loading state', (WidgetTester tester) async {
+      final model = LoremIpsumModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: LoremIpsumCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('LoremIpsumCard renders initialized state', (WidgetTester tester) async {
+      final model = LoremIpsumModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: LoremIpsumCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Lorem Ipsum Generator'), findsOneWidget);
+      expect(find.byType(Slider), findsNWidgets(2));
+    });
+
+    test('LoremIpsum keywords are registered', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'LoremIpsum');
+      expect(provider.name, 'LoremIpsum');
     });
   });
 }
