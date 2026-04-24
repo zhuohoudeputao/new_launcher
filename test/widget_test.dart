@@ -43,6 +43,7 @@ import 'package:new_launcher/providers/provider_age.dart';
 import 'package:new_launcher/providers/provider_percentage.dart';
 import 'package:new_launcher/providers/provider_quickcontacts.dart';
 import 'package:new_launcher/providers/provider_shoppinglist.dart';
+import 'package:new_launcher/providers/provider_caffeine.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2483,7 +2484,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 44);
+      expect(Global.providerList.length, 45);
     });
 
     test('Global.providerList names are correct', () {
@@ -3650,7 +3651,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 44);
+      expect(initCount, 45);
     });
   });
 
@@ -3968,7 +3969,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (43 total)', () {
-      expect(Global.providerList.length, 44);
+      expect(Global.providerList.length, 45);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5312,7 +5313,7 @@ test('Global.providerList contains all providers (43 total)', () {
     });
 
 test('Global.providerList contains all providers (43 total)', () {
-      expect(Global.providerList.length, 44);
+      expect(Global.providerList.length, 45);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -12422,6 +12423,210 @@ test('Global.providerList contains all providers (43 total)', () {
 
       expect(find.text('Edit Shopping Item'), findsOneWidget);
       expect(find.byType(TextField), findsNWidgets(2));
+    });
+  });
+
+  group('Caffeine provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('CaffeineModel is initialized correctly', () async {
+      final model = CaffeineModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.history.length, 1);
+      expect(model.todayMg, 0);
+    });
+
+    test('CaffeineModel addCaffeine works', () async {
+      final model = CaffeineModel();
+      await model.init();
+      expect(model.todayMg, 0);
+      model.addCaffeine(95, 'Coffee');
+      expect(model.todayMg, 95);
+      model.addCaffeine(26, 'Tea');
+      expect(model.todayMg, 121);
+    });
+
+    test('CaffeineModel removeLastEntry works', () async {
+      final model = CaffeineModel();
+      await model.init();
+      model.addCaffeine(95, 'Coffee');
+      model.addCaffeine(26, 'Tea');
+      expect(model.todayMg, 121);
+      model.removeLastEntry();
+      expect(model.todayMg, 95);
+      model.removeLastEntry();
+      expect(model.todayMg, 0);
+      model.removeLastEntry();
+      expect(model.todayMg, 0);
+    });
+
+    test('CaffeineModel setLimit works', () async {
+      final model = CaffeineModel();
+      await model.init();
+      expect(model.dailyLimit, CaffeineModel.defaultLimit);
+      model.setLimit(300);
+      expect(model.dailyLimit, 300);
+    });
+
+    test('CaffeineModel progress calculates correctly', () async {
+      final model = CaffeineModel();
+      await model.init();
+      model.setLimit(400);
+      model.addCaffeine(100, 'Coffee');
+      expect(model.progress, 0.25);
+    });
+
+    test('CaffeineModel limitReached works', () async {
+      final model = CaffeineModel();
+      await model.init();
+      model.setLimit(180);
+      expect(model.limitReached, false);
+      model.addCaffeine(95, 'Coffee');
+      model.addCaffeine(64, 'Espresso');
+      model.addCaffeine(26, 'Tea');
+      expect(model.limitReached, true);
+    });
+
+    test('CaffeineModel overLimit works', () async {
+      final model = CaffeineModel();
+      await model.init();
+      model.setLimit(200);
+      expect(model.overLimit, false);
+      model.addCaffeine(95, 'Coffee');
+      model.addCaffeine(95, 'Coffee');
+      model.addCaffeine(95, 'Coffee');
+      expect(model.overLimit, true);
+    });
+
+    test('CaffeineModel clearHistory works', () async {
+      final model = CaffeineModel();
+      await model.init();
+      model.addCaffeine(95, 'Coffee');
+      expect(model.todayMg, 95);
+      await model.clearHistory();
+      expect(model.history.length, 1);
+      expect(model.todayMg, 0);
+    });
+
+    test('CaffeineEntry toJson and fromJson work', () {
+      final entry = CaffeineEntry(
+        date: DateTime.now(),
+        amountMg: 95,
+        limit: 400,
+        drinkType: 'Coffee',
+      );
+      final json = entry.toJson();
+      final restored = CaffeineEntry.fromJson(json);
+      expect(restored.amountMg, 95);
+      expect(restored.limit, 400);
+      expect(restored.drinkType, 'Coffee');
+    });
+
+    test('CaffeineEntry getDayKey works', () {
+      final date = DateTime(2024, 1, 15);
+      final key = CaffeineEntry.getDayKey(date);
+      expect(key, '2024-1-15');
+    });
+
+    test('DailyCaffeineSummary toJson and fromJson work', () {
+      final summary = DailyCaffeineSummary(
+        date: DateTime.now(),
+        totalMg: 150,
+        limit: 400,
+      );
+      final json = summary.toJson();
+      final restored = DailyCaffeineSummary.fromJson(json);
+      expect(restored.totalMg, 150);
+      expect(restored.limit, 400);
+    });
+
+    test('DailyCaffeineSummary getDayKey works', () {
+      final date = DateTime(2024, 1, 15);
+      final key = DailyCaffeineSummary.getDayKey(date);
+      expect(key, '2024-1-15');
+    });
+
+    test('DrinkOption properties work', () {
+      final option = DrinkOption(name: 'Coffee', caffeineMg: 95, icon: '☕');
+      expect(option.name, 'Coffee');
+      expect(option.caffeineMg, 95);
+      expect(option.icon, '☕');
+    });
+
+    test('CaffeineModel drinkOptions contains expected drinks', () async {
+      expect(CaffeineModel.drinkOptions.length, 8);
+      expect(CaffeineModel.drinkOptions.any((d) => d.name.contains('Coffee')), true);
+      expect(CaffeineModel.drinkOptions.any((d) => d.name.contains('Tea')), true);
+      expect(CaffeineModel.drinkOptions.any((d) => d.name.contains('Energy')), true);
+    });
+
+    test('CaffeineModel addQuickDrink works', () async {
+      final model = CaffeineModel();
+      await model.init();
+      model.addQuickDrink('coffee');
+      expect(model.todayMg, 95);
+    });
+
+    testWidgets('CaffeineCard renders loading state', (WidgetTester tester) async {
+      final model = CaffeineModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: CaffeineCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Caffeine Tracker: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('CaffeineCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CaffeineModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: CaffeineCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Caffeine Tracker'), findsOneWidget);
+      expect(find.text('0/400 mg'), findsOneWidget);
+    });
+
+    test('CaffeineCard widget exists', () {
+      expect(CaffeineCard, isNotNull);
+    });
+
+    test('Global.providerList includes Caffeine', () {
+      final hasCaffeine = Global.providerList.any((p) => p.name == 'Caffeine');
+      expect(hasCaffeine, true);
+    });
+
+    test('providerCaffeine exists', () {
+      expect(providerCaffeine, isNotNull);
+      expect(providerCaffeine.name, 'Caffeine');
+    });
+
+    test('CaffeineModel maxHistoryDays limit', () async {
+      final model = CaffeineModel();
+      await model.init();
+      expect(CaffeineModel.maxHistoryDays, 30);
+    });
+
+    test('CaffeineModel defaultLimit constant', () async {
+      expect(CaffeineModel.defaultLimit, 400);
     });
   });
 }

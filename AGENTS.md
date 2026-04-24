@@ -544,6 +544,18 @@ Settings auto-saved via `SharedPreferences`:
     - Clear all items with confirmation dialog
     - Uses `Card.filled` and `DropdownButton` for Material 3 style
     - Keywords: shopping, list, shop, buy, grocery, market, item, add, cart
+- **Caffeine**: Daily caffeine intake tracker
+    - Track daily caffeine consumption in milligrams (mg)
+    - 8 preset drink options: Coffee (95mg), Espresso (64mg), Tea (26mg), Green Tea (28mg), Energy Drink (80mg), Cola (35mg), Diet Cola (46mg), Chocolate Bar (12mg)
+    - Emoji-based drink icons (☕, 🍵, ⚡, 🥤, 🍫)
+    - Custom caffeine amount input via dialog
+    - Daily limit setting (default 400mg, adjustable 50-1000mg)
+    - Progress bar with color coding (tertiary under limit, primary at limit, error over limit)
+    - Over-limit warning indicator
+    - History tracking for up to 30 days
+    - Caffeine entries persisted via SharedPreferences
+    - Uses `Card.filled` and `ActionChip` for Material 3 style
+    - Keywords: caffeine, coffee, tea, energy, drink, cola, beverage, intake, track, daily, health
 
 ## Material 3 Design System
 
@@ -653,8 +665,9 @@ Test coverage includes:
 - Percentage provider tests (provider existence, keywords, model state, percentage calculations, history, widget rendering)
 - Quick Contacts provider tests (provider existence, keywords, model state, CRUD operations, widget rendering)
 - Shopping List provider tests (provider existence, keywords, model state, CRUD operations, category handling, persistence, widget rendering)
+- Caffeine provider tests (provider existence, keywords, model state, add/remove caffeine, limit tracking, preset drinks, history, widget rendering)
   
-Total tests: 1193 tests
+Total tests: 1215 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
