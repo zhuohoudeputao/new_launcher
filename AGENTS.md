@@ -492,6 +492,20 @@ Settings auto-saved via `SharedPreferences`:
     - Workouts persisted via SharedPreferences
     - Uses `Card.filled` and `Wrap` for Material 3 style
     - Keywords: workout, exercise, gym, fitness, run, cycle, swim, yoga, walk, training, log
+- **Age**: Age calculator from birthdate
+    - Calculate age in years, months, and days
+    - Display total days lived
+    - Western zodiac sign with emoji (Aries ♈, Taurus ♉, etc.)
+    - Chinese zodiac sign with emoji (Rat 🐀, Ox 🐂, etc.)
+    - Days until next birthday countdown
+    - Birthday proximity indicator (warning color if <= 7 days)
+    - Happy Birthday celebration message on birthday day
+    - Save multiple birthdates for quick reference (up to 10 entries)
+    - Load saved birthdates from history
+    - Delete individual entries or clear all
+    - Birthdates persisted via SharedPreferences
+    - Uses `Card.filled` for Material 3 style
+    - Keywords: age, birthday, birthdate, calculate, years, old, zodiac
 
 ## Material 3 Design System
 
@@ -597,8 +611,9 @@ Test coverage includes:
 - Metronome provider tests (provider existence, keywords, model state, BPM operations, time signature, tap tempo, history, widget rendering)
 - Flashcard provider tests (provider existence, keywords, model state, CRUD operations for decks and cards, study tracking, widget rendering)
 - Workout provider tests (provider existence, keywords, model state, workout logging, statistics calculations, widget rendering)
+- Age provider tests (provider existence, keywords, model state, zodiac calculation, age calculation, birthday countdown, CRUD operations, widget rendering)
   
-Total tests: 1086 tests
+Total tests: 1112 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -665,6 +680,7 @@ Technical documentation is available in `docs/`:
 - `metronome_provider.md` - Metronome provider implementation for musicians
 - `flashcard_provider.md` - Flashcard provider implementation for studying/memorization
 - `workout_provider.md` - Workout provider implementation for fitness/exercise tracking
+- `age_provider.md` - Age Calculator provider implementation for birthdate/age calculation
 - `calendar_model.md` - CalendarModel implementation for provider pattern consistency
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks

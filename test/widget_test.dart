@@ -39,6 +39,7 @@ import 'package:new_launcher/providers/provider_bmi.dart';
 import 'package:new_launcher/providers/provider_metronome.dart';
 import 'package:new_launcher/providers/provider_flashcard.dart';
 import 'package:new_launcher/providers/provider_workout.dart';
+import 'package:new_launcher/providers/provider_age.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2479,7 +2480,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 40);
+      expect(Global.providerList.length, 41);
     });
 
     test('Global.providerList names are correct', () {
@@ -3646,7 +3647,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 40);
+      expect(initCount, 41);
     });
   });
 
@@ -3963,8 +3964,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (40 total)', () {
-      expect(Global.providerList.length, 40);
+test('Global.providerList contains all providers (41 total)', () {
+      expect(Global.providerList.length, 41);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5307,8 +5308,8 @@ test('Global.providerList contains all providers (40 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (40 total)', () {
-      expect(Global.providerList.length, 40);
+test('Global.providerList contains all providers (41 total)', () {
+      expect(Global.providerList.length, 41);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -11027,6 +11028,334 @@ test('Global.providerList contains all providers (40 total)', () {
 
     testWidgets('WorkoutLogDialog widget exists', (WidgetTester tester) async {
       expect(WorkoutLogDialog, isNotNull);
+    });
+  });
+
+  group('Age provider tests', () {
+    test('AgeModel initialization works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AgeModel();
+      await model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('AgeModel getZodiacSign returns correct sign', () {
+      final model = AgeModel();
+      
+      DateTime ariesDate = DateTime(2000, 3, 25);
+      expect(model.getZodiacSign(ariesDate), 'Aries ♈');
+      
+      DateTime taurusDate = DateTime(2000, 4, 25);
+      expect(model.getZodiacSign(taurusDate), 'Taurus ♉');
+      
+      DateTime geminiDate = DateTime(2000, 5, 25);
+      expect(model.getZodiacSign(geminiDate), 'Gemini ♊');
+      
+      DateTime cancerDate = DateTime(2000, 6, 25);
+      expect(model.getZodiacSign(cancerDate), 'Cancer ♋');
+      
+      DateTime leoDate = DateTime(2000, 8, 1);
+      expect(model.getZodiacSign(leoDate), 'Leo ♌');
+      
+      DateTime capricornDate = DateTime(2000, 1, 1);
+      expect(model.getZodiacSign(capricornDate), 'Capricorn ♑');
+    });
+
+    test('AgeModel getChineseZodiac returns correct sign', () {
+      final model = AgeModel();
+      
+      DateTime ratYear = DateTime(2020, 1, 1);
+      expect(model.getChineseZodiac(ratYear), 'Rat 🐀');
+      
+      DateTime oxYear = DateTime(2021, 1, 1);
+      expect(model.getChineseZodiac(oxYear), 'Ox 🐂');
+      
+      DateTime tigerYear = DateTime(2022, 1, 1);
+      expect(model.getChineseZodiac(tigerYear), 'Tiger 🐅');
+      
+      DateTime dragonYear = DateTime(2024, 1, 1);
+      expect(model.getChineseZodiac(dragonYear), 'Dragon 🐲');
+    });
+
+    test('AgeModel calculateAgeYears works', () {
+      final model = AgeModel();
+      final now = DateTime.now();
+      
+      DateTime birthdate = DateTime(now.year - 25, now.month, now.day);
+      expect(model.calculateAgeYears(birthdate), 25);
+      
+      DateTime birthdateBeforeBirthday = DateTime(now.year - 25, now.month + 1, now.day);
+      expect(model.calculateAgeYears(birthdateBeforeBirthday), 24);
+    });
+
+    test('AgeModel calculateAgeMonths works', () {
+      final model = AgeModel();
+      final now = DateTime.now();
+      
+      DateTime birthdate = DateTime(now.year - 1, now.month, now.day);
+      expect(model.calculateAgeMonths(birthdate), 12);
+      
+      DateTime birthdate6Months = DateTime(now.year, now.month - 6, now.day);
+      expect(model.calculateAgeMonths(birthdate6Months), 6);
+    });
+
+    test('AgeModel calculateAgeDays works', () {
+      final model = AgeModel();
+      final now = DateTime.now();
+      
+      DateTime birthdate = now.subtract(Duration(days: 365));
+      expect(model.calculateAgeDays(birthdate), 365);
+      
+      DateTime birthdateWeek = now.subtract(Duration(days: 7));
+      expect(model.calculateAgeDays(birthdateWeek), 7);
+    });
+
+    test('AgeModel calculateDaysUntilNextBirthday works', () {
+      final model = AgeModel();
+      final now = DateTime.now();
+      
+      DateTime birthdateToday = DateTime(2000, now.month, now.day);
+      int daysUntil = model.calculateDaysUntilNextBirthday(birthdateToday);
+      expect(daysUntil <= 365, true);
+      
+      DateTime birthdateTomorrow = DateTime(2000, now.month, now.day + 1);
+      daysUntil = model.calculateDaysUntilNextBirthday(birthdateTomorrow);
+      expect(daysUntil, 1);
+    });
+
+    test('AgeModel formatAge works', () {
+      final model = AgeModel();
+      final now = DateTime.now();
+      
+      DateTime adultBirthdate = DateTime(now.year - 30, now.month, now.day);
+      String formatted = model.formatAge(adultBirthdate);
+      expect(formatted.contains('30 years'), true);
+      
+      DateTime infantBirthdate = DateTime(now.year, now.month - 6, now.day);
+      formatted = model.formatAge(infantBirthdate);
+      expect(formatted.contains('6 months'), true);
+    });
+
+    test('AgeModel formatAgeDetailed works', () {
+      final model = AgeModel();
+      final now = DateTime.now();
+      
+      DateTime birthdate = DateTime(now.year - 25, now.month, now.day);
+      String formatted = model.formatAgeDetailed(birthdate);
+      expect(formatted.contains('25 years'), true);
+      expect(formatted.contains('days'), true);
+    });
+
+    test('AgeModel setBirthdate works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AgeModel();
+      await model.init();
+      
+      DateTime birthdate = DateTime(1990, 6, 15);
+      model.setBirthdate(birthdate);
+      
+      expect(model.birthdate, birthdate);
+      expect(model.hasBirthdate, true);
+    });
+
+    test('AgeModel saveEntry works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AgeModel();
+      await model.init();
+      
+      DateTime birthdate = DateTime(1995, 3, 20);
+      model.setBirthdate(birthdate);
+      model.saveEntry('Test Person');
+      
+      expect(model.savedEntries.length, 1);
+      expect(model.savedEntries.first.name, 'Test Person');
+      expect(model.savedEntries.first.birthdate, birthdate);
+    });
+
+    test('AgeModel loadEntry works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AgeModel();
+      await model.init();
+      
+      DateTime birthdate1 = DateTime(1990, 1, 1);
+      model.setBirthdate(birthdate1);
+      model.saveEntry('Person 1');
+      
+      DateTime birthdate2 = DateTime(1985, 6, 15);
+      model.setBirthdate(birthdate2);
+      model.saveEntry('Person 2');
+      
+      model.loadEntry(model.savedEntries.first);
+      expect(model.birthdate, birthdate2);
+    });
+
+    test('AgeModel deleteEntry works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AgeModel();
+      await model.init();
+      
+      DateTime birthdate = DateTime(1990, 1, 1);
+      model.setBirthdate(birthdate);
+      model.saveEntry('Person 1');
+      model.setBirthdate(DateTime(1985, 1, 1));
+      model.saveEntry('Person 2');
+      
+      expect(model.savedEntries.length, 2);
+      
+      model.deleteEntry(0);
+      expect(model.savedEntries.length, 1);
+    });
+
+    test('AgeModel clearAllEntries works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AgeModel();
+      await model.init();
+      
+      DateTime birthdate = DateTime(1990, 1, 1);
+      model.setBirthdate(birthdate);
+      model.saveEntry('Person 1');
+      model.setBirthdate(DateTime(1985, 1, 1));
+      model.saveEntry('Person 2');
+      
+      model.clearAllEntries();
+      expect(model.savedEntries.length, 0);
+      expect(model.hasSavedEntries, false);
+    });
+
+    test('AgeModel clear works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AgeModel();
+      await model.init();
+      
+      DateTime birthdate = DateTime(1990, 1, 1);
+      model.setBirthdate(birthdate);
+      
+      model.clear();
+      expect(model.birthdate, null);
+      expect(model.hasBirthdate, false);
+    });
+
+    test('AgeModel max entries limit', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AgeModel();
+      await model.init();
+      
+      for (int i = 0; i < 15; i++) {
+        model.setBirthdate(DateTime(1990 + i, 1, 1));
+        model.saveEntry('Person $i');
+      }
+      
+      expect(model.savedEntries.length, 10);
+    });
+
+    test('Age provider exists', () {
+      expect(providerAge, isNotNull);
+    });
+
+    test('Age provider keywords include age', () {
+      final keywords = 'age birthday birthdate calculate years old zodiac';
+      expect(keywords.contains('age'), true);
+    });
+
+    test('Age provider keywords include birthday', () {
+      final keywords = 'age birthday birthdate calculate years old zodiac';
+      expect(keywords.contains('birthday'), true);
+    });
+
+    test('Age provider keywords include zodiac', () {
+      final keywords = 'age birthday birthdate calculate years old zodiac';
+      expect(keywords.contains('zodiac'), true);
+    });
+
+    testWidgets('AgeCard renders loading state', (WidgetTester tester) async {
+      final model = AgeModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: AgeCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Age Calculator: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('AgeCard renders initialized state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AgeModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: AgeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Age Calculator'), findsOneWidget);
+    });
+
+    testWidgets('AgeCard shows empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AgeModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: AgeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Select a birthdate to calculate age'), findsOneWidget);
+    });
+
+    testWidgets('AgeCard widget exists', (WidgetTester tester) async {
+      expect(AgeCard, isNotNull);
+    });
+
+    testWidgets('AgeCard shows calendar button', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = AgeModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: AgeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byIcon(Icons.calendar_today), findsOneWidget);
+    });
+
+    test('AgeEntry toJson/fromJson works', () {
+      final entry = AgeEntry(
+        name: 'Test Person',
+        birthdate: DateTime(1990, 6, 15),
+        createdAt: DateTime(2026, 4, 24),
+      );
+      
+      final json = entry.toJson();
+      final restored = AgeEntry.fromJson(json);
+      
+      expect(restored.name, entry.name);
+      expect(restored.birthdate, entry.birthdate);
+      expect(restored.createdAt, entry.createdAt);
     });
   });
 }
