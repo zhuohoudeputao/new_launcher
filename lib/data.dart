@@ -56,6 +56,7 @@ import 'package:new_launcher/providers/provider_percentage.dart';
 import 'package:new_launcher/providers/provider_quickcontacts.dart';
 import 'package:new_launcher/providers/provider_shoppinglist.dart';
 import 'package:new_launcher/providers/provider_caffeine.dart';
+import 'package:new_launcher/providers/provider_subscription.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -225,6 +226,7 @@ class Global {
     providerQuickContacts,
     providerShoppingList,
     providerCaffeine,
+    providerSubscription,
   ];
 
   //_______________________________________________________________________

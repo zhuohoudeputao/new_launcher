@@ -44,6 +44,7 @@ import 'package:new_launcher/providers/provider_percentage.dart';
 import 'package:new_launcher/providers/provider_quickcontacts.dart';
 import 'package:new_launcher/providers/provider_shoppinglist.dart';
 import 'package:new_launcher/providers/provider_caffeine.dart';
+import 'package:new_launcher/providers/provider_subscription.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2484,7 +2485,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 45);
+      expect(Global.providerList.length, 46);
     });
 
     test('Global.providerList names are correct', () {
@@ -3651,7 +3652,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 45);
+      expect(initCount, 46);
     });
   });
 
@@ -3969,7 +3970,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (43 total)', () {
-      expect(Global.providerList.length, 45);
+      expect(Global.providerList.length, 46);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5313,7 +5314,7 @@ test('Global.providerList contains all providers (43 total)', () {
     });
 
 test('Global.providerList contains all providers (43 total)', () {
-      expect(Global.providerList.length, 45);
+      expect(Global.providerList.length, 46);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -12627,6 +12628,275 @@ test('Global.providerList contains all providers (43 total)', () {
 
     test('CaffeineModel defaultLimit constant', () async {
       expect(CaffeineModel.defaultLimit, 400);
+    });
+  });
+
+  group('Subscription provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('SubscriptionModel is initialized correctly', () async {
+      final model = SubscriptionModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.subscriptions.length, 0);
+      expect(model.count, 0);
+    });
+
+    test('SubscriptionModel addSubscription works', () async {
+      final model = SubscriptionModel();
+      await model.init();
+      expect(model.count, 0);
+      model.addSubscription('Netflix', 9.99, 'monthly', DateTime.now().add(Duration(days: 30)));
+      expect(model.count, 1);
+      expect(model.subscriptions.first.name, 'Netflix');
+      expect(model.subscriptions.first.cost, 9.99);
+    });
+
+    test('SubscriptionModel updateSubscription works', () async {
+      final model = SubscriptionModel();
+      await model.init();
+      model.addSubscription('Netflix', 9.99, 'monthly', DateTime.now().add(Duration(days: 30)));
+      final id = model.subscriptions.first.id;
+      model.updateSubscription(id, 'Netflix Premium', 15.99, 'monthly', DateTime.now().add(Duration(days: 45)));
+      expect(model.subscriptions.first.name, 'Netflix Premium');
+      expect(model.subscriptions.first.cost, 15.99);
+    });
+
+    test('SubscriptionModel deleteSubscription works', () async {
+      final model = SubscriptionModel();
+      await model.init();
+      model.addSubscription('Netflix', 9.99, 'monthly', DateTime.now().add(Duration(days: 30)));
+      model.addSubscription('Spotify', 9.99, 'monthly', DateTime.now().add(Duration(days: 15)));
+      expect(model.count, 2);
+      model.deleteSubscription(model.subscriptions.first.id);
+      expect(model.count, 1);
+    });
+
+    test('SubscriptionModel totalMonthly calculates correctly', () async {
+      final model = SubscriptionModel();
+      await model.init();
+      model.addSubscription('Netflix', 10.0, 'monthly', DateTime.now().add(Duration(days: 30)));
+      model.addSubscription('Weekly', 5.0, 'weekly', DateTime.now().add(Duration(days: 7)));
+      model.addSubscription('Yearly', 120.0, 'yearly', DateTime.now().add(Duration(days: 365)));
+      expect(model.totalMonthly, closeTo(10 + 5 * 4.33 + 120 / 12, 0.1));
+    });
+
+    test('SubscriptionModel totalYearly calculates correctly', () async {
+      final model = SubscriptionModel();
+      await model.init();
+      model.addSubscription('Netflix', 10.0, 'monthly', DateTime.now().add(Duration(days: 30)));
+      model.addSubscription('Weekly', 5.0, 'weekly', DateTime.now().add(Duration(days: 7)));
+      model.addSubscription('Yearly', 120.0, 'yearly', DateTime.now().add(Duration(days: 365)));
+      expect(model.totalYearly, closeTo(10 * 12 + 5 * 52 + 120, 0.1));
+    });
+
+    test('SubscriptionEntry daysUntilRenewal works', () {
+      final entry = SubscriptionEntry(
+        id: 'test',
+        name: 'Test',
+        cost: 10.0,
+        frequency: 'monthly',
+        renewalDate: DateTime.now().add(Duration(days: 15)),
+        createdAt: DateTime.now(),
+      );
+      expect(entry.daysUntilRenewal(), 15);
+    });
+
+    test('SubscriptionEntry isExpired works', () {
+      final expiredEntry = SubscriptionEntry(
+        id: 'test',
+        name: 'Test',
+        cost: 10.0,
+        frequency: 'monthly',
+        renewalDate: DateTime.now().subtract(Duration(days: 1)),
+        createdAt: DateTime.now(),
+      );
+      expect(expiredEntry.isExpired(), true);
+
+      final validEntry = SubscriptionEntry(
+        id: 'test',
+        name: 'Test',
+        cost: 10.0,
+        frequency: 'monthly',
+        renewalDate: DateTime.now().add(Duration(days: 30)),
+        createdAt: DateTime.now(),
+      );
+      expect(validEntry.isExpired(), false);
+    });
+
+    test('SubscriptionEntry monthlyEquivalent works', () {
+      final monthlyEntry = SubscriptionEntry(
+        id: 'test',
+        name: 'Test',
+        cost: 10.0,
+        frequency: 'monthly',
+        renewalDate: DateTime.now().add(Duration(days: 30)),
+        createdAt: DateTime.now(),
+      );
+      expect(monthlyEntry.monthlyEquivalent(), 10.0);
+
+      final weeklyEntry = SubscriptionEntry(
+        id: 'test',
+        name: 'Test',
+        cost: 10.0,
+        frequency: 'weekly',
+        renewalDate: DateTime.now().add(Duration(days: 7)),
+        createdAt: DateTime.now(),
+      );
+      expect(weeklyEntry.monthlyEquivalent(), closeTo(10 * 4.33, 0.1));
+
+      final yearlyEntry = SubscriptionEntry(
+        id: 'test',
+        name: 'Test',
+        cost: 120.0,
+        frequency: 'yearly',
+        renewalDate: DateTime.now().add(Duration(days: 365)),
+        createdAt: DateTime.now(),
+      );
+      expect(yearlyEntry.monthlyEquivalent(), 10.0);
+    });
+
+    test('SubscriptionEntry yearlyEquivalent works', () {
+      final monthlyEntry = SubscriptionEntry(
+        id: 'test',
+        name: 'Test',
+        cost: 10.0,
+        frequency: 'monthly',
+        renewalDate: DateTime.now().add(Duration(days: 30)),
+        createdAt: DateTime.now(),
+      );
+      expect(monthlyEntry.yearlyEquivalent(), 120.0);
+
+      final weeklyEntry = SubscriptionEntry(
+        id: 'test',
+        name: 'Test',
+        cost: 10.0,
+        frequency: 'weekly',
+        renewalDate: DateTime.now().add(Duration(days: 7)),
+        createdAt: DateTime.now(),
+      );
+      expect(weeklyEntry.yearlyEquivalent(), 520.0);
+
+      final yearlyEntry = SubscriptionEntry(
+        id: 'test',
+        name: 'Test',
+        cost: 120.0,
+        frequency: 'yearly',
+        renewalDate: DateTime.now().add(Duration(days: 365)),
+        createdAt: DateTime.now(),
+      );
+      expect(yearlyEntry.yearlyEquivalent(), 120.0);
+    });
+
+    test('SubscriptionEntry toJson and fromJson work', () {
+      final entry = SubscriptionEntry(
+        id: 'test123',
+        name: 'Netflix',
+        cost: 9.99,
+        frequency: 'monthly',
+        renewalDate: DateTime(2024, 6, 15),
+        createdAt: DateTime(2024, 1, 1),
+      );
+      final json = entry.toJson();
+      final restored = SubscriptionEntry.fromJson(json);
+      expect(restored.id, 'test123');
+      expect(restored.name, 'Netflix');
+      expect(restored.cost, 9.99);
+      expect(restored.frequency, 'monthly');
+    });
+
+    test('SubscriptionModel renewSubscription works', () async {
+      final model = SubscriptionModel();
+      await model.init();
+      final oldRenewal = DateTime(2024, 1, 15);
+      model.addSubscription('Netflix', 9.99, 'monthly', oldRenewal);
+      final id = model.subscriptions.first.id;
+      model.renewSubscription(id);
+      final newRenewal = model.subscriptions.first.renewalDate;
+      expect(newRenewal.month, 2);
+      expect(newRenewal.day, 15);
+    });
+
+    test('SubscriptionModel clearAll works', () async {
+      final model = SubscriptionModel();
+      await model.init();
+      model.addSubscription('Netflix', 9.99, 'monthly', DateTime.now().add(Duration(days: 30)));
+      model.addSubscription('Spotify', 9.99, 'monthly', DateTime.now().add(Duration(days: 15)));
+      expect(model.count, 2);
+      await model.clearAll();
+      expect(model.count, 0);
+    });
+
+    test('SubscriptionModel nextRenewal works', () async {
+      final model = SubscriptionModel();
+      await model.init();
+      model.addSubscription('Netflix', 9.99, 'monthly', DateTime.now().add(Duration(days: 30)));
+      model.addSubscription('Spotify', 9.99, 'monthly', DateTime.now().add(Duration(days: 15)));
+      expect(model.nextRenewal!.name, 'Spotify');
+    });
+
+    test('SubscriptionModel upcomingRenewals excludes expired', () async {
+      final model = SubscriptionModel();
+      await model.init();
+      model.addSubscription('Expired', 9.99, 'monthly', DateTime.now().subtract(Duration(days: 1)));
+      model.addSubscription('Active', 9.99, 'monthly', DateTime.now().add(Duration(days: 30)));
+      expect(model.upcomingRenewals.length, 1);
+      expect(model.upcomingRenewals.first.name, 'Active');
+    });
+
+    testWidgets('SubscriptionCard renders loading state', (WidgetTester tester) async {
+      final model = SubscriptionModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: SubscriptionCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Subscription Tracker: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('SubscriptionCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = SubscriptionModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: SubscriptionCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Subscription Tracker'), findsOneWidget);
+      expect(find.text('No subscriptions tracked'), findsOneWidget);
+    });
+
+    test('SubscriptionCard widget exists', () {
+      expect(SubscriptionCard, isNotNull);
+    });
+
+    test('Global.providerList includes Subscription', () {
+      final hasSubscription = Global.providerList.any((p) => p.name == 'Subscription');
+      expect(hasSubscription, true);
+    });
+
+    test('providerSubscription exists', () {
+      expect(providerSubscription, isNotNull);
+      expect(providerSubscription.name, 'Subscription');
+    });
+
+    test('SubscriptionModel maxSubscriptions limit', () async {
+      expect(SubscriptionModel.maxSubscriptions, 15);
     });
   });
 }

@@ -556,6 +556,17 @@ Settings auto-saved via `SharedPreferences`:
     - Caffeine entries persisted via SharedPreferences
     - Uses `Card.filled` and `ActionChip` for Material 3 style
     - Keywords: caffeine, coffee, tea, energy, drink, cola, beverage, intake, track, daily, health
+- **Subscription**: Subscription and recurring payment tracker
+    - Track recurring subscriptions with name, cost, and renewal date
+    - Three frequency options: Weekly, Monthly, Yearly
+    - Monthly and yearly total cost calculation
+    - Upcoming renewals sorted by urgency
+    - Days until renewal display with color coding (red for 7 days, orange for 30 days)
+    - Expired subscription detection with renewal button
+    - Maximum 15 subscriptions stored (oldest removed when limit exceeded)
+    - Subscriptions persisted via SharedPreferences
+    - Uses `Card.filled` and `SegmentedButton` for Material 3 style
+    - Keywords: subscription, subscribe, bill, recurring, payment, netflix, spotify, membership, fee, monthly, yearly
 
 ## Material 3 Design System
 
@@ -666,8 +677,9 @@ Test coverage includes:
 - Quick Contacts provider tests (provider existence, keywords, model state, CRUD operations, widget rendering)
 - Shopping List provider tests (provider existence, keywords, model state, CRUD operations, category handling, persistence, widget rendering)
 - Caffeine provider tests (provider existence, keywords, model state, add/remove caffeine, limit tracking, preset drinks, history, widget rendering)
+- Subscription provider tests (provider existence, keywords, model state, CRUD operations, renewal calculations, cost totals, widget rendering)
   
-Total tests: 1215 tests
+Total tests: 1236 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
