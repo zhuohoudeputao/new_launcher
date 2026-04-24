@@ -1019,6 +1019,15 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `GridView` for Material 3 style
     - Keywords: ascii, converter, encode, decode, character, code, text, char, table
+- **AreaConverter**: Area unit converter for land and surface measurements
+    - Convert between 10 area units: m², km², cm², mm², ha, ac, ft², yd², in², mi²
+    - Real-time conversion as values are entered
+    - Swap input/output units with one tap
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `DropdownButton`, `TextField` for Material 3 style
+    - Keywords: area, convert, square, meter, kilometer, centimeter, hectare, acre, foot, yard, inch, mile, sq, m2, km2
 
 ## Material 3 Design System
 
@@ -1163,8 +1172,9 @@ Test coverage includes:
 - VolumeConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - AngleConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - Prime provider tests (provider existence, keywords, model state, prime checking, prime factor finding, history, widget rendering)
+- AreaConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 
-Total tests: 2273 tests
+Total tests: 2311 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

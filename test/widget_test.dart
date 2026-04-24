@@ -83,6 +83,7 @@ import 'package:new_launcher/providers/provider_volume.dart';
 import 'package:new_launcher/providers/provider_angle.dart';
 import 'package:new_launcher/providers/provider_prime.dart';
 import 'package:new_launcher/providers/provider_ascii.dart';
+import 'package:new_launcher/providers/provider_area.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2523,7 +2524,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 84);
+      expect(Global.providerList.length, 85);
     });
 
     test('Global.providerList names are correct', () {
@@ -3690,7 +3691,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 84);
+      expect(initCount, 85);
     });
   });
 
@@ -4007,8 +4008,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (84 total)', () {
-      expect(Global.providerList.length, 84);
+test('Global.providerList contains all providers (85 total)', () {
+      expect(Global.providerList.length, 85);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5351,8 +5352,8 @@ test('Global.providerList contains all providers (84 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (84 total)', () {
-      expect(Global.providerList.length, 84);
+test('Global.providerList contains all providers (85 total)', () {
+      expect(Global.providerList.length, 85);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -23015,6 +23016,330 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       asciiModel.clearHistory();
+    });
+  });
+
+  group('AreaConverter Provider tests', () {
+    test('providerAreaConverter exists in Global.providerList', () {
+      final areaProvider = Global.providerList.where((p) => p.name == 'AreaConverter').first;
+      expect(areaProvider.name, 'AreaConverter');
+    });
+
+    test('AreaConverter keywords include area', () {
+      final areaProvider = Global.providerList.where((p) => p.name == 'AreaConverter').first;
+      expect(areaProvider.name, 'AreaConverter');
+    });
+
+    test('areaConverterModel global instance exists', () {
+      expect(areaConverterModel, isNotNull);
+      expect(areaConverterModel.isInitialized, false);
+    });
+
+    test('AreaConverterModel starts uninitialized', () {
+      final model = AreaConverterModel();
+      expect(model.isInitialized, false);
+    });
+
+    test('AreaConverterModel is ChangeNotifier', () {
+      final model = AreaConverterModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('AreaConverterModel init sets initialized', () {
+      final model = AreaConverterModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('AreaConverterModel default units', () {
+      final model = AreaConverterModel();
+      model.init();
+      expect(model.inputUnit, 'm2');
+      expect(model.outputUnit, 'acre');
+    });
+
+    test('AreaConverterModel setInputUnit works', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputUnit('km2');
+      expect(model.inputUnit, 'km2');
+    });
+
+    test('AreaConverterModel setOutputUnit works', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setOutputUnit('hectare');
+      expect(model.outputUnit, 'hectare');
+    });
+
+    test('AreaConverterModel setInputValue works', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputValue('100');
+      expect(model.inputValue, '100');
+    });
+
+    test('AreaConverterModel swapUnits works', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputValue('100');
+      final originalInput = model.inputUnit;
+      final originalOutput = model.outputUnit;
+      model.swapUnits();
+      expect(model.inputUnit, originalOutput);
+      expect(model.outputUnit, originalInput);
+    });
+
+    test('AreaConverterModel clear works', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.clear();
+      expect(model.inputValue, '0');
+    });
+
+    test('AreaConverterModel conversion m2 to acre', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(0.000247, 0.00001));
+    });
+
+    test('AreaConverterModel conversion acre to m2', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputUnit('acre');
+      model.setOutputUnit('m2');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(4046.86, 0.1));
+    });
+
+    test('AreaConverterModel conversion m2 to km2', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputUnit('m2');
+      model.setOutputUnit('km2');
+      model.setInputValue('1000000');
+      expect(double.parse(model.outputValue), closeTo(1, 0.01));
+    });
+
+    test('AreaConverterModel conversion hectare to m2', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputUnit('hectare');
+      model.setOutputUnit('m2');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(10000, 0.1));
+    });
+
+    test('AreaConverterModel conversion ft2 to m2', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputUnit('ft2');
+      model.setOutputUnit('m2');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(0.0929, 0.001));
+    });
+
+    test('AreaConverter static convert method works', () {
+      expect(AreaConverterModel.convert(1, 'm2', 'acre'), closeTo(0.000247, 0.00001));
+      expect(AreaConverterModel.convert(1, 'acre', 'm2'), closeTo(4046.86, 0.1));
+      expect(AreaConverterModel.convert(1, 'm2', 'km2'), closeTo(0.000001, 0.0000001));
+      expect(AreaConverterModel.convert(1, 'km2', 'm2'), closeTo(1000000, 1));
+    });
+
+    test('AreaConverter static convert same unit returns same value', () {
+      expect(AreaConverterModel.convert(100, 'm2', 'm2'), 100);
+      expect(AreaConverterModel.convert(50, 'acre', 'acre'), 50);
+    });
+
+    test('AreaConverterModel handles invalid input', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputValue('abc');
+      expect(model.outputValue, '0');
+    });
+
+    test('AreaConverterModel handles negative values', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputValue('-10');
+      expect(double.parse(model.outputValue), closeTo(-0.00247, 0.0001));
+    });
+
+    test('AreaConverterModel handles decimal values', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputValue('1.5');
+      expect(double.parse(model.outputValue), closeTo(0.000371, 0.00001));
+    });
+
+    test('AreaConverterModel handles zero', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputValue('0');
+      expect(model.outputValue, '0');
+    });
+
+    test('AreaConverterModel availableUnits contains expected units', () {
+      final model = AreaConverterModel();
+      model.init();
+      final units = model.availableUnits;
+      expect(units.contains('m2'), true);
+      expect(units.contains('km2'), true);
+      expect(units.contains('acre'), true);
+      expect(units.contains('hectare'), true);
+      expect(units.contains('ft2'), true);
+      expect(units.contains('yd2'), true);
+      expect(units.contains('in2'), true);
+      expect(units.contains('mi2'), true);
+    });
+
+    test('AreaConverterModel history starts empty', () {
+      final model = AreaConverterModel();
+      model.init();
+      expect(model.history.isEmpty, true);
+      expect(model.hasHistory, false);
+    });
+
+    test('AreaConverterModel addToHistory works', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].inputValue, 100);
+      expect(model.history[0].inputUnit, 'm2');
+      expect(model.history[0].outputUnit, 'acre');
+    });
+
+    test('AreaConverterModel addToHistory ignores zero', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputValue('0');
+      model.addToHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('AreaConverterModel addToHistory ignores invalid', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputValue('abc');
+      model.addToHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('AreaConverterModel history max limit', () {
+      final model = AreaConverterModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputValue('$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('AreaConverterModel clearHistory works', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('AreaConverterModel useHistoryEntry works', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputUnit('km2');
+      model.setOutputUnit('hectare');
+      model.setInputValue('5');
+      model.addToHistory();
+      model.clear();
+      expect(model.inputValue, '0');
+      model.useHistoryEntry(model.history[0]);
+      expect(model.inputUnit, 'km2');
+      expect(model.outputUnit, 'hectare');
+      expect(double.parse(model.inputValue), closeTo(5, 0.1));
+    });
+
+    test('AreaConverterModel refresh calls notifyListeners', () {
+      final model = AreaConverterModel();
+      model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('AreaConverterModel prevents same input and output unit', () {
+      final model = AreaConverterModel();
+      model.init();
+      model.setInputUnit('acre');
+      expect(model.outputUnit != 'acre', true);
+      model.setOutputUnit('m2');
+      expect(model.inputUnit != 'm2', true);
+    });
+
+    testWidgets('AreaConverterCard renders loading state', (WidgetTester tester) async {
+      final model = AreaConverterModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: AreaConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Area Converter: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('AreaConverterCard renders initialized state', (WidgetTester tester) async {
+      final model = AreaConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: AreaConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Area Converter'), findsOneWidget);
+      expect(find.byType(DropdownButton<String>, skipOffstage: false), findsWidgets);
+    });
+
+    testWidgets('AreaConverterCard shows input field', (WidgetTester tester) async {
+      final model = AreaConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: AreaConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsOneWidget);
+    });
+
+    test('AreaConverterCard widget exists', () {
+      expect(AreaConverterCard, isNotNull);
+    });
+
+    test('Global.providerList includes AreaConverter', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('AreaConverter'), true);
+    });
+
+    tearDownAll(() {
+      areaConverterModel.clearHistory();
     });
   });
 }
