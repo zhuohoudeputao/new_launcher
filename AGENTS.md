@@ -870,6 +870,17 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `Row`, `InkWell` for Material 3 style
     - Keywords: wordle, word, guess, game, letter, puzzle, play, five
+- **TypingTest**: Typing speed and accuracy test
+    - Measure typing speed in WPM (words per minute)
+    - Accuracy percentage calculation
+    - Real-time timer display
+    - Character-by-character feedback (correct/incorrect/pending)
+    - Multiple sample texts to type
+    - History tracking (up to 10 test results)
+    - Best and average WPM statistics
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `TextField`, `SelectableText`, `RichText` for Material 3 style
+    - Keywords: typing, test, speed, wpm, words, per, minute, type, keyboard, fast, accuracy
 
 ## Material 3 Design System
 
@@ -1002,8 +1013,9 @@ Test coverage includes:
 - Minesweeper provider tests (provider existence, keywords, model state, difficulty settings, grid operations, cell operations, statistics, history, widget rendering)
 - Game2048 provider tests (provider existence, keywords, model state, grid operations, move operations, statistics, history, widget rendering)
 - Wordle provider tests (provider existence, keywords, model state, letter operations, guess evaluation, statistics, history, widget rendering)
+- TypingTest provider tests (provider existence, keywords, model state, typing operations, WPM calculation, accuracy, history, widget rendering)
   
-Total tests: 1905 tests
+Total tests: 1925 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

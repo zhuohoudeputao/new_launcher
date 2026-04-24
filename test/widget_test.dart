@@ -70,6 +70,7 @@ import 'package:new_launcher/providers/provider_sudoku.dart';
 import 'package:new_launcher/providers/provider_minesweeper.dart';
 import 'package:new_launcher/providers/provider_2048.dart';
 import 'package:new_launcher/providers/provider_wordle.dart';
+import 'package:new_launcher/providers/provider_typingtest.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2510,7 +2511,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 71);
+      expect(Global.providerList.length, 72);
     });
 
     test('Global.providerList names are correct', () {
@@ -3677,7 +3678,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 71);
+      expect(initCount, 72);
     });
   });
 
@@ -3995,7 +3996,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 71);
+      expect(Global.providerList.length, 72);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5339,7 +5340,7 @@ test('Global.providerList contains all providers (71 total)', () {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 71);
+      expect(Global.providerList.length, 72);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -16390,13 +16391,13 @@ test('Global.providerList contains all providers (71 total)', () {
     test('MoonPhaseModel calculates next new moon', () {
       final model = MoonPhaseModel();
       model.init();
-      expect(model.nextNewMoon != null, true);
+      expect(model.nextNewMoon, isA<DateTime>());
     });
 
     test('MoonPhaseModel calculates next full moon', () {
       final model = MoonPhaseModel();
       model.init();
-      expect(model.nextFullMoon != null, true);
+      expect(model.nextFullMoon, isA<DateTime>());
     });
 
     test('MoonPhaseModel setDate works', () {
@@ -16518,7 +16519,7 @@ test('Global.providerList contains all providers (71 total)', () {
 
     test('ReactionTimeModel is ChangeNotifier', () {
       final model = ReactionTimeModel();
-      expect(model is ChangeNotifier, true);
+      expect(model, isA<ChangeNotifier>());
     });
 
     test('ReactionTimeModel initial state is ready', () {
@@ -16730,7 +16731,7 @@ test('Global.providerList contains all providers (71 total)', () {
 
     test('DecisionMakerModel is ChangeNotifier', () {
       final model = DecisionMakerModel();
-      expect(model is ChangeNotifier, true);
+      expect(model, isA<ChangeNotifier>());
     });
 
     test('DecisionMakerModel initial values', () {
@@ -17018,7 +17019,7 @@ test('Global.providerList contains all providers (71 total)', () {
 
     test('RockPaperScissorsModel is ChangeNotifier', () {
       final model = RockPaperScissorsModel();
-      expect(model is ChangeNotifier, true);
+      expect(model, isA<ChangeNotifier>());
     });
 
     test('RockPaperScissorsModel initial values', () {
@@ -17733,7 +17734,7 @@ test('Global.providerList contains all providers (71 total)', () {
 
     test('TicTacToeModel is ChangeNotifier', () {
       final model = TicTacToeModel();
-      expect(model is ChangeNotifier, true);
+      expect(model, isA<ChangeNotifier>());
     });
 
     test('TicTacToeModel initial values', () {
@@ -18012,7 +18013,7 @@ test('Global.providerList contains all providers (71 total)', () {
 
       test('MemoryGameModel is ChangeNotifier', () {
         final model = MemoryGameModel();
-        expect(model is ChangeNotifier, true);
+        expect(model, isA<ChangeNotifier>());
       });
 
       test('MemoryGameModel initial state', () {
@@ -19620,6 +19621,184 @@ test('WordleModel submitGuess works', () async {
     test('Global.providerList includes Wordle', () {
       final hasWordle = Global.providerList.any((p) => p.name == 'Wordle');
       expect(hasWordle, true);
+    });
+  });
+
+  group('TypingTest Provider tests', () {
+    test('providerTypingTest exists in Global.providerList', () {
+      final typingTestProvider = Global.providerList.where((p) => p.name == 'TypingTest').first;
+      expect(typingTestProvider.name, 'TypingTest');
+    });
+
+    test('TypingTestModel is ChangeNotifier', () {
+      final model = TypingTestModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('TypingTestModel initial state is ready', () {
+      final model = TypingTestModel();
+      expect(model.state, TypingTestState.ready);
+    });
+
+    test('TypingTestModel initial values', () {
+      final model = TypingTestModel();
+      expect(model.typedText, '');
+      expect(model.elapsedSeconds, 0);
+      expect(model.wpm, 0);
+      expect(model.accuracy, 0);
+      expect(model.errors, 0);
+      expect(model.hasHistory, false);
+      expect(model.isInitialized, false);
+    });
+
+    test('TypingTestModel init sets isInitialized and currentText', () {
+      final model = TypingTestModel();
+      expect(model.isInitialized, false);
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.currentText.isNotEmpty, true);
+    });
+
+    test('TypingTestModel maxHistory constant is 10', () {
+      expect(TypingTestModel.maxHistory, 10);
+    });
+
+    test('TypingTestModel sampleTexts contains valid texts', () {
+      expect(TypingTestModel.sampleTexts.length, greaterThan(5));
+      for (final text in TypingTestModel.sampleTexts) {
+        expect(text.isNotEmpty, true);
+      }
+    });
+
+    test('TypingTestModel startTest changes state', () {
+      final model = TypingTestModel();
+      model.init();
+      model.startTest();
+      expect(model.state, TypingTestState.typing);
+      expect(model.typedText, '');
+      expect(model.elapsedSeconds, 0);
+      model.resetTest();
+    });
+
+    test('TypingTestModel updateTypedText updates typed text', () {
+      final model = TypingTestModel();
+      model.init();
+      model.startTest();
+      model.updateTypedText('Hello');
+      expect(model.typedText, 'Hello');
+      model.resetTest();
+    });
+
+    test('TypingTestModel getCharacterStatus works', () {
+      final model = TypingTestModel();
+      model.init();
+      model.startTest();
+      final typedText = model.currentText.substring(0, 3);
+      model.updateTypedText(typedText);
+      expect(model.getCharacterStatus(0), 'correct');
+      expect(model.getCharacterStatus(4), 'pending');
+      model.resetTest();
+    });
+
+    test('TypingTestModel resetTest restores ready state', () {
+      final model = TypingTestModel();
+      model.init();
+      model.startTest();
+      model.updateTypedText('Hello');
+      expect(model.state, TypingTestState.typing);
+      model.resetTest();
+      expect(model.state, TypingTestState.ready);
+      expect(model.typedText, '');
+      expect(model.elapsedSeconds, 0);
+    });
+
+    test('TypingTestModel clearHistory works', () {
+      final model = TypingTestModel();
+      model.init();
+      model.startTest();
+      model.updateTypedText(model.currentText);
+      expect(model.hasHistory, true);
+      model.clearHistory();
+      expect(model.hasHistory, false);
+      model.resetTest();
+    });
+
+    test('TypingTestModel getBestWpm and getAverageWpm work', () {
+      final model = TypingTestModel();
+      model.init();
+      expect(model.getBestWpm(), 0);
+      expect(model.getAverageWpm(), 0);
+    });
+
+    test('TypingTestModel history respects max limit', () {
+      final model = TypingTestModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.startTest();
+        model.updateTypedText(model.currentText);
+      }
+      expect(model.history.length, TypingTestModel.maxHistory);
+      model.resetTest();
+      model.clearHistory();
+    });
+
+    test('TypingTestModel refresh calls notifyListeners', () {
+      final model = TypingTestModel();
+      model.init();
+      model.refresh();
+    });
+
+    test('TypingTestCard renders loading state', () {
+      final model = TypingTestModel();
+      MaterialApp app = MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => TypingTestCard(),
+          ),
+        ),
+      );
+      expect(app, isNotNull);
+    });
+
+    testWidgets('TypingTestCard renders initialized state', (WidgetTester tester) async {
+      final model = TypingTestModel();
+      model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => TypingTestCard(),
+          ),
+        ),
+      ));
+      expect(find.text('Typing Test'), findsOneWidget);
+      expect(find.text('Start'), findsOneWidget);
+    });
+
+    testWidgets('TypingTestCard shows sample text', (WidgetTester tester) async {
+      final model = TypingTestModel();
+      model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => TypingTestCard(),
+          ),
+        ),
+      ));
+      expect(find.text('Typing Test'), findsOneWidget);
+      expect(find.text('Start'), findsOneWidget);
+      expect(find.byType(SelectableText), findsWidgets);
+    });
+
+    test('TypingTestCard widget exists', () {
+      expect(TypingTestCard, isNotNull);
+    });
+
+    test('Global.providerList includes TypingTest', () {
+      final hasTypingTest = Global.providerList.any((p) => p.name == 'TypingTest');
+      expect(hasTypingTest, true);
     });
   });
 }
