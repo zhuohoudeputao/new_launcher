@@ -581,6 +581,17 @@ Settings auto-saved via `SharedPreferences`:
     - Parking data persisted via SharedPreferences
     - Uses `Card.filled`, `ActionChip`, `LinearProgressIndicator` for Material 3 style
     - Keywords: parking, park, car, vehicle, meter, spot, location, level, garage
+- **Gratitude**: Daily gratitude journal for mental health tracking
+    - Record daily gratitude entries (up to 5 entries per day)
+    - Streak tracking for consecutive days of gratitude logging
+    - History view with expandable day entries
+    - Delete individual entries via history view
+    - Clear all history with confirmation dialog
+    - Maximum 30 days of history stored
+    - Entries persisted via SharedPreferences
+    - Heart icon with pink color for visual appeal
+    - Uses `Card.filled` for Material 3 style
+    - Keywords: gratitude, grateful, thanks, thankful, appreciation, journal, daily, positive
 
 ## Material 3 Design System
 
@@ -693,8 +704,9 @@ Test coverage includes:
 - Caffeine provider tests (provider existence, keywords, model state, add/remove caffeine, limit tracking, preset drinks, history, widget rendering)
 - Subscription provider tests (provider existence, keywords, model state, CRUD operations, renewal calculations, cost totals, widget rendering)
 - Parking provider tests (provider existence, keywords, model state, entry operations, meter controls, widget rendering)
+- Gratitude provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
   
-Total tests: 1254 tests
+Total tests: 1270 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

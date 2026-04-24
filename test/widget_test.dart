@@ -46,6 +46,7 @@ import 'package:new_launcher/providers/provider_shoppinglist.dart';
 import 'package:new_launcher/providers/provider_caffeine.dart';
 import 'package:new_launcher/providers/provider_subscription.dart';
 import 'package:new_launcher/providers/provider_parking.dart';
+import 'package:new_launcher/providers/provider_gratitude.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2486,7 +2487,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 47);
+      expect(Global.providerList.length, 48);
     });
 
     test('Global.providerList names are correct', () {
@@ -3653,7 +3654,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 47);
+      expect(initCount, 48);
     });
   });
 
@@ -3970,8 +3971,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (43 total)', () {
-      expect(Global.providerList.length, 47);
+test('Global.providerList contains all providers (48 total)', () {
+      expect(Global.providerList.length, 48);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5314,8 +5315,8 @@ test('Global.providerList contains all providers (43 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (43 total)', () {
-      expect(Global.providerList.length, 47);
+test('Global.providerList contains all providers (48 total)', () {
+      expect(Global.providerList.length, 48);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -13143,6 +13144,178 @@ test('Global.providerList contains all providers (43 total)', () {
     test('providerParking exists', () {
       expect(providerParking, isNotNull);
       expect(providerParking.name, 'Parking');
+    });
+  });
+
+  group('Gratitude provider tests', () {
+    setUpAll(() {
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('GratitudeModel initializes correctly', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = GratitudeModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.history, isEmpty);
+    });
+
+    test('GratitudeModel addEntry works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = GratitudeModel();
+      await model.init();
+      model.addEntry('My family');
+      expect(model.todayEntries.length, 1);
+      expect(model.todayEntries.first.text, 'My family');
+      expect(model.todayCount, 1);
+    });
+
+    test('GratitudeModel max entries per day', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = GratitudeModel();
+      await model.init();
+      for (int i = 0; i < GratitudeModel.maxEntriesPerDay + 1; i++) {
+        model.addEntry('Entry $i');
+      }
+      expect(model.todayCount, GratitudeModel.maxEntriesPerDay);
+    });
+
+    test('GratitudeModel removeEntry works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = GratitudeModel();
+      await model.init();
+      model.addEntry('Test entry');
+      expect(model.todayCount, 1);
+      model.removeEntry(model.todayEntries.first);
+      expect(model.todayCount, 0);
+      expect(model.history, isEmpty);
+    });
+
+    test('GratitudeModel streak calculation', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = GratitudeModel();
+      await model.init();
+      expect(model.streak, 0);
+      model.addEntry('Today entry');
+      expect(model.streak, 1);
+    });
+
+    test('GratitudeModel clearHistory works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = GratitudeModel();
+      await model.init();
+      model.addEntry('Test');
+      expect(model.history.isNotEmpty, true);
+      await model.clearHistory();
+      expect(model.history, isEmpty);
+    });
+
+    test('GratitudeModel totalEntries calculation', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = GratitudeModel();
+      await model.init();
+      model.addEntry('Entry 1');
+      model.addEntry('Entry 2');
+      expect(model.totalEntries, 2);
+    });
+
+    test('GratitudeEntry toJson/fromJson works', () {
+      final entry = GratitudeEntry(
+        date: DateTime(2026, 4, 24, 10, 30),
+        text: 'Test gratitude',
+      );
+      final json = entry.toJson();
+      final restored = GratitudeEntry.fromJson(json);
+      expect(restored.text, 'Test gratitude');
+      expect(restored.date.year, 2026);
+    });
+
+    test('GratitudeDay toJson/fromJson works', () {
+      final day = GratitudeDay(
+        date: DateTime(2026, 4, 24),
+        entries: [
+          GratitudeEntry(date: DateTime(2026, 4, 24, 10), text: 'Entry 1'),
+          GratitudeEntry(date: DateTime(2026, 4, 24, 11), text: 'Entry 2'),
+        ],
+      );
+      final json = day.toJson();
+      final restored = GratitudeDay.fromJson(json);
+      expect(restored.entries.length, 2);
+      expect(restored.entries.first.text, 'Entry 1');
+    });
+
+    testWidgets('GratitudeCard renders loading state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = GratitudeModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: GratitudeCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Gratitude Journal: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('GratitudeCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = GratitudeModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: GratitudeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('No gratitude logged today'), findsOneWidget);
+    });
+
+    testWidgets('GratitudeCard renders entries', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = GratitudeModel();
+      await model.init();
+      model.addEntry('My family');
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: GratitudeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('My family'), findsOneWidget);
+      expect(find.text('1/5 entries today'), findsOneWidget);
+    });
+
+    test('GratitudeCard widget exists', () {
+      expect(GratitudeCard, isNotNull);
+    });
+
+    test('GratitudeInputDialog widget exists', () {
+      expect(GratitudeInputDialog, isNotNull);
+    });
+
+    test('Global.providerList includes Gratitude', () {
+      final hasGratitude = Global.providerList.any((p) => p.name == 'Gratitude');
+      expect(hasGratitude, true);
+    });
+
+    test('providerGratitude exists', () {
+      expect(providerGratitude, isNotNull);
+      expect(providerGratitude.name, 'Gratitude');
     });
   });
 }
