@@ -66,6 +66,7 @@ import 'package:new_launcher/providers/provider_whosturn.dart';
 import 'package:new_launcher/providers/provider_tictactoe.dart';
 import 'package:new_launcher/providers/provider_memorygame.dart';
 import 'package:new_launcher/providers/provider_hangman.dart';
+import 'package:new_launcher/providers/provider_sudoku.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2506,7 +2507,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 67);
+      expect(Global.providerList.length, 68);
     });
 
     test('Global.providerList names are correct', () {
@@ -3673,7 +3674,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 67);
+      expect(initCount, 68);
     });
   });
 
@@ -3990,8 +3991,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (67 total)', () {
-      expect(Global.providerList.length, 67);
+test('Global.providerList contains all providers (68 total)', () {
+      expect(Global.providerList.length, 68);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5334,8 +5335,8 @@ test('Global.providerList contains all providers (67 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (67 total)', () {
-      expect(Global.providerList.length, 67);
+test('Global.providerList contains all providers (68 total)', () {
+      expect(Global.providerList.length, 68);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -6583,23 +6584,23 @@ test('Global.providerList contains all providers (67 total)', () {
       expect(currencyModel, isA<CurrencyModel>());
     });
 
-    test('CurrencyModel init works', () {
+    test('CurrencyModel init works', () async {
       final model = CurrencyModel();
-      model.init();
+      await model.init();
       expect(model.isInitialized, true);
     });
 
-    test('CurrencyModel default values', () {
+    test('CurrencyModel default values', () async {
       final model = CurrencyModel();
-      model.init();
+      await model.init();
       expect(model.fromCurrency, 'USD');
       expect(model.toCurrency, 'EUR');
       expect(model.inputValue, '1');
     });
 
-    test('CurrencyModel setInputValue works', () {
+    test('CurrencyModel setInputValue works', () async {
       final model = CurrencyModel();
-      model.init();
+      await model.init();
       int notifyCount = 0;
       model.addListener(() => notifyCount++);
       
@@ -6608,27 +6609,27 @@ test('Global.providerList contains all providers (67 total)', () {
       expect(notifyCount, 1);
     });
 
-    test('CurrencyModel setFromCurrency works', () {
+    test('CurrencyModel setFromCurrency works', () async {
       final model = CurrencyModel();
-      model.init();
+      await model.init();
       
       model.setFromCurrency('EUR');
       expect(model.fromCurrency, 'EUR');
       expect(model.toCurrency, isNot('EUR'));
     });
 
-    test('CurrencyModel setToCurrency works', () {
+    test('CurrencyModel setToCurrency works', () async {
       final model = CurrencyModel();
-      model.init();
+      await model.init();
       
       model.setToCurrency('GBP');
       expect(model.toCurrency, 'GBP');
       expect(model.fromCurrency, isNot('GBP'));
     });
 
-    test('CurrencyModel swapCurrencies changes both', () {
+    test('CurrencyModel swapCurrencies changes both', () async {
       final model = CurrencyModel();
-      model.init();
+      await model.init();
       final originalFrom = model.fromCurrency;
       final originalTo = model.toCurrency;
       
@@ -6637,27 +6638,27 @@ test('Global.providerList contains all providers (67 total)', () {
       expect(model.toCurrency, originalFrom);
     });
 
-    test('CurrencyModel clear resets input', () {
+    test('CurrencyModel clear resets input', () async {
       final model = CurrencyModel();
-      model.init();
+      await model.init();
       
       model.setInputValue('500');
       model.clear();
       expect(model.inputValue, '1');
     });
 
-    test('CurrencyModel clearHistory works', () {
+    test('CurrencyModel clearHistory works', () async {
       final model = CurrencyModel();
-      model.init();
+      await model.init();
       
       model.clearHistory();
       expect(model.history.length, 0);
       expect(model.hasHistory, false);
     });
 
-    test('CurrencyModel refresh calls notifyListeners', () {
+    test('CurrencyModel refresh calls notifyListeners', () async {
       final model = CurrencyModel();
-      model.init();
+      await model.init();
       int notifyCount = 0;
       model.addListener(() => notifyCount++);
       
@@ -6665,9 +6666,9 @@ test('Global.providerList contains all providers (67 total)', () {
       expect(notifyCount, 1);
     });
 
-    test('CurrencyModel availableCurrencies contains common currencies', () {
+    test('CurrencyModel availableCurrencies contains common currencies', () async {
       final model = CurrencyModel();
-      model.init();
+      await model.init();
       
       expect(model.availableCurrencies.contains('USD'), true);
       expect(model.availableCurrencies.contains('EUR'), true);
@@ -6706,7 +6707,7 @@ test('Global.providerList contains all providers (67 total)', () {
 
     testWidgets('CurrencyCard widget exists', (tester) async {
       final model = CurrencyModel();
-      model.init();
+      await model.init();
 
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
@@ -6733,7 +6734,7 @@ test('Global.providerList contains all providers (67 total)', () {
 
     testWidgets('CurrencyCard renders initialized state', (tester) async {
       final model = CurrencyModel();
-      model.init();
+      await model.init();
 
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
@@ -9869,42 +9870,42 @@ test('Global.providerList contains all providers (67 total)', () {
       expect(model.history.length, 0);
     });
 
-    test('BmiModel setWeight works', () {
+    test('BmiModel setWeight works', () async {
       final model = BmiModel();
-      model.init();
+      await model.init();
       model.setHeightMetric(175);
       model.setWeight(70);
       expect(model.weight, 70);
       expect(model.calculatedBmi, closeTo(22.86, 0.1));
     });
 
-    test('BmiModel setHeightMetric works', () {
+    test('BmiModel setHeightMetric works', () async {
       final model = BmiModel();
-      model.init();
+      await model.init();
       model.setWeight(70);
       model.setHeightMetric(175);
       expect(model.heightMetric, 175);
       expect(model.calculatedBmi, closeTo(22.86, 0.1));
     });
 
-    test('BmiModel setUnit works', () {
+    test('BmiModel setUnit works', () async {
       final model = BmiModel();
-      model.init();
+      await model.init();
       model.setUnit('imperial');
       expect(model.unit, 'imperial');
     });
 
-    test('BmiModel metric BMI calculation is correct', () {
+    test('BmiModel metric BMI calculation is correct', () async {
       final model = BmiModel();
-      model.init();
+      await model.init();
       model.setWeight(70);
       model.setHeightMetric(175);
       expect(model.calculatedBmi, closeTo(22.86, 0.1));
     });
 
-    test('BmiModel imperial BMI calculation is correct', () {
+    test('BmiModel imperial BMI calculation is correct', () async {
       final model = BmiModel();
-      model.init();
+      await model.init();
       model.setUnit('imperial');
       model.setWeight(154);
       model.setHeightFeet(5);
@@ -9914,9 +9915,9 @@ test('Global.providerList contains all providers (67 total)', () {
       expect(model.calculatedBmi, closeTo(expectedBmi, 0.1));
     });
 
-    test('BmiModel getBmiCategory works', () {
+    test('BmiModel getBmiCategory works', () async {
       final model = BmiModel();
-      model.init();
+      await model.init();
       expect(model.getBmiCategory(17.0), 'Underweight');
       expect(model.getBmiCategory(22.0), 'Normal');
       expect(model.getBmiCategory(27.0), 'Overweight');
@@ -9963,9 +9964,9 @@ test('Global.providerList contains all providers (67 total)', () {
       expect(model.history.length, 0);
     });
 
-    test('BmiModel clear works', () {
+    test('BmiModel clear works', () async {
       final model = BmiModel();
-      model.init();
+      await model.init();
       model.setWeight(70);
       model.setHeightMetric(175);
       model.clear();
@@ -10000,9 +10001,9 @@ test('Global.providerList contains all providers (67 total)', () {
       expect(model.hasHistory, true);
     });
 
-    test('BmiModel requestFocus works', () {
+    test('BmiModel requestFocus works', () async {
       final model = BmiModel();
-      model.init();
+      await model.init();
       model.requestFocus();
       expect(model.shouldFocus, true);
     });
@@ -18516,6 +18517,316 @@ test('Global.providerList contains all providers (67 total)', () {
 
     tearDownAll(() {
       Global.loggerModel.clear();
+    });
+  });
+
+  group('Sudoku provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('SudokuGameEntry has required properties', () {
+      final entry = SudokuGameEntry(
+        difficulty: SudokuDifficulty.easy,
+        completed: true,
+        errorsCount: 5,
+        timeSeconds: 120,
+        timestamp: DateTime.now(),
+      );
+
+      expect(entry.difficulty, SudokuDifficulty.easy);
+      expect(entry.completed, true);
+      expect(entry.errorsCount, 5);
+      expect(entry.timeSeconds, 120);
+    });
+
+    test('SudokuModel default values are correct', () {
+      final model = SudokuModel();
+
+      expect(model.isInitialized, false);
+      expect(model.selectedNumber, 0);
+      expect(model.selectedRow, -1);
+      expect(model.selectedCol, -1);
+      expect(model.gamesPlayed, 0);
+      expect(model.gamesCompleted, 0);
+      expect(model.totalErrors, 0);
+    });
+
+    test('SudokuModel init initializes correctly', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      expect(model.isInitialized, true);
+      expect(model.puzzle.length, 9);
+      expect(model.userInput.length, 9);
+    });
+
+    test('SudokuModel setDifficulty changes difficulty', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      expect(model.difficulty, SudokuDifficulty.easy);
+
+      model.setDifficulty(SudokuDifficulty.medium);
+      expect(model.difficulty, SudokuDifficulty.medium);
+
+      model.setDifficulty(SudokuDifficulty.hard);
+      expect(model.difficulty, SudokuDifficulty.hard);
+    });
+
+    test('SudokuModel newGame generates new puzzle', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      final firstPuzzle = model.puzzle;
+      model.newGame();
+      final secondPuzzle = model.puzzle;
+
+      expect(firstPuzzle.length, 9);
+      expect(secondPuzzle.length, 9);
+    });
+
+    test('SudokuModel selectCell selects non-fixed cells', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 9; col++) {
+          if (!model.isFixed[row][col]) {
+            model.selectCell(row, col);
+            expect(model.selectedRow, row);
+            expect(model.selectedCol, col);
+            break;
+          }
+        }
+      }
+    });
+
+    test('SudokuModel selectCell ignores fixed cells', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 9; col++) {
+          if (model.isFixed[row][col]) {
+            model.selectCell(row, col);
+            expect(model.selectedRow, -1);
+            expect(model.selectedCol, -1);
+            break;
+          }
+        }
+      }
+    });
+
+    test('SudokuModel placeNumber sets value', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 9; col++) {
+          if (!model.isFixed[row][col]) {
+            model.selectCell(row, col);
+            model.selectNumber(5);
+            expect(model.userInput[row][col], 5);
+            break;
+          }
+        }
+      }
+    });
+
+    test('SudokuModel clearCell clears value', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 9; col++) {
+          if (!model.isFixed[row][col]) {
+            model.selectCell(row, col);
+            model.selectNumber(5);
+            model.clearCell();
+            expect(model.userInput[row][col], 0);
+            break;
+          }
+        }
+      }
+    });
+
+    test('SudokuModel getDifficultyText works', () {
+      final model = SudokuModel();
+
+      expect(model.getDifficultyText(SudokuDifficulty.easy), "Easy");
+      expect(model.getDifficultyText(SudokuDifficulty.medium), "Medium");
+      expect(model.getDifficultyText(SudokuDifficulty.hard), "Hard");
+    });
+
+    test('SudokuModel formatTime works', () {
+      final model = SudokuModel();
+
+      expect(model.formatTime(0), "00:00");
+      expect(model.formatTime(60), "01:00");
+      expect(model.formatTime(120), "02:00");
+      expect(model.formatTime(3661), "61:01");
+    });
+
+    test('SudokuModel getCompletionRate works', () {
+      final model = SudokuModel();
+
+      expect(model.getCompletionRate(), 0);
+    });
+
+    test('SudokuModel getEmptyCellsCount works', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      final emptyCells = model.getEmptyCellsCount();
+      expect(emptyCells, greaterThan(0));
+      expect(emptyCells, lessThanOrEqualTo(81));
+    });
+
+    test('SudokuModel getFilledCellsCount works', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      final filledCells = model.getFilledCellsCount();
+      expect(filledCells, greaterThanOrEqualTo(31));
+      expect(filledCells, lessThan(81));
+    });
+
+    test('SudokuModel getProgressPercentage works', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      final progress = model.getProgressPercentage();
+      expect(progress, greaterThan(0));
+      expect(progress, lessThanOrEqualTo(1));
+    });
+
+    test('SudokuModel resetStats clears stats', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      model.resetStats();
+
+      expect(model.gamesPlayed, 0);
+      expect(model.gamesCompleted, 0);
+      expect(model.totalErrors, 0);
+    });
+
+    test('SudokuModel clearHistory clears history', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('SudokuModel history respects max limit', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      expect(SudokuModel.maxHistory, 10);
+    });
+
+    test('SudokuModel refresh calls notifyListeners', () async {
+      final model = SudokuModel();
+      await model.init();
+
+      var notified = false;
+      model.addListener(() => notified = true);
+
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('providerSudoku exists', () {
+      expect(providerSudoku.name, "Sudoku");
+    });
+
+    test('providerSudoku keywords contain sudoku related words', () {
+      expect(providerSudoku.name, 'Sudoku');
+    });
+
+    testWidgets('SudokuCard renders loading state', (WidgetTester tester) async {
+      final model = SudokuModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SudokuCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Sudoku: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('SudokuCard renders initialized state', (WidgetTester tester) async {
+      final model = SudokuModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SudokuCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Sudoku'), findsOneWidget);
+    });
+
+    testWidgets('SudokuCard shows grid', (WidgetTester tester) async {
+      final model = SudokuModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SudokuCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(GridView), findsOneWidget);
+    });
+
+    testWidgets('SudokuCard shows difficulty selector', (WidgetTester tester) async {
+      final model = SudokuModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SudokuCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(SegmentedButton<SudokuDifficulty>), findsOneWidget);
+      expect(find.text('Easy'), findsOneWidget);
+      expect(find.text('Medium'), findsOneWidget);
+      expect(find.text('Hard'), findsOneWidget);
+    });
+
+    testWidgets('SudokuCard shows number selector', (WidgetTester tester) async {
+      final model = SudokuModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SudokuCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('1'), findsWidgets);
+      expect(find.text('9'), findsWidgets);
     });
   });
 }

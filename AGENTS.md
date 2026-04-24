@@ -815,6 +815,19 @@ Settings auto-saved via `SharedPreferences`:
     - Reset stats with confirmation dialog
     - Uses `Card.filled` and `Wrap` for Material 3 style
     - Keywords: hangman, word, guess, game, letter, puzzle, play
+- **Sudoku**: Classic 9x9 logic puzzle game
+    - 9x9 grid with numbers 1-9
+    - Three difficulty levels: Easy, Medium, Hard
+    - Number selector with quick input buttons
+    - Error highlighting for incorrect placements
+    - Time tracking and error count display
+    - Progress percentage visualization
+    - Completion detection and statistics
+    - Best time tracking per difficulty level
+    - History tracking (up to 10 entries)
+    - Reset stats with confirmation dialog
+    - Uses `Card.filled` and `SegmentedButton` for Material 3 style
+    - Keywords: sudoku, puzzle, logic, grid, numbers, game
 
 ## Material 3 Design System
 
@@ -943,8 +956,9 @@ Test coverage includes:
 - TicTacToe provider tests (provider existence, keywords, model state, game operations, statistics, history, widget rendering)
 - MemoryGame provider tests (provider existence, keywords, model state, grid operations, card flipping, match detection, history, widget rendering)
 - Hangman provider tests (provider existence, keywords, model state, letter guessing, win/lose detection, statistics, history, widget rendering)
+- Sudoku provider tests (provider existence, keywords, model state, difficulty settings, grid operations, statistics, history, widget rendering)
   
-Total tests: 1800 tests
+Total tests: 1826 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1033,6 +1047,7 @@ Technical documentation is available in `docs/`:
 - `reactiontime_provider.md` - Reaction Time provider implementation for reaction speed testing
 - `memorygame_provider.md` - Memory Game provider implementation for card matching game
 - `hangman_provider.md` - Hangman provider implementation for word guessing game
+- `sudoku_provider.md` - Sudoku provider implementation for classic puzzle game
 
 ## Notice
 DO NOT EDIT task*.md
