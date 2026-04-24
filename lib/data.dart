@@ -77,6 +77,7 @@ import 'package:new_launcher/providers/provider_rockpaperscissors.dart';
 import 'package:new_launcher/providers/provider_whosturn.dart';
 import 'package:new_launcher/providers/provider_tictactoe.dart';
 import 'package:new_launcher/providers/provider_memorygame.dart';
+import 'package:new_launcher/providers/provider_hangman.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -267,6 +268,7 @@ class Global {
     providerWhosTurn,
     providerTicTacToe,
     providerMemoryGame,
+    providerHangman,
   ];
 
   //_______________________________________________________________________

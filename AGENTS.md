@@ -805,6 +805,16 @@ Settings auto-saved via `SharedPreferences`:
     - Cards flip with color indication (hidden, flipped, matched)
     - Uses `Card.filled` and `SegmentedButton` for Material 3 style
     - Keywords: memory, game, cards, match, flip, pairs, puzzle, remember
+- **Hangman**: Classic word guessing game
+    - Guess letters to reveal hidden word before 6 wrong guesses
+    - ASCII art hangman figure showing progress
+    - 40 tech-related words (flutter, dart, android, widget, etc.)
+    - Letter grid for easy selection
+    - Win/loss statistics with win rate percentage
+    - History tracking (up to 10 entries)
+    - Reset stats with confirmation dialog
+    - Uses `Card.filled` and `Wrap` for Material 3 style
+    - Keywords: hangman, word, guess, game, letter, puzzle, play
 
 ## Material 3 Design System
 
@@ -932,8 +942,9 @@ Test coverage includes:
 - WhosTurn provider tests (provider existence, keywords, model state, CRUD operations, turn navigation, history, widget rendering)
 - TicTacToe provider tests (provider existence, keywords, model state, game operations, statistics, history, widget rendering)
 - MemoryGame provider tests (provider existence, keywords, model state, grid operations, card flipping, match detection, history, widget rendering)
+- Hangman provider tests (provider existence, keywords, model state, letter guessing, win/lose detection, statistics, history, widget rendering)
   
-Total tests: 1778 tests
+Total tests: 1800 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1021,6 +1032,7 @@ Technical documentation is available in `docs/`:
 - `moonphase_provider.md` - Moon Phase provider implementation for lunar phase calculation
 - `reactiontime_provider.md` - Reaction Time provider implementation for reaction speed testing
 - `memorygame_provider.md` - Memory Game provider implementation for card matching game
+- `hangman_provider.md` - Hangman provider implementation for word guessing game
 
 ## Notice
 DO NOT EDIT task*.md

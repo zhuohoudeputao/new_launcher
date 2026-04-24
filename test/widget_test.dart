@@ -65,6 +65,7 @@ import 'package:new_launcher/providers/provider_rockpaperscissors.dart';
 import 'package:new_launcher/providers/provider_whosturn.dart';
 import 'package:new_launcher/providers/provider_tictactoe.dart';
 import 'package:new_launcher/providers/provider_memorygame.dart';
+import 'package:new_launcher/providers/provider_hangman.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2505,7 +2506,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 66);
+      expect(Global.providerList.length, 67);
     });
 
     test('Global.providerList names are correct', () {
@@ -3672,7 +3673,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 66);
+      expect(initCount, 67);
     });
   });
 
@@ -3989,8 +3990,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (66 total)', () {
-      expect(Global.providerList.length, 66);
+test('Global.providerList contains all providers (67 total)', () {
+      expect(Global.providerList.length, 67);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5333,8 +5334,8 @@ test('Global.providerList contains all providers (66 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (66 total)', () {
-      expect(Global.providerList.length, 66);
+test('Global.providerList contains all providers (67 total)', () {
+      expect(Global.providerList.length, 67);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -18277,6 +18278,239 @@ test('Global.providerList contains all providers (66 total)', () {
         expect(find.text('Pairs'), findsOneWidget);
         expect(find.text('Best'), findsOneWidget);
         expect(find.text('Games'), findsOneWidget);
+      });
+    });
+
+    group('Hangman provider tests', () {
+      test('HangmanGameEntry has required properties', () {
+        final entry = HangmanGameEntry(
+          won: true,
+          word: 'flutter',
+          wrongGuesses: 2,
+          timestamp: DateTime.now(),
+        );
+        expect(entry.won, true);
+        expect(entry.word, 'flutter');
+        expect(entry.wrongGuesses, 2);
+        expect(entry.timestamp, isNotNull);
+      });
+
+      test('HangmanModel default values are correct', () {
+        final model = HangmanModel();
+        expect(model.isInitialized, false);
+        expect(model.wins, 0);
+        expect(model.losses, 0);
+        expect(model.totalGames, 0);
+        expect(model.hasHistory, false);
+        expect(model.gameWon, false);
+        expect(model.gameLost, false);
+        expect(model.isGameOver, false);
+        expect(model.maxWrongGuesses, 6);
+      });
+
+      test('HangmanModel init initializes correctly', () async {
+        final model = HangmanModel();
+        await model.init();
+        expect(model.isInitialized, true);
+        expect(model.currentWord.isNotEmpty, true);
+      });
+
+      test('HangmanModel displayedWord shows underscores', () async {
+        final model = HangmanModel();
+        await model.init();
+        final displayed = model.displayedWord;
+        expect(displayed.contains('_'), true);
+      });
+
+      test('HangmanModel guessLetter correct', () async {
+        final model = HangmanModel();
+        await model.init();
+        final word = model.currentWord;
+        final firstLetter = word[0].toLowerCase();
+        model.guessLetter(firstLetter);
+        expect(model.guessedLetters.contains(firstLetter), true);
+        expect(model.wrongGuessCount, 0);
+      });
+
+      test('HangmanModel guessLetter wrong', () async {
+        final model = HangmanModel();
+        await model.init();
+        final wrongLetter = 'z';
+        if (!model.currentWord.toLowerCase().contains(wrongLetter)) {
+          model.guessLetter(wrongLetter);
+          expect(model.wrongLetters.contains(wrongLetter), true);
+          expect(model.wrongGuessCount, 1);
+        }
+      });
+
+      test('HangmanModel guessLetter ignores duplicates', () async {
+        final model = HangmanModel();
+        await model.init();
+        final word = model.currentWord;
+        final firstLetter = word[0].toLowerCase();
+        model.guessLetter(firstLetter);
+        model.guessLetter(firstLetter);
+        expect(model.guessedLetters.contains(firstLetter), true);
+        expect(model.wrongGuessCount, 0);
+      });
+
+      test('HangmanModel guessLetter ignores after game over', () async {
+        final model = HangmanModel();
+        await model.init();
+        model.resetStats();
+        for (int i = 0; i < 10; i++) {
+          if (!model.isGameOver && model.availableLetters.isNotEmpty) {
+            final letter = model.availableLetters[0];
+            if (!model.currentWord.toLowerCase().contains(letter)) {
+              model.guessLetter(letter);
+            }
+          }
+        }
+        if (model.gameLost) {
+          final availableBefore = model.availableLetters.length;
+          model.guessLetter('x');
+          expect(model.availableLetters.length, availableBefore);
+        }
+      });
+
+      test('HangmanModel availableLetters excludes guessed', () async {
+        final model = HangmanModel();
+        await model.init();
+        final word = model.currentWord;
+        final firstLetter = word[0].toLowerCase();
+        model.guessLetter(firstLetter);
+        expect(model.availableLetters.contains(firstLetter), false);
+      });
+
+      test('HangmanModel remainingGuesses calculation', () async {
+        final model = HangmanModel();
+        await model.init();
+        expect(model.remainingGuesses, model.maxWrongGuesses - model.wrongGuessCount);
+      });
+
+      test('HangmanModel newGame resets state', () async {
+        final model = HangmanModel();
+        await model.init();
+        final word = model.currentWord;
+        final firstLetter = word[0].toLowerCase();
+        model.guessLetter(firstLetter);
+        model.newGame();
+        expect(model.guessedLetters.isEmpty, true);
+        expect(model.wrongLetters.isEmpty, true);
+        expect(model.gameWon, false);
+        expect(model.gameLost, false);
+        expect(model.isGameOver, false);
+      });
+
+      test('HangmanModel getWinRate calculation', () async {
+        final model = HangmanModel();
+        await model.init();
+        expect(model.getWinRate(), 0);
+      });
+
+      test('HangmanModel resetStats clears stats', () async {
+        final model = HangmanModel();
+        await model.init();
+        model.resetStats();
+        expect(model.wins, 0);
+        expect(model.losses, 0);
+      });
+
+      test('HangmanModel clearHistory clears history', () async {
+        final model = HangmanModel();
+        await model.init();
+        model.clearHistory();
+        expect(model.hasHistory, false);
+      });
+
+      test('HangmanModel getHangmanStage returns correct stages', () async {
+        final model = HangmanModel();
+        expect(model.getHangmanStage(0).contains('_____'), true);
+        expect(model.getHangmanStage(1).contains('O'), true);
+        expect(model.getHangmanStage(6).contains('/'), true);
+      });
+
+      test('HangmanModel refresh calls notifyListeners', () async {
+        final model = HangmanModel();
+        await model.init();
+        int notifyCount = 0;
+        model.addListener(() => notifyCount++);
+        model.refresh();
+        expect(notifyCount, 1);
+      });
+
+      test('providerHangman exists', () {
+        expect(providerHangman, isNotNull);
+        expect(providerHangman.name, 'Hangman');
+      });
+
+      test('providerHangman keywords contain hangman related words', () {
+        expect(providerHangman.name, 'Hangman');
+      });
+
+      testWidgets('HangmanCard renders loading state', (WidgetTester tester) async {
+        final model = HangmanModel();
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => HangmanCard(),
+            ),
+          ),
+        ));
+
+        expect(find.text('Hangman: Loading...'), findsOneWidget);
+      });
+
+      testWidgets('HangmanCard renders initialized state', (WidgetTester tester) async {
+        final model = HangmanModel();
+        await model.init();
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => HangmanCard(),
+            ),
+          ),
+        ));
+
+        expect(find.text('Hangman'), findsOneWidget);
+      });
+
+      testWidgets('HangmanCard shows hangman figure', (WidgetTester tester) async {
+        final model = HangmanModel();
+        await model.init();
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => HangmanCard(),
+            ),
+          ),
+        ));
+
+        expect(find.byIcon(Icons.spellcheck), findsWidgets);
+      });
+
+      testWidgets('HangmanCard shows stats', (WidgetTester tester) async {
+        final model = HangmanModel();
+        await model.init();
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => HangmanCard(),
+            ),
+          ),
+        ));
+
+        expect(find.text('Wins'), findsOneWidget);
+        expect(find.text('Losses'), findsOneWidget);
+        expect(find.text('Rate'), findsOneWidget);
       });
     });
 
