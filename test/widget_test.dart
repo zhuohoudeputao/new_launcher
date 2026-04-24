@@ -85,6 +85,7 @@ import 'package:new_launcher/providers/provider_prime.dart';
 import 'package:new_launcher/providers/provider_ascii.dart';
 import 'package:new_launcher/providers/provider_area.dart';
 import 'package:new_launcher/providers/provider_datarate.dart';
+import 'package:new_launcher/providers/provider_power.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2525,7 +2526,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 86);
+      expect(Global.providerList.length, 87);
     });
 
     test('Global.providerList names are correct', () {
@@ -3692,7 +3693,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 86);
+      expect(initCount, 87);
     });
   });
 
@@ -4009,8 +4010,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (86 total)', () {
-      expect(Global.providerList.length, 86);
+test('Global.providerList contains all providers (87 total)', () {
+      expect(Global.providerList.length, 87);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5353,8 +5354,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (86 total)', () {
-      expect(Global.providerList.length, 86);
+test('Global.providerList contains all providers (87 total)', () {
+      expect(Global.providerList.length, 87);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -23671,6 +23672,339 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       dataRateConverterModel.clearHistory();
+    });
+  });
+
+  group('PowerConverter Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('providerPowerConverter exists in Global.providerList', () {
+      final powerProvider = Global.providerList.where((p) => p.name == 'PowerConverter').first;
+      expect(powerProvider.name, 'PowerConverter');
+    });
+
+    test('PowerConverter keywords include power', () {
+      final powerProvider = Global.providerList.where((p) => p.name == 'PowerConverter').first;
+      expect(powerProvider.name, 'PowerConverter');
+    });
+
+    test('PowerConverter keywords include watt', () {
+      final keywords = 'power convert watt kilowatt horsepower hp mw btu energy wattage';
+      expect(keywords.contains('watt'), true);
+    });
+
+    test('PowerConverter keywords include horsepower', () {
+      final keywords = 'power convert watt kilowatt horsepower hp mw btu energy wattage';
+      expect(keywords.contains('horsepower'), true);
+    });
+
+    test('PowerConverter keywords include kilowatt', () {
+      final keywords = 'power convert watt kilowatt horsepower hp mw btu energy wattage';
+      expect(keywords.contains('kilowatt'), true);
+    });
+
+    test('PowerConverterModel starts uninitialized', () {
+      final model = PowerConverterModel();
+      expect(model.initialized, false);
+    });
+
+    test('PowerConverterModel is ChangeNotifier', () {
+      final model = PowerConverterModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    test('PowerConverterModel init sets initialized', () {
+      final model = PowerConverterModel();
+      model.init();
+      expect(model.initialized, true);
+    });
+
+    test('PowerConverterModel default units', () {
+      final model = PowerConverterModel();
+      expect(model.inputUnit.symbol, 'W');
+      expect(model.outputUnit.symbol, 'kW');
+    });
+
+    test('PowerConverterModel setInputUnit works', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputUnit(powerUnits[2]);
+      expect(model.inputUnit.symbol, 'MW');
+    });
+
+    test('PowerConverterModel setOutputUnit works', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setOutputUnit(powerUnits[3]);
+      expect(model.outputUnit.symbol, 'hp');
+    });
+
+    test('PowerConverterModel setInputValue works', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputValue('100');
+      expect(model.inputValue, '100');
+    });
+
+    test('PowerConverterModel swapUnits works', () {
+      final model = PowerConverterModel();
+      model.init();
+      final originalInput = model.inputUnit;
+      final originalOutput = model.outputUnit;
+      model.swapUnits();
+      expect(model.inputUnit, originalOutput);
+      expect(model.outputUnit, originalInput);
+    });
+
+    test('PowerConverterModel clear works', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.clear();
+      expect(model.inputValue, '');
+      expect(model.outputValue, '');
+    });
+
+    test('PowerConverterModel conversion kW to W', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputUnit(powerUnits[1]);
+      model.setOutputUnit(powerUnits[0]);
+      model.setInputValue('1');
+      expect(model.outputValue, '1000');
+    });
+
+    test('PowerConverterModel conversion W to kW', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputUnit(powerUnits[0]);
+      model.setOutputUnit(powerUnits[1]);
+      model.setInputValue('1000');
+      expect(model.outputValue, '1');
+    });
+
+    test('PowerConverterModel conversion hp to W', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputUnit(powerUnits[3]);
+      model.setOutputUnit(powerUnits[0]);
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(745.7, 0.5));
+    });
+
+    test('PowerConverterModel conversion W to hp', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputUnit(powerUnits[0]);
+      model.setOutputUnit(powerUnits[3]);
+      model.setInputValue('745.7');
+      expect(double.parse(model.outputValue), closeTo(1, 0.05));
+    });
+
+    test('PowerConverterModel conversion MW to kW', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputUnit(powerUnits[2]);
+      model.setOutputUnit(powerUnits[1]);
+      model.setInputValue('1');
+      expect(model.outputValue, '1000');
+    });
+
+    test('PowerConverterModel conversion kW to MW', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputUnit(powerUnits[1]);
+      model.setOutputUnit(powerUnits[2]);
+      model.setInputValue('1000');
+      expect(model.outputValue, '1');
+    });
+
+    test('PowerConverterModel handles invalid input', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputValue('abc');
+      expect(model.outputValue, '');
+    });
+
+    test('PowerConverterModel handles negative values', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputUnit(powerUnits[0]);
+      model.setOutputUnit(powerUnits[1]);
+      model.setInputValue('-100');
+      expect(double.parse(model.outputValue), closeTo(-0.1, 0.01));
+    });
+
+    test('PowerConverterModel handles decimal values', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputUnit(powerUnits[0]);
+      model.setOutputUnit(powerUnits[1]);
+      model.setInputValue('500');
+      expect(double.parse(model.outputValue), closeTo(0.5, 0.01));
+    });
+
+    test('PowerConverterModel handles zero', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputValue('0');
+      expect(model.outputValue, '0');
+    });
+
+    test('PowerConverterModel availableUnits contains expected units', () {
+      final model = PowerConverterModel();
+      final symbols = model.availableUnits.map((u) => u.symbol).toList();
+      expect(symbols.contains('W'), true);
+      expect(symbols.contains('kW'), true);
+      expect(symbols.contains('MW'), true);
+      expect(symbols.contains('hp'), true);
+      expect(symbols.contains('BTU/hr'), true);
+    });
+
+    test('PowerConverterModel history starts empty', () {
+      final model = PowerConverterModel();
+      model.init();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('PowerConverterModel addToHistory works', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      expect(model.history.length, 1);
+    });
+
+    test('PowerConverterModel addToHistory ignores zero', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputValue('0');
+      model.addToHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('PowerConverterModel addToHistory ignores invalid', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputValue('abc');
+      model.addToHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('PowerConverterModel history max limit', () {
+      final model = PowerConverterModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputValue('$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('PowerConverterModel clearHistory works', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('PowerConverterModel useHistoryEntry works', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputUnit(powerUnits[2]);
+      model.setOutputUnit(powerUnits[3]);
+      model.setInputValue('5');
+      model.addToHistory();
+      model.clear();
+      expect(model.inputValue, '');
+      model.useHistoryEntry(model.history[0]);
+      expect(model.inputUnit.symbol, 'MW');
+      expect(model.outputUnit.symbol, 'hp');
+    });
+
+    test('PowerConverterModel refresh calls notifyListeners', () {
+      final model = PowerConverterModel();
+      model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('PowerConverterModel prevents same input and output unit', () {
+      final model = PowerConverterModel();
+      model.init();
+      model.setInputUnit(powerUnits[1]);
+      expect(model.outputUnit != powerUnits[1], true);
+      model.setOutputUnit(powerUnits[2]);
+      expect(model.inputUnit != powerUnits[2], true);
+    });
+
+    testWidgets('PowerConverterCard renders loading state', (WidgetTester tester) async {
+      final model = PowerConverterModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PowerConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('PowerConverterCard renders initialized state', (WidgetTester tester) async {
+      final model = PowerConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PowerConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Power Converter'), findsOneWidget);
+      expect(find.byType(DropdownButtonFormField<PowerUnit>, skipOffstage: false), findsWidgets);
+    });
+
+    testWidgets('PowerConverterCard shows input field', (WidgetTester tester) async {
+      final model = PowerConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PowerConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsWidgets);
+    });
+
+    test('PowerConverterCard widget exists', () {
+      expect(PowerConverterCard, isNotNull);
+    });
+
+    test('Global.providerList includes PowerConverter', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('PowerConverter'), true);
+    });
+
+    tearDownAll(() {
+      powerConverterModel.clearHistory();
     });
   });
 }

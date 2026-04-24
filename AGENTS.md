@@ -1037,6 +1037,16 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `DropdownButton`, `TextField` for Material 3 style
     - Keywords: datarate, bandwidth, speed, bps, mbps, gbps, kbps, network, internet
+- **PowerConverter**: Power unit converter for engineering and physics
+    - Convert between 5 power units: W (Watt), kW (Kilowatt), MW (Megawatt), hp (Horsepower), BTU/hr
+    - Real-time conversion as values are entered
+    - Swap input/output units with one tap
+    - Same unit prevention (automatically selects different unit when input equals output)
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `DropdownButtonFormField`, `TextField` for Material 3 style
+    - Keywords: power, convert, watt, kilowatt, horsepower, hp, mw, btu, energy, wattage
 
 ## Material 3 Design System
 
@@ -1183,8 +1193,9 @@ Test coverage includes:
 - Prime provider tests (provider existence, keywords, model state, prime checking, prime factor finding, history, widget rendering)
 - AreaConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - DataRateConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
+- PowerConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 
-Total tests: 2350 tests
+Total tests: 2389 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1276,6 +1287,7 @@ Technical documentation is available in `docs/`:
 - `sudoku_provider.md` - Sudoku provider implementation for classic puzzle game
 - `palindrome_provider.md` - Palindrome Checker provider implementation for palindrome detection
 - `speed_converter_provider.md` - Speed Converter provider implementation for speed unit conversions
+- `power_converter_provider.md` - Power Converter provider implementation for power unit conversions
 
 ## Notice
 DO NOT EDIT task*.md
