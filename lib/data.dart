@@ -81,6 +81,7 @@ import 'package:new_launcher/providers/provider_hangman.dart';
 import 'package:new_launcher/providers/provider_sudoku.dart';
 import 'package:new_launcher/providers/provider_minesweeper.dart';
 import 'package:new_launcher/providers/provider_2048.dart';
+import 'package:new_launcher/providers/provider_wordle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -275,6 +276,7 @@ class Global {
     providerSudoku,
     providerMinesweeper,
     provider2048,
+    providerWordle,
   ];
 
   //_______________________________________________________________________

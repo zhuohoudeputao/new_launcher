@@ -857,6 +857,19 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `GridView`, `IconButton` for Material 3 style
     - Keywords: 2048, game, puzzle, number, tile, slide, merge
+- **Wordle**: Classic word guessing game
+    - Guess a 5-letter word in 6 attempts
+    - Letter feedback: green (correct position), yellow (wrong position), gray (not in word)
+    - 5x6 grid display showing all guesses
+    - On-screen keyboard with letter status colors
+    - Letter status tracking across guesses
+    - Win/loss statistics tracking
+    - Win rate percentage display
+    - History tracking (up to 10 games)
+    - Reset stats with confirmation dialog
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `Row`, `InkWell` for Material 3 style
+    - Keywords: wordle, word, guess, game, letter, puzzle, play, five
 
 ## Material 3 Design System
 
@@ -988,8 +1001,9 @@ Test coverage includes:
 - Sudoku provider tests (provider existence, keywords, model state, difficulty settings, grid operations, statistics, history, widget rendering)
 - Minesweeper provider tests (provider existence, keywords, model state, difficulty settings, grid operations, cell operations, statistics, history, widget rendering)
 - Game2048 provider tests (provider existence, keywords, model state, grid operations, move operations, statistics, history, widget rendering)
+- Wordle provider tests (provider existence, keywords, model state, letter operations, guess evaluation, statistics, history, widget rendering)
   
-Total tests: 1875 tests
+Total tests: 1905 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

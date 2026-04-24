@@ -69,6 +69,7 @@ import 'package:new_launcher/providers/provider_hangman.dart';
 import 'package:new_launcher/providers/provider_sudoku.dart';
 import 'package:new_launcher/providers/provider_minesweeper.dart';
 import 'package:new_launcher/providers/provider_2048.dart';
+import 'package:new_launcher/providers/provider_wordle.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2509,7 +2510,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 70);
+      expect(Global.providerList.length, 71);
     });
 
     test('Global.providerList names are correct', () {
@@ -3676,7 +3677,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 70);
+      expect(initCount, 71);
     });
   });
 
@@ -3993,8 +3994,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (70 total)', () {
-      expect(Global.providerList.length, 70);
+test('Global.providerList contains all providers (71 total)', () {
+      expect(Global.providerList.length, 71);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5337,8 +5338,8 @@ test('Global.providerList contains all providers (70 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (70 total)', () {
-      expect(Global.providerList.length, 70);
+test('Global.providerList contains all providers (71 total)', () {
+      expect(Global.providerList.length, 71);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -19316,6 +19317,309 @@ test('Global.providerList contains all providers (70 total)', () {
     test('Global.providerList includes Game2048', () {
       final has2048 = Global.providerList.any((p) => p.name == 'Game2048');
       expect(has2048, true);
+    });
+  });
+
+  group('Wordle provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('WordleGameEntry has required properties', () {
+      final entry = WordleGameEntry(
+        won: true,
+        word: 'apple',
+        attempts: 3,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.won, true);
+      expect(entry.word, 'apple');
+      expect(entry.attempts, 3);
+    });
+
+    test('WordleModel default values are correct', () {
+      final model = WordleModel();
+      expect(model.isInitialized, false);
+      expect(model.currentAttempt, 0);
+      expect(model.maxGuesses, 6);
+      expect(model.isGameOver, false);
+      expect(model.gameWon, false);
+      expect(model.gameLost, false);
+      expect(model.wins, 0);
+      expect(model.losses, 0);
+    });
+
+    test('WordleModel init initializes correctly', () async {
+      final model = WordleModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.currentWord.length, 5);
+      expect(model.currentAttempt, 0);
+      expect(model.guesses.isEmpty, true);
+    });
+
+    test('WordleModel newGame resets state', () async {
+      final model = WordleModel();
+      await model.init();
+      model.newGame();
+      expect(model.currentAttempt, 0);
+      expect(model.guesses.isEmpty, true);
+      expect(model.currentGuess.isEmpty, true);
+      expect(model.isGameOver, false);
+      expect(model.gameWon, false);
+      expect(model.gameLost, false);
+    });
+
+    test('WordleModel addLetter works', () async {
+      final model = WordleModel();
+      await model.init();
+      model.addLetter('a');
+      expect(model.currentGuess, 'a');
+      model.addLetter('b');
+      expect(model.currentGuess, 'ab');
+    });
+
+    test('WordleModel addLetter stops at 5 letters', () async {
+      final model = WordleModel();
+      await model.init();
+      model.addLetter('a');
+      model.addLetter('b');
+      model.addLetter('c');
+      model.addLetter('d');
+      model.addLetter('e');
+      expect(model.currentGuess, 'abcde');
+      model.addLetter('f');
+      expect(model.currentGuess, 'abcde');
+    });
+
+    test('WordleModel removeLetter works', () async {
+      final model = WordleModel();
+      await model.init();
+      model.addLetter('a');
+      model.addLetter('b');
+      model.addLetter('c');
+      model.removeLetter();
+      expect(model.currentGuess, 'ab');
+    });
+
+    test('WordleModel removeLetter stops at empty', () async {
+      final model = WordleModel();
+      await model.init();
+      model.removeLetter();
+      expect(model.currentGuess.isEmpty, true);
+    });
+
+test('WordleModel submitGuess works', () async {
+      final model = WordleModel();
+      await model.init();
+      model.setTestWord('apple');
+      model.addLetter('a');
+      model.addLetter('p');
+      model.addLetter('p');
+      model.addLetter('l');
+      model.addLetter('e');
+      model.submitGuess();
+      expect(model.currentAttempt, 1);
+      expect(model.gameWon, true);
+    });
+
+    test('WordleModel wrong guess counts', () async {
+      final model = WordleModel();
+      await model.init();
+      model.setTestWord('apple');
+      model.addLetter('z');
+      model.addLetter('x');
+      model.addLetter('y');
+      model.addLetter('w');
+      model.addLetter('q');
+      model.submitGuess();
+      expect(model.currentAttempt, 1);
+      expect(model.gameWon, false);
+    });
+
+    test('WordleModel game over after 6 wrong guesses', () async {
+      final model = WordleModel();
+      await model.init();
+      model.setTestWord('apple');
+      for (int i = 0; i < 6; i++) {
+        model.addLetter('z');
+        model.addLetter('x');
+        model.addLetter('y');
+        model.addLetter('w');
+        model.addLetter('q');
+        model.submitGuess();
+      }
+      expect(model.gameLost, true);
+    });
+
+    test('WordleModel wrong guess counts', () async {
+      final model = WordleModel();
+      await model.init();
+      model.setTestWord('apple');
+      model.addLetter('z');
+      model.addLetter('x');
+      model.addLetter('y');
+      model.addLetter('w');
+      model.addLetter('q');
+      model.submitGuess();
+      expect(model.currentAttempt, 1);
+      expect(model.gameWon, false);
+    });
+
+    test('WordleModel game over after 6 wrong guesses', () async {
+      final model = WordleModel();
+      await model.init();
+      model.setTestWord('apple');
+      for (int i = 0; i < 6; i++) {
+        model.addLetter('z');
+        model.addLetter('x');
+        model.addLetter('y');
+        model.addLetter('w');
+        model.addLetter('q');
+        model.submitGuess();
+      }
+      expect(model.gameLost, true);
+    });
+
+    test('WordleModel resetStats clears stats', () async {
+      final model = WordleModel();
+      await model.init();
+      model.resetStats();
+      expect(model.wins, 0);
+      expect(model.losses, 0);
+    });
+
+    test('WordleModel clearHistory clears history', () async {
+      final model = WordleModel();
+      await model.init();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('WordleModel history respects max limit', () async {
+      expect(WordleModel.maxHistory, 10);
+    });
+
+    test('WordleModel refresh calls notifyListeners', () async {
+      final model = WordleModel();
+      await model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('WordleModel getWinRate works', () async {
+      final model = WordleModel();
+      expect(model.getWinRate(), 0);
+    });
+
+    test('WordleModel hasHistory works', () async {
+      final model = WordleModel();
+      await model.init();
+      expect(model.hasHistory, false);
+    });
+
+    test('WordleModel letterStatuses initialized', () async {
+      final model = WordleModel();
+      await model.init();
+      expect(model.letterStatuses.length, 26);
+    });
+
+    test('LetterStatus enum has all values', () {
+      expect(LetterStatus.values.length, 4);
+      expect(LetterStatus.correct, isNotNull);
+      expect(LetterStatus.present, isNotNull);
+      expect(LetterStatus.absent, isNotNull);
+      expect(LetterStatus.unused, isNotNull);
+    });
+
+    test('providerWordle exists', () {
+      expect(providerWordle.name, "Wordle");
+    });
+
+    test('providerWordle keywords contain wordle related words', () {
+      expect(providerWordle.name, 'Wordle');
+    });
+
+    testWidgets('WordleCard renders loading state', (WidgetTester tester) async {
+      final model = WordleModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => WordleCard(),
+          ),
+        ),
+      ));
+      expect(find.text('Wordle: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('WordleCard renders initialized state', (WidgetTester tester) async {
+      final model = WordleModel();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => WordleCard(),
+          ),
+        ),
+      ));
+      expect(find.text('Wordle'), findsOneWidget);
+    });
+
+    testWidgets('WordleCard shows grid', (WidgetTester tester) async {
+      final model = WordleModel();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => WordleCard(),
+          ),
+        ),
+      ));
+      expect(find.byType(Row), findsWidgets);
+    });
+
+    testWidgets('WordleCard shows keyboard', (WidgetTester tester) async {
+      final model = WordleModel();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => WordleCard(),
+          ),
+        ),
+      ));
+      expect(find.byType(InkWell), findsWidgets);
+    });
+
+    testWidgets('WordleCard shows new game button after game over', (WidgetTester tester) async {
+      final model = WordleModel();
+      await model.init();
+      model.setTestGameWon(true);
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => WordleCard(),
+          ),
+        ),
+      ));
+      expect(find.text('New Game'), findsOneWidget);
+    });
+
+    test('WordleCard widget exists', () {
+      expect(WordleCard, isNotNull);
+    });
+
+    test('Global.providerList includes Wordle', () {
+      final hasWordle = Global.providerList.any((p) => p.name == 'Wordle');
+      expect(hasWordle, true);
     });
   });
 }
