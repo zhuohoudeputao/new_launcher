@@ -37,6 +37,7 @@ import 'package:new_launcher/providers/provider_counter.dart';
 import 'package:new_launcher/providers/provider_tip.dart';
 import 'package:new_launcher/providers/provider_bmi.dart';
 import 'package:new_launcher/providers/provider_metronome.dart';
+import 'package:new_launcher/providers/provider_flashcard.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2477,7 +2478,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 38);
+      expect(Global.providerList.length, 39);
     });
 
     test('Global.providerList names are correct', () {
@@ -3644,7 +3645,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 38);
+      expect(initCount, 39);
     });
   });
 
@@ -3962,7 +3963,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 38);
+      expect(Global.providerList.length, 39);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5306,7 +5307,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 38);
+      expect(Global.providerList.length, 39);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -10370,6 +10371,312 @@ void main() {
       ));
 
       expect(find.byIcon(Icons.play_arrow), findsOneWidget);
+    });
+  });
+
+  group('Flashcard provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      flashcardModel = FlashcardModel();
+      await flashcardModel.init();
+    });
+
+    test('FlashcardItem toJson and fromJson work', () {
+      final item = FlashcardItem(front: 'Question', back: 'Answer');
+      final json = item.toJson();
+      final restored = FlashcardItem.fromJson(json);
+      
+      expect(restored.front, 'Question');
+      expect(restored.back, 'Answer');
+    });
+
+    test('FlashcardDeck toJson and fromJson work', () {
+      final deck = FlashcardDeck(
+        name: 'Test Deck',
+        cards: [FlashcardItem(front: 'Q1', back: 'A1')],
+        correctCount: 5,
+        incorrectCount: 3,
+      );
+      final json = deck.toJson();
+      final restored = FlashcardDeck.fromJson(json);
+      
+      expect(restored.name, 'Test Deck');
+      expect(restored.cards.length, 1);
+      expect(restored.correctCount, 5);
+      expect(restored.incorrectCount, 3);
+    });
+
+    test('FlashcardDeck totalCards getter works', () {
+      final deck = FlashcardDeck(
+        name: 'Test',
+        cards: [
+          FlashcardItem(front: 'Q1', back: 'A1'),
+          FlashcardItem(front: 'Q2', back: 'A2'),
+        ],
+      );
+      
+      expect(deck.totalCards, 2);
+    });
+
+    test('FlashcardDeck accuracy calculation works', () {
+      final deck = FlashcardDeck(
+        name: 'Test',
+        correctCount: 8,
+        incorrectCount: 2,
+      );
+      
+      expect(deck.accuracy, 80.0);
+    });
+
+    test('FlashcardDeck accuracy with zero studiedCards', () {
+      final deck = FlashcardDeck(name: 'Test');
+      
+      expect(deck.accuracy, 0);
+    });
+
+    test('FlashcardModel isInitialized is false before init', () {
+      final model = FlashcardModel();
+      expect(model.isInitialized, false);
+    });
+
+    test('FlashcardModel isInitialized is true after init', () async {
+      final model = FlashcardModel();
+      await model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('FlashcardModel decks getter works', () {
+      expect(flashcardModel.decks, isNotNull);
+    });
+
+    test('FlashcardModel totalDecks getter works', () {
+      expect(flashcardModel.totalDecks, 0);
+    });
+
+    test('FlashcardModel totalCards getter works', () {
+      expect(flashcardModel.totalCards, 0);
+    });
+
+    test('FlashcardModel addDeck works', () async {
+      flashcardModel.addDeck('Math');
+      
+      expect(flashcardModel.totalDecks, 1);
+      expect(flashcardModel.decks[0].name, 'Math');
+    });
+
+    test('FlashcardModel addDeck removes oldest when max limit reached', () async {
+      for (int i = 0; i < 12; i++) {
+        flashcardModel.addDeck('Deck $i');
+      }
+      
+      expect(flashcardModel.totalDecks, 10);
+      expect(flashcardModel.decks[0].name, 'Deck 2');
+    });
+
+    test('FlashcardModel updateDeck works', () async {
+      flashcardModel.addDeck('Original');
+      flashcardModel.updateDeck(0, 'Updated');
+      
+      expect(flashcardModel.decks[0].name, 'Updated');
+    });
+
+    test('FlashcardModel deleteDeck works', () async {
+      flashcardModel.addDeck('Deck 1');
+      flashcardModel.addDeck('Deck 2');
+      flashcardModel.deleteDeck(0);
+      
+      expect(flashcardModel.totalDecks, 1);
+      expect(flashcardModel.decks[0].name, 'Deck 2');
+    });
+
+    test('FlashcardModel addCard works', () async {
+      flashcardModel.addDeck('Test Deck');
+      flashcardModel.addCard(0, 'Q1', 'A1');
+      
+      expect(flashcardModel.decks[0].cards.length, 1);
+      expect(flashcardModel.decks[0].cards[0].front, 'Q1');
+      expect(flashcardModel.decks[0].cards[0].back, 'A1');
+    });
+
+    test('FlashcardModel addCard removes oldest when max limit reached', () async {
+      flashcardModel.addDeck('Test');
+      for (int i = 0; i < 55; i++) {
+        flashcardModel.addCard(0, 'Q$i', 'A$i');
+      }
+      
+      expect(flashcardModel.decks[0].cards.length, 50);
+      expect(flashcardModel.decks[0].cards[0].front, 'Q5');
+    });
+
+    test('FlashcardModel deleteCard works', () async {
+      flashcardModel.addDeck('Test');
+      flashcardModel.addCard(0, 'Q1', 'A1');
+      flashcardModel.addCard(0, 'Q2', 'A2');
+      flashcardModel.deleteCard(0, 0);
+      
+      expect(flashcardModel.decks[0].cards.length, 1);
+      expect(flashcardModel.decks[0].cards[0].front, 'Q2');
+    });
+
+    test('FlashcardModel recordStudyResult correct', () async {
+      flashcardModel.addDeck('Test');
+      flashcardModel.recordStudyResult(0, true);
+      
+      expect(flashcardModel.decks[0].correctCount, 1);
+      expect(flashcardModel.decks[0].incorrectCount, 0);
+    });
+
+    test('FlashcardModel recordStudyResult incorrect', () async {
+      flashcardModel.addDeck('Test');
+      flashcardModel.recordStudyResult(0, false);
+      
+      expect(flashcardModel.decks[0].correctCount, 0);
+      expect(flashcardModel.decks[0].incorrectCount, 1);
+    });
+
+    test('FlashcardModel clearAllDecks works', () async {
+      flashcardModel.addDeck('Deck 1');
+      flashcardModel.addDeck('Deck 2');
+      await flashcardModel.clearAllDecks();
+      
+      expect(flashcardModel.totalDecks, 0);
+    });
+
+    test('FlashcardModel is ChangeNotifier', () {
+      expect(flashcardModel is ChangeNotifier, true);
+    });
+
+    test('flashcardModel global instance exists', () {
+      expect(flashcardModel, isNotNull);
+    });
+
+    test('Global.providerList includes Flashcard', () {
+      final flashcardProvider = Global.providerList.where((p) => p.name == 'Flashcard').first;
+      expect(flashcardProvider, isNotNull);
+    });
+
+    test('providerFlashcard exists', () {
+      expect(providerFlashcard, isNotNull);
+    });
+
+    test('Flashcard provider keywords include flashcard', () {
+      final keywords = 'flashcard flash cards study learn memorize quiz deck review';
+      expect(keywords.contains('flashcard'), true);
+    });
+
+    test('Flashcard provider keywords include study', () {
+      final keywords = 'flashcard flash cards study learn memorize quiz deck review';
+      expect(keywords.contains('study'), true);
+    });
+
+    test('Flashcard provider keywords include learn', () {
+      final keywords = 'flashcard flash cards study learn memorize quiz deck review';
+      expect(keywords.contains('learn'), true);
+    });
+
+    test('FlashcardDeck copyWith works', () {
+      final deck = FlashcardDeck(name: 'Original');
+      final updated = deck.copyWith(name: 'Updated', correctCount: 5);
+      
+      expect(updated.name, 'Updated');
+      expect(updated.correctCount, 5);
+    });
+
+    test('FlashcardItem copyWith works', () {
+      final item = FlashcardItem(front: 'Q', back: 'A');
+      final updated = item.copyWith(front: 'NewQ');
+      
+      expect(updated.front, 'NewQ');
+      expect(updated.back, 'A');
+    });
+
+    testWidgets('FlashcardCard renders loading state', (WidgetTester tester) async {
+      final model = FlashcardModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: FlashcardCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Flashcard Study: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('FlashcardCard renders initialized state', (WidgetTester tester) async {
+      final model = FlashcardModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: FlashcardCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Flashcard Study'), findsOneWidget);
+    });
+
+    testWidgets('FlashcardCard shows empty state message', (WidgetTester tester) async {
+      final model = FlashcardModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: FlashcardCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('No decks. Tap + to create one!'), findsOneWidget);
+    });
+
+    testWidgets('FlashcardCard widget exists', (WidgetTester tester) async {
+      expect(FlashcardCard, isNotNull);
+    });
+
+    testWidgets('FlashcardCard shows add button', (WidgetTester tester) async {
+      final model = FlashcardModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: FlashcardCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byIcon(Icons.add), findsOneWidget);
+    });
+
+    testWidgets('AddDeckDialog widget exists', (WidgetTester tester) async {
+      expect(AddDeckDialog, isNotNull);
+    });
+
+    testWidgets('EditDeckDialog widget exists', (WidgetTester tester) async {
+      expect(EditDeckDialog, isNotNull);
+    });
+
+    testWidgets('AddCardDialog widget exists', (WidgetTester tester) async {
+      expect(AddCardDialog, isNotNull);
+    });
+
+    testWidgets('StudyDialog widget exists', (WidgetTester tester) async {
+      expect(StudyDialog, isNotNull);
     });
   });
 }

@@ -469,6 +469,18 @@ Settings auto-saved via `SharedPreferences`:
     - Circular beat indicator with current beat number display
     - Uses `Card.filled`, `SegmentedButton`, `ActionChip`, `FloatingActionButton` for Material 3 style
     - Keywords: metronome, beat, bpm, tempo, rhythm, music, tap, pulse
+- **Flashcard**: Study tool for learning and memorization
+    - Create multiple flashcard decks (up to 10 decks)
+    - Add cards with front (question) and back (answer) to each deck (up to 50 cards per deck)
+    - Study mode with card flipping and navigation
+    - Mark cards as correct/incorrect for progress tracking
+    - Accuracy percentage display for each deck
+    - Edit and delete decks via long press
+    - Add cards to specific decks
+    - Clear all decks with confirmation dialog
+    - Decks persisted via SharedPreferences
+    - Uses `Card.filled` for Material 3 style
+    - Keywords: flashcard, flash, cards, study, learn, memorize, quiz, deck, review
 
 ## Material 3 Design System
 
@@ -572,8 +584,9 @@ Test coverage includes:
 - Tip Calculator provider tests (provider existence, keywords, model state, bill calculations, split functionality, history, widget rendering)
 - BMI Calculator provider tests (provider existence, keywords, model state, BMI calculation, unit switching, history, widget rendering)
 - Metronome provider tests (provider existence, keywords, model state, BPM operations, time signature, tap tempo, history, widget rendering)
+- Flashcard provider tests (provider existence, keywords, model state, CRUD operations for decks and cards, study tracking, widget rendering)
   
-Total tests: 1015 tests
+Total tests: 1053 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -638,6 +651,7 @@ Technical documentation is available in `docs/`:
 - `tip_provider.md` - Tip Calculator provider implementation for dining/bill splitting
 - `bmi_provider.md` - BMI Calculator provider implementation for health tracking
 - `metronome_provider.md` - Metronome provider implementation for musicians
+- `flashcard_provider.md` - Flashcard provider implementation for studying/memorization
 - `calendar_model.md` - CalendarModel implementation for provider pattern consistency
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks
