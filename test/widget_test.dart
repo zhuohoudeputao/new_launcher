@@ -10552,8 +10552,12 @@ test('Global.providerList contains all providers (49 total)', () {
       expect(flashcardModel.totalDecks, 0);
     });
 
-    test('FlashcardModel is ChangeNotifier', () {
-      expect(flashcardModel is ChangeNotifier, true);
+    test('FlashcardModel notifies listeners on update', () {
+      int notifyCount = 0;
+      flashcardModel.addListener(() => notifyCount++);
+      flashcardModel.refresh();
+      expect(notifyCount, greaterThanOrEqualTo(1));
+      flashcardModel.removeListener(() => notifyCount++);
     });
 
     test('flashcardModel global instance exists', () {
