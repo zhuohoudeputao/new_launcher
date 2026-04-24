@@ -283,7 +283,7 @@ class PowerConverterCard extends StatelessWidget {
                 items: model.availableUnits.map((unit) {
                   return DropdownMenuItem(
                     value: unit,
-                    child: Text('${unit.name} (${unit.symbol})'),
+                    child: Text(unit.symbol, overflow: TextOverflow.ellipsis),
                   );
                 }).toList(),
                 onChanged: (unit) {
@@ -329,7 +329,7 @@ class PowerConverterCard extends StatelessWidget {
                 items: model.availableUnits.map((unit) {
                   return DropdownMenuItem(
                     value: unit,
-                    child: Text('${unit.name} (${unit.symbol})'),
+                    child: Text(unit.symbol, overflow: TextOverflow.ellipsis),
                   );
                 }).toList(),
                 onChanged: (unit) {
