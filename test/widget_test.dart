@@ -56,6 +56,7 @@ import 'package:new_launcher/providers/provider_textcase.dart';
 import 'package:new_launcher/providers/provider_wordcounter.dart';
 import 'package:new_launcher/providers/provider_dayscalculator.dart';
 import 'package:new_launcher/providers/provider_loremipsum.dart';
+import 'package:new_launcher/providers/provider_uuid.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2496,7 +2497,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 57);
+      expect(Global.providerList.length, 58);
     });
 
     test('Global.providerList names are correct', () {
@@ -3663,7 +3664,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 57);
+      expect(initCount, 58);
     });
   });
 
@@ -3981,7 +3982,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (57 total)', () {
-      expect(Global.providerList.length, 57);
+      expect(Global.providerList.length, 58);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5325,7 +5326,7 @@ test('Global.providerList contains all providers (57 total)', () {
     });
 
 test('Global.providerList contains all providers (57 total)', () {
-      expect(Global.providerList.length, 57);
+      expect(Global.providerList.length, 58);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -15924,6 +15925,181 @@ test('Global.providerList contains all providers (57 total)', () {
     test('LoremIpsum keywords are registered', () {
       final provider = Global.providerList.firstWhere((p) => p.name == 'LoremIpsum');
       expect(provider.name, 'LoremIpsum');
+    });
+  });
+
+  group('UUID provider tests', () {
+    setUpAll(() {
+      Global.loggerModel.clear();
+    });
+
+    test('providerUUID exists in Global.providerList', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'UUID');
+      expect(provider.name, 'UUID');
+    });
+
+    test('UUIDModel initializes correctly', () {
+      final model = UUIDModel();
+      expect(model.isInitialized, false);
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.uuidv4Result.isNotEmpty, true);
+    });
+
+    test('UUIDModel generates valid UUID v4 format', () {
+      final model = UUIDModel();
+      model.init();
+      final uuid = model.generateUUIDv4();
+
+      expect(uuid.length, 36);
+      expect(uuid.contains('-'), true);
+
+      final parts = uuid.split('-');
+      expect(parts.length, 5);
+      expect(parts[0].length, 8);
+      expect(parts[1].length, 4);
+      expect(parts[2].length, 4);
+      expect(parts[3].length, 4);
+      expect(parts[4].length, 12);
+    });
+
+    test('UUIDModel generates unique UUIDs', () {
+      final model = UUIDModel();
+      model.init();
+      final uuid1 = model.generateUUIDv4();
+      final uuid2 = model.generateUUIDv4();
+      expect(uuid1 != uuid2, true);
+    });
+
+    test('UUIDModel generateUUIDv1 produces valid format', () {
+      final model = UUIDModel();
+      model.init();
+      final uuid = model.generateUUIDv1();
+
+      expect(uuid.length, 36);
+      expect(uuid.contains('-'), true);
+    });
+
+    test('UUIDModel generateShortUUID produces valid format', () {
+      final model = UUIDModel();
+      model.init();
+      final uuid = model.generateShortUUID();
+
+      expect(uuid.isNotEmpty, true);
+      expect(uuid.contains('x'), true);
+    });
+
+    test('UUIDModel generateNoDashUUID removes dashes', () {
+      final model = UUIDModel();
+      model.init();
+      final uuid = model.generateNoDashUUID();
+
+      expect(uuid.contains('-'), false);
+      expect(uuid.length, 32);
+    });
+
+    test('UUIDModel generationCount increments', () {
+      final model = UUIDModel();
+      model.init();
+      final initialCount = model.generationCount;
+      model.generateUUIDv4();
+      expect(model.generationCount, initialCount + 1);
+    });
+
+    test('UUIDModel addToHistory works', () {
+      final model = UUIDModel();
+      model.clearHistory();
+      model.addToHistory('test-uuid-123');
+      expect(model.history.length, 1);
+      expect(model.history.first, 'test-uuid-123');
+    });
+
+    test('UUIDModel history max length is 10', () {
+      final model = UUIDModel();
+      model.clearHistory();
+      for (int i = 0; i < 15; i++) {
+        model.addToHistory('uuid-$i');
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('UUIDModel addToHistory does not add empty string', () {
+      final model = UUIDModel();
+      model.clearHistory();
+      model.addToHistory('');
+      expect(model.history.length, 0);
+    });
+
+    test('UUIDModel removeFromHistory works', () {
+      final model = UUIDModel();
+      model.clearHistory();
+      model.addToHistory('uuid-1');
+      model.addToHistory('uuid-2');
+      expect(model.history.length, 2);
+      model.removeFromHistory(0);
+      expect(model.history.length, 1);
+    });
+
+    test('UUIDModel clearHistory works', () {
+      final model = UUIDModel();
+      model.init();
+      model.addToHistory('uuid-1');
+      model.addToHistory('uuid-2');
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('UUIDModel refresh notifies listeners', () {
+      final model = UUIDModel();
+      var notified = false;
+      model.addListener(() {
+        notified = true;
+      });
+      model.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('UUIDCard renders loading state', (WidgetTester tester) async {
+      final model = UUIDModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: UUIDCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('UUID: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('UUIDCard renders initialized state', (WidgetTester tester) async {
+      final model = UUIDModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: UUIDCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('UUID Generator'), findsOneWidget);
+      expect(find.byIcon(Icons.fingerprint), findsWidgets);
+    });
+
+    test('UUID keywords are registered', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'UUID');
+      expect(provider.name, 'UUID');
+    });
+
+    tearDownAll(() {
+      Global.loggerModel.clear();
     });
   });
 }

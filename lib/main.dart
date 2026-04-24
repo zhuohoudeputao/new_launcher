@@ -59,6 +59,7 @@ import 'package:new_launcher/providers/provider_textcase.dart';
 import 'package:new_launcher/providers/provider_wordcounter.dart';
 import 'package:new_launcher/providers/provider_dayscalculator.dart';
 import 'package:new_launcher/providers/provider_loremipsum.dart';
+import 'package:new_launcher/providers/provider_uuid.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -192,6 +193,7 @@ ChangeNotifierProvider.value(value: tipModel),
             ChangeNotifierProvider.value(value: wordCounterModel),
             ChangeNotifierProvider.value(value: daysCalculatorModel),
             ChangeNotifierProvider.value(value: loremIpsumModel),
+            ChangeNotifierProvider.value(value: uuidModel),
             ],
           child: MyApp(),
          )));

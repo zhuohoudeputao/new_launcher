@@ -701,6 +701,17 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `Slider`, `FilterChip`, `ElevatedButton` for Material 3 style
     - Keywords: loremipsum, lorem, ipsum, placeholder, text, generate, dummy, sample
+- **UUID**: UUID/GUID generator for unique identifiers
+    - Generate UUID v4 (random) identifiers
+    - Generate UUID v1 (time-based) identifiers
+    - Generate short IDs (timestamp-based)
+    - Copy UUID to clipboard with one tap
+    - Generation count display
+    - History of generated UUIDs (up to 10 entries)
+    - No-dash UUID format display
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `ActionChip` for Material 3 style
+    - Keywords: uuid, guid, id, unique, identifier, generate, random
 
 ## Material 3 Design System
 
@@ -819,8 +830,9 @@ Test coverage includes:
 - TextCase provider tests (provider existence, keywords, model state, case conversions, history, widget rendering)
 - DaysCalculator provider tests (provider existence, keywords, model state, date operations, history, widget rendering)
 - LoremIpsum provider tests (provider existence, keywords, model state, text generation, paragraph handling, history, widget rendering)
+- UUID provider tests (provider existence, keywords, model state, UUID v4 generation, UUID v1 generation, short UUID generation, history, widget rendering)
   
-Total tests: 1525 tests
+Total tests: 1542 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
