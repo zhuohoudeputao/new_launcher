@@ -57,12 +57,11 @@ Future<void> _provideActions() async {
   }
   allAppsModel.setApps(allAppsWithIcons);
 
-  final topApps = allAppsWithIcons.take(20).toList();
-  final appWidgets = topApps.map((app) => 
+  final appWidgets = allAppsWithIcons.map((app) => 
     MapEntry("app_${app.packageName}", _buildAppCard(app))
   ).toList();
   final appTitles = Map.fromEntries(
-    topApps.map((app) => MapEntry("app_${app.packageName}", app.appName))
+    allAppsWithIcons.map((app) => MapEntry("app_${app.packageName}", app.appName))
   );
   Global.infoModel.addInfoWidgetsBatch(appWidgets, titles: appTitles);
 
@@ -376,8 +375,17 @@ Widget _buildAppCard(ApplicationWithIcon app) {
           height: 40,
           cacheWidth: 80,
         ),
-        title: Text(app.appName),
-        subtitle: Text(app.packageName, style: TextStyle(fontSize: 12)),
+        title: Text(
+          app.appName,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          app.packageName,
+          style: TextStyle(fontSize: 12),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         onTap: () => DeviceApps.openApp(app.packageName),
       ),
     ),

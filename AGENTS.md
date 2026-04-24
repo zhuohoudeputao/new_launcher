@@ -140,6 +140,8 @@ Settings auto-saved via `SharedPreferences`:
   - `AppStatisticsCard`: Card.outlined with dynamic height statistics display
     - Clear button with confirmation dialog to reset usage history
     - Button only visible when statistics exist
+  - All apps now displayed as info widgets in main list (no limit)
+  - Text overflow handling for long app/package names
   - RepaintBoundary and cacheWidth for icon performance
   - Models: `appModel`, `allAppsModel`, `appStatisticsModel`
   - Requires `QUERY_ALL_PACKAGES` permission for Android 11+ to enumerate all apps
@@ -808,6 +810,7 @@ Technical documentation is available in `docs/`:
 - `critical_bug_fixes_iteration32.md` - Critical bug fix for missing Anniversary model in MultiProvider
 - `critical_bug_fixes_iteration49.md` - Critical bug fix for missing Parking, Gratitude, Debt models in MultiProvider
 - `interval_timer_provider.md` - Interval Timer (HIIT/Tabata) provider implementation for workout intervals
+- `app_limit_removal.md` - Removal of 20 app limit in info widget list
 
 ## Notice
 DO NOT EDIT task*.md
