@@ -519,6 +519,18 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled` and `SegmentedButton` for Material 3 style
     - Keywords: percentage, percent, calc, discount, ratio, rate, %
+- **QuickContacts**: Quick contacts for speed dial and messaging
+    - Add frequently used contacts with name and phone number
+    - Quick dial: tap contact to open phone dialer
+    - Quick SMS: tap message icon to send SMS
+    - Add, edit, and delete contacts
+    - Maximum 15 contacts stored (oldest removed when limit exceeded)
+    - Contacts persisted via SharedPreferences
+    - Phone number normalization (removes dashes, spaces)
+    - Long press to edit, tap to call
+    - Clear all contacts with confirmation dialog
+    - Uses `Card.filled` for Material 3 style
+    - Keywords: contact, contacts, quick, dial, phone, call, speed, speeddial
 
 ## Material 3 Design System
 
@@ -626,8 +638,9 @@ Test coverage includes:
 - Workout provider tests (provider existence, keywords, model state, workout logging, statistics calculations, widget rendering)
 - Age provider tests (provider existence, keywords, model state, zodiac calculation, age calculation, birthday countdown, CRUD operations, widget rendering)
 - Percentage provider tests (provider existence, keywords, model state, percentage calculations, history, widget rendering)
+- Quick Contacts provider tests (provider existence, keywords, model state, CRUD operations, widget rendering)
   
-Total tests: 1140 tests
+Total tests: 1165 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -696,6 +709,7 @@ Technical documentation is available in `docs/`:
 - `workout_provider.md` - Workout provider implementation for fitness/exercise tracking
 - `age_provider.md` - Age Calculator provider implementation for birthdate/age calculation
 - `percentage_provider.md` - Percentage Calculator provider implementation for percentage calculations
+- `quickcontacts_provider.md` - Quick Contacts provider implementation for speed dial and messaging
 - `calendar_model.md` - CalendarModel implementation for provider pattern consistency
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks

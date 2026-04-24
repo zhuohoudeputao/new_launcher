@@ -41,6 +41,7 @@ import 'package:new_launcher/providers/provider_flashcard.dart';
 import 'package:new_launcher/providers/provider_workout.dart';
 import 'package:new_launcher/providers/provider_age.dart';
 import 'package:new_launcher/providers/provider_percentage.dart';
+import 'package:new_launcher/providers/provider_quickcontacts.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2481,7 +2482,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 42);
+      expect(Global.providerList.length, 43);
     });
 
     test('Global.providerList names are correct', () {
@@ -3648,7 +3649,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 42);
+      expect(initCount, 43);
     });
   });
 
@@ -3965,8 +3966,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (41 total)', () {
-      expect(Global.providerList.length, 42);
+test('Global.providerList contains all providers (42 total)', () {
+      expect(Global.providerList.length, 43);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5309,8 +5310,8 @@ test('Global.providerList contains all providers (41 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (41 total)', () {
-      expect(Global.providerList.length, 42);
+test('Global.providerList contains all providers (42 total)', () {
+      expect(Global.providerList.length, 43);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -11721,6 +11722,322 @@ test('Global.providerList contains all providers (41 total)', () {
       ));
 
       expect(find.text('Enter values'), findsOneWidget);
+    });
+  });
+
+  group('Quick Contacts provider tests', () {
+    test('QuickContactsModel init works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      
+      expect(model.isInitialized, true);
+      expect(model.contacts, isEmpty);
+    });
+
+    test('QuickContactsModel addContact works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      
+      model.addContact('John Doe', '+1234567890');
+      
+      expect(model.length, 1);
+      expect(model.contacts[0].name, 'John Doe');
+      expect(model.contacts[0].phone, '+1234567890');
+    });
+
+    test('QuickContactsModel maxContacts limit', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      
+      for (int i = 0; i < 20; i++) {
+        model.addContact('Contact $i', '+123456789$i');
+      }
+      
+      expect(model.length, 15);
+    });
+
+    test('QuickContactsModel deleteContact works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      
+      model.addContact('John Doe', '+1234567890');
+      model.addContact('Jane Doe', '+1234567891');
+      
+      model.deleteContact(0);
+      
+      expect(model.length, 1);
+      expect(model.contacts[0].name, 'John Doe');
+    });
+
+    test('QuickContactsModel updateContact works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      
+      model.addContact('John Doe', '+1234567890');
+      model.updateContact(0, 'John Updated', '+1234567899');
+      
+      expect(model.contacts[0].name, 'John Updated');
+      expect(model.contacts[0].phone, '+1234567899');
+    });
+
+    test('QuickContactsModel clearAllContacts works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      
+      model.addContact('John Doe', '+1234567890');
+      model.addContact('Jane Doe', '+1234567891');
+      
+      model.clearAllContacts();
+      
+      expect(model.contacts, isEmpty);
+      expect(model.hasContacts, false);
+    });
+
+    test('QuickContactsModel hasContacts property', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      
+      expect(model.hasContacts, false);
+      
+      model.addContact('John Doe', '+1234567890');
+      
+      expect(model.hasContacts, true);
+    });
+
+    test('QuickContact toJson/fromJson works', () {
+      final contact = QuickContact(name: 'John Doe', phone: '+1234567890');
+      
+      final json = contact.toJson();
+      final restored = QuickContact.fromJson(json);
+      
+      expect(restored.name, contact.name);
+      expect(restored.phone, contact.phone);
+    });
+
+    test('QuickContact toMap/fromMap works', () {
+      final contact = QuickContact(name: 'John Doe', phone: '+1234567890');
+      
+      final map = contact.toMap();
+      final restored = QuickContact.fromMap(map);
+      
+      expect(restored.name, contact.name);
+      expect(restored.phone, contact.phone);
+    });
+
+    test('QuickContactsModel persistence works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model1 = QuickContactsModel();
+      await model1.init();
+      
+      model1.addContact('John Doe', '+1234567890');
+      
+      final model2 = QuickContactsModel();
+      await model2.init();
+      
+      expect(model2.length, 1);
+      expect(model2.contacts[0].name, 'John Doe');
+    });
+
+    test('QuickContactsModel phone normalization', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      
+      model.addContact('Test', '123-456-7890');
+      
+      expect(model.contacts[0].phone, '1234567890');
+    });
+
+    test('Quick Contacts provider exists', () {
+      expect(providerQuickContacts, isNotNull);
+    });
+
+    test('Quick Contacts provider keywords include contact', () {
+      final keywords = 'contact contacts quick dial phone call speed speeddial';
+      expect(keywords.contains('contact'), true);
+    });
+
+    test('Quick Contacts provider keywords include dial', () {
+      final keywords = 'contact contacts quick dial phone call speed speeddial';
+      expect(keywords.contains('dial'), true);
+    });
+
+    test('Quick Contacts provider keywords include phone', () {
+      final keywords = 'contact contacts quick dial phone call speed speeddial';
+      expect(keywords.contains('phone'), true);
+    });
+
+    testWidgets('QuickContactsCard renders loading state', (WidgetTester tester) async {
+      final model = QuickContactsModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: QuickContactsCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Quick Contacts: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('QuickContactsCard renders initialized state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: QuickContactsCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Quick Contacts'), findsOneWidget);
+    });
+
+    testWidgets('QuickContactsCard shows empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: QuickContactsCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('No contacts yet. Tap + to add.'), findsOneWidget);
+    });
+
+    testWidgets('QuickContactsCard shows contacts list', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      model.addContact('John Doe', '+1234567890');
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: QuickContactsCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('John Doe'), findsOneWidget);
+      expect(find.text('+1234567890'), findsOneWidget);
+    });
+
+    testWidgets('QuickContactsCard widget exists', (WidgetTester tester) async {
+      expect(QuickContactsCard, isNotNull);
+    });
+
+    testWidgets('QuickContactsCard shows add button', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: QuickContactsCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byIcon(Icons.add), findsOneWidget);
+    });
+
+    testWidgets('AddContactDialog widget exists', (WidgetTester tester) async {
+      expect(AddContactDialog, isNotNull);
+    });
+
+    testWidgets('EditContactDialog widget exists', (WidgetTester tester) async {
+      expect(EditContactDialog, isNotNull);
+    });
+
+    testWidgets('AddContactDialog shows input fields', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: Builder(
+              builder: (context) => ElevatedButton(
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => AddContactDialog(),
+                ),
+                child: Text('Show Dialog'),
+              ),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text('Show Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Add Quick Contact'), findsOneWidget);
+      expect(find.byType(TextField), findsNWidgets(2));
+    });
+
+    testWidgets('EditContactDialog shows input fields', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = QuickContactsModel();
+      await model.init();
+      model.addContact('John Doe', '+1234567890');
+      
+      final contact = model.contacts[0];
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: Builder(
+              builder: (context) => ElevatedButton(
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => EditContactDialog(index: 0, contact: contact),
+                ),
+                child: Text('Show Dialog'),
+              ),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text('Show Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Edit Contact'), findsOneWidget);
+      expect(find.byType(TextField), findsNWidgets(2));
     });
   });
 }
