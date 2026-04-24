@@ -780,6 +780,18 @@ Settings auto-saved via `SharedPreferences`:
     - Long press to edit player name, tap to set current
     - Uses `Card.filled` for Material 3 style
     - Keywords: whosturn, turn, player, game, board, card, next, who
+- **TicTacToe**: Classic Tic Tac Toe game against computer
+    - Play against computer opponent with AI
+    - Smart AI: blocks winning moves, takes winning moves, prioritizes center
+    - Win/loss/draw statistics tracking
+    - Win rate percentage display
+    - Game history tracking (up to 10 entries)
+    - Highlight winning line on game end
+    - Reset stats with confirmation dialog
+    - Clear history with confirmation dialog
+    - 3x3 grid with X and O symbols
+    - Uses `Card.filled` and `SizedBox` for Material 3 style
+    - Keywords: tic, tac, toe, game, ttt, xo, grid, board, play
 
 ## Material 3 Design System
 
@@ -905,8 +917,9 @@ Test coverage includes:
 - DecisionMaker provider tests (provider existence, keywords, model state, decision operations, history, widget rendering)
 - RockPaperScissors provider tests (provider existence, keywords, model state, game operations, statistics, history, widget rendering)
 - WhosTurn provider tests (provider existence, keywords, model state, CRUD operations, turn navigation, history, widget rendering)
+- TicTacToe provider tests (provider existence, keywords, model state, game operations, statistics, history, widget rendering)
   
-Total tests: 1721 tests
+Total tests: 1753 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

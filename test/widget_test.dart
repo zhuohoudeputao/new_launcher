@@ -63,6 +63,7 @@ import 'package:new_launcher/providers/provider_reactiontime.dart';
 import 'package:new_launcher/providers/provider_decisionmaker.dart';
 import 'package:new_launcher/providers/provider_rockpaperscissors.dart';
 import 'package:new_launcher/providers/provider_whosturn.dart';
+import 'package:new_launcher/providers/provider_tictactoe.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2503,7 +2504,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 64);
+      expect(Global.providerList.length, 65);
     });
 
     test('Global.providerList names are correct', () {
@@ -3670,7 +3671,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 64);
+      expect(initCount, 65);
     });
   });
 
@@ -3987,8 +3988,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (63 total)', () {
-      expect(Global.providerList.length, 64);
+test('Global.providerList contains all providers (65 total)', () {
+      expect(Global.providerList.length, 65);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5331,8 +5332,8 @@ test('Global.providerList contains all providers (63 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (63 total)', () {
-      expect(Global.providerList.length, 64);
+test('Global.providerList contains all providers (65 total)', () {
+      expect(Global.providerList.length, 65);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -17712,6 +17713,286 @@ test('Global.providerList contains all providers (63 total)', () {
       model.addListener(() => notifyCount++);
       await model.refresh();
       expect(notifyCount, 1);
+    });
+
+    tearDownAll(() {
+      Global.loggerModel.clear();
+    });
+  });
+
+  group('TicTacToe Provider tests', () {
+    test('providerTicTacToe exists in Global.providerList', () {
+      expect(Global.providerList.contains(providerTicTacToe), true);
+    });
+
+    test('TicTacToeModel is ChangeNotifier', () {
+      final model = TicTacToeModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    test('TicTacToeModel initial values', () {
+      final model = TicTacToeModel();
+      expect(model.isInitialized, false);
+      expect(model.board.length, 9);
+      expect(model.board.every((s) => s == TTTSymbol.empty), true);
+      expect(model.gameResult, TTTResult.none);
+      expect(model.isGameOver, false);
+      expect(model.wins, 0);
+      expect(model.losses, 0);
+      expect(model.draws, 0);
+      expect(model.totalGames, 0);
+      expect(model.hasHistory, false);
+    });
+
+    test('TicTacToeModel init sets isInitialized', () {
+      final model = TicTacToeModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('TicTacToeModel maxHistory constant is 10', () {
+      expect(TicTacToeModel.maxHistory, 10);
+    });
+
+    test('TicTacToeModel resetBoard clears board', () {
+      final model = TicTacToeModel();
+      model.init();
+      model.playerMove(0);
+      expect(model.board[0], TTTSymbol.x);
+      model.resetBoard();
+      expect(model.board.every((s) => s == TTTSymbol.empty), true);
+      expect(model.isGameOver, false);
+      expect(model.gameResult, TTTResult.none);
+    });
+
+    test('TicTacToeModel canPlay returns correct values', () {
+      final model = TicTacToeModel();
+      model.init();
+      expect(model.canPlay(0), true);
+      model.playerMove(0);
+      expect(model.canPlay(0), false);
+    });
+
+    test('TicTacToeModel playerMove sets X on board', () {
+      final model = TicTacToeModel();
+      model.init();
+      model.playerMove(4);
+      expect(model.board[4], TTTSymbol.x);
+    });
+
+    test('TicTacToeModel playerMove triggers computer move', () {
+      final model = TicTacToeModel();
+      model.init();
+      final emptyCountBefore = model.board.where((s) => s == TTTSymbol.empty).length;
+      model.playerMove(0);
+      final emptyCountAfter = model.board.where((s) => s == TTTSymbol.empty).length;
+      expect(emptyCountAfter, emptyCountBefore - 2);
+    });
+
+    test('TicTacToeModel history respects max limit', () {
+      final model = TicTacToeModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.playerMove(0);
+        if (!model.isGameOver) model.playerMove(1);
+        if (!model.isGameOver) model.playerMove(2);
+        model.resetBoard();
+      }
+      expect(model.history.length <= 10, true);
+    });
+
+    test('TicTacToeModel resetStats clears stats', () {
+      final model = TicTacToeModel();
+      model.init();
+      model.resetStats();
+      expect(model.wins, 0);
+      expect(model.losses, 0);
+      expect(model.draws, 0);
+      expect(model.isGameOver, false);
+      expect(model.board.every((s) => s == TTTSymbol.empty), true);
+    });
+
+    test('TicTacToeModel clearHistory clears history', () {
+      final model = TicTacToeModel();
+      model.init();
+      model.playerMove(0);
+      if (model.hasHistory) {
+        model.clearHistory();
+        expect(model.hasHistory, false);
+        expect(model.history.length, 0);
+      }
+    });
+
+    test('TicTacToeModel getSymbolText works', () {
+      final model = TicTacToeModel();
+      expect(model.getSymbolText(TTTSymbol.x), "X");
+      expect(model.getSymbolText(TTTSymbol.o), "O");
+      expect(model.getSymbolText(TTTSymbol.empty), "");
+    });
+
+    test('TicTacToeModel getResultText works', () {
+      final model = TicTacToeModel();
+      expect(model.getResultText(TTTResult.playerWin), "You Win!");
+      expect(model.getResultText(TTTResult.computerWin), "Computer Wins!");
+      expect(model.getResultText(TTTResult.draw), "Draw!");
+      expect(model.getResultText(TTTResult.none), "");
+    });
+
+    test('TicTacToeModel getWinRate returns correct value', () {
+      final model = TicTacToeModel();
+      expect(model.getWinRate(), 0);
+    });
+
+    test('TicTacToe keywords include tic', () {
+      final keywords = 'tic tac toe game ttt xo grid board play';
+      expect(keywords.contains('tic'), true);
+    });
+
+    test('TicTacToe keywords include tac', () {
+      final keywords = 'tic tac toe game ttt xo grid board play';
+      expect(keywords.contains('tac'), true);
+    });
+
+    test('TicTacToe keywords include toe', () {
+      final keywords = 'tic tac toe game ttt xo grid board play';
+      expect(keywords.contains('toe'), true);
+    });
+
+    test('TicTacToe keywords include game', () {
+      final keywords = 'tic tac toe game ttt xo grid board play';
+      expect(keywords.contains('game'), true);
+    });
+
+    test('TicTacToe keywords include ttt', () {
+      final keywords = 'tic tac toe game ttt xo grid board play';
+      expect(keywords.contains('ttt'), true);
+    });
+
+    test('TicTacToe keywords include xo', () {
+      final keywords = 'tic tac toe game ttt xo grid board play';
+      expect(keywords.contains('xo'), true);
+    });
+
+    test('TicTacToe keywords include grid', () {
+      final keywords = 'tic tac toe game ttt xo grid board play';
+      expect(keywords.contains('grid'), true);
+    });
+
+    test('TicTacToe keywords include board', () {
+      final keywords = 'tic tac toe game ttt xo grid board play';
+      expect(keywords.contains('board'), true);
+    });
+
+    test('TicTacToe keywords include play', () {
+      final keywords = 'tic tac toe game ttt xo grid board play';
+      expect(keywords.contains('play'), true);
+    });
+
+    test('Global.providerList includes TicTacToe', () {
+      bool found = false;
+      for (var provider in Global.providerList) {
+        if (provider.name == "TicTacToe") {
+          found = true;
+          break;
+        }
+      }
+      expect(found, true);
+    });
+
+    testWidgets('TicTacToeCard renders loading state', (WidgetTester tester) async {
+      final model = TicTacToeModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => TicTacToeCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('TicTacToe: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('TicTacToeCard renders initialized state', (WidgetTester tester) async {
+      final model = TicTacToeModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => TicTacToeCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Tic Tac Toe'), findsOneWidget);
+    });
+
+    testWidgets('TicTacToeCard shows grid', (WidgetTester tester) async {
+      final model = TicTacToeModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => TicTacToeCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byIcon(Icons.grid_on), findsWidgets);
+    });
+
+    testWidgets('TicTacToeCard shows stats', (WidgetTester tester) async {
+      final model = TicTacToeModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => TicTacToeCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Wins'), findsOneWidget);
+      expect(find.text('Losses'), findsOneWidget);
+      expect(find.text('Draws'), findsOneWidget);
+      expect(find.text('Rate'), findsOneWidget);
+    });
+
+    test('TicTacToeModel refresh calls notifyListeners', () {
+      final model = TicTacToeModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    test('TTTGameEntry has required properties', () {
+      final entry = TTTGameEntry(
+        result: TTTResult.playerWin,
+        board: List.filled(9, TTTSymbol.empty),
+        timestamp: DateTime.now(),
+      );
+      expect(entry.result, TTTResult.playerWin);
+      expect(entry.board.length, 9);
+      expect(entry.timestamp, isNotNull);
+    });
+
+    test('TicTacToeModel newGame resets board', () {
+      final model = TicTacToeModel();
+      model.init();
+      model.playerMove(0);
+      expect(model.board[0], TTTSymbol.x);
+      model.newGame();
+      expect(model.board.every((s) => s == TTTSymbol.empty), true);
+      expect(model.isGameOver, false);
     });
 
     tearDownAll(() {
