@@ -792,6 +792,7 @@ Technical documentation is available in `docs/`:
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks
 - `critical_bug_fixes_iteration32.md` - Critical bug fix for missing Anniversary model in MultiProvider
+- `critical_bug_fixes_iteration49.md` - Critical bug fix for missing Parking, Gratitude, Debt models in MultiProvider
 
 ## Notice
 DO NOT EDIT task*.md

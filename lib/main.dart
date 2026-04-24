@@ -48,6 +48,9 @@ import 'package:new_launcher/providers/provider_quickcontacts.dart';
 import 'package:new_launcher/providers/provider_shoppinglist.dart';
 import 'package:new_launcher/providers/provider_caffeine.dart';
 import 'package:new_launcher/providers/provider_subscription.dart';
+import 'package:new_launcher/providers/provider_parking.dart';
+import 'package:new_launcher/providers/provider_gratitude.dart';
+import 'package:new_launcher/providers/provider_debt.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -170,6 +173,9 @@ ChangeNotifierProvider.value(value: tipModel),
             ChangeNotifierProvider.value(value: shoppingListModel),
             ChangeNotifierProvider.value(value: caffeineModel),
             ChangeNotifierProvider.value(value: subscriptionModel),
+            ChangeNotifierProvider.value(value: parkingModel),
+            ChangeNotifierProvider.value(value: gratitudeModel),
+            ChangeNotifierProvider.value(value: debtModel),
             ],
           child: MyApp(),
          )));
