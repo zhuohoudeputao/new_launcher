@@ -472,9 +472,40 @@
         "00:16 +1774 -4: TicTacToe Provider tests MemoryGame provider tests MemoryGameCard shows stats                                                                                                          \r",
         "00:15 +1774 -4: TicTacToe Provider tests MemoryGame provider tests MemoryGameCard shows stats                                                                                                          \r"
       ]
+    },
+    {
+      "iteration": 18,
+      "startedAt": "2026-04-24T19:15:22.888Z",
+      "endedAt": "2026-04-24T19:25:09.011Z",
+      "durationMs": 578205,
+      "agent": "opencode",
+      "model": "",
+      "toolsUsed": {},
+      "filesModified": [
+        "AGENTS.md",
+        "docs/hangman_provider.md",
+        "lib/data.dart",
+        "lib/main.dart",
+        "lib/providers/provider_hangman.dart",
+        "test/widget_test.dart"
+      ],
+      "exitCode": 0,
+      "completionDetected": true,
+      "errors": [
+        "test/widget_test.dart:18393:21: Error: This expression has type 'void' and can't be used.",
+        "test/widget_test.dart:18407:21: Error: This expression has type 'void' and can't be used.",
+        "test/widget_test.dart:18413:21: Error: This expression has type 'void' and can't be used.",
+        "test/widget_test.dart:18421:21: Error: This expression has type 'void' and can't be used.",
+        "test/widget_test.dart:18435:21: Error: This expression has type 'void' and can't be used.",
+        "test/widget_test.dart:18468:21: Error: This expression has type 'void' and can't be used.",
+        "test/widget_test.dart:18484:21: Error: This expression has type 'void' and can't be used.",
+        "test/widget_test.dart:18500:21: Error: This expression has type 'void' and can't be used.",
+        "Failed to load \"/home/linzuxuan/Documents/new_launcher/test/widget_test.dart\": Compilation failed for testPath=/home/linzuxuan/Documents/new_launcher/test/widget_test.dart",
+        "00:01 +0 -1: Some tests failed."
+      ]
     }
   ],
-  "totalDurationMs": 9895092,
+  "totalDurationMs": 10473297,
   "struggleIndicators": {
     "repeatedErrors": {
       "I/flutter (11166): [ERROR] 2026-04-24T23:57:45.682722 - Network error: ClientException with SocketEx": 1,
@@ -490,8 +521,8 @@
       "test/widget_test.dart:15350:52: Error: The argument type 'Future<Null> Function(WidgetTester)' can't": 1,
       "test/widget_test.dart:15368:51: Error: The argument type 'Future<Null> Function(WidgetTester)' can't": 1,
       "lib/providers/provider_textcase.dart:201:29: Error: The method 'watch' isn't defined for the class '": 1,
-      "Failed to load \"/home/linzuxuan/Documents/new_launcher/test/widget_test.dart\": Compilation failed fo": 8,
-      "00:01 +0 -1: Some tests failed.": 7,
+      "Failed to load \"/home/linzuxuan/Documents/new_launcher/test/widget_test.dart\": Compilation failed fo": 9,
+      "00:01 +0 -1: Some tests failed.": 8,
       "00:00 +0: loading /home/linzuxuan/Documents/new_launcher/test/widget_test.dart                      ": 7,
       "00:12 +1457 -6: TextCase provider tests TextCaseModel clearHistory works                            ": 1,
       "lib/providers/provider_wordcounter.dart:53:25: Error: A value of type 'String' can't be returned fro": 1,
@@ -562,7 +593,15 @@
       "lib/providers/provider_memorygame.dart:541:47: Error: The argument type 'int' can't be assigned to t": 1,
       "lib/providers/provider_memorygame.dart:594:13: Error: The getter 'game' isn't defined for the class ": 1,
       "00:16 +1774 -4: TicTacToe Provider tests MemoryGame provider tests MemoryGameCard shows stats       ": 1,
-      "00:15 +1774 -4: TicTacToe Provider tests MemoryGame provider tests MemoryGameCard shows stats       ": 1
+      "00:15 +1774 -4: TicTacToe Provider tests MemoryGame provider tests MemoryGameCard shows stats       ": 1,
+      "test/widget_test.dart:18393:21: Error: This expression has type 'void' and can't be used.": 1,
+      "test/widget_test.dart:18407:21: Error: This expression has type 'void' and can't be used.": 1,
+      "test/widget_test.dart:18413:21: Error: This expression has type 'void' and can't be used.": 1,
+      "test/widget_test.dart:18421:21: Error: This expression has type 'void' and can't be used.": 1,
+      "test/widget_test.dart:18435:21: Error: This expression has type 'void' and can't be used.": 1,
+      "test/widget_test.dart:18468:21: Error: This expression has type 'void' and can't be used.": 1,
+      "test/widget_test.dart:18484:21: Error: This expression has type 'void' and can't be used.": 1,
+      "test/widget_test.dart:18500:21: Error: This expression has type 'void' and can't be used.": 1
     },
     "noProgressIterations": 0,
     "shortIterations": 0
