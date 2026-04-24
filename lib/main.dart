@@ -56,6 +56,7 @@ import 'package:new_launcher/providers/provider_textencoder.dart';
 import 'package:new_launcher/providers/provider_morse.dart';
 import 'package:new_launcher/providers/provider_timestamp.dart';
 import 'package:new_launcher/providers/provider_textcase.dart';
+import 'package:new_launcher/providers/provider_wordcounter.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -186,6 +187,7 @@ ChangeNotifierProvider.value(value: tipModel),
             ChangeNotifierProvider.value(value: morseCodeModel),
             ChangeNotifierProvider.value(value: timestampModel),
             ChangeNotifierProvider.value(value: textCaseModel),
+            ChangeNotifierProvider.value(value: wordCounterModel),
             ],
           child: MyApp(),
          )));

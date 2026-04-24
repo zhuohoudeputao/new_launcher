@@ -668,6 +668,16 @@ Settings auto-saved via `SharedPreferences`:
     - Clear input button
     - Uses `Card.filled` and `SegmentedButton` for Material 3 style
     - Keywords: textcase, case, uppercase, lowercase, title, sentence, camel, pascal, snake, kebab, constant, convert, text
+- **WordCounter**: Text analysis tool for counting text statistics
+    - Character count (with and without spaces)
+    - Word count
+    - Line count
+    - Sentence count
+    - Paragraph count
+    - Real-time counting as you type
+    - Clear input button
+    - Uses `Card.filled` and `Chip` for Material 3 style
+    - Keywords: wordcounter, word, count, character, char, line, sentence, paragraph, text, letter
 
 ## Material 3 Design System
 
@@ -785,7 +795,7 @@ Test coverage includes:
 - Interval Timer provider tests (provider existence, keywords, model state, presets, phase operations, timer controls, widget rendering)
 - TextCase provider tests (provider existence, keywords, model state, case conversions, history, widget rendering)
   
-Total tests: 1470 tests
+Total tests: 1489 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -864,6 +874,11 @@ Technical documentation is available in `docs/`:
 - `interval_timer_provider.md` - Interval Timer (HIIT/Tabata) provider implementation for workout intervals
 - `app_limit_removal.md` - Removal of 20 app limit in info widget list
 - `battery_listener_optimization.md` - Battery state listener optimization to prevent excessive notifications
+- `textencoder_provider.md` - TextEncoder provider implementation for encoding/decoding utilities
+- `morse_provider.md` - Morse Code encoder/decoder provider implementation
+- `timestamp_provider.md` - Timestamp Converter provider implementation for Unix timestamp/datetime conversion
+- `textcase_provider.md` - TextCase provider implementation for text case conversion
+- `wordcounter_provider.md` - Word Counter provider implementation for text analysis
 
 ## Notice
 DO NOT EDIT task*.md

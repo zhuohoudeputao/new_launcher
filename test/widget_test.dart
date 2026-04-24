@@ -53,6 +53,7 @@ import 'package:new_launcher/providers/provider_textencoder.dart';
 import 'package:new_launcher/providers/provider_morse.dart';
 import 'package:new_launcher/providers/provider_timestamp.dart';
 import 'package:new_launcher/providers/provider_textcase.dart';
+import 'package:new_launcher/providers/provider_wordcounter.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2493,7 +2494,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 54);
+      expect(Global.providerList.length, 55);
     });
 
     test('Global.providerList names are correct', () {
@@ -3660,7 +3661,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 54);
+      expect(initCount, 55);
     });
   });
 
@@ -3977,8 +3978,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (51 total)', () {
-      expect(Global.providerList.length, 54);
+test('Global.providerList contains all providers (55 total)', () {
+      expect(Global.providerList.length, 55);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5321,8 +5322,8 @@ test('Global.providerList contains all providers (51 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (51 total)', () {
-      expect(Global.providerList.length, 54);
+test('Global.providerList contains all providers (55 total)', () {
+      expect(Global.providerList.length, 55);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -15390,6 +15391,188 @@ test('Global.providerList contains all providers (51 total)', () {
     test('TextCase keywords are registered', () {
       final provider = Global.providerList.firstWhere((p) => p.name == 'TextCase');
       expect(provider.name, 'TextCase');
+    });
+  });
+
+  group('WordCounter provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('providerWordCounter exists in Global.providerList', () {
+      final providers = Global.providerList.where((p) => p.name == 'WordCounter');
+      expect(providers.length, 1);
+      expect(providers.first.name, 'WordCounter');
+    });
+
+    test('WordCounterModel initializes correctly', () {
+      final model = WordCounterModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.inputText, '');
+      expect(model.charCount, 0);
+    });
+
+    test('WordCounterModel counts characters correctly', () {
+      final model = WordCounterModel();
+      model.init();
+      model.setInputText('Hello World');
+      expect(model.charCount, 11);
+      expect(model.charCountNoSpaces, 10);
+    });
+
+    test('WordCounterModel counts words correctly', () {
+      final model = WordCounterModel();
+      model.init();
+      model.setInputText('Hello World Test');
+      expect(model.wordCount, 3);
+    });
+
+    test('WordCounterModel counts words with empty text', () {
+      final model = WordCounterModel();
+      model.init();
+      model.setInputText('');
+      expect(model.wordCount, 0);
+    });
+
+    test('WordCounterModel counts words with only spaces', () {
+      final model = WordCounterModel();
+      model.init();
+      model.setInputText('   ');
+      expect(model.wordCount, 0);
+    });
+
+    test('WordCounterModel counts lines correctly', () {
+      final model = WordCounterModel();
+      model.init();
+      model.setInputText('Line1\nLine2\nLine3');
+      expect(model.lineCount, 3);
+    });
+
+    test('WordCounterModel counts single line as 1', () {
+      final model = WordCounterModel();
+      model.init();
+      model.setInputText('Single line');
+      expect(model.lineCount, 1);
+    });
+
+    test('WordCounterModel counts lines with empty text as 0', () {
+      final model = WordCounterModel();
+      model.init();
+      model.setInputText('');
+      expect(model.lineCount, 0);
+    });
+
+    test('WordCounterModel counts sentences correctly', () {
+      final model = WordCounterModel();
+      model.init();
+      model.setInputText('Hello. World! Test?');
+      expect(model.sentenceCount, 3);
+    });
+
+    test('WordCounterModel counts paragraphs correctly', () {
+      final model = WordCounterModel();
+      model.init();
+      model.setInputText('Para1\n\nPara2\n\nPara3');
+      expect(model.paragraphCount, 3);
+    });
+
+    test('WordCounterModel handles complex text', () {
+      final model = WordCounterModel();
+      model.init();
+      model.setInputText('Hello world!\nThis is a test.\n\nNew paragraph here.');
+      expect(model.charCount, 49);
+      expect(model.wordCount, 9);
+      expect(model.lineCount, 4);
+      expect(model.sentenceCount, 3);
+      expect(model.paragraphCount, 2);
+    });
+
+    test('WordCounterModel clearInput works', () {
+      final model = WordCounterModel();
+      model.init();
+      model.setInputText('Hello World');
+      model.clearInput();
+      expect(model.inputText, '');
+      expect(model.charCount, 0);
+      expect(model.wordCount, 0);
+    });
+
+    test('WordCounterModel refresh notifies listeners', () {
+      final model = WordCounterModel();
+      model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('WordCounterModel setInputText notifies listeners', () {
+      final model = WordCounterModel();
+      model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.setInputText('Test');
+      expect(notified, true);
+    });
+
+    testWidgets('WordCounterCard renders loading state', (WidgetTester tester) async {
+      final model = WordCounterModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: WordCounterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Word Counter'), findsOneWidget);
+    });
+
+    testWidgets('WordCounterCard renders initialized state', (WidgetTester tester) async {
+      final model = WordCounterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: WordCounterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Word Counter'), findsOneWidget);
+    });
+
+    testWidgets('WordCounterCard shows counts after input', (WidgetTester tester) async {
+      final model = WordCounterModel();
+      model.init();
+      model.setInputText('Hello World');
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: WordCounterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Word Counter'), findsOneWidget);
+      expect(find.textContaining('Characters: 11'), findsOneWidget);
+      expect(find.textContaining('Words: 2'), findsOneWidget);
+    });
+
+    test('WordCounter keywords are registered', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'WordCounter');
+      expect(provider.name, 'WordCounter');
     });
   });
 }
