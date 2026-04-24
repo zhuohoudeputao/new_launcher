@@ -1028,6 +1028,15 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `DropdownButton`, `TextField` for Material 3 style
     - Keywords: area, convert, square, meter, kilometer, centimeter, hectare, acre, foot, yard, inch, mile, sq, m2, km2
+- **DataRateConverter**: Data rate/bandwidth unit converter for networking
+    - Convert between 5 data rate units: bps, Kbps, Mbps, Gbps, Tbps
+    - Real-time conversion as values are entered
+    - Swap input/output units with one tap
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `DropdownButton`, `TextField` for Material 3 style
+    - Keywords: datarate, bandwidth, speed, bps, mbps, gbps, kbps, network, internet
 
 ## Material 3 Design System
 
@@ -1173,8 +1182,9 @@ Test coverage includes:
 - AngleConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - Prime provider tests (provider existence, keywords, model state, prime checking, prime factor finding, history, widget rendering)
 - AreaConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
+- DataRateConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 
-Total tests: 2311 tests
+Total tests: 2350 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

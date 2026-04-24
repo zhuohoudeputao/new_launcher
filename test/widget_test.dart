@@ -84,6 +84,7 @@ import 'package:new_launcher/providers/provider_angle.dart';
 import 'package:new_launcher/providers/provider_prime.dart';
 import 'package:new_launcher/providers/provider_ascii.dart';
 import 'package:new_launcher/providers/provider_area.dart';
+import 'package:new_launcher/providers/provider_datarate.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2524,7 +2525,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 85);
+      expect(Global.providerList.length, 86);
     });
 
     test('Global.providerList names are correct', () {
@@ -3691,7 +3692,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 85);
+      expect(initCount, 86);
     });
   });
 
@@ -4006,13 +4007,13 @@ void main() {
     test('Flashlight keywords include lamp', () {
       final keywords = 'flashlight torch light flash lamp toggle';
       expect(keywords.contains('lamp'), true);
+});
+
+test('Global.providerList contains all providers (86 total)', () {
+      expect(Global.providerList.length, 86);
     });
 
-test('Global.providerList contains all providers (85 total)', () {
-      expect(Global.providerList.length, 85);
-    });
-
-    test('Global.providerList includes Flashlight', () {
+test('Global.providerList includes Flashlight', () {
       final names = Global.providerList.map((p) => p.name).toList();
       expect(names.contains('Flashlight'), true);
     });
@@ -5350,13 +5351,13 @@ test('Global.providerList contains all providers (85 total)', () {
 
     test('UnitConverterCard widget exists', () {
       expect(UnitConverterCard, isNotNull);
+});
+
+test('Global.providerList contains all providers (86 total)', () {
+      expect(Global.providerList.length, 86);
     });
 
-test('Global.providerList contains all providers (85 total)', () {
-      expect(Global.providerList.length, 85);
-    });
-
-    test('Global.providerList includes UnitConverter', () {
+test('Global.providerList includes UnitConverter', () {
       final names = Global.providerList.map((p) => p.name).toList();
       expect(names.contains('UnitConverter'), true);
     });
@@ -23340,6 +23341,336 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       areaConverterModel.clearHistory();
+    });
+  });
+
+  group('DataRateConverter Provider tests', () {
+    test('providerDataRateConverter exists in Global.providerList', () {
+      final dataRateProvider = Global.providerList.where((p) => p.name == 'DataRateConverter').first;
+      expect(dataRateProvider.name, 'DataRateConverter');
+    });
+
+    test('DataRateConverter keywords include datarate', () {
+      final dataRateProvider = Global.providerList.where((p) => p.name == 'DataRateConverter').first;
+      expect(dataRateProvider.name, 'DataRateConverter');
+    });
+
+    test('dataRateConverterModel global instance exists', () {
+      expect(dataRateConverterModel, isNotNull);
+      expect(dataRateConverterModel.isInitialized, false);
+    });
+
+    test('DataRateConverterModel starts uninitialized', () {
+      final model = DataRateConverterModel();
+      expect(model.isInitialized, false);
+    });
+
+    test('DataRateConverterModel is ChangeNotifier', () {
+      final model = DataRateConverterModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('DataRateConverterModel init sets initialized', () {
+      final model = DataRateConverterModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('DataRateConverterModel default units', () {
+      final model = DataRateConverterModel();
+      model.init();
+      expect(model.inputUnit, 'Mbps');
+      expect(model.outputUnit, 'Kbps');
+    });
+
+    test('DataRateConverterModel setInputUnit works', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputUnit('Gbps');
+      expect(model.inputUnit, 'Gbps');
+    });
+
+    test('DataRateConverterModel setOutputUnit works', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setOutputUnit('bps');
+      expect(model.outputUnit, 'bps');
+    });
+
+    test('DataRateConverterModel setInputValue works', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputValue('100');
+      expect(model.inputValue, '100');
+    });
+
+    test('DataRateConverterModel swapUnits works', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputValue('100');
+      final originalInput = model.inputUnit;
+      final originalOutput = model.outputUnit;
+      model.swapUnits();
+      expect(model.inputUnit, originalOutput);
+      expect(model.outputUnit, originalInput);
+    });
+
+    test('DataRateConverterModel clear works', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.clear();
+      expect(model.inputValue, '0');
+    });
+
+    test('DataRateConverterModel conversion Mbps to Kbps', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(1000, 0.1));
+    });
+
+    test('DataRateConverterModel conversion Kbps to Mbps', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputUnit('Kbps');
+      model.setOutputUnit('Mbps');
+      model.setInputValue('1000');
+      expect(double.parse(model.outputValue), closeTo(1, 0.01));
+    });
+
+    test('DataRateConverterModel conversion Mbps to Gbps', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputUnit('Mbps');
+      model.setOutputUnit('Gbps');
+      model.setInputValue('1000');
+      expect(double.parse(model.outputValue), closeTo(1, 0.01));
+    });
+
+    test('DataRateConverterModel conversion Gbps to Mbps', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputUnit('Gbps');
+      model.setOutputUnit('Mbps');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(1000, 0.1));
+    });
+
+    test('DataRateConverterModel conversion bps to Kbps', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputUnit('bps');
+      model.setOutputUnit('Kbps');
+      model.setInputValue('1000');
+      expect(double.parse(model.outputValue), closeTo(1, 0.01));
+    });
+
+    test('DataRateConverterModel conversion Tbps to Gbps', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputUnit('Tbps');
+      model.setOutputUnit('Gbps');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(1000, 0.1));
+    });
+
+    test('DataRateConverter static convert method works', () {
+      expect(DataRateConverterModel.convert(1, 'Mbps', 'Kbps'), closeTo(1000, 0.1));
+      expect(DataRateConverterModel.convert(1000, 'Kbps', 'Mbps'), closeTo(1, 0.01));
+      expect(DataRateConverterModel.convert(1, 'Gbps', 'Mbps'), closeTo(1000, 0.1));
+      expect(DataRateConverterModel.convert(1000, 'Mbps', 'Gbps'), closeTo(1, 0.01));
+    });
+
+    test('DataRateConverter static convert same unit returns same value', () {
+      expect(DataRateConverterModel.convert(100, 'Mbps', 'Mbps'), 100);
+      expect(DataRateConverterModel.convert(50, 'Kbps', 'Kbps'), 50);
+    });
+
+    test('DataRateConverterModel handles invalid input', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputValue('abc');
+      expect(model.outputValue, '0');
+    });
+
+    test('DataRateConverterModel handles negative values', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputValue('-10');
+      expect(double.parse(model.outputValue), closeTo(-10000, 0.1));
+    });
+
+    test('DataRateConverterModel handles decimal values', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputValue('1.5');
+      expect(double.parse(model.outputValue), closeTo(1500, 0.1));
+    });
+
+    test('DataRateConverterModel handles zero', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputValue('0');
+      expect(model.outputValue, '0');
+    });
+
+    test('DataRateConverterModel availableUnits contains expected units', () {
+      final model = DataRateConverterModel();
+      model.init();
+      final units = model.availableUnits;
+      expect(units.contains('bps'), true);
+      expect(units.contains('Kbps'), true);
+      expect(units.contains('Mbps'), true);
+      expect(units.contains('Gbps'), true);
+      expect(units.contains('Tbps'), true);
+    });
+
+    test('DataRateConverterModel history starts empty', () {
+      final model = DataRateConverterModel();
+      model.init();
+      expect(model.history.isEmpty, true);
+      expect(model.hasHistory, false);
+    });
+
+    test('DataRateConverterModel addToHistory works', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].inputValue, 100);
+      expect(model.history[0].inputUnit, 'Mbps');
+      expect(model.history[0].outputUnit, 'Kbps');
+    });
+
+    test('DataRateConverterModel addToHistory ignores zero', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputValue('0');
+      model.addToHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('DataRateConverterModel addToHistory ignores invalid', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputValue('abc');
+      model.addToHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('DataRateConverterModel history max limit', () {
+      final model = DataRateConverterModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputValue('$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('DataRateConverterModel clearHistory works', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('DataRateConverterModel useHistoryEntry works', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputUnit('Gbps');
+      model.setOutputUnit('Mbps');
+      model.setInputValue('5');
+      model.addToHistory();
+      model.clear();
+      expect(model.inputValue, '0');
+      model.useHistoryEntry(model.history[0]);
+      expect(model.inputUnit, 'Gbps');
+      expect(model.outputUnit, 'Mbps');
+      expect(double.parse(model.inputValue), closeTo(5, 0.1));
+    });
+
+    test('DataRateConverterModel refresh calls notifyListeners', () {
+      final model = DataRateConverterModel();
+      model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('DataRateConverterModel prevents same input and output unit', () {
+      final model = DataRateConverterModel();
+      model.init();
+      model.setInputUnit('Kbps');
+      expect(model.outputUnit != 'Kbps', true);
+      model.setOutputUnit('Mbps');
+      expect(model.inputUnit != 'Mbps', true);
+    });
+
+    testWidgets('DataRateConverterCard renders loading state', (WidgetTester tester) async {
+      final model = DataRateConverterModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: DataRateConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Data Rate Converter: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('DataRateConverterCard renders initialized state', (WidgetTester tester) async {
+      final model = DataRateConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: DataRateConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Data Rate Converter'), findsOneWidget);
+      expect(find.byType(DropdownButton<String>, skipOffstage: false), findsWidgets);
+    });
+
+    testWidgets('DataRateConverterCard shows input field', (WidgetTester tester) async {
+      final model = DataRateConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: DataRateConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsOneWidget);
+    });
+
+    test('DataRateConverterCard widget exists', () {
+      expect(DataRateConverterCard, isNotNull);
+    });
+
+    test('Global.providerList includes DataRateConverter', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('DataRateConverter'), true);
+    });
+
+    tearDownAll(() {
+      dataRateConverterModel.clearHistory();
     });
   });
 }
