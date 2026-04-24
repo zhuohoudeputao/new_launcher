@@ -959,6 +959,19 @@ Settings auto-saved via `SharedPreferences`:
     - Supports numbers and single characters
     - Uses `Card.filled`, `FilterChip` for Material 3 style
     - Keywords: palindrome, check, text, reverse, word, phrase, mirror, backwards
+- **NatoPhonetic**: NATO Phonetic Alphabet encoder/decoder
+    - Convert text to NATO phonetic alphabet (A -> Alpha, B -> Bravo, etc.)
+    - Convert NATO phonetic words back to letters
+    - Full alphabet support (A-Z: Alpha, Bravo, Charlie, Delta, Echo, Foxtrot, Golf, Hotel, India, Juliet, Kilo, Lima, Mike, November, Oscar, Papa, Quebec, Romeo, Sierra, Tango, Uniform, Victor, Whiskey, X-ray, Yankee, Zulu)
+    - Number support (0-9: Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine)
+    - Case-insensitive decoding
+    - Reference section showing all NATO phonetic codes
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Copy output to clipboard
+    - Uses `Card.filled`, `SegmentedButton` for Material 3 style
+    - Keywords: nato, phonetic, alphabet, radio, spelling, alpha, bravo, charlie, encode, decode
 
 ## Material 3 Design System
 
@@ -1098,8 +1111,9 @@ Test coverage includes:
 - SunPosition provider tests (provider existence, keywords, model state, time formatting, azimuth direction, day length, phase detection, widget rendering)
 - RomanNumerals provider tests (provider existence, keywords, model state, number to Roman conversion, Roman to number conversion, validation, history, widget rendering)
 - Palindrome provider tests (provider existence, keywords, model state, palindrome detection, options handling, history, widget rendering)
+- NatoPhonetic provider tests (provider existence, keywords, model state, NATO encoding/decoding, history, reference toggle, widget rendering)
 
-Total tests: 2083 tests
+Total tests: 2126 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

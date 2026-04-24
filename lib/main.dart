@@ -80,6 +80,7 @@ import 'package:new_launcher/providers/provider_filesize.dart';
 import 'package:new_launcher/providers/provider_sunposition.dart';
 import 'package:new_launcher/providers/provider_romannumerals.dart';
 import 'package:new_launcher/providers/provider_palindrome.dart';
+import 'package:new_launcher/providers/provider_nato.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -234,6 +235,7 @@ ChangeNotifierProvider.value(value: simonModel),
 ChangeNotifierProvider.value(value: sunPositionModel),
               ChangeNotifierProvider.value(value: romanNumeralsModel),
               ChangeNotifierProvider.value(value: palindromeModel),
+              ChangeNotifierProvider.value(value: natoPhoneticModel),
               ],
           child: MyApp(),
             )));

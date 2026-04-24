@@ -77,6 +77,7 @@ import 'package:new_launcher/providers/provider_filesize.dart';
 import 'package:new_launcher/providers/provider_sunposition.dart';
 import 'package:new_launcher/providers/provider_romannumerals.dart';
 import 'package:new_launcher/providers/provider_palindrome.dart';
+import 'package:new_launcher/providers/provider_nato.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2517,7 +2518,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 77);
+      expect(Global.providerList.length, 79);
     });
 
     test('Global.providerList names are correct', () {
@@ -3684,7 +3685,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 77);
+      expect(initCount, 79);
     });
   });
 
@@ -4002,7 +4003,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 77);
+      expect(Global.providerList.length, 79);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5346,7 +5347,7 @@ test('Global.providerList contains all providers (71 total)', () {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 77);
+      expect(Global.providerList.length, 79);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -21255,6 +21256,386 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       palindromeModel.clearHistory();
+    });
+  });
+
+  group('NatoPhonetic provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('NatoPhoneticModel initializes correctly', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.inputText, "");
+      expect(model.outputText, "");
+      expect(model.operation, "encode");
+      expect(model.error, null);
+      expect(model.history.length, 0);
+      expect(model.showReference, false);
+    });
+
+    test('NatoPhoneticModel operations exist', () {
+      expect(NatoPhoneticModel.operations, contains('encode'));
+      expect(NatoPhoneticModel.operations, contains('decode'));
+      expect(NatoPhoneticModel.operations.length, 2);
+    });
+
+    test('NatoPhoneticModel natoMap has letters', () {
+      expect(NatoPhoneticModel.natoMap, contains('A'));
+      expect(NatoPhoneticModel.natoMap, contains('Z'));
+      expect(NatoPhoneticModel.natoMap['A'], 'Alpha');
+      expect(NatoPhoneticModel.natoMap['Z'], 'Zulu');
+    });
+
+    test('NatoPhoneticModel natoMap has numbers', () {
+      expect(NatoPhoneticModel.natoMap, contains('0'));
+      expect(NatoPhoneticModel.natoMap, contains('9'));
+      expect(NatoPhoneticModel.natoMap['0'], 'Zero');
+      expect(NatoPhoneticModel.natoMap['9'], 'Nine');
+    });
+
+    test('NatoPhoneticModel natoMap has 36 entries (26 letters + 10 numbers)', () {
+      expect(NatoPhoneticModel.natoMap.length, 36);
+    });
+
+    test('NatoPhoneticModel reverseNatoMap works', () {
+      final reverse = NatoPhoneticModel.reverseNatoMap;
+      expect(reverse['alpha'], 'A');
+      expect(reverse['zulu'], 'Z');
+      expect(reverse['zero'], '0');
+      expect(reverse['nine'], '9');
+    });
+
+    test('NatoPhoneticModel natoList returns all entries', () {
+      final list = NatoPhoneticModel.natoList;
+      expect(list.length, 36);
+    });
+
+    test('NatoPhoneticModel setOperation works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setInputText("test");
+      model.setOperation('decode');
+      expect(model.operation, 'decode');
+    });
+
+    test('NatoPhoneticModel setOperation ignores invalid operation', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setInputText("test");
+      model.setOperation('invalid');
+      expect(model.operation, 'encode');
+    });
+
+    test('NatoPhoneticModel encode simple text works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('encode');
+      model.setInputText("ABC");
+      expect(model.outputText, "Alpha Bravo Charlie");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel encode text with space works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('encode');
+      model.setInputText("A B");
+      expect(model.outputText, "Alpha (space) Bravo");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel encode numbers works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('encode');
+      model.setInputText("123");
+      expect(model.outputText, "One Two Three");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel encode lowercase converts to uppercase', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('encode');
+      model.setInputText("abc");
+      expect(model.outputText, "Alpha Bravo Charlie");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel encode unknown character passes through', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('encode');
+      model.setInputText("A@B");
+      expect(model.outputText, "Alpha @ Bravo");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel encode SOS works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('encode');
+      model.setInputText("SOS");
+      expect(model.outputText, "Sierra Oscar Sierra");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel decode simple nato works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText("Alpha Bravo Charlie");
+      expect(model.outputText, "ABC");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel decode with space separator works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText("Alpha Bravo");
+      expect(model.outputText, "AB");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel decode numbers works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText("One Two Three");
+      expect(model.outputText, "123");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel decode case insensitive', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText("alpha bravo charlie");
+      expect(model.outputText, "ABC");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel decode unknown word shows question mark', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText("Alpha Unknown Bravo");
+      expect(model.outputText, "A?B");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel decode (space) works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText("Alpha (space) Bravo");
+      expect(model.outputText, "A B");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel decode handles multiple spaces', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText("Alpha   Bravo");
+      expect(model.outputText, "AB");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel swapOperation works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setInputText("test");
+      model.setOperation('encode');
+      model.swapOperation();
+      expect(model.operation, 'decode');
+      model.swapOperation();
+      expect(model.operation, 'encode');
+    });
+
+    test('NatoPhoneticModel clearInput works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setInputText("test");
+      model.clearInput();
+      expect(model.inputText, "");
+      expect(model.outputText, "");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel toggleReference works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      expect(model.showReference, false);
+      model.toggleReference();
+      expect(model.showReference, true);
+      model.toggleReference();
+      expect(model.showReference, false);
+    });
+
+    test('NatoPhoneticModel empty input produces empty output', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setInputText("");
+      expect(model.outputText, "");
+      expect(model.error, null);
+    });
+
+    test('NatoPhoneticModel addToHistory works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setInputText("ABC");
+      expect(model.outputText, isNotEmpty);
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].input, "ABC");
+      expect(model.history[0].operation, "encode");
+    });
+
+    test('NatoPhoneticModel addToHistory limits to 10 entries', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputText("Test $i");
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('NatoPhoneticModel addToHistory does not add on empty output', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setInputText("");
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('NatoPhoneticModel loadFromHistory works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setInputText("ABC");
+      model.addToHistory();
+      model.clearInput();
+      model.loadFromHistory(0);
+      expect(model.inputText, "ABC");
+      expect(model.operation, "encode");
+    });
+
+    test('NatoPhoneticModel loadFromHistory ignores invalid index', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setInputText("ABC");
+      model.addToHistory();
+      model.clearInput();
+      model.loadFromHistory(999);
+      expect(model.inputText, "");
+    });
+
+    test('NatoPhoneticModel clearHistory works', () {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setInputText("ABC");
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('NatoPhoneticModel getOperationLabel works', () {
+      final model = NatoPhoneticModel();
+      expect(model.getOperationLabel('encode'), 'Encode');
+      expect(model.getOperationLabel('decode'), 'Decode');
+    });
+
+    testWidgets('NatoPhoneticCard renders loading state', (WidgetTester tester) async {
+      final model = NatoPhoneticModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => NatoPhoneticCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('NATO Phonetic: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('NatoPhoneticCard renders initialized state', (WidgetTester tester) async {
+      final model = NatoPhoneticModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => NatoPhoneticCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('NATO Phonetic Alphabet'), findsOneWidget);
+      expect(find.text('Encode'), findsOneWidget);
+      expect(find.text('Decode'), findsOneWidget);
+    });
+
+    testWidgets('NatoPhoneticCard shows output after input', (WidgetTester tester) async {
+      final model = NatoPhoneticModel();
+      model.init();
+      model.setInputText("ABC");
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => NatoPhoneticCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Alpha Bravo Charlie'), findsOneWidget);
+    });
+
+    testWidgets('NatoPhoneticCard shows reference toggle', (WidgetTester tester) async {
+      final model = NatoPhoneticModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => NatoPhoneticCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byIcon(Icons.book_outlined), findsOneWidget);
+    });
+
+    test('providerNatoPhonetic exists in Global.providerList', () {
+      final natoProvider = Global.providerList.where((p) => p.name == 'NatoPhonetic').first;
+      expect(natoProvider.name, 'NatoPhonetic');
+    });
+
+    test('natoPhoneticModel global instance exists', () {
+      expect(natoPhoneticModel, isNotNull);
+      expect(natoPhoneticModel.isInitialized, false);
+    });
+
+    tearDownAll(() {
+      natoPhoneticModel.clearHistory();
     });
   });
 }
