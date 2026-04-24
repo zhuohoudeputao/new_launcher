@@ -724,6 +724,16 @@ Settings auto-saved via `SharedPreferences`:
     - Clear password and history options
     - Uses `Card.filled`, `LinearProgressIndicator` for Material 3 style
     - Keywords: password, strength, check, security, weak, strong, analyze, score
+- **MoonPhase**: Moon phase calculator based on date
+    - Current moon phase display with emoji (🌑, 🌒, 🌓, 🌔, 🌕, 🌖, 🌗, 🌘)
+    - Illumination percentage (0-100%)
+    - Moon age in days (synodic month cycle)
+    - Phase name (New Moon, Waxing Crescent, First Quarter, Waxing Gibbous, Full Moon, Waning Gibbous, Last Quarter, Waning Crescent)
+    - Date selector to view past/future moon phases
+    - Upcoming events: next new moon and full moon countdown
+    - "Today" quick action button
+    - Uses `Card.filled`, `ActionChip`, `showDatePicker` for Material 3 style
+    - Keywords: moon, phase, lunar, cycle, full, new, crescent, gibbous, waxing, waning, quarter
 
 ## Material 3 Design System
 
@@ -843,8 +853,10 @@ Test coverage includes:
 - DaysCalculator provider tests (provider existence, keywords, model state, date operations, history, widget rendering)
 - LoremIpsum provider tests (provider existence, keywords, model state, text generation, paragraph handling, history, widget rendering)
 - UUID provider tests (provider existence, keywords, model state, UUID v4 generation, UUID v1 generation, short UUID generation, history, widget rendering)
+- PasswordStrength provider tests (provider existence, keywords, model state, password analysis, strength scoring, feedback, history, widget rendering)
+- MoonPhase provider tests (provider existence, keywords, model state, moon age calculation, illumination percentage, phase name/emoji validation, next new/full moon, date operations, widget rendering)
   
-Total tests: 1566 tests
+Total tests: 1587 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -928,6 +940,8 @@ Technical documentation is available in `docs/`:
 - `timestamp_provider.md` - Timestamp Converter provider implementation for Unix timestamp/datetime conversion
 - `textcase_provider.md` - TextCase provider implementation for text case conversion
 - `wordcounter_provider.md` - Word Counter provider implementation for text analysis
+- `passwordstrength_provider.md` - Password Strength provider implementation for security analysis
+- `moonphase_provider.md` - Moon Phase provider implementation for lunar phase calculation
 
 ## Notice
 DO NOT EDIT task*.md

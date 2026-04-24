@@ -61,6 +61,7 @@ import 'package:new_launcher/providers/provider_dayscalculator.dart';
 import 'package:new_launcher/providers/provider_loremipsum.dart';
 import 'package:new_launcher/providers/provider_uuid.dart';
 import 'package:new_launcher/providers/provider_passwordstrength.dart';
+import 'package:new_launcher/providers/provider_moonphase.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -196,6 +197,7 @@ ChangeNotifierProvider.value(value: tipModel),
             ChangeNotifierProvider.value(value: loremIpsumModel),
 ChangeNotifierProvider.value(value: uuidModel),
             ChangeNotifierProvider.value(value: passwordStrengthModel),
+            ChangeNotifierProvider.value(value: moonPhaseModel),
             ],
           child: MyApp(),
           )));

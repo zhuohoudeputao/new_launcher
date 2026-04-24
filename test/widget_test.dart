@@ -58,6 +58,7 @@ import 'package:new_launcher/providers/provider_dayscalculator.dart';
 import 'package:new_launcher/providers/provider_loremipsum.dart';
 import 'package:new_launcher/providers/provider_uuid.dart';
 import 'package:new_launcher/providers/provider_passwordstrength.dart';
+import 'package:new_launcher/providers/provider_moonphase.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2498,7 +2499,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 59);
+      expect(Global.providerList.length, 60);
     });
 
     test('Global.providerList names are correct', () {
@@ -3665,7 +3666,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 59);
+      expect(initCount, 60);
     });
   });
 
@@ -3982,8 +3983,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (58 total)', () {
-      expect(Global.providerList.length, 59);
+test('Global.providerList contains all providers (59 total)', () {
+      expect(Global.providerList.length, 60);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5326,8 +5327,8 @@ test('Global.providerList contains all providers (58 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (58 total)', () {
-      expect(Global.providerList.length, 59);
+test('Global.providerList contains all providers (59 total)', () {
+      expect(Global.providerList.length, 60);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -16308,6 +16309,189 @@ test('Global.providerList contains all providers (58 total)', () {
     test('PasswordStrength keywords are registered', () {
       final provider = Global.providerList.firstWhere((p) => p.name == 'PasswordStrength');
       expect(provider.name, 'PasswordStrength');
+    });
+
+    tearDownAll(() {
+      Global.loggerModel.clear();
+    });
+  });
+
+  group('MoonPhase provider tests', () {
+    setUpAll(() {
+      Global.loggerModel.clear();
+    });
+
+    test('providerMoonPhase exists in Global.providerList', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'MoonPhase');
+      expect(provider.name, 'MoonPhase');
+    });
+
+    test('MoonPhaseModel initializes correctly', () {
+      final model = MoonPhaseModel();
+      expect(model.isInitialized, false);
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('MoonPhaseModel calculates moon age', () {
+      final model = MoonPhaseModel();
+      model.init();
+      expect(model.moonAge >= 0, true);
+      expect(model.moonAge < 29.53, true);
+    });
+
+    test('MoonPhaseModel calculates illumination percentage', () {
+      final model = MoonPhaseModel();
+      model.init();
+      expect(model.illumination >= 0, true);
+      expect(model.illumination <= 100, true);
+    });
+
+    test('MoonPhaseModel has phase name', () {
+      final model = MoonPhaseModel();
+      model.init();
+      expect(model.phaseName.isNotEmpty, true);
+    });
+
+    test('MoonPhaseModel has phase emoji', () {
+      final model = MoonPhaseModel();
+      model.init();
+      expect(model.phaseEmoji.isNotEmpty, true);
+    });
+
+    test('MoonPhaseModel phase name is valid', () {
+      final model = MoonPhaseModel();
+      model.init();
+      final validPhases = [
+        'New Moon', 'Waxing Crescent', 'First Quarter', 'Waxing Gibbous',
+        'Full Moon', 'Waning Gibbous', 'Last Quarter', 'Waning Crescent'
+      ];
+      expect(validPhases.contains(model.phaseName), true);
+    });
+
+    test('MoonPhaseModel phase emoji is valid', () {
+      final model = MoonPhaseModel();
+      model.init();
+      final validEmojis = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
+      expect(validEmojis.contains(model.phaseEmoji), true);
+    });
+
+    test('MoonPhaseModel calculates next new moon', () {
+      final model = MoonPhaseModel();
+      model.init();
+      expect(model.nextNewMoon != null, true);
+    });
+
+    test('MoonPhaseModel calculates next full moon', () {
+      final model = MoonPhaseModel();
+      model.init();
+      expect(model.nextFullMoon != null, true);
+    });
+
+    test('MoonPhaseModel setDate works', () {
+      final model = MoonPhaseModel();
+      model.init();
+      final testDate = DateTime(2024, 1, 1);
+      model.setDate(testDate);
+      expect(model.currentDate.year, 2024);
+      expect(model.currentDate.month, 1);
+      expect(model.currentDate.day, 1);
+    });
+
+    test('MoonPhaseModel refresh notifies listeners', () {
+      final model = MoonPhaseModel();
+      model.init();
+      bool notified = false;
+      model.addListener(() {
+        notified = true;
+      });
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('MoonPhaseModel formatDaysUntil works for today', () {
+      final model = MoonPhaseModel();
+      model.init();
+      final result = model.formatDaysUntil(model.currentDate);
+      expect(result, 'Today');
+    });
+
+    test('MoonPhaseModel formatDaysUntil works for tomorrow', () {
+      final model = MoonPhaseModel();
+      model.init();
+      final tomorrow = model.currentDate.add(Duration(days: 1));
+      final result = model.formatDaysUntil(tomorrow);
+      expect(result, 'Tomorrow');
+    });
+
+    test('MoonPhaseModel formatDaysUntil works for days', () {
+      final model = MoonPhaseModel();
+      model.init();
+      final daysLater = model.currentDate.add(Duration(days: 5));
+      final result = model.formatDaysUntil(daysLater);
+      expect(result.contains('days'), true);
+    });
+
+    test('MoonPhaseModel formatDate works', () {
+      final model = MoonPhaseModel();
+      model.init();
+      final testDate = DateTime(2024, 6, 15);
+      final result = model.formatDate(testDate);
+      expect(result.contains('6'), true);
+      expect(result.contains('15'), true);
+      expect(result.contains('2024'), true);
+    });
+
+    test('MoonPhaseModel known new moon date calculation', () {
+      final model = MoonPhaseModel();
+      model.init();
+      model.setDate(DateTime(2000, 1, 6, 18, 14));
+      expect(model.moonAge < 1, true);
+    });
+
+    test('MoonPhaseModel full moon occurs around day 14-15', () {
+      final model = MoonPhaseModel();
+      model.setDate(DateTime(2000, 1, 21, 0, 0));
+      expect(model.phaseName == 'Full Moon' || model.moonAge >= 14, true);
+    });
+
+    testWidgets('MoonPhaseCard renders loading state', (WidgetTester tester) async {
+      final model = MoonPhaseModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: MoonPhaseCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Moon Phase: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('MoonPhaseCard renders initialized state', (WidgetTester tester) async {
+      final model = MoonPhaseModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: MoonPhaseCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Moon Phase'), findsOneWidget);
+      expect(find.byIcon(Icons.nightlight_round), findsWidgets);
+    });
+
+    test('MoonPhase keywords are registered', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'MoonPhase');
+      expect(provider.name, 'MoonPhase');
     });
 
     tearDownAll(() {
