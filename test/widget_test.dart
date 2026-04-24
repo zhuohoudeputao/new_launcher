@@ -57,6 +57,7 @@ import 'package:new_launcher/providers/provider_wordcounter.dart';
 import 'package:new_launcher/providers/provider_dayscalculator.dart';
 import 'package:new_launcher/providers/provider_loremipsum.dart';
 import 'package:new_launcher/providers/provider_uuid.dart';
+import 'package:new_launcher/providers/provider_passwordstrength.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2497,7 +2498,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 58);
+      expect(Global.providerList.length, 59);
     });
 
     test('Global.providerList names are correct', () {
@@ -3664,7 +3665,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 58);
+      expect(initCount, 59);
     });
   });
 
@@ -3981,8 +3982,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (57 total)', () {
-      expect(Global.providerList.length, 58);
+test('Global.providerList contains all providers (58 total)', () {
+      expect(Global.providerList.length, 59);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5325,8 +5326,8 @@ test('Global.providerList contains all providers (57 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (57 total)', () {
-      expect(Global.providerList.length, 58);
+test('Global.providerList contains all providers (58 total)', () {
+      expect(Global.providerList.length, 59);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -16096,6 +16097,217 @@ test('Global.providerList contains all providers (57 total)', () {
     test('UUID keywords are registered', () {
       final provider = Global.providerList.firstWhere((p) => p.name == 'UUID');
       expect(provider.name, 'UUID');
+    });
+
+    tearDownAll(() {
+      Global.loggerModel.clear();
+    });
+  });
+
+  group('PasswordStrength provider tests', () {
+    setUpAll(() {
+      Global.loggerModel.clear();
+    });
+
+    test('providerPasswordStrength exists in Global.providerList', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'PasswordStrength');
+      expect(provider.name, 'PasswordStrength');
+    });
+
+    test('PasswordStrengthModel initializes correctly', () {
+      final model = PasswordStrengthModel();
+      expect(model.isInitialized, false);
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('PasswordStrengthModel starts with empty values', () {
+      final model = PasswordStrengthModel();
+      expect(model.password, '');
+      expect(model.strengthScore, 0);
+      expect(model.strengthLevel, '');
+      expect(model.history.isEmpty, true);
+    });
+
+    test('PasswordStrengthModel checkPassword works', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.checkPassword('password123');
+      expect(model.password, 'password123');
+      expect(model.strengthScore > 0, true);
+      expect(model.strengthLevel.isNotEmpty, true);
+    });
+
+    test('PasswordStrengthModel detects very weak password', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.checkPassword('abc');
+      expect(model.strengthScore < 20, true);
+      expect(model.strengthLevel, 'Very Weak');
+    });
+
+    test('PasswordStrengthModel detects weak password', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.checkPassword('password');
+      expect(model.strengthScore < 40, true);
+      expect(model.strengthLevel == 'Very Weak' || model.strengthLevel == 'Weak', true);
+    });
+
+    test('PasswordStrengthModel detects medium password', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.checkPassword('Password123');
+      expect(model.strengthScore >= 20, true);
+    });
+
+    test('PasswordStrengthModel detects strong password', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.checkPassword('MyStr0ngPass!');
+      expect(model.strengthScore >= 40, true);
+    });
+
+    test('PasswordStrengthModel detects very strong password', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.checkPassword('MyV3ryStr0ngP@ssw0rd2024!');
+      expect(model.strengthScore >= 80, true);
+      expect(model.strengthLevel, 'Very Strong');
+    });
+
+    test('PasswordStrengthModel provides feedback', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.checkPassword('abc');
+      expect(model.feedback.isNotEmpty, true);
+    });
+
+    test('PasswordStrengthModel feedback suggests improvements', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.checkPassword('abc');
+      expect(model.feedback.contains('short') || model.feedback.contains('Add'), true);
+    });
+
+    test('PasswordStrengthModel detects repeated characters', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.checkPassword('aaaaaaa');
+      expect(model.feedback.contains('repeated'), true);
+    });
+
+    test('PasswordStrengthModel detects sequential characters', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.checkPassword('abc123');
+      expect(model.feedback.contains('sequential') || model.feedback.contains('pattern'), true);
+    });
+
+    test('PasswordStrengthModel detects common patterns', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.checkPassword('password123');
+      expect(model.feedback.contains('common') || model.feedback.contains('pattern'), true);
+    });
+
+    test('PasswordStrengthModel addToHistory works', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.addToHistory('test123');
+      expect(model.history.contains('test123'), true);
+    });
+
+    test('PasswordStrengthModel addToHistory does not add empty string', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.addToHistory('');
+      expect(model.history.isEmpty, true);
+    });
+
+    test('PasswordStrengthModel history max length is 10', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.addToHistory('password\$i');
+      }
+      expect(model.history.length <= 10, true);
+    });
+
+    test('PasswordStrengthModel removeFromHistory works', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.addToHistory('test123');
+      model.removeFromHistory('test123');
+      expect(model.history.contains('test123'), false);
+    });
+
+    test('PasswordStrengthModel clearHistory works', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.addToHistory('test1');
+      model.addToHistory('test2');
+      model.clearHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('PasswordStrengthModel clearPassword works', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      model.checkPassword('test123');
+      model.clearPassword();
+      expect(model.password, '');
+      expect(model.strengthScore, 0);
+    });
+
+    test('PasswordStrengthModel refresh notifies listeners', () {
+      final model = PasswordStrengthModel();
+      model.init();
+      bool notified = false;
+      model.addListener(() {
+        notified = true;
+      });
+      model.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('PasswordStrengthCard renders loading state', (WidgetTester tester) async {
+      final model = PasswordStrengthModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PasswordStrengthCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Password Strength: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('PasswordStrengthCard renders initialized state', (WidgetTester tester) async {
+      final model = PasswordStrengthModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: PasswordStrengthCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Password Strength Checker'), findsOneWidget);
+      expect(find.byIcon(Icons.security), findsWidgets);
+    });
+
+    test('PasswordStrength keywords are registered', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'PasswordStrength');
+      expect(provider.name, 'PasswordStrength');
     });
 
     tearDownAll(() {

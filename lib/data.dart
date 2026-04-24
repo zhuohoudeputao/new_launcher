@@ -69,6 +69,7 @@ import 'package:new_launcher/providers/provider_wordcounter.dart';
 import 'package:new_launcher/providers/provider_dayscalculator.dart';
 import 'package:new_launcher/providers/provider_loremipsum.dart';
 import 'package:new_launcher/providers/provider_uuid.dart';
+import 'package:new_launcher/providers/provider_passwordstrength.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -251,6 +252,7 @@ class Global {
     providerDaysCalculator,
     providerLoremIpsum,
     providerUUID,
+    providerPasswordStrength,
   ];
 
   //_______________________________________________________________________

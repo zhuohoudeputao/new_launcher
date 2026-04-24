@@ -712,6 +712,18 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `ActionChip` for Material 3 style
     - Keywords: uuid, guid, id, unique, identifier, generate, random
+- **PasswordStrength**: Password strength checker for security analysis
+    - Check password strength with real-time scoring (0-100)
+    - Five strength levels: Very Weak, Weak, Medium, Strong, Very Strong
+    - Color-coded strength indicators (red, orange, yellow, green)
+    - Feedback for improving password security
+    - Detects repeated characters, sequential patterns, common passwords
+    - Password history tracking (up to 10 entries)
+    - Show/hide password toggle
+    - Copy password from history with one tap
+    - Clear password and history options
+    - Uses `Card.filled`, `LinearProgressIndicator` for Material 3 style
+    - Keywords: password, strength, check, security, weak, strong, analyze, score
 
 ## Material 3 Design System
 
@@ -832,7 +844,7 @@ Test coverage includes:
 - LoremIpsum provider tests (provider existence, keywords, model state, text generation, paragraph handling, history, widget rendering)
 - UUID provider tests (provider existence, keywords, model state, UUID v4 generation, UUID v1 generation, short UUID generation, history, widget rendering)
   
-Total tests: 1542 tests
+Total tests: 1566 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
