@@ -1,13 +1,13 @@
 {
   "active": true,
-  "iteration": 49,
-  "minIterations": 50,
+  "iteration": 1,
+  "minIterations": 100,
   "maxIterations": 0,
   "completionPromise": "COMPLETE",
   "tasksMode": false,
   "taskPromise": "READY_FOR_NEXT_TASK",
   "prompt": "start a new loop @docs/automatic_loop.md",
-  "startedAt": "2026-04-23T18:54:06.724Z",
+  "startedAt": "2026-04-24T16:25:34.907Z",
   "model": "",
   "agent": "opencode"
 }
