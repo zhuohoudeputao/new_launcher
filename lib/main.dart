@@ -64,6 +64,7 @@ import 'package:new_launcher/providers/provider_passwordstrength.dart';
 import 'package:new_launcher/providers/provider_moonphase.dart';
 import 'package:new_launcher/providers/provider_reactiontime.dart';
 import 'package:new_launcher/providers/provider_decisionmaker.dart';
+import 'package:new_launcher/providers/provider_rockpaperscissors.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -202,6 +203,7 @@ ChangeNotifierProvider.value(value: uuidModel),
             ChangeNotifierProvider.value(value: moonPhaseModel),
             ChangeNotifierProvider.value(value: reactionTimeModel),
             ChangeNotifierProvider.value(value: decisionMakerModel),
+            ChangeNotifierProvider.value(value: rockPaperScissorsModel),
             ],
           child: MyApp(),
           )));

@@ -757,6 +757,17 @@ Settings auto-saved via `SharedPreferences`:
     - Clear all history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
     - Keywords: decision, maker, decide, choose, random, pick, option, spin, wheel, coin, toss, yes, no
+- **RockPaperScissors**: Rock Paper Scissors game against computer
+    - Play against computer opponent with random choices
+    - Three choices: Rock (🪨), Paper (📄), Scissors (✂️)
+    - Win/loss/draw statistics tracking
+    - Win rate percentage display
+    - Game history tracking (up to 10 entries)
+    - Reset stats with confirmation dialog
+    - History toggle view
+    - Standard RPS rules: Rock beats Scissors, Scissors beats Paper, Paper beats Rock
+    - Uses `Card.filled`, `ElevatedButton`, `TextButton` for Material 3 style
+    - Keywords: rock, paper, scissors, game, rps, play, hand
 
 ## Material 3 Design System
 
@@ -880,8 +891,9 @@ Test coverage includes:
 - MoonPhase provider tests (provider existence, keywords, model state, moon age calculation, illumination percentage, phase name/emoji validation, next new/full moon, date operations, widget rendering)
 - ReactionTime provider tests (provider existence, keywords, model state, reaction time operations, history, widget rendering)
 - DecisionMaker provider tests (provider existence, keywords, model state, decision operations, history, widget rendering)
+- RockPaperScissors provider tests (provider existence, keywords, model state, game operations, statistics, history, widget rendering)
   
-Total tests: 1647 tests
+Total tests: 1684 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

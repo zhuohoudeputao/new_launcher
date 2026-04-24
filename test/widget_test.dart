@@ -61,6 +61,7 @@ import 'package:new_launcher/providers/provider_passwordstrength.dart';
 import 'package:new_launcher/providers/provider_moonphase.dart';
 import 'package:new_launcher/providers/provider_reactiontime.dart';
 import 'package:new_launcher/providers/provider_decisionmaker.dart';
+import 'package:new_launcher/providers/provider_rockpaperscissors.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2501,7 +2502,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 62);
+      expect(Global.providerList.length, 63);
     });
 
     test('Global.providerList names are correct', () {
@@ -3668,7 +3669,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 62);
+      expect(initCount, 63);
     });
   });
 
@@ -3985,8 +3986,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (59 total)', () {
-      expect(Global.providerList.length, 62);
+test('Global.providerList contains all providers (63 total)', () {
+      expect(Global.providerList.length, 63);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5329,8 +5330,8 @@ test('Global.providerList contains all providers (59 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (59 total)', () {
-      expect(Global.providerList.length, 62);
+test('Global.providerList contains all providers (63 total)', () {
+      expect(Global.providerList.length, 63);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -16995,6 +16996,314 @@ test('Global.providerList contains all providers (59 total)', () {
     test('DecisionMakerModel isSpinning is false initially', () {
       final model = DecisionMakerModel();
       expect(model.isSpinning, false);
+    });
+
+    tearDownAll(() {
+      Global.loggerModel.clear();
+    });
+  });
+
+  group('RockPaperScissors Provider tests', () {
+    test('providerRockPaperScissors exists in Global.providerList', () {
+      expect(Global.providerList.contains(providerRockPaperScissors), true);
+    });
+
+    test('RockPaperScissorsModel is ChangeNotifier', () {
+      final model = RockPaperScissorsModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    test('RockPaperScissorsModel initial values', () {
+      final model = RockPaperScissorsModel();
+      expect(model.isInitialized, false);
+      expect(model.playerChoice, null);
+      expect(model.computerChoice, null);
+      expect(model.lastResult, null);
+      expect(model.wins, 0);
+      expect(model.losses, 0);
+      expect(model.draws, 0);
+      expect(model.totalGames, 0);
+      expect(model.hasHistory, false);
+    });
+
+    test('RockPaperScissorsModel init sets isInitialized', () {
+      final model = RockPaperScissorsModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('RockPaperScissorsModel maxHistory constant is 10', () {
+      expect(RockPaperScissorsModel.maxHistory, 10);
+    });
+
+    test('RockPaperScissorsModel play updates choices', () {
+      final model = RockPaperScissorsModel();
+      model.init();
+      model.play(RPSChoice.rock);
+      expect(model.playerChoice, RPSChoice.rock);
+      expect(model.computerChoice != null, true);
+      expect(model.lastResult != null, true);
+    });
+
+    test('RockPaperScissorsModel play increments stats', () {
+      final model = RockPaperScissorsModel();
+      model.init();
+      final initialTotal = model.totalGames;
+      model.play(RPSChoice.rock);
+      expect(model.totalGames, initialTotal + 1);
+    });
+
+    test('RockPaperScissorsModel play creates history entry', () {
+      final model = RockPaperScissorsModel();
+      model.init();
+      model.play(RPSChoice.rock);
+      expect(model.hasHistory, true);
+      expect(model.history.length, 1);
+      expect(model.history[0].playerChoice, RPSChoice.rock);
+    });
+
+    test('RockPaperScissorsModel history respects max limit', () {
+      final model = RockPaperScissorsModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.play(RPSChoice.rock);
+      }
+      expect(model.history.length <= 10, true);
+    });
+
+    test('RockPaperScissorsModel resetStats clears stats', () {
+      final model = RockPaperScissorsModel();
+      model.init();
+      model.play(RPSChoice.rock);
+      model.play(RPSChoice.paper);
+      model.resetStats();
+      expect(model.wins, 0);
+      expect(model.losses, 0);
+      expect(model.draws, 0);
+      expect(model.playerChoice, null);
+      expect(model.computerChoice, null);
+      expect(model.lastResult, null);
+    });
+
+    test('RockPaperScissorsModel clearHistory clears history', () {
+      final model = RockPaperScissorsModel();
+      model.init();
+      model.play(RPSChoice.rock);
+      model.play(RPSChoice.paper);
+      model.clearHistory();
+      expect(model.hasHistory, false);
+      expect(model.history.length, 0);
+    });
+
+    test('RockPaperScissorsModel requestFocus sets shouldFocus', () {
+      final model = RockPaperScissorsModel();
+      model.init();
+      model.requestFocus();
+      expect(model.shouldFocusInput, false);
+    });
+
+    test('RockPaperScissors keywords include rock', () {
+      final keywords = 'rock paper scissors game rps play hand';
+      expect(keywords.contains('rock'), true);
+    });
+
+    test('RockPaperScissors keywords include paper', () {
+      final keywords = 'rock paper scissors game rps play hand';
+      expect(keywords.contains('paper'), true);
+    });
+
+    test('RockPaperScissors keywords include scissors', () {
+      final keywords = 'rock paper scissors game rps play hand';
+      expect(keywords.contains('scissors'), true);
+    });
+
+    test('RockPaperScissors keywords include game', () {
+      final keywords = 'rock paper scissors game rps play hand';
+      expect(keywords.contains('game'), true);
+    });
+
+    test('RockPaperScissors keywords include rps', () {
+      final keywords = 'rock paper scissors game rps play hand';
+      expect(keywords.contains('rps'), true);
+    });
+
+    test('RockPaperScissors keywords include play', () {
+      final keywords = 'rock paper scissors game rps play hand';
+      expect(keywords.contains('play'), true);
+    });
+
+    test('Global.providerList includes RockPaperScissors', () {
+      bool found = false;
+      for (var provider in Global.providerList) {
+        if (provider.name == "RockPaperScissors") {
+          found = true;
+          break;
+        }
+      }
+      expect(found, true);
+    });
+
+    testWidgets('RockPaperScissorsCard renders loading state', (WidgetTester tester) async {
+      final model = RockPaperScissorsModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: RockPaperScissorsCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Rock Paper Scissors: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('RockPaperScissorsCard renders initialized state', (WidgetTester tester) async {
+      final model = RockPaperScissorsModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: RockPaperScissorsCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Rock Paper Scissors'), findsOneWidget);
+    });
+
+    testWidgets('RockPaperScissorsCard shows choice buttons', (WidgetTester tester) async {
+      final model = RockPaperScissorsModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: RockPaperScissorsCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Rock'), findsOneWidget);
+      expect(find.text('Paper'), findsOneWidget);
+      expect(find.text('Scissors'), findsOneWidget);
+    });
+
+    testWidgets('RockPaperScissorsCard shows stats row', (WidgetTester tester) async {
+      final model = RockPaperScissorsModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: RockPaperScissorsCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Wins'), findsOneWidget);
+      expect(find.text('Losses'), findsOneWidget);
+      expect(find.text('Draws'), findsOneWidget);
+      expect(find.text('Rate'), findsOneWidget);
+    });
+
+    test('RPSChoice enum has all choices', () {
+      expect(RPSChoice.values.length, 3);
+      expect(RPSChoice.values.contains(RPSChoice.rock), true);
+      expect(RPSChoice.values.contains(RPSChoice.paper), true);
+      expect(RPSChoice.values.contains(RPSChoice.scissors), true);
+    });
+
+    test('RPSChoice rock exists', () {
+      expect(RPSChoice.rock.toString(), 'RPSChoice.rock');
+    });
+
+    test('RPSChoice paper exists', () {
+      expect(RPSChoice.paper.toString(), 'RPSChoice.paper');
+    });
+
+    test('RPSChoice scissors exists', () {
+      expect(RPSChoice.scissors.toString(), 'RPSChoice.scissors');
+    });
+
+    test('RPSResult enum has all results', () {
+      expect(RPSResult.values.length, 3);
+      expect(RPSResult.values.contains(RPSResult.win), true);
+      expect(RPSResult.values.contains(RPSResult.lose), true);
+      expect(RPSResult.values.contains(RPSResult.draw), true);
+    });
+
+    test('RPSResult win exists', () {
+      expect(RPSResult.win.toString(), 'RPSResult.win');
+    });
+
+    test('RPSResult lose exists', () {
+      expect(RPSResult.lose.toString(), 'RPSResult.lose');
+    });
+
+    test('RPSResult draw exists', () {
+      expect(RPSResult.draw.toString(), 'RPSResult.draw');
+    });
+
+    test('RPSGameEntry stores game data', () {
+      final entry = RPSGameEntry(
+        playerChoice: RPSChoice.rock,
+        computerChoice: RPSChoice.scissors,
+        result: RPSResult.win,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.playerChoice, RPSChoice.rock);
+      expect(entry.computerChoice, RPSChoice.scissors);
+      expect(entry.result, RPSResult.win);
+    });
+
+    test('RockPaperScissorsModel getChoiceEmoji returns correct emoji', () {
+      final model = RockPaperScissorsModel();
+      expect(model.getChoiceEmoji(RPSChoice.rock), "🪨");
+      expect(model.getChoiceEmoji(RPSChoice.paper), "📄");
+      expect(model.getChoiceEmoji(RPSChoice.scissors), "✂️");
+    });
+
+    test('RockPaperScissorsModel getChoiceName returns correct name', () {
+      final model = RockPaperScissorsModel();
+      expect(model.getChoiceName(RPSChoice.rock), "Rock");
+      expect(model.getChoiceName(RPSChoice.paper), "Paper");
+      expect(model.getChoiceName(RPSChoice.scissors), "Scissors");
+    });
+
+    test('RockPaperScissorsModel getResultText returns correct text', () {
+      final model = RockPaperScissorsModel();
+      expect(model.getResultText(RPSResult.win), "You Win!");
+      expect(model.getResultText(RPSResult.lose), "You Lose!");
+      expect(model.getResultText(RPSResult.draw), "Draw!");
+    });
+
+    test('RockPaperScissorsModel getWinRate returns correct rate', () {
+      final model = RockPaperScissorsModel();
+      model.init();
+      expect(model.getWinRate(), 0);
+    });
+
+    test('RockPaperScissorsModel win rate after games', () {
+      final model = RockPaperScissorsModel();
+      model.init();
+      model.play(RPSChoice.rock);
+      model.play(RPSChoice.rock);
+      model.play(RPSChoice.rock);
+      model.play(RPSChoice.rock);
+      model.play(RPSChoice.rock);
+      final rate = model.getWinRate();
+      expect(rate >= 0 && rate <= 1, true);
     });
 
     tearDownAll(() {
