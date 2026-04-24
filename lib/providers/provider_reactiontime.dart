@@ -44,7 +44,7 @@ class ReactionTimeModel extends ChangeNotifier {
   static const int minDelayMs = 1000;
   static const int maxDelayMs = 5000;
 
-  ReactionState _state = ReactionState.waiting;
+  ReactionState _state = ReactionState.ready;
   int? _lastReactionTime;
   int? _bestTime;
   double? _averageTime;
@@ -113,7 +113,7 @@ class ReactionTimeModel extends ChangeNotifier {
       Global.loggerModel.info("Reaction time: $reactionTime ms", source: "ReactionTime");
       notifyListeners();
     } else if (_state == ReactionState.early) {
-      _state = ReactionState.waiting;
+      _state = ReactionState.ready;
       notifyListeners();
     }
   }
@@ -127,7 +127,7 @@ class ReactionTimeModel extends ChangeNotifier {
 
   void reset() {
     _delayTimer?.cancel();
-    _state = ReactionState.waiting;
+    _state = ReactionState.ready;
     _lastReactionTime = null;
     _bestTime = null;
     _averageTime = null;

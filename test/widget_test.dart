@@ -16511,9 +16511,9 @@ test('Global.providerList contains all providers (59 total)', () {
       expect(model is ChangeNotifier, true);
     });
 
-    test('ReactionTimeModel initial state is waiting', () {
+    test('ReactionTimeModel initial state is ready', () {
       final model = ReactionTimeModel();
-      expect(model.state, ReactionState.waiting);
+      expect(model.state, ReactionState.ready);
     });
 
     test('ReactionTimeModel initial values are null', () {
@@ -16558,7 +16558,7 @@ test('Global.providerList contains all providers (59 total)', () {
       model.startTest();
       
       model.reset();
-      expect(model.state, ReactionState.waiting);
+      expect(model.state, ReactionState.ready);
       expect(model.lastReactionTime, null);
       expect(model.bestTime, null);
       expect(model.averageTime, null);
@@ -16644,7 +16644,7 @@ test('Global.providerList contains all providers (59 total)', () {
       expect(find.byIcon(Icons.timer), findsWidgets);
     });
 
-    testWidgets('ReactionTimeCard shows waiting state', (WidgetTester tester) async {
+    testWidgets('ReactionTimeCard shows ready state', (WidgetTester tester) async {
       final model = ReactionTimeModel();
       model.init();
 
@@ -16659,7 +16659,7 @@ test('Global.providerList contains all providers (59 total)', () {
         ),
       ));
 
-      expect(find.text('Wait...'), findsOneWidget);
+      expect(find.text('Start'), findsOneWidget);
     });
 
     testWidgets('ReactionTimeCard shows stats row', (WidgetTester tester) async {

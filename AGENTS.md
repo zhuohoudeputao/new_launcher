@@ -736,6 +736,7 @@ Settings auto-saved via `SharedPreferences`:
     - Keywords: moon, phase, lunar, cycle, full, new, crescent, gibbous, waxing, waning, quarter
 - **ReactionTime**: Reaction time tester for measuring response speed
     - Test reaction speed with visual signal
+    - Initial state is 'ready' allowing immediate test start
     - Random delay between 1-5 seconds before signal appears
     - Detect early taps with "Too early" warning
     - Track best time, average time, and attempt count
