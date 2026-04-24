@@ -54,6 +54,7 @@ import 'package:new_launcher/providers/provider_morse.dart';
 import 'package:new_launcher/providers/provider_timestamp.dart';
 import 'package:new_launcher/providers/provider_textcase.dart';
 import 'package:new_launcher/providers/provider_wordcounter.dart';
+import 'package:new_launcher/providers/provider_dayscalculator.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -15573,6 +15574,185 @@ test('Global.providerList contains all providers (55 total)', () {
     test('WordCounter keywords are registered', () {
       final provider = Global.providerList.firstWhere((p) => p.name == 'WordCounter');
       expect(provider.name, 'WordCounter');
+    });
+  });
+
+  group('DaysCalculator provider tests', () {
+    test('providerDaysCalculator exists in Global.providerList', () {
+      final providers = Global.providerList.where((p) => p.name == 'DaysCalculator');
+      expect(providers.length, 1);
+      expect(providers.first.name, 'DaysCalculator');
+    });
+
+    test('DaysCalculatorModel initializes correctly', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      expect(model.isLoading, false);
+      expect(model.startDate, isNotNull);
+      expect(model.endDate, isNotNull);
+      expect(model.operation, 'difference');
+    });
+
+    test('DaysCalculatorModel sets operation correctly', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setOperation('add');
+      expect(model.operation, 'add');
+    });
+
+    test('DaysCalculatorModel calculates difference correctly', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setStartDate(DateTime(2024, 1, 1));
+      model.setEndDate(DateTime(2024, 1, 31));
+      expect(model.calculatedDays, 30);
+    });
+
+    test('DaysCalculatorModel calculates weeks correctly', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setStartDate(DateTime(2024, 1, 1));
+      model.setEndDate(DateTime(2024, 1, 22));
+      expect(model.calculatedWeeks, 3);
+    });
+
+    test('DaysCalculatorModel calculates months difference correctly', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setStartDate(DateTime(2024, 1, 1));
+      model.setEndDate(DateTime(2024, 4, 1));
+      expect(model.calculatedMonths, 3);
+    });
+
+    test('DaysCalculatorModel calculates years difference correctly', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setStartDate(DateTime(2020, 1, 1));
+      model.setEndDate(DateTime(2024, 1, 1));
+      expect(model.calculatedYears, 4);
+    });
+
+    test('DaysCalculatorModel adds days correctly', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setOperation('add');
+      model.setStartDate(DateTime(2024, 1, 1));
+      model.setDaysToAdd(10);
+      expect(model.resultDate, DateTime(2024, 1, 11));
+    });
+
+    test('DaysCalculatorModel subtracts days correctly', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setOperation('subtract');
+      model.setStartDate(DateTime(2024, 1, 11));
+      model.setDaysToAdd(10);
+      expect(model.resultDate, DateTime(2024, 1, 1));
+    });
+
+    test('DaysCalculatorModel swapDates works', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setStartDate(DateTime(2024, 1, 1));
+      model.setEndDate(DateTime(2024, 2, 1));
+      model.swapDates();
+      expect(model.startDate, DateTime(2024, 2, 1));
+      expect(model.endDate, DateTime(2024, 1, 1));
+    });
+
+    test('DaysCalculatorModel setStartDateToToday works', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setStartDate(DateTime(2020, 1, 1));
+      model.setStartDateToToday();
+      expect(model.startDate?.year, DateTime.now().year);
+      expect(model.startDate?.month, DateTime.now().month);
+      expect(model.startDate?.day, DateTime.now().day);
+    });
+
+    test('DaysCalculatorModel setEndDateToToday works', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setEndDate(DateTime(2020, 1, 1));
+      model.setEndDateToToday();
+      expect(model.endDate?.year, DateTime.now().year);
+      expect(model.endDate?.month, DateTime.now().month);
+      expect(model.endDate?.day, DateTime.now().day);
+    });
+
+    test('DaysCalculatorModel addToHistory works', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setStartDate(DateTime(2024, 1, 1));
+      model.setEndDate(DateTime(2024, 1, 31));
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history.first.days, 30);
+    });
+
+    test('DaysCalculatorModel history max length is 10', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setStartDate(DateTime(2024, 1, 1));
+        model.setEndDate(DateTime(2024, 1, i + 2));
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('DaysCalculatorModel clearHistory works', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setStartDate(DateTime(2024, 1, 1));
+      model.setEndDate(DateTime(2024, 1, 31));
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('DaysCalculatorModel reset works', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      model.setStartDate(DateTime(2020, 1, 1));
+      model.setEndDate(DateTime(2024, 1, 1));
+      model.setOperation('add');
+      model.setDaysToAdd(100);
+      model.reset();
+      expect(model.operation, 'difference');
+      expect(model.daysToAdd, 0);
+    });
+
+    test('DaysCalculatorModel refresh notifies listeners', () {
+      final model = DaysCalculatorModel();
+      model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('DaysCalculatorCard renders', (WidgetTester tester) async {
+      final model = DaysCalculatorModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: DaysCalculatorCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Days Calculator'), findsOneWidget);
+    });
+
+    test('DaysCalculator keywords are registered', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'DaysCalculator');
+      expect(provider.name, 'DaysCalculator');
     });
   });
 }

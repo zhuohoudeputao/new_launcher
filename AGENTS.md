@@ -678,6 +678,18 @@ Settings auto-saved via `SharedPreferences`:
     - Clear input button
     - Uses `Card.filled` and `Chip` for Material 3 style
     - Keywords: wordcounter, word, count, character, char, line, sentence, paragraph, text, letter
+- **DaysCalculator**: Days calculator for date calculations
+    - Calculate days between two dates
+    - Add days to a date
+    - Subtract days from a date
+    - Results displayed in days, weeks, months, years
+    - Date picker integration with today button
+    - Swap dates button for difference mode
+    - Slider for adding/subtracting days (0-365)
+    - Calculation history (up to 10 entries)
+    - Reset button to clear all inputs
+    - Uses `Card.filled`, `SegmentedButton`, `Slider`, `Chip` for Material 3 style
+    - Keywords: days, calculator, date, difference, between, add, subtract, calculate
 
 ## Material 3 Design System
 
@@ -794,8 +806,9 @@ Test coverage includes:
 - Debt provider tests (provider existence, keywords, model state, CRUD operations, owed tracking, history, widget rendering)
 - Interval Timer provider tests (provider existence, keywords, model state, presets, phase operations, timer controls, widget rendering)
 - TextCase provider tests (provider existence, keywords, model state, case conversions, history, widget rendering)
+- DaysCalculator provider tests (provider existence, keywords, model state, date operations, history, widget rendering)
   
-Total tests: 1489 tests
+Total tests: 1508 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
