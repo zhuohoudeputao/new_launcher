@@ -50,6 +50,7 @@ import 'package:new_launcher/providers/provider_gratitude.dart';
 import 'package:new_launcher/providers/provider_debt.dart';
 import 'package:new_launcher/providers/provider_interval_timer.dart';
 import 'package:new_launcher/providers/provider_textencoder.dart';
+import 'package:new_launcher/providers/provider_morse.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2490,7 +2491,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 51);
+      expect(Global.providerList.length, 52);
     });
 
     test('Global.providerList names are correct', () {
@@ -3657,7 +3658,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 51);
+      expect(initCount, 52);
     });
   });
 
@@ -3975,7 +3976,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (50 total)', () {
-      expect(Global.providerList.length, 51);
+      expect(Global.providerList.length, 52);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5319,7 +5320,7 @@ test('Global.providerList contains all providers (50 total)', () {
     });
 
 test('Global.providerList contains all providers (50 total)', () {
-      expect(Global.providerList.length, 51);
+      expect(Global.providerList.length, 52);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -14377,6 +14378,488 @@ test('Global.providerList contains all providers (50 total)', () {
       model.setOperation('decode');
       model.setInputText(encoded);
       expect(model.outputText, original);
+    });
+  });
+
+  group('MorseCode provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('MorseCodeModel initializes correctly', () {
+      final model = MorseCodeModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.inputText, "");
+      expect(model.outputText, "");
+      expect(model.operation, "encode");
+      expect(model.error, null);
+      expect(model.history.length, 0);
+    });
+
+    test('MorseCodeModel operations exist', () {
+      expect(MorseCodeModel.operations, contains('encode'));
+      expect(MorseCodeModel.operations, contains('decode'));
+      expect(MorseCodeModel.operations.length, 2);
+    });
+
+    test('MorseCodeModel morseCodeMap has letters', () {
+      expect(MorseCodeModel.morseCodeMap, contains('A'));
+      expect(MorseCodeModel.morseCodeMap, contains('Z'));
+      expect(MorseCodeModel.morseCodeMap['A'], '.-');
+      expect(MorseCodeModel.morseCodeMap['Z'], '--..');
+    });
+
+    test('MorseCodeModel morseCodeMap has numbers', () {
+      expect(MorseCodeModel.morseCodeMap, contains('0'));
+      expect(MorseCodeModel.morseCodeMap, contains('9'));
+      expect(MorseCodeModel.morseCodeMap['0'], '-----');
+      expect(MorseCodeModel.morseCodeMap['9'], '----.');
+    });
+
+    test('MorseCodeModel morseCodeMap has space', () {
+      expect(MorseCodeModel.morseCodeMap, contains(' '));
+      expect(MorseCodeModel.morseCodeMap[' '], '/');
+    });
+
+    test('MorseCodeModel reverseMorseCodeMap works', () {
+      final reverse = MorseCodeModel.reverseMorseCodeMap;
+      expect(reverse['.-'], 'A');
+      expect(reverse['--..'], 'Z');
+      expect(reverse['-----'], '0');
+      expect(reverse['/'], ' ');
+    });
+
+    test('MorseCodeModel setOperation works', () {
+      final model = MorseCodeModel();
+      model.setInputText("test");
+      model.setOperation('decode');
+      expect(model.operation, 'decode');
+    });
+
+    test('MorseCodeModel setOperation ignores invalid operation', () {
+      final model = MorseCodeModel();
+      model.setInputText("test");
+      model.setOperation('invalid');
+      expect(model.operation, 'encode');
+    });
+
+    test('MorseCodeModel encode simple text works', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('encode');
+      model.setInputText("SOS");
+      expect(model.outputText, "... --- ...");
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel encode text with space works', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('encode');
+      model.setInputText("HELLO WORLD");
+      expect(model.outputText, contains('.... . .-.. .-.. ---'));
+      expect(model.outputText, contains('/'));
+      expect(model.outputText, contains('.-- --- .-. .-.. -..'));
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel encode numbers works', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('encode');
+      model.setInputText("123");
+      expect(model.outputText, ".---- ..--- ...--");
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel encode lowercase converts to uppercase', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('encode');
+      model.setInputText("abc");
+      expect(model.outputText, ".- -... -.-.");
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel encode unknown character shows question mark', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('encode');
+      model.setInputText("A{B");
+      expect(model.outputText, ".- ? -...");
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel decode simple morse works', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText("... --- ...");
+      expect(model.outputText, "SOS");
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel decode with space separator works', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText(".... . .-.. .-.. --- / .-- --- .-. .-.. -..");
+      expect(model.outputText, "HELLO WORLD");
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel decode numbers works', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText(".---- ..--- ...--");
+      expect(model.outputText, "123");
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel decode unknown morse shows question mark', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText(".- invalidcode -...");
+      expect(model.outputText, "A?B");
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel decode handles multiple spaces', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText(".-   -...");
+      expect(model.outputText, "AB");
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel swapOperation works', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("test");
+      model.setOperation('encode');
+      model.swapOperation();
+      expect(model.operation, 'decode');
+      model.swapOperation();
+      expect(model.operation, 'encode');
+    });
+
+    test('MorseCodeModel clearInput works', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("test");
+      model.clearInput();
+      expect(model.inputText, "");
+      expect(model.outputText, "");
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel empty input produces empty output', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("");
+      expect(model.outputText, "");
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel addToHistory works', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("SOS");
+      expect(model.outputText, isNotEmpty);
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].input, "SOS");
+      expect(model.history[0].operation, "encode");
+    });
+
+    test('MorseCodeModel addToHistory limits to 10 entries', () {
+      final model = MorseCodeModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputText("Test $i");
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('MorseCodeModel addToHistory does not add on empty output', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("");
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('MorseCodeModel loadFromHistory works', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("SOS");
+      model.addToHistory();
+      model.clearInput();
+      model.loadFromHistory(0);
+      expect(model.inputText, "SOS");
+      expect(model.operation, "encode");
+    });
+
+    test('MorseCodeModel loadFromHistory ignores invalid index', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("SOS");
+      model.addToHistory();
+      model.clearInput();
+      model.loadFromHistory(999);
+      expect(model.inputText, "");
+    });
+
+    test('MorseCodeModel clearHistory works', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("SOS");
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('MorseCodeModel getOperationLabel works', () {
+      final model = MorseCodeModel();
+      expect(model.getOperationLabel('encode'), 'Encode');
+      expect(model.getOperationLabel('decode'), 'Decode');
+    });
+
+    testWidgets('MorseCodeCard renders loading state', (WidgetTester tester) async {
+      final model = MorseCodeModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: MorseCodeCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Morse Code: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('MorseCodeCard renders initialized state', (WidgetTester tester) async {
+      final model = MorseCodeModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: MorseCodeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Morse Code'), findsOneWidget);
+      expect(find.text('Encode'), findsOneWidget);
+      expect(find.text('Decode'), findsOneWidget);
+    });
+
+    testWidgets('MorseCodeCard shows output after input', (WidgetTester tester) async {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("SOS");
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: MorseCodeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Output:'), findsOneWidget);
+      expect(find.text('... --- ...'), findsOneWidget);
+    });
+
+    testWidgets('MorseCodeCard shows decoded output', (WidgetTester tester) async {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText("... --- ...");
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: MorseCodeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Output:'), findsOneWidget);
+      expect(find.text('SOS'), findsOneWidget);
+    });
+
+    test('MorseCodeCard widget exists', () {
+      expect(MorseCodeCard, isNotNull);
+    });
+
+    test('Global.providerList includes MorseCode', () {
+      final hasMorseCode = Global.providerList.any((p) => p.name == 'MorseCode');
+      expect(hasMorseCode, true);
+    });
+
+    test('providerMorseCode exists', () {
+      expect(providerMorseCode, isNotNull);
+      expect(providerMorseCode.name, 'MorseCode');
+    });
+
+    test('MorseCode model is initialized on provider init', () async {
+      final model = MorseCodeModel();
+      await providerMorseCode.init();
+      expect(model.isInitialized, false);
+      morseCodeModel.init();
+      expect(morseCodeModel.isInitialized, true);
+    });
+
+    test('MorseCodeModel refresh works', () {
+      final model = MorseCodeModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    test('MorseCodeModel notifies on setInputText', () {
+      final model = MorseCodeModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.setInputText("test");
+      expect(notifyCount, 1);
+    });
+
+    test('MorseCodeModel notifies on setOperation', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("test");
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.setOperation('decode');
+      expect(notifyCount, 1);
+    });
+
+    test('MorseCodeModel notifies on swapOperation', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("test");
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.swapOperation();
+      expect(notifyCount, 1);
+    });
+
+    test('MorseCodeModel notifies on clearInput', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("test");
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.clearInput();
+      expect(notifyCount, 1);
+    });
+
+    test('MorseCodeModel notifies on addToHistory', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("test");
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.addToHistory();
+      expect(notifyCount, 1);
+    });
+
+    test('MorseCodeModel notifies on clearHistory', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setInputText("test");
+      model.addToHistory();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.clearHistory();
+      expect(notifyCount, 1);
+    });
+
+    test('MorseCodeModel history entry has correct timestamp', () {
+      final model = MorseCodeModel();
+      model.init();
+      final before = DateTime.now();
+      model.setInputText("test");
+      model.addToHistory();
+      final after = DateTime.now();
+      expect(model.history[0].timestamp, isNotNull);
+      expect(model.history[0].timestamp.millisecondsSinceEpoch, greaterThanOrEqualTo(before.millisecondsSinceEpoch));
+      expect(model.history[0].timestamp.millisecondsSinceEpoch, lessThanOrEqualTo(after.millisecondsSinceEpoch));
+    });
+
+    test('MorseCodeModel history preserves operation', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText("... --- ...");
+      model.addToHistory();
+      expect(model.history[0].operation, 'decode');
+    });
+
+    test('MorseCodeModel roundtrip encode decode', () {
+      final model = MorseCodeModel();
+      model.init();
+      final original = "HELLO WORLD 123";
+      model.setOperation('encode');
+      model.setInputText(original);
+      final encoded = model.outputText;
+      model.setOperation('decode');
+      model.setInputText(encoded);
+      expect(model.outputText, original);
+    });
+
+    test('MorseCodeModel roundtrip decode encode', () {
+      final model = MorseCodeModel();
+      model.init();
+      final original = ".... . .-.. .-.. --- / .-- --- .-. .-.. -..";
+      model.setOperation('decode');
+      model.setInputText(original);
+      final decoded = model.outputText;
+      model.setOperation('encode');
+      model.setInputText(decoded);
+      expect(model.outputText, original);
+    });
+
+    test('MorseCodeModel encode handles special characters', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('encode');
+      model.setInputText("HELLO.WORLD");
+      expect(model.outputText, contains('.-.-.-'));
+      expect(model.error, null);
+    });
+
+    test('MorseCodeModel decode handles special characters', () {
+      final model = MorseCodeModel();
+      model.init();
+      model.setOperation('decode');
+      model.setInputText(".- .-.-.- -...");
+      expect(model.outputText, "A.B");
+      expect(model.error, null);
     });
   });
 }

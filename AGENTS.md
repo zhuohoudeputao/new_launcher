@@ -631,6 +631,20 @@ Settings auto-saved via `SharedPreferences`:
     - Error handling for invalid input
     - Uses `Card.filled` and `SegmentedButton` for Material 3 style
     - Keywords: encode, decode, base64, url, html, json, escape, text, string, convert
+- **MorseCode**: Morse code encoder/decoder
+    - Convert text to Morse code (dots and dashes)
+    - Convert Morse code to text
+    - Supports letters A-Z, numbers 0-9, and common punctuation
+    - Space represented as '/' in Morse code
+    - Swap encode/decode operation with one tap
+    - Real-time conversion as you type
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse previous conversions
+    - Clear history with confirmation dialog
+    - Copy output to clipboard
+    - Unknown characters shown as '?' in output
+    - Uses `Card.filled` and `SegmentedButton` for Material 3 style
+    - Keywords: morse, code, encode, decode, dot, dash, signal, telegraph, convert
 
 ## Material 3 Design System
 
@@ -747,7 +761,7 @@ Test coverage includes:
 - Debt provider tests (provider existence, keywords, model state, CRUD operations, owed tracking, history, widget rendering)
 - Interval Timer provider tests (provider existence, keywords, model state, presets, phase operations, timer controls, widget rendering)
   
-Total tests: 1370 tests
+Total tests: 1419 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

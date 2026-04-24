@@ -62,6 +62,7 @@ import 'package:new_launcher/providers/provider_gratitude.dart';
 import 'package:new_launcher/providers/provider_debt.dart';
 import 'package:new_launcher/providers/provider_interval_timer.dart';
 import 'package:new_launcher/providers/provider_textencoder.dart';
+import 'package:new_launcher/providers/provider_morse.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -237,6 +238,7 @@ class Global {
     providerDebt,
     providerIntervalTimer,
     providerTextEncoder,
+    providerMorseCode,
   ];
 
   //_______________________________________________________________________
