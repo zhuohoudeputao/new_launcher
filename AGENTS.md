@@ -972,6 +972,15 @@ Settings auto-saved via `SharedPreferences`:
     - Copy output to clipboard
     - Uses `Card.filled`, `SegmentedButton` for Material 3 style
     - Keywords: nato, phonetic, alphabet, radio, spelling, alpha, bravo, charlie, encode, decode
+- **SpeedConverter**: Speed unit converter for velocity conversions
+    - Convert between 5 speed units: km/h, mph, m/s, ft/s, knot
+    - Real-time conversion as values are entered
+    - Swap input/output units with one tap
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `DropdownButton`, `TextField` for Material 3 style
+    - Keywords: speed, convert, kmh, mph, ms, knots, velocity, fast
 
 ## Material 3 Design System
 
@@ -1112,8 +1121,9 @@ Test coverage includes:
 - RomanNumerals provider tests (provider existence, keywords, model state, number to Roman conversion, Roman to number conversion, validation, history, widget rendering)
 - Palindrome provider tests (provider existence, keywords, model state, palindrome detection, options handling, history, widget rendering)
 - NatoPhonetic provider tests (provider existence, keywords, model state, NATO encoding/decoding, history, reference toggle, widget rendering)
+- SpeedConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 
-Total tests: 2126 tests
+Total tests: 2162 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1204,6 +1214,7 @@ Technical documentation is available in `docs/`:
 - `hangman_provider.md` - Hangman provider implementation for word guessing game
 - `sudoku_provider.md` - Sudoku provider implementation for classic puzzle game
 - `palindrome_provider.md` - Palindrome Checker provider implementation for palindrome detection
+- `speed_converter_provider.md` - Speed Converter provider implementation for speed unit conversions
 
 ## Notice
 DO NOT EDIT task*.md

@@ -78,6 +78,7 @@ import 'package:new_launcher/providers/provider_sunposition.dart';
 import 'package:new_launcher/providers/provider_romannumerals.dart';
 import 'package:new_launcher/providers/provider_palindrome.dart';
 import 'package:new_launcher/providers/provider_nato.dart';
+import 'package:new_launcher/providers/provider_speed.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -21636,6 +21637,323 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       natoPhoneticModel.clearHistory();
+    });
+  });
+
+  group('SpeedConverter Provider tests', () {
+    test('providerSpeedConverter exists in Global.providerList', () {
+      final speedProvider = Global.providerList.where((p) => p.name == 'SpeedConverter').first;
+      expect(speedProvider.name, 'SpeedConverter');
+    });
+
+    test('SpeedConverter keywords include speed', () {
+      final speedProvider = Global.providerList.where((p) => p.name == 'SpeedConverter').first;
+      expect(speedProvider.name, 'SpeedConverter');
+    });
+
+    test('speedConverterModel global instance exists', () {
+      expect(speedConverterModel, isNotNull);
+      expect(speedConverterModel.isInitialized, false);
+    });
+
+    test('SpeedConverterModel starts uninitialized', () {
+      final model = SpeedConverterModel();
+      expect(model.isInitialized, false);
+    });
+
+    test('SpeedConverterModel is ChangeNotifier', () {
+      final model = SpeedConverterModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('SpeedConverterModel init sets initialized', () {
+      final model = SpeedConverterModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('SpeedConverterModel default units', () {
+      final model = SpeedConverterModel();
+      model.init();
+      expect(model.inputUnit, 'kmh');
+      expect(model.outputUnit, 'mph');
+    });
+
+    test('SpeedConverterModel setInputUnit works', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputUnit('ms');
+      expect(model.inputUnit, 'ms');
+    });
+
+    test('SpeedConverterModel setOutputUnit works', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setOutputUnit('knot');
+      expect(model.outputUnit, 'knot');
+    });
+
+    test('SpeedConverterModel setInputValue works', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputValue('100');
+      expect(model.inputValue, '100');
+    });
+
+    test('SpeedConverterModel swapUnits works', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputValue('100');
+      final originalInput = model.inputUnit;
+      final originalOutput = model.outputUnit;
+      model.swapUnits();
+      expect(model.inputUnit, originalOutput);
+      expect(model.outputUnit, originalInput);
+    });
+
+    test('SpeedConverterModel clear works', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.clear();
+      expect(model.inputValue, '0');
+    });
+
+    test('SpeedConverterModel conversion kmh to mph', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputValue('100');
+      expect(double.parse(model.outputValue), closeTo(62.137, 0.01));
+    });
+
+    test('SpeedConverterModel conversion mph to kmh', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputUnit('mph');
+      model.setOutputUnit('kmh');
+      model.setInputValue('60');
+      expect(double.parse(model.outputValue), closeTo(96.56, 0.01));
+    });
+
+    test('SpeedConverterModel conversion kmh to ms', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputUnit('kmh');
+      model.setOutputUnit('ms');
+      model.setInputValue('36');
+      expect(double.parse(model.outputValue), closeTo(10, 0.01));
+    });
+
+    test('SpeedConverterModel conversion ms to fts', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputUnit('ms');
+      model.setOutputUnit('fts');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(3.281, 0.01));
+    });
+
+    test('SpeedConverterModel conversion knot to kmh', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputUnit('knot');
+      model.setOutputUnit('kmh');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(1.852, 0.01));
+    });
+
+    test('SpeedConverter static convert method works', () {
+      expect(SpeedConverterModel.convert(100, 'kmh', 'mph'), closeTo(62.137, 0.01));
+      expect(SpeedConverterModel.convert(60, 'mph', 'kmh'), closeTo(96.56, 0.01));
+      expect(SpeedConverterModel.convert(36, 'kmh', 'ms'), closeTo(10, 0.01));
+      expect(SpeedConverterModel.convert(1, 'ms', 'fts'), closeTo(3.281, 0.01));
+    });
+
+    test('SpeedConverter static convert same unit returns same value', () {
+      expect(SpeedConverterModel.convert(100, 'kmh', 'kmh'), 100);
+      expect(SpeedConverterModel.convert(50, 'mph', 'mph'), 50);
+    });
+
+    test('SpeedConverterModel handles invalid input', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputValue('abc');
+      expect(model.outputValue, '0');
+    });
+
+    test('SpeedConverterModel handles negative values', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputValue('-10');
+      expect(double.parse(model.outputValue), closeTo(-6.214, 0.01));
+    });
+
+    test('SpeedConverterModel handles decimal values', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputValue('50.5');
+      expect(double.parse(model.outputValue), closeTo(31.37, 0.01));
+    });
+
+    test('SpeedConverterModel history works', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].inputValue, 100);
+      expect(model.history[0].inputUnit, 'kmh');
+    });
+
+    test('SpeedConverterModel clearHistory works', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('SpeedConverterModel history max limit', () {
+      final model = SpeedConverterModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputValue(i.toString());
+        model.addToHistory();
+      }
+      expect(model.history.length, SpeedConverterModel.maxHistory);
+    });
+
+    test('SpeedConverterModel availableUnits returns correct units', () {
+      final model = SpeedConverterModel();
+      expect(model.availableUnits, contains('kmh'));
+      expect(model.availableUnits, contains('mph'));
+      expect(model.availableUnits, contains('ms'));
+      expect(model.availableUnits, contains('fts'));
+      expect(model.availableUnits, contains('knot'));
+    });
+
+    test('SpeedConverterModel refresh calls notifyListeners', () {
+      final model = SpeedConverterModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('SpeedConverterModel useHistoryEntry works', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputUnit('mph');
+      model.setOutputUnit('kmh');
+      model.setInputValue('60');
+      model.addToHistory();
+      
+      final entry = model.history[0];
+      model.setInputUnit('ms');
+      model.setOutputUnit('fts');
+      model.useHistoryEntry(entry);
+      
+      expect(model.inputUnit, 'mph');
+      expect(model.outputUnit, 'kmh');
+    });
+
+    testWidgets('SpeedConverterCard renders loading state', (WidgetTester tester) async {
+      final model = SpeedConverterModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SpeedConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Speed Converter: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('SpeedConverterCard renders initialized state', (WidgetTester tester) async {
+      final model = SpeedConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => SpeedConverterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Speed Converter'), findsOneWidget);
+      expect(find.byIcon(Icons.swap_horiz), findsOneWidget);
+    });
+
+    testWidgets('SpeedConverterCard shows input field', (WidgetTester tester) async {
+      final model = SpeedConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => SpeedConverterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsOneWidget);
+    });
+
+    testWidgets('SpeedConverterCard shows unit dropdowns', (WidgetTester tester) async {
+      final model = SpeedConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => SpeedConverterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byType(DropdownButton<String>, skipOffstage: false), findsNWidgets(2));
+    });
+
+    test('SpeedConverterCard widget exists', () {
+      expect(SpeedConverterCard, isNotNull);
+    });
+
+    test('Global.providerList includes SpeedConverter', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('SpeedConverter'), true);
+    });
+
+    test('SpeedConverterModel prevents same input/output units', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setInputUnit('mph');
+      expect(model.outputUnit, isNot('mph'));
+    });
+
+    test('SpeedConverterModel prevents same output/input units', () {
+      final model = SpeedConverterModel();
+      model.init();
+      model.setOutputUnit('kmh');
+      expect(model.inputUnit, isNot('kmh'));
+    });
+
+    tearDownAll(() {
+      speedConverterModel.clearHistory();
     });
   });
 }
