@@ -734,6 +734,17 @@ Settings auto-saved via `SharedPreferences`:
     - "Today" quick action button
     - Uses `Card.filled`, `ActionChip`, `showDatePicker` for Material 3 style
     - Keywords: moon, phase, lunar, cycle, full, new, crescent, gibbous, waxing, waning, quarter
+- **ReactionTime**: Reaction time tester for measuring response speed
+    - Test reaction speed with visual signal
+    - Random delay between 1-5 seconds before signal appears
+    - Detect early taps with "Too early" warning
+    - Track best time, average time, and attempt count
+    - History tracking for up to 10 attempts
+    - Trophy icon indicator for best time
+    - Clear all history with confirmation dialog
+    - Reaction time persisted in history via SharedPreferences
+    - Uses `Card.filled`, `GestureDetector`, circular button for Material 3 style
+    - Keywords: reaction, time, reflex, speed, test, tap, quick, fast, response
 
 ## Material 3 Design System
 
@@ -855,8 +866,9 @@ Test coverage includes:
 - UUID provider tests (provider existence, keywords, model state, UUID v4 generation, UUID v1 generation, short UUID generation, history, widget rendering)
 - PasswordStrength provider tests (provider existence, keywords, model state, password analysis, strength scoring, feedback, history, widget rendering)
 - MoonPhase provider tests (provider existence, keywords, model state, moon age calculation, illumination percentage, phase name/emoji validation, next new/full moon, date operations, widget rendering)
+- ReactionTime provider tests (provider existence, keywords, model state, reaction time operations, history, widget rendering)
   
-Total tests: 1587 tests
+Total tests: 1613 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -942,6 +954,7 @@ Technical documentation is available in `docs/`:
 - `wordcounter_provider.md` - Word Counter provider implementation for text analysis
 - `passwordstrength_provider.md` - Password Strength provider implementation for security analysis
 - `moonphase_provider.md` - Moon Phase provider implementation for lunar phase calculation
+- `reactiontime_provider.md` - Reaction Time provider implementation for reaction speed testing
 
 ## Notice
 DO NOT EDIT task*.md

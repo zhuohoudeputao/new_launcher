@@ -71,6 +71,7 @@ import 'package:new_launcher/providers/provider_loremipsum.dart';
 import 'package:new_launcher/providers/provider_uuid.dart';
 import 'package:new_launcher/providers/provider_passwordstrength.dart';
 import 'package:new_launcher/providers/provider_moonphase.dart';
+import 'package:new_launcher/providers/provider_reactiontime.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -255,6 +256,7 @@ class Global {
     providerUUID,
     providerPasswordStrength,
     providerMoonPhase,
+    providerReactionTime,
   ];
 
   //_______________________________________________________________________

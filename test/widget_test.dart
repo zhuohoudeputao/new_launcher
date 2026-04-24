@@ -59,6 +59,7 @@ import 'package:new_launcher/providers/provider_loremipsum.dart';
 import 'package:new_launcher/providers/provider_uuid.dart';
 import 'package:new_launcher/providers/provider_passwordstrength.dart';
 import 'package:new_launcher/providers/provider_moonphase.dart';
+import 'package:new_launcher/providers/provider_reactiontime.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2499,7 +2500,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 60);
+      expect(Global.providerList.length, 61);
     });
 
     test('Global.providerList names are correct', () {
@@ -3666,7 +3667,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 60);
+      expect(initCount, 61);
     });
   });
 
@@ -3984,7 +3985,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (59 total)', () {
-      expect(Global.providerList.length, 60);
+      expect(Global.providerList.length, 61);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5328,7 +5329,7 @@ test('Global.providerList contains all providers (59 total)', () {
     });
 
 test('Global.providerList contains all providers (59 total)', () {
-      expect(Global.providerList.length, 60);
+      expect(Global.providerList.length, 61);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -16492,6 +16493,218 @@ test('Global.providerList contains all providers (59 total)', () {
     test('MoonPhase keywords are registered', () {
       final provider = Global.providerList.firstWhere((p) => p.name == 'MoonPhase');
       expect(provider.name, 'MoonPhase');
+    });
+
+    tearDownAll(() {
+      Global.loggerModel.clear();
+    });
+  });
+
+  group('ReactionTime Provider tests', () {
+    test('providerReactionTime exists in Global.providerList', () {
+      final reactionTimeProvider = Global.providerList.where((p) => p.name == 'ReactionTime').first;
+      expect(reactionTimeProvider.name, 'ReactionTime');
+    });
+
+    test('ReactionTimeModel is ChangeNotifier', () {
+      final model = ReactionTimeModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    test('ReactionTimeModel initial state is waiting', () {
+      final model = ReactionTimeModel();
+      expect(model.state, ReactionState.waiting);
+    });
+
+    test('ReactionTimeModel initial values are null', () {
+      final model = ReactionTimeModel();
+      expect(model.lastReactionTime, null);
+      expect(model.bestTime, null);
+      expect(model.averageTime, null);
+      expect(model.attemptCount, 0);
+      expect(model.history.isEmpty, true);
+    });
+
+    test('ReactionTimeModel init sets isInitialized', () {
+      final model = ReactionTimeModel();
+      expect(model.isInitialized, false);
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('ReactionTimeModel maxHistory constant is 10', () {
+      expect(ReactionTimeModel.maxHistory, 10);
+    });
+
+    test('ReactionTimeModel minDelayMs constant is 1000', () {
+      expect(ReactionTimeModel.minDelayMs, 1000);
+    });
+
+    test('ReactionTimeModel maxDelayMs constant is 5000', () {
+      expect(ReactionTimeModel.maxDelayMs, 5000);
+    });
+
+    test('ReactionTimeModel hasHistory is false initially', () {
+      final model = ReactionTimeModel();
+      expect(model.hasHistory, false);
+    });
+
+    test('ReactionTimeModel reset clears all data', () {
+      final model = ReactionTimeModel();
+      model.init();
+      
+      model.startTest();
+      model.startTest();
+      model.startTest();
+      
+      model.reset();
+      expect(model.state, ReactionState.waiting);
+      expect(model.lastReactionTime, null);
+      expect(model.bestTime, null);
+      expect(model.averageTime, null);
+      expect(model.attemptCount, 0);
+      expect(model.history.isEmpty, true);
+    });
+
+    test('ReactionTimeModel clearHistory clears history', () {
+      final model = ReactionTimeModel();
+      model.init();
+      
+      model.startTest();
+      model.startTest();
+      model.startTest();
+      
+      model.clearHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('ReactionTimeModel requestFocus sets shouldFocus', () {
+      final model = ReactionTimeModel();
+      expect(model.shouldFocus, false);
+      model.requestFocus();
+      expect(model.shouldFocus, true);
+    });
+
+    test('ReactionTime keywords include reaction', () {
+      final keywords = 'reaction time reflex speed test tap quick fast response';
+      expect(keywords.contains('reaction'), true);
+    });
+
+    test('ReactionTime keywords include reflex', () {
+      final keywords = 'reaction time reflex speed test tap quick fast response';
+      expect(keywords.contains('reflex'), true);
+    });
+
+    test('ReactionTime keywords include speed', () {
+      final keywords = 'reaction time reflex speed test tap quick fast response';
+      expect(keywords.contains('speed'), true);
+    });
+
+    test('ReactionTime keywords include tap', () {
+      final keywords = 'reaction time reflex speed test tap quick fast response';
+      expect(keywords.contains('tap'), true);
+    });
+
+    test('Global.providerList includes ReactionTime', () {
+      final hasReactionTime = Global.providerList.any((p) => p.name == 'ReactionTime');
+      expect(hasReactionTime, true);
+    });
+
+    testWidgets('ReactionTimeCard renders loading state', (WidgetTester tester) async {
+      final model = ReactionTimeModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: ReactionTimeCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('ReactionTime: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('ReactionTimeCard renders initialized state', (WidgetTester tester) async {
+      final model = ReactionTimeModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ReactionTimeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Reaction Time'), findsOneWidget);
+      expect(find.byIcon(Icons.timer), findsWidgets);
+    });
+
+    testWidgets('ReactionTimeCard shows waiting state', (WidgetTester tester) async {
+      final model = ReactionTimeModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ReactionTimeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Wait...'), findsOneWidget);
+    });
+
+    testWidgets('ReactionTimeCard shows stats row', (WidgetTester tester) async {
+      final model = ReactionTimeModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ReactionTimeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Best'), findsOneWidget);
+      expect(find.text('Avg'), findsOneWidget);
+      expect(find.text('Attempts'), findsOneWidget);
+      expect(find.text('--'), findsWidgets);
+    });
+
+    test('ReactionState enum has all states', () {
+      expect(ReactionState.values.length, 5);
+      expect(ReactionState.values.contains(ReactionState.waiting), true);
+      expect(ReactionState.values.contains(ReactionState.go), true);
+      expect(ReactionState.values.contains(ReactionState.result), true);
+      expect(ReactionState.values.contains(ReactionState.early), true);
+    });
+
+    test('ReactionState waiting state exists', () {
+      expect(ReactionState.waiting.toString(), 'ReactionState.waiting');
+    });
+
+    test('ReactionState go state exists', () {
+      expect(ReactionState.go.toString(), 'ReactionState.go');
+    });
+
+    test('ReactionState result state exists', () {
+      expect(ReactionState.result.toString(), 'ReactionState.result');
+    });
+
+    test('ReactionState early state exists', () {
+      expect(ReactionState.early.toString(), 'ReactionState.early');
     });
 
     tearDownAll(() {
