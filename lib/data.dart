@@ -92,6 +92,7 @@ import 'package:new_launcher/providers/provider_palindrome.dart';
 import 'package:new_launcher/providers/provider_nato.dart';
 import 'package:new_launcher/providers/provider_speed.dart';
 import 'package:new_launcher/providers/provider_volume.dart';
+import 'package:new_launcher/providers/provider_angle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -297,6 +298,7 @@ class Global {
     providerNatoPhonetic,
     providerSpeedConverter,
     providerVolumeConverter,
+    providerAngleConverter,
   ];
 
   //_______________________________________________________________________

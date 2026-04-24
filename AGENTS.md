@@ -990,6 +990,15 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `DropdownButton`, `TextField` for Material 3 style
     - Keywords: volume, convert, liter, gallon, ml, milliliter, quart, pint, cup, fluid ounce, cubic meter, cm3, in3, cc
+- **AngleConverter**: Angle unit converter for mathematics and engineering
+    - Convert between 3 angle units: degrees (°), radians (rad), gradians (grad)
+    - Real-time conversion as values are entered
+    - Swap input/output units with one tap
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `DropdownButton`, `TextField` for Material 3 style
+    - Keywords: angle, convert, degree, radian, gradian, deg, rad, grad
 
 ## Material 3 Design System
 
@@ -1132,8 +1141,9 @@ Test coverage includes:
 - NatoPhonetic provider tests (provider existence, keywords, model state, NATO encoding/decoding, history, reference toggle, widget rendering)
 - SpeedConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - VolumeConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
+- AngleConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 
-Total tests: 2198 tests
+Total tests: 2234 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

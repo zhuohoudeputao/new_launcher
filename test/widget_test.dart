@@ -80,6 +80,7 @@ import 'package:new_launcher/providers/provider_palindrome.dart';
 import 'package:new_launcher/providers/provider_nato.dart';
 import 'package:new_launcher/providers/provider_speed.dart';
 import 'package:new_launcher/providers/provider_volume.dart';
+import 'package:new_launcher/providers/provider_angle.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2520,7 +2521,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 81);
+      expect(Global.providerList.length, 82);
     });
 
     test('Global.providerList names are correct', () {
@@ -3687,7 +3688,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 81);
+      expect(initCount, 82);
     });
   });
 
@@ -4005,7 +4006,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 81);
+      expect(Global.providerList.length, 82);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5349,7 +5350,7 @@ test('Global.providerList contains all providers (71 total)', () {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 81);
+      expect(Global.providerList.length, 82);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -22277,6 +22278,321 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       volumeConverterModel.clearHistory();
+    });
+  });
+
+  group('AngleConverter Provider tests', () {
+    test('providerAngleConverter exists in Global.providerList', () {
+      final angleProvider = Global.providerList.where((p) => p.name == 'AngleConverter').first;
+      expect(angleProvider.name, 'AngleConverter');
+    });
+
+    test('AngleConverter keywords include angle', () {
+      final angleProvider = Global.providerList.where((p) => p.name == 'AngleConverter').first;
+      expect(angleProvider.name, 'AngleConverter');
+    });
+
+    test('angleConverterModel global instance exists', () {
+      expect(angleConverterModel, isNotNull);
+      expect(angleConverterModel.isInitialized, false);
+    });
+
+    test('AngleConverterModel starts uninitialized', () {
+      final model = AngleConverterModel();
+      expect(model.isInitialized, false);
+    });
+
+    test('AngleConverterModel is ChangeNotifier', () {
+      final model = AngleConverterModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('AngleConverterModel init sets initialized', () {
+      final model = AngleConverterModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('AngleConverterModel default units', () {
+      final model = AngleConverterModel();
+      model.init();
+      expect(model.inputUnit, 'deg');
+      expect(model.outputUnit, 'rad');
+    });
+
+    test('AngleConverterModel setInputUnit works', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputUnit('grad');
+      expect(model.inputUnit, 'grad');
+    });
+
+    test('AngleConverterModel setOutputUnit works', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setOutputUnit('grad');
+      expect(model.outputUnit, 'grad');
+    });
+
+    test('AngleConverterModel setInputValue works', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputValue('90');
+      expect(model.inputValue, '90');
+    });
+
+    test('AngleConverterModel swapUnits works', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputValue('90');
+      final originalInput = model.inputUnit;
+      final originalOutput = model.outputUnit;
+      model.swapUnits();
+      expect(model.inputUnit, originalOutput);
+      expect(model.outputUnit, originalInput);
+    });
+
+    test('AngleConverterModel clear works', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputValue('90');
+      model.clear();
+      expect(model.inputValue, '0');
+    });
+
+    test('AngleConverterModel conversion deg to rad', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputValue('180');
+      expect(double.parse(model.outputValue), closeTo(3.14159, 0.001));
+    });
+
+    test('AngleConverterModel conversion rad to deg', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputUnit('rad');
+      model.setOutputUnit('deg');
+      model.setInputValue('3.14159');
+      expect(double.parse(model.outputValue), closeTo(180, 0.01));
+    });
+
+    test('AngleConverterModel conversion deg to grad', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputUnit('deg');
+      model.setOutputUnit('grad');
+      model.setInputValue('90');
+      expect(double.parse(model.outputValue), closeTo(100, 0.01));
+    });
+
+    test('AngleConverterModel conversion grad to deg', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputUnit('grad');
+      model.setOutputUnit('deg');
+      model.setInputValue('100');
+      expect(double.parse(model.outputValue), closeTo(90, 0.01));
+    });
+
+    test('AngleConverterModel conversion rad to grad', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputUnit('rad');
+      model.setOutputUnit('grad');
+      model.setInputValue('1.5708');
+      expect(double.parse(model.outputValue), closeTo(100, 0.1));
+    });
+
+    test('AngleConverter static convert method works', () {
+      expect(AngleConverterModel.convert(180, 'deg', 'rad'), closeTo(3.14159, 0.001));
+      expect(AngleConverterModel.convert(3.14159, 'rad', 'deg'), closeTo(180, 0.01));
+      expect(AngleConverterModel.convert(90, 'deg', 'grad'), closeTo(100, 0.01));
+      expect(AngleConverterModel.convert(100, 'grad', 'deg'), closeTo(90, 0.01));
+    });
+
+    test('AngleConverter static convert same unit returns same value', () {
+      expect(AngleConverterModel.convert(90, 'deg', 'deg'), 90);
+      expect(AngleConverterModel.convert(1.57, 'rad', 'rad'), closeTo(1.57, 0.01));
+    });
+
+    test('AngleConverterModel handles invalid input', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputValue('abc');
+      expect(model.outputValue, '0');
+    });
+
+    test('AngleConverterModel handles negative values', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputValue('-90');
+      expect(double.parse(model.outputValue), closeTo(-1.5708, 0.001));
+    });
+
+    test('AngleConverterModel handles decimal values', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputValue('45.5');
+      expect(double.parse(model.outputValue), closeTo(0.794, 0.01));
+    });
+
+    test('AngleConverterModel history works', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputValue('90');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].inputValue, 90);
+      expect(model.history[0].inputUnit, 'deg');
+    });
+
+    test('AngleConverterModel clearHistory works', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputValue('90');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('AngleConverterModel history max limit', () {
+      final model = AngleConverterModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputValue(i.toString());
+        model.addToHistory();
+      }
+      expect(model.history.length, AngleConverterModel.maxHistory);
+    });
+
+    test('AngleConverterModel availableUnits returns correct units', () {
+      final model = AngleConverterModel();
+      expect(model.availableUnits, contains('deg'));
+      expect(model.availableUnits, contains('rad'));
+      expect(model.availableUnits, contains('grad'));
+    });
+
+    test('AngleConverterModel refresh calls notifyListeners', () {
+      final model = AngleConverterModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('AngleConverterModel useHistoryEntry works', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputUnit('rad');
+      model.setOutputUnit('deg');
+      model.setInputValue('1.57');
+      model.addToHistory();
+      
+      final entry = model.history[0];
+      model.setInputUnit('grad');
+      model.setOutputUnit('deg');
+      model.useHistoryEntry(entry);
+      
+      expect(model.inputUnit, 'rad');
+      expect(model.outputUnit, 'deg');
+    });
+
+    testWidgets('AngleConverterCard renders loading state', (WidgetTester tester) async {
+      final model = AngleConverterModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => AngleConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Angle Converter: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('AngleConverterCard renders initialized state', (WidgetTester tester) async {
+      final model = AngleConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => AngleConverterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Angle Converter'), findsOneWidget);
+      expect(find.byIcon(Icons.swap_horiz), findsOneWidget);
+    });
+
+    testWidgets('AngleConverterCard shows input field', (WidgetTester tester) async {
+      final model = AngleConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => AngleConverterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsOneWidget);
+    });
+
+    testWidgets('AngleConverterCard shows unit dropdowns', (WidgetTester tester) async {
+      final model = AngleConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => AngleConverterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byType(DropdownButton<String>, skipOffstage: false), findsNWidgets(2));
+    });
+
+    test('AngleConverterCard widget exists', () {
+      expect(AngleConverterCard, isNotNull);
+    });
+
+    test('Global.providerList includes AngleConverter', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('AngleConverter'), true);
+    });
+
+    test('AngleConverterModel prevents same input/output units', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setInputUnit('rad');
+      expect(model.outputUnit, isNot('rad'));
+    });
+
+    test('AngleConverterModel prevents same output/input units', () {
+      final model = AngleConverterModel();
+      model.init();
+      model.setOutputUnit('deg');
+      expect(model.inputUnit, isNot('deg'));
+    });
+
+    tearDownAll(() {
+      angleConverterModel.clearHistory();
     });
   });
 }

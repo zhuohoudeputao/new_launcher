@@ -81,7 +81,9 @@ import 'package:new_launcher/providers/provider_sunposition.dart';
 import 'package:new_launcher/providers/provider_romannumerals.dart';
 import 'package:new_launcher/providers/provider_palindrome.dart';
 import 'package:new_launcher/providers/provider_nato.dart';
+import 'package:new_launcher/providers/provider_speed.dart';
 import 'package:new_launcher/providers/provider_volume.dart';
+import 'package:new_launcher/providers/provider_angle.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -237,7 +239,9 @@ ChangeNotifierProvider.value(value: sunPositionModel),
               ChangeNotifierProvider.value(value: romanNumeralsModel),
               ChangeNotifierProvider.value(value: palindromeModel),
               ChangeNotifierProvider.value(value: natoPhoneticModel),
+              ChangeNotifierProvider.value(value: speedConverterModel),
               ChangeNotifierProvider.value(value: volumeConverterModel),
+              ChangeNotifierProvider.value(value: angleConverterModel),
               ],
           child: MyApp(),
             )));
