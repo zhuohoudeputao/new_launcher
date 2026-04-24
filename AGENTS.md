@@ -881,6 +881,19 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `TextField`, `SelectableText`, `RichText` for Material 3 style
     - Keywords: typing, test, speed, wpm, words, per, minute, type, keyboard, fast, accuracy
+- **Simon**: Color sequence memory game
+    - Classic Simon memory game with 4 colors (red, green, blue, yellow)
+    - Watch the sequence and repeat it correctly
+    - Each successful round adds one more color to the sequence
+    - Game ends when player makes a mistake
+    - Level tracking showing current sequence length
+    - Highest level (best score) tracking
+    - Games played and completed statistics
+    - Completion rate percentage display
+    - History tracking (up to 10 games)
+    - Reset stats with confirmation dialog
+    - Uses `Card.filled`, `GridView`, `GestureDetector` for Material 3 style
+    - Keywords: simon, memory, sequence, color, pattern, game, play, repeat
 
 ## Material 3 Design System
 
@@ -1014,8 +1027,9 @@ Test coverage includes:
 - Game2048 provider tests (provider existence, keywords, model state, grid operations, move operations, statistics, history, widget rendering)
 - Wordle provider tests (provider existence, keywords, model state, letter operations, guess evaluation, statistics, history, widget rendering)
 - TypingTest provider tests (provider existence, keywords, model state, typing operations, WPM calculation, accuracy, history, widget rendering)
+- Simon provider tests (provider existence, keywords, model state, game operations, statistics, history, widget rendering)
   
-Total tests: 1925 tests
+Total tests: 1944 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

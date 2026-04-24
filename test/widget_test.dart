@@ -71,6 +71,7 @@ import 'package:new_launcher/providers/provider_minesweeper.dart';
 import 'package:new_launcher/providers/provider_2048.dart';
 import 'package:new_launcher/providers/provider_wordle.dart';
 import 'package:new_launcher/providers/provider_typingtest.dart';
+import 'package:new_launcher/providers/provider_simon.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2511,7 +2512,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 72);
+      expect(Global.providerList.length, 73);
     });
 
     test('Global.providerList names are correct', () {
@@ -3678,7 +3679,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 72);
+      expect(initCount, 73);
     });
   });
 
@@ -3996,7 +3997,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 72);
+      expect(Global.providerList.length, 73);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5340,7 +5341,7 @@ test('Global.providerList contains all providers (71 total)', () {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 72);
+      expect(Global.providerList.length, 73);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -19799,6 +19800,184 @@ test('WordleModel submitGuess works', () async {
     test('Global.providerList includes TypingTest', () {
       final hasTypingTest = Global.providerList.any((p) => p.name == 'TypingTest');
       expect(hasTypingTest, true);
+    });
+  });
+
+  group('Simon Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('SimonGameEntry properties', () {
+      final entry = SimonGameEntry(
+        level: 5,
+        completed: true,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.level, 5);
+      expect(entry.completed, true);
+      expect(entry.timestamp, isNotNull);
+    });
+
+    test('SimonModel default values', () {
+      final model = SimonModel();
+      expect(model.state, SimonState.ready);
+      expect(model.currentLevel, 0);
+      expect(model.highestLevel, 0);
+      expect(model.sequence.isEmpty, true);
+      expect(model.gamesPlayed, 0);
+      expect(model.gamesCompleted, 0);
+      expect(model.hasHistory, false);
+      expect(model.isInitialized, false);
+    });
+
+    test('SimonModel init', () {
+      final model = SimonModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.state, SimonState.ready);
+    });
+
+    test('SimonModel startGame', () {
+      final model = SimonModel();
+      model.init();
+      model.startGame();
+      expect(model.state, SimonState.showingSequence);
+      expect(model.currentLevel, 1);
+      expect(model.sequence.length, 1);
+      expect(model.gamesPlayed, 1);
+    });
+
+    test('SimonModel resetGame', () {
+      final model = SimonModel();
+      model.init();
+      model.startGame();
+      model.resetGame();
+      expect(model.state, SimonState.ready);
+      expect(model.currentLevel, 0);
+      expect(model.sequence.isEmpty, true);
+    });
+
+    test('SimonModel resetStats', () {
+      final model = SimonModel();
+      model.init();
+      model.startGame();
+      model.resetStats();
+      expect(model.gamesPlayed, 0);
+      expect(model.gamesCompleted, 0);
+      expect(model.highestLevel, 0);
+      expect(model.hasHistory, false);
+    });
+
+    test('SimonModel clearHistory', () {
+      final model = SimonModel();
+      model.init();
+      model.clearHistory();
+      expect(model.hasHistory, false);
+    });
+
+    test('SimonModel getCompletionRate', () {
+      final model = SimonModel();
+      expect(model.getCompletionRate(), 0);
+    });
+
+    test('SimonModel history respects max limit', () {
+      expect(SimonModel.maxHistory, 10);
+    });
+
+    test('SimonModel refresh calls notifyListeners', () {
+      final model = SimonModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('SimonColor enum values', () {
+      expect(SimonColor.values.length, 4);
+      expect(SimonColor.values.contains(SimonColor.red), true);
+      expect(SimonColor.values.contains(SimonColor.green), true);
+      expect(SimonColor.values.contains(SimonColor.blue), true);
+      expect(SimonColor.values.contains(SimonColor.yellow), true);
+    });
+
+    test('SimonState enum values', () {
+      expect(SimonState.values.length, 4);
+      expect(SimonState.values.contains(SimonState.ready), true);
+      expect(SimonState.values.contains(SimonState.showingSequence), true);
+      expect(SimonState.values.contains(SimonState.waitingInput), true);
+      expect(SimonState.values.contains(SimonState.gameOver), true);
+    });
+
+    test('providerSimon exists', () {
+      expect(providerSimon, isNotNull);
+      expect(providerSimon.name, 'Simon');
+    });
+
+    test('providerSimon keywords', () {
+      expect(providerSimon.name, 'Simon');
+      final action = MyAction(
+        name: 'Simon',
+        keywords: 'simon memory sequence color pattern game play repeat',
+        action: () {},
+        times: List.generate(24, (_) => 0),
+      );
+      expect(action.canIdentifyBy('simon'), true);
+      expect(action.canIdentifyBy('memory'), true);
+      expect(action.canIdentifyBy('game'), true);
+    });
+
+    test('SimonCard renders loading state', () {
+      final model = SimonModel();
+      MaterialApp app = MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SimonCard(),
+          ),
+        ),
+      );
+      expect(app, isNotNull);
+    });
+
+    testWidgets('SimonCard renders initialized state', (WidgetTester tester) async {
+      final model = SimonModel();
+      model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SimonCard(),
+          ),
+        ),
+      ));
+      expect(find.text('Simon'), findsOneWidget);
+      expect(find.text('Start'), findsOneWidget);
+    });
+
+    testWidgets('SimonCard shows level display', (WidgetTester tester) async {
+      final model = SimonModel();
+      model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SimonCard(),
+          ),
+        ),
+      ));
+      expect(find.text('Level: 0'), findsOneWidget);
+    });
+
+    test('SimonCard widget exists', () {
+      expect(SimonCard, isNotNull);
+    });
+
+    test('Global.providerList includes Simon', () {
+      final hasSimon = Global.providerList.any((p) => p.name == 'Simon');
+      expect(hasSimon, true);
     });
   });
 }

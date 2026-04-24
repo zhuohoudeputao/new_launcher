@@ -83,6 +83,7 @@ import 'package:new_launcher/providers/provider_minesweeper.dart';
 import 'package:new_launcher/providers/provider_2048.dart';
 import 'package:new_launcher/providers/provider_wordle.dart';
 import 'package:new_launcher/providers/provider_typingtest.dart';
+import 'package:new_launcher/providers/provider_simon.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -279,6 +280,7 @@ class Global {
     provider2048,
     providerWordle,
     providerTypingTest,
+    providerSimon,
   ];
 
   //_______________________________________________________________________

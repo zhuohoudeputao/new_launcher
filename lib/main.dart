@@ -69,6 +69,12 @@ import 'package:new_launcher/providers/provider_whosturn.dart';
 import 'package:new_launcher/providers/provider_tictactoe.dart';
 import 'package:new_launcher/providers/provider_memorygame.dart';
 import 'package:new_launcher/providers/provider_hangman.dart';
+import 'package:new_launcher/providers/provider_sudoku.dart';
+import 'package:new_launcher/providers/provider_minesweeper.dart';
+import 'package:new_launcher/providers/provider_2048.dart';
+import 'package:new_launcher/providers/provider_wordle.dart';
+import 'package:new_launcher/providers/provider_typingtest.dart';
+import 'package:new_launcher/providers/provider_simon.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -211,10 +217,16 @@ ChangeNotifierProvider.value(value: rockPaperScissorsModel),
             ChangeNotifierProvider.value(value: whosTurnModel),
             ChangeNotifierProvider.value(value: ticTacToeModel),
             ChangeNotifierProvider.value(value: memoryGameModel),
-            ChangeNotifierProvider.value(value: hangmanModel),
+ChangeNotifierProvider.value(value: hangmanModel),
+            ChangeNotifierProvider.value(value: sudokuModel),
+            ChangeNotifierProvider.value(value: minesweeperModel),
+            ChangeNotifierProvider.value(value: game2048Model),
+            ChangeNotifierProvider.value(value: wordleModel),
+            ChangeNotifierProvider.value(value: typingTestModel),
+            ChangeNotifierProvider.value(value: simonModel),
             ],
           child: MyApp(),
-           )));
+            )));
 }
 
 class MyApp extends StatefulWidget {
