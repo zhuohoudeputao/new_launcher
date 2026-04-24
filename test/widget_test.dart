@@ -40,6 +40,7 @@ import 'package:new_launcher/providers/provider_metronome.dart';
 import 'package:new_launcher/providers/provider_flashcard.dart';
 import 'package:new_launcher/providers/provider_workout.dart';
 import 'package:new_launcher/providers/provider_age.dart';
+import 'package:new_launcher/providers/provider_percentage.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2480,7 +2481,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 41);
+      expect(Global.providerList.length, 42);
     });
 
     test('Global.providerList names are correct', () {
@@ -3647,7 +3648,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 41);
+      expect(initCount, 42);
     });
   });
 
@@ -3965,7 +3966,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (41 total)', () {
-      expect(Global.providerList.length, 41);
+      expect(Global.providerList.length, 42);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5309,7 +5310,7 @@ test('Global.providerList contains all providers (41 total)', () {
     });
 
 test('Global.providerList contains all providers (41 total)', () {
-      expect(Global.providerList.length, 41);
+      expect(Global.providerList.length, 42);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -11356,6 +11357,370 @@ test('Global.providerList contains all providers (41 total)', () {
       expect(restored.name, entry.name);
       expect(restored.birthdate, entry.birthdate);
       expect(restored.createdAt, entry.createdAt);
+    });
+  });
+
+  group('Percentage provider tests', () {
+    test('PercentageModel percentageOf calculation', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setMode(PercentageMode.percentageOf);
+      model.setInput1('20');
+      model.setInput2('100');
+      
+      final result = model.calculate();
+      expect(result, 20.0);
+    });
+
+    test('PercentageModel whatPercent calculation', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setMode(PercentageMode.whatPercent);
+      model.setInput1('50');
+      model.setInput2('200');
+      
+      final result = model.calculate();
+      expect(result, 25.0);
+    });
+
+    test('PercentageModel percentageChange calculation', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setMode(PercentageMode.percentageChange);
+      model.setInput1('100');
+      model.setInput2('150');
+      
+      final result = model.calculate();
+      expect(result, 50.0);
+    });
+
+    test('PercentageModel percentageChange decrease', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setMode(PercentageMode.percentageChange);
+      model.setInput1('100');
+      model.setInput2('80');
+      
+      final result = model.calculate();
+      expect(result, -20.0);
+    });
+
+    test('PercentageModel discount calculation', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setMode(PercentageMode.discount);
+      model.setInput1('20');
+      model.setInput2('100');
+      
+      final result = model.calculate();
+      expect(result, 80.0);
+    });
+
+    test('PercentageModel handles invalid input', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setInput1('abc');
+      model.setInput2('100');
+      
+      final result = model.calculate();
+      expect(result, null);
+    });
+
+    test('PercentageModel handles empty input', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setInput1('');
+      model.setInput2('');
+      
+      final result = model.calculate();
+      expect(result, null);
+    });
+
+    test('PercentageModel handles division by zero in whatPercent', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setMode(PercentageMode.whatPercent);
+      model.setInput1('50');
+      model.setInput2('0');
+      
+      final result = model.calculate();
+      expect(result, null);
+    });
+
+    test('PercentageModel handles division by zero in percentageChange', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setMode(PercentageMode.percentageChange);
+      model.setInput1('0');
+      model.setInput2('100');
+      
+      final result = model.calculate();
+      expect(result, null);
+    });
+
+    test('PercentageModel history works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setMode(PercentageMode.percentageOf);
+      model.setInput1('20');
+      model.setInput2('100');
+      model.addToHistory();
+      
+      expect(model.history.length, 1);
+      expect(model.hasHistory, true);
+    });
+
+    test('PercentageModel history max limit', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setMode(PercentageMode.percentageOf);
+      model.setInput1('10');
+      model.setInput2('100');
+      
+      for (int i = 0; i < 15; i++) {
+        model.addToHistory();
+      }
+      
+      expect(model.history.length, 10);
+    });
+
+    test('PercentageModel loadFromHistory works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setMode(PercentageMode.percentageOf);
+      model.setInput1('20');
+      model.setInput2('100');
+      model.addToHistory();
+      
+      model.setInput1('');
+      model.setInput2('');
+      
+      model.loadFromHistory(model.history.first);
+      
+      expect(model.mode, PercentageMode.percentageOf);
+      expect(model.input1, '20.0');
+      expect(model.input2, '100.0');
+    });
+
+    test('PercentageModel clearHistory works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setMode(PercentageMode.percentageOf);
+      model.setInput1('20');
+      model.setInput2('100');
+      model.addToHistory();
+      
+      model.clearHistory();
+      
+      expect(model.history.length, 0);
+      expect(model.hasHistory, false);
+    });
+
+    test('PercentageModel clearInputs works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setInput1('20');
+      model.setInput2('100');
+      model.clearInputs();
+      
+      expect(model.input1, '');
+      expect(model.input2, '');
+    });
+
+    test('PercentageModel setMode works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      model.setMode(PercentageMode.whatPercent);
+      expect(model.mode, PercentageMode.whatPercent);
+      
+      model.setMode(PercentageMode.discount);
+      expect(model.mode, PercentageMode.discount);
+    });
+
+    test('PercentageHistory toJson/fromJson works', () {
+      final entry = PercentageHistory(
+        mode: PercentageMode.percentageOf,
+        value1: 20.0,
+        value2: 100.0,
+        result: 20.0,
+        timestamp: DateTime(2026, 4, 24),
+      );
+      
+      final json = entry.toJson();
+      final restored = PercentageHistory.fromJson(json);
+      
+      expect(restored.mode, entry.mode);
+      expect(restored.value1, entry.value1);
+      expect(restored.value2, entry.value2);
+      expect(restored.result, entry.result);
+    });
+
+    test('PercentageHistory modeLabel percentageOf', () {
+      final entry = PercentageHistory(
+        mode: PercentageMode.percentageOf,
+        value1: 20.0,
+        value2: 100.0,
+        result: 20.0,
+        timestamp: DateTime.now(),
+      );
+      
+      expect(entry.modeLabel, '20.0% of 100.0');
+    });
+
+    test('PercentageHistory modeLabel whatPercent', () {
+      final entry = PercentageHistory(
+        mode: PercentageMode.whatPercent,
+        value1: 50.0,
+        value2: 200.0,
+        result: 25.0,
+        timestamp: DateTime.now(),
+      );
+      
+      expect(entry.modeLabel, '50.0 is ?% of 200.0');
+    });
+
+    test('Percentage provider exists', () {
+      expect(providerPercentage, isNotNull);
+    });
+
+    test('Percentage provider keywords include percentage', () {
+      final keywords = 'percentage percent calc discount ratio rate %';
+      expect(keywords.contains('percentage'), true);
+    });
+
+    test('Percentage provider keywords include percent', () {
+      final keywords = 'percentage percent calc discount ratio rate %';
+      expect(keywords.contains('percent'), true);
+    });
+
+    test('Percentage provider keywords include discount', () {
+      final keywords = 'percentage percent calc discount ratio rate %';
+      expect(keywords.contains('discount'), true);
+    });
+
+    testWidgets('PercentageCard renders loading state', (WidgetTester tester) async {
+      final model = PercentageModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PercentageCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('PercentageCard renders initialized state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: PercentageCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Percentage Calculator'), findsOneWidget);
+    });
+
+    testWidgets('PercentageCard shows segmented buttons', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: PercentageCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byType(SegmentedButton<PercentageMode>), findsOneWidget);
+    });
+
+    testWidgets('PercentageCard widget exists', (WidgetTester tester) async {
+      expect(PercentageCard, isNotNull);
+    });
+
+    testWidgets('PercentageCard shows input fields', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: PercentageCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsNWidgets(2));
+    });
+
+    testWidgets('PercentageCard shows result area', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = PercentageModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: PercentageCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Enter values'), findsOneWidget);
     });
   });
 }

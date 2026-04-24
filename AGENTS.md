@@ -506,6 +506,19 @@ Settings auto-saved via `SharedPreferences`:
     - Birthdates persisted via SharedPreferences
     - Uses `Card.filled` for Material 3 style
     - Keywords: age, birthday, birthdate, calculate, years, old, zodiac
+- **Percentage**: Percentage calculator for quick calculations
+    - Four calculation modes: X% of Y, X is what % of Y, Percentage Change, Discount
+    - Real-time calculation as values are entered
+    - Percentage of: calculates what X% of Y is (e.g., 20% of 100 = 20)
+    - What percent: calculates what percentage X is of Y (e.g., 50 is 25% of 200)
+    - Percentage change: calculates percentage increase/decrease (e.g., 100 to 150 = +50%)
+    - Discount calculator: calculates final price after discount (e.g., 20% off $100 = $80)
+    - Handles division by zero cases
+    - Calculation history (up to 10 entries)
+    - Tap history entries to reuse calculations
+    - Clear history with confirmation dialog
+    - Uses `Card.filled` and `SegmentedButton` for Material 3 style
+    - Keywords: percentage, percent, calc, discount, ratio, rate, %
 
 ## Material 3 Design System
 
@@ -612,8 +625,9 @@ Test coverage includes:
 - Flashcard provider tests (provider existence, keywords, model state, CRUD operations for decks and cards, study tracking, widget rendering)
 - Workout provider tests (provider existence, keywords, model state, workout logging, statistics calculations, widget rendering)
 - Age provider tests (provider existence, keywords, model state, zodiac calculation, age calculation, birthday countdown, CRUD operations, widget rendering)
+- Percentage provider tests (provider existence, keywords, model state, percentage calculations, history, widget rendering)
   
-Total tests: 1112 tests
+Total tests: 1140 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -681,6 +695,7 @@ Technical documentation is available in `docs/`:
 - `flashcard_provider.md` - Flashcard provider implementation for studying/memorization
 - `workout_provider.md` - Workout provider implementation for fitness/exercise tracking
 - `age_provider.md` - Age Calculator provider implementation for birthdate/age calculation
+- `percentage_provider.md` - Percentage Calculator provider implementation for percentage calculations
 - `calendar_model.md` - CalendarModel implementation for provider pattern consistency
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks
