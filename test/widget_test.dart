@@ -79,6 +79,7 @@ import 'package:new_launcher/providers/provider_romannumerals.dart';
 import 'package:new_launcher/providers/provider_palindrome.dart';
 import 'package:new_launcher/providers/provider_nato.dart';
 import 'package:new_launcher/providers/provider_speed.dart';
+import 'package:new_launcher/providers/provider_volume.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2519,7 +2520,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 79);
+      expect(Global.providerList.length, 81);
     });
 
     test('Global.providerList names are correct', () {
@@ -3686,7 +3687,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 79);
+      expect(initCount, 81);
     });
   });
 
@@ -4004,7 +4005,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 79);
+      expect(Global.providerList.length, 81);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5348,7 +5349,7 @@ test('Global.providerList contains all providers (71 total)', () {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 79);
+      expect(Global.providerList.length, 81);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -21954,6 +21955,328 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       speedConverterModel.clearHistory();
+    });
+  });
+
+  group('VolumeConverter Provider tests', () {
+    test('providerVolumeConverter exists in Global.providerList', () {
+      final volumeProvider = Global.providerList.where((p) => p.name == 'VolumeConverter').first;
+      expect(volumeProvider.name, 'VolumeConverter');
+    });
+
+    test('VolumeConverter keywords include volume', () {
+      final volumeProvider = Global.providerList.where((p) => p.name == 'VolumeConverter').first;
+      expect(volumeProvider.name, 'VolumeConverter');
+    });
+
+    test('volumeConverterModel global instance exists', () {
+      expect(volumeConverterModel, isNotNull);
+      expect(volumeConverterModel.isInitialized, false);
+    });
+
+    test('VolumeConverterModel starts uninitialized', () {
+      final model = VolumeConverterModel();
+      expect(model.isInitialized, false);
+    });
+
+    test('VolumeConverterModel is ChangeNotifier', () {
+      final model = VolumeConverterModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('VolumeConverterModel init sets initialized', () {
+      final model = VolumeConverterModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('VolumeConverterModel default units', () {
+      final model = VolumeConverterModel();
+      model.init();
+      expect(model.inputUnit, 'liter');
+      expect(model.outputUnit, 'gallon');
+    });
+
+    test('VolumeConverterModel setInputUnit works', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputUnit('milliliter');
+      expect(model.inputUnit, 'milliliter');
+    });
+
+    test('VolumeConverterModel setOutputUnit works', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setOutputUnit('quart');
+      expect(model.outputUnit, 'quart');
+    });
+
+    test('VolumeConverterModel setInputValue works', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputValue('100');
+      expect(model.inputValue, '100');
+    });
+
+    test('VolumeConverterModel swapUnits works', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputValue('100');
+      final originalInput = model.inputUnit;
+      final originalOutput = model.outputUnit;
+      model.swapUnits();
+      expect(model.inputUnit, originalOutput);
+      expect(model.outputUnit, originalInput);
+    });
+
+    test('VolumeConverterModel clear works', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.clear();
+      expect(model.inputValue, '0');
+    });
+
+    test('VolumeConverterModel conversion liter to gallon', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(0.264172, 0.01));
+    });
+
+    test('VolumeConverterModel conversion gallon to liter', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputUnit('gallon');
+      model.setOutputUnit('liter');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(3.78541, 0.01));
+    });
+
+    test('VolumeConverterModel conversion liter to milliliter', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputUnit('liter');
+      model.setOutputUnit('milliliter');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(1000, 0.01));
+    });
+
+    test('VolumeConverterModel conversion milliliter to cm3', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputUnit('milliliter');
+      model.setOutputUnit('cm3');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(1, 0.01));
+    });
+
+    test('VolumeConverterModel conversion cup to floz', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputUnit('cup');
+      model.setOutputUnit('floz');
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(8, 0.01));
+    });
+
+    test('VolumeConverter static convert method works', () {
+      expect(VolumeConverterModel.convert(1, 'liter', 'gallon'), closeTo(0.264172, 0.01));
+      expect(VolumeConverterModel.convert(1, 'gallon', 'liter'), closeTo(3.78541, 0.01));
+      expect(VolumeConverterModel.convert(1, 'liter', 'milliliter'), closeTo(1000, 0.01));
+      expect(VolumeConverterModel.convert(1, 'milliliter', 'cm3'), closeTo(1, 0.01));
+    });
+
+    test('VolumeConverter static convert same unit returns same value', () {
+      expect(VolumeConverterModel.convert(100, 'liter', 'liter'), 100);
+      expect(VolumeConverterModel.convert(50, 'gallon', 'gallon'), 50);
+    });
+
+    test('VolumeConverterModel handles invalid input', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputValue('abc');
+      expect(model.outputValue, '0');
+    });
+
+    test('VolumeConverterModel handles negative values', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputValue('-10');
+      expect(double.parse(model.outputValue), closeTo(-2.64172, 0.01));
+    });
+
+    test('VolumeConverterModel handles decimal values', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputValue('0.5');
+      expect(double.parse(model.outputValue), closeTo(0.132086, 0.01));
+    });
+
+    test('VolumeConverterModel history works', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].inputValue, 100);
+      expect(model.history[0].inputUnit, 'liter');
+    });
+
+    test('VolumeConverterModel clearHistory works', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('VolumeConverterModel history max limit', () {
+      final model = VolumeConverterModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputValue(i.toString());
+        model.addToHistory();
+      }
+      expect(model.history.length, VolumeConverterModel.maxHistory);
+    });
+
+    test('VolumeConverterModel availableUnits returns correct units', () {
+      final model = VolumeConverterModel();
+      expect(model.availableUnits, contains('liter'));
+      expect(model.availableUnits, contains('milliliter'));
+      expect(model.availableUnits, contains('gallon'));
+      expect(model.availableUnits, contains('quart'));
+      expect(model.availableUnits, contains('pint'));
+      expect(model.availableUnits, contains('cup'));
+      expect(model.availableUnits, contains('floz'));
+      expect(model.availableUnits, contains('m3'));
+      expect(model.availableUnits, contains('cm3'));
+      expect(model.availableUnits, contains('in3'));
+    });
+
+    test('VolumeConverterModel refresh calls notifyListeners', () {
+      final model = VolumeConverterModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('VolumeConverterModel useHistoryEntry works', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputUnit('gallon');
+      model.setOutputUnit('liter');
+      model.setInputValue('1');
+      model.addToHistory();
+      
+      final entry = model.history[0];
+      model.setInputUnit('milliliter');
+      model.setOutputUnit('cm3');
+      model.useHistoryEntry(entry);
+      
+      expect(model.inputUnit, 'gallon');
+      expect(model.outputUnit, 'liter');
+    });
+
+    testWidgets('VolumeConverterCard renders loading state', (WidgetTester tester) async {
+      final model = VolumeConverterModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => VolumeConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Volume Converter: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('VolumeConverterCard renders initialized state', (WidgetTester tester) async {
+      final model = VolumeConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => VolumeConverterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Volume Converter'), findsOneWidget);
+      expect(find.byIcon(Icons.swap_horiz), findsOneWidget);
+    });
+
+    testWidgets('VolumeConverterCard shows input field', (WidgetTester tester) async {
+      final model = VolumeConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => VolumeConverterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsOneWidget);
+    });
+
+    testWidgets('VolumeConverterCard shows unit dropdowns', (WidgetTester tester) async {
+      final model = VolumeConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => VolumeConverterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byType(DropdownButton<String>, skipOffstage: false), findsNWidgets(2));
+    });
+
+    test('VolumeConverterCard widget exists', () {
+      expect(VolumeConverterCard, isNotNull);
+    });
+
+    test('Global.providerList includes VolumeConverter', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('VolumeConverter'), true);
+    });
+
+    test('VolumeConverterModel prevents same input/output units', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setInputUnit('gallon');
+      expect(model.outputUnit, isNot('gallon'));
+    });
+
+    test('VolumeConverterModel prevents same output/input units', () {
+      final model = VolumeConverterModel();
+      model.init();
+      model.setOutputUnit('liter');
+      expect(model.inputUnit, isNot('liter'));
+    });
+
+    tearDownAll(() {
+      volumeConverterModel.clearHistory();
     });
   });
 }
