@@ -67,6 +67,7 @@ import 'package:new_launcher/providers/provider_decisionmaker.dart';
 import 'package:new_launcher/providers/provider_rockpaperscissors.dart';
 import 'package:new_launcher/providers/provider_whosturn.dart';
 import 'package:new_launcher/providers/provider_tictactoe.dart';
+import 'package:new_launcher/providers/provider_memorygame.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -208,6 +209,7 @@ ChangeNotifierProvider.value(value: uuidModel),
 ChangeNotifierProvider.value(value: rockPaperScissorsModel),
             ChangeNotifierProvider.value(value: whosTurnModel),
             ChangeNotifierProvider.value(value: ticTacToeModel),
+            ChangeNotifierProvider.value(value: memoryGameModel),
             ],
           child: MyApp(),
            )));

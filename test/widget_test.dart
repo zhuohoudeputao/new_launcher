@@ -64,6 +64,7 @@ import 'package:new_launcher/providers/provider_decisionmaker.dart';
 import 'package:new_launcher/providers/provider_rockpaperscissors.dart';
 import 'package:new_launcher/providers/provider_whosturn.dart';
 import 'package:new_launcher/providers/provider_tictactoe.dart';
+import 'package:new_launcher/providers/provider_memorygame.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2504,7 +2505,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 65);
+      expect(Global.providerList.length, 66);
     });
 
     test('Global.providerList names are correct', () {
@@ -3671,7 +3672,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 65);
+      expect(initCount, 66);
     });
   });
 
@@ -3988,8 +3989,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (65 total)', () {
-      expect(Global.providerList.length, 65);
+test('Global.providerList contains all providers (66 total)', () {
+      expect(Global.providerList.length, 66);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5332,8 +5333,8 @@ test('Global.providerList contains all providers (65 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (65 total)', () {
-      expect(Global.providerList.length, 65);
+test('Global.providerList contains all providers (66 total)', () {
+      expect(Global.providerList.length, 66);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -17993,6 +17994,290 @@ test('Global.providerList contains all providers (65 total)', () {
       model.newGame();
       expect(model.board.every((s) => s == TTTSymbol.empty), true);
       expect(model.isGameOver, false);
+    });
+
+    group('MemoryGame provider tests', () {
+      test('providerMemoryGame exists in providerList', () {
+        expect(Global.providerList.contains(providerMemoryGame), true);
+      });
+
+      test('MemoryGame keywords contain memory, game, match', () {
+        expect(providerMemoryGame.name, "MemoryGame");
+      });
+
+      test('MemoryGameModel is ChangeNotifier', () {
+        final model = MemoryGameModel();
+        expect(model is ChangeNotifier, true);
+      });
+
+      test('MemoryGameModel initial state', () {
+        final model = MemoryGameModel();
+        expect(model.isInitialized, false);
+        expect(model.cards.isEmpty, true);
+        expect(model.moves, 0);
+        expect(model.matchedPairs, 0);
+        expect(model.isGameOver, false);
+        expect(model.history.isEmpty, true);
+      });
+
+      test('MemoryGameModel init creates cards', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        expect(model.isInitialized, true);
+        expect(model.cards.length, 16);
+        expect(model.totalPairs, 8);
+        expect(model.gridSize, 4);
+      });
+
+      test('MemoryGameModel setSize changes grid', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        model.setSize(MemoryGameSize.large6x6);
+        expect(model.cards.length, 36);
+        expect(model.totalPairs, 18);
+        expect(model.gridSize, 6);
+      });
+
+      test('MemoryGameModel flipCard adds flipped cards', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        final firstCard = model.cards[0];
+        model.flipCard(firstCard.id);
+        expect(firstCard.state, MemoryCardState.flipped);
+      });
+
+      test('MemoryGameModel flipCard two cards increases moves', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        final firstCard = model.cards[0];
+        final secondCard = model.cards[1];
+        model.flipCard(firstCard.id);
+        model.flipCard(secondCard.id);
+        await Future.delayed(Duration(milliseconds: 100));
+        expect(model.moves, 1);
+      });
+
+      test('MemoryGameModel matched cards stay matched', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        
+        var pairCards = model.cards.where((c) => c.pairId == 0).toList();
+        model.flipCard(pairCards[0].id);
+        model.flipCard(pairCards[1].id);
+        await Future.delayed(Duration(milliseconds: 600));
+        
+        expect(pairCards[0].state, MemoryCardState.matched);
+        expect(pairCards[1].state, MemoryCardState.matched);
+        expect(model.matchedPairs, 1);
+      });
+
+      test('MemoryGameModel non-matched cards are hidden again', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        
+        var card1 = model.cards[0];
+        var card2 = model.cards[1];
+        
+        if (card1.pairId != card2.pairId) {
+          model.flipCard(card1.id);
+          model.flipCard(card2.id);
+          await Future.delayed(Duration(milliseconds: 600));
+          
+          expect(card1.state, MemoryCardState.hidden);
+          expect(card2.state, MemoryCardState.hidden);
+        }
+      });
+
+      test('MemoryGameModel isProcessing prevents flipping', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        final firstCard = model.cards[0];
+        final secondCard = model.cards[1];
+        final thirdCard = model.cards[2];
+        
+        model.flipCard(firstCard.id);
+        model.flipCard(secondCard.id);
+        
+        expect(model.isProcessing, true);
+        
+        model.flipCard(thirdCard.id);
+        expect(thirdCard.state, MemoryCardState.hidden);
+        
+        await Future.delayed(Duration(milliseconds: 600));
+        expect(model.isProcessing, false);
+      });
+
+      test('MemoryGameModel newGame resets state', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        model.flipCard(model.cards[0].id);
+        expect(model.moves >= 0, true);
+        model.newGame();
+        expect(model.moves, 0);
+        expect(model.matchedPairs, 0);
+        expect(model.isGameOver, false);
+        expect(model.isProcessing, false);
+      });
+
+      test('MemoryGameModel getProgress calculates percentage', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        expect(model.getProgress(), 0);
+        
+        var pairCards = model.cards.where((c) => c.pairId == 0).toList();
+        model.flipCard(pairCards[0].id);
+        model.flipCard(pairCards[1].id);
+        await Future.delayed(Duration(milliseconds: 600));
+        
+        expect(model.getProgress(), 12.5);
+      });
+
+      test('MemoryGameModel history entries', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        expect(model.hasHistory, false);
+        
+        var entry = MemoryGameEntry(
+          moves: 10,
+          size: MemoryGameSize.small4x4,
+          timestamp: DateTime.now(),
+        );
+        expect(entry.moves, 10);
+        expect(entry.size, MemoryGameSize.small4x4);
+      });
+
+      test('MemoryGameModel bestMoves tracking', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        expect(model.bestMoves, 0);
+      });
+
+      test('MemoryGameModel gamesPlayed tracking', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        expect(model.gamesPlayed, 0);
+      });
+
+      test('MemoryGameModel size label', () async {
+        final model = MemoryGameModel();
+        expect(model.getSizeLabel(MemoryGameSize.small4x4), "4x4");
+        expect(model.getSizeLabel(MemoryGameSize.large6x6), "6x6");
+      });
+
+      test('MemoryGameModel refresh calls notifyListeners', () async {
+        final model = MemoryGameModel();
+        await model.init();
+        int notifyCount = 0;
+        model.addListener(() => notifyCount++);
+        model.refresh();
+        expect(notifyCount, 1);
+      });
+
+      test('MemoryCard has required properties', () {
+        final card = MemoryCard(
+          id: 0,
+          symbol: '🌟',
+          pairId: 0,
+        );
+        expect(card.id, 0);
+        expect(card.symbol, '🌟');
+        expect(card.pairId, 0);
+        expect(card.state, MemoryCardState.hidden);
+      });
+
+      test('MemoryGameEntry has required properties', () {
+        final entry = MemoryGameEntry(
+          moves: 10,
+          size: MemoryGameSize.small4x4,
+          timestamp: DateTime.now(),
+        );
+        expect(entry.moves, 10);
+        expect(entry.size, MemoryGameSize.small4x4);
+        expect(entry.timestamp, isNotNull);
+      });
+
+      testWidgets('MemoryGameCard renders loading state', (WidgetTester tester) async {
+        final model = MemoryGameModel();
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => MemoryGameCard(),
+            ),
+          ),
+        ));
+
+        expect(find.text('MemoryGame: Loading...'), findsOneWidget);
+      });
+
+      testWidgets('MemoryGameCard renders initialized state', (WidgetTester tester) async {
+        final model = MemoryGameModel();
+        await model.init();
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => MemoryGameCard(),
+            ),
+          ),
+        ));
+
+        expect(find.text('Memory Game'), findsOneWidget);
+      });
+
+      testWidgets('MemoryGameCard shows grid', (WidgetTester tester) async {
+        final model = MemoryGameModel();
+        await model.init();
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => MemoryGameCard(),
+            ),
+          ),
+        ));
+
+        expect(find.byIcon(Icons.extension), findsWidgets);
+      });
+
+      testWidgets('MemoryGameCard shows size selector', (WidgetTester tester) async {
+        final model = MemoryGameModel();
+        await model.init();
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => MemoryGameCard(),
+            ),
+          ),
+        ));
+
+        expect(find.text('4x4'), findsWidgets);
+        expect(find.text('6x6'), findsWidgets);
+      });
+
+      testWidgets('MemoryGameCard shows stats', (WidgetTester tester) async {
+        final model = MemoryGameModel();
+        await model.init();
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => MemoryGameCard(),
+            ),
+          ),
+        ));
+
+        expect(find.text('Moves'), findsOneWidget);
+        expect(find.text('Pairs'), findsOneWidget);
+        expect(find.text('Best'), findsOneWidget);
+        expect(find.text('Games'), findsOneWidget);
+      });
     });
 
     tearDownAll(() {

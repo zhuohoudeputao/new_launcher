@@ -792,6 +792,19 @@ Settings auto-saved via `SharedPreferences`:
     - 3x3 grid with X and O symbols
     - Uses `Card.filled` and `SizedBox` for Material 3 style
     - Keywords: tic, tac, toe, game, ttt, xo, grid, board, play
+- **MemoryGame**: Classic memory card matching game
+    - Match pairs of cards by flipping them
+    - Two grid sizes: 4x4 (8 pairs) and 6x6 (18 pairs)
+    - Emoji-based card symbols (🌟, 🎈, 🌈, 🍀, 🔥, 💎, etc.)
+    - Track number of moves to complete game
+    - Best score tracking (minimum moves per grid size)
+    - Games played counter
+    - Progress percentage display
+    - History tracking (up to 10 entries)
+    - Clear history with confirmation dialog
+    - Cards flip with color indication (hidden, flipped, matched)
+    - Uses `Card.filled` and `SegmentedButton` for Material 3 style
+    - Keywords: memory, game, cards, match, flip, pairs, puzzle, remember
 
 ## Material 3 Design System
 
@@ -918,8 +931,9 @@ Test coverage includes:
 - RockPaperScissors provider tests (provider existence, keywords, model state, game operations, statistics, history, widget rendering)
 - WhosTurn provider tests (provider existence, keywords, model state, CRUD operations, turn navigation, history, widget rendering)
 - TicTacToe provider tests (provider existence, keywords, model state, game operations, statistics, history, widget rendering)
+- MemoryGame provider tests (provider existence, keywords, model state, grid operations, card flipping, match detection, history, widget rendering)
   
-Total tests: 1753 tests
+Total tests: 1778 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1006,6 +1020,7 @@ Technical documentation is available in `docs/`:
 - `passwordstrength_provider.md` - Password Strength provider implementation for security analysis
 - `moonphase_provider.md` - Moon Phase provider implementation for lunar phase calculation
 - `reactiontime_provider.md` - Reaction Time provider implementation for reaction speed testing
+- `memorygame_provider.md` - Memory Game provider implementation for card matching game
 
 ## Notice
 DO NOT EDIT task*.md
