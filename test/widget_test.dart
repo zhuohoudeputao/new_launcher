@@ -42,6 +42,7 @@ import 'package:new_launcher/providers/provider_workout.dart';
 import 'package:new_launcher/providers/provider_age.dart';
 import 'package:new_launcher/providers/provider_percentage.dart';
 import 'package:new_launcher/providers/provider_quickcontacts.dart';
+import 'package:new_launcher/providers/provider_shoppinglist.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2482,7 +2483,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 43);
+      expect(Global.providerList.length, 44);
     });
 
     test('Global.providerList names are correct', () {
@@ -3649,7 +3650,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 43);
+      expect(initCount, 44);
     });
   });
 
@@ -3966,8 +3967,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (42 total)', () {
-      expect(Global.providerList.length, 43);
+test('Global.providerList contains all providers (43 total)', () {
+      expect(Global.providerList.length, 44);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5310,8 +5311,8 @@ test('Global.providerList contains all providers (42 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (42 total)', () {
-      expect(Global.providerList.length, 43);
+test('Global.providerList contains all providers (43 total)', () {
+      expect(Global.providerList.length, 44);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -12037,6 +12038,389 @@ test('Global.providerList contains all providers (42 total)', () {
       await tester.pumpAndSettle();
 
       expect(find.text('Edit Contact'), findsOneWidget);
+      expect(find.byType(TextField), findsNWidgets(2));
+    });
+  });
+
+  group('Shopping List provider tests', () {
+    test('ShoppingListModel init works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      expect(model.isInitialized, true);
+      expect(model.items, isEmpty);
+    });
+
+    test('ShoppingListModel addItem works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      model.addItem('Milk', ShoppingCategory.groceries, null);
+      
+      expect(model.length, 1);
+      expect(model.items[0].name, 'Milk');
+      expect(model.items[0].category, ShoppingCategory.groceries);
+    });
+
+    test('ShoppingListModel addItem with quantity', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      model.addItem('Apples', ShoppingCategory.groceries, 5);
+      
+      expect(model.length, 1);
+      expect(model.items[0].name, 'Apples');
+      expect(model.items[0].quantity, 5);
+    });
+
+    test('ShoppingListModel togglePurchased works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      model.addItem('Bread', ShoppingCategory.groceries, null);
+      
+      expect(model.items[0].purchased, false);
+      
+      model.togglePurchased(0);
+      
+      expect(model.items[0].purchased, true);
+      
+      model.togglePurchased(0);
+      
+      expect(model.items[0].purchased, false);
+    });
+
+    test('ShoppingListModel deleteItem works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      model.addItem('Item 1', ShoppingCategory.groceries, null);
+      model.addItem('Item 2', ShoppingCategory.household, null);
+      
+      expect(model.length, 2);
+      
+      model.deleteItem(0);
+      
+      expect(model.length, 1);
+      expect(model.items[0].name, 'Item 1');
+    });
+
+    test('ShoppingListModel updateItem works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      model.addItem('Old Name', ShoppingCategory.groceries, null);
+      
+      model.updateItem(0, 'New Name', ShoppingCategory.household, 3);
+      
+      expect(model.items[0].name, 'New Name');
+      expect(model.items[0].category, ShoppingCategory.household);
+      expect(model.items[0].quantity, 3);
+    });
+
+    test('ShoppingListModel clearPurchased works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      model.addItem('Item 1', ShoppingCategory.groceries, null);
+      model.addItem('Item 2', ShoppingCategory.household, null);
+      
+      model.togglePurchased(0);
+      
+      expect(model.purchasedCount, 1);
+      expect(model.unpurchasedCount, 1);
+      
+      model.clearPurchased();
+      
+      expect(model.length, 1);
+      expect(model.items[0].name, 'Item 1');
+    });
+
+    test('ShoppingListModel clearAllItems works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      model.addItem('Item 1', ShoppingCategory.groceries, null);
+      model.addItem('Item 2', ShoppingCategory.household, null);
+      
+      expect(model.length, 2);
+      
+      model.clearAllItems();
+      
+      expect(model.length, 0);
+    });
+
+    test('ShoppingListModel unpurchasedItems getter', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      model.addItem('Item 1', ShoppingCategory.groceries, null);
+      model.addItem('Item 2', ShoppingCategory.household, null);
+      model.togglePurchased(0);
+      
+      expect(model.unpurchasedItems.length, 1);
+      expect(model.unpurchasedItems[0].name, 'Item 1');
+    });
+
+    test('ShoppingListModel purchasedItems getter', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      model.addItem('Item 1', ShoppingCategory.groceries, null);
+      model.addItem('Item 2', ShoppingCategory.household, null);
+      model.togglePurchased(0);
+      
+      expect(model.purchasedItems.length, 1);
+      expect(model.purchasedItems[0].name, 'Item 2');
+    });
+
+    test('ShoppingListModel maxItems limit', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      for (int i = 0; i < 35; i++) {
+        model.addItem('Item $i', ShoppingCategory.other, null);
+      }
+      
+      expect(model.length, 30);
+    });
+
+    test('ShoppingListModel hasItems property', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      expect(model.hasItems, false);
+      
+      model.addItem('Test Item', ShoppingCategory.groceries, null);
+      
+      expect(model.hasItems, true);
+    });
+
+    test('ShoppingItem toJson/fromJson works', () {
+      final item = ShoppingItem(
+        name: 'Milk',
+        purchased: true,
+        category: ShoppingCategory.groceries,
+        quantity: 2,
+      );
+      
+      final json = item.toJson();
+      final restored = ShoppingItem.fromJson(json);
+      
+      expect(restored.name, item.name);
+      expect(restored.purchased, item.purchased);
+      expect(restored.category, item.category);
+      expect(restored.quantity, item.quantity);
+    });
+
+    test('ShoppingListModel persistence works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model1 = ShoppingListModel();
+      await model1.init();
+      
+      model1.addItem('Milk', ShoppingCategory.groceries, 2);
+      
+      final model2 = ShoppingListModel();
+      await model2.init();
+      
+      expect(model2.length, 1);
+      expect(model2.items[0].name, 'Milk');
+      expect(model2.items[0].quantity, 2);
+    });
+
+    test('Shopping List provider exists', () {
+      expect(providerShoppingList, isNotNull);
+    });
+
+    test('Shopping List provider keywords include shopping', () {
+      final keywords = 'shopping list shop buy grocery market item add cart';
+      expect(keywords.contains('shopping'), true);
+    });
+
+    test('Shopping List provider keywords include list', () {
+      final keywords = 'shopping list shop buy grocery market item add cart';
+      expect(keywords.contains('list'), true);
+    });
+
+    test('Shopping List provider keywords include grocery', () {
+      final keywords = 'shopping list shop buy grocery market item add cart';
+      expect(keywords.contains('grocery'), true);
+    });
+
+    testWidgets('ShoppingListCard renders loading state', (WidgetTester tester) async {
+      final model = ShoppingListModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: ShoppingListCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Shopping List: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('ShoppingListCard renders initialized state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ShoppingListCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Shopping List'), findsOneWidget);
+    });
+
+    testWidgets('ShoppingListCard shows empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ShoppingListCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('No items yet. Tap + to add.'), findsOneWidget);
+    });
+
+    testWidgets('ShoppingListCard shows items list', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      model.addItem('Milk', ShoppingCategory.groceries, 2);
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ShoppingListCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.textContaining('Milk'), findsOneWidget);
+    });
+
+    testWidgets('ShoppingListCard widget exists', (WidgetTester tester) async {
+      expect(ShoppingListCard, isNotNull);
+    });
+
+    testWidgets('ShoppingListCard shows add button', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ShoppingListCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byIcon(Icons.add), findsOneWidget);
+    });
+
+    testWidgets('AddShoppingItemDialog widget exists', (WidgetTester tester) async {
+      expect(AddShoppingItemDialog, isNotNull);
+    });
+
+    testWidgets('EditShoppingItemDialog widget exists', (WidgetTester tester) async {
+      expect(EditShoppingItemDialog, isNotNull);
+    });
+
+    testWidgets('AddShoppingItemDialog shows input fields', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: Builder(
+              builder: (context) => ElevatedButton(
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => AddShoppingItemDialog(),
+                ),
+                child: Text('Show Dialog'),
+              ),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text('Show Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Add Shopping Item'), findsOneWidget);
+      expect(find.byType(TextField), findsNWidgets(2));
+    });
+
+    testWidgets('EditShoppingItemDialog shows input fields', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ShoppingListModel();
+      await model.init();
+      model.addItem('Milk', ShoppingCategory.groceries, 2);
+      
+      final item = model.items[0];
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: Builder(
+              builder: (context) => ElevatedButton(
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => EditShoppingItemDialog(index: 0, item: item),
+                ),
+                child: Text('Show Dialog'),
+              ),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text('Show Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Edit Shopping Item'), findsOneWidget);
       expect(find.byType(TextField), findsNWidgets(2));
     });
   });

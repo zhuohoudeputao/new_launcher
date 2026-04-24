@@ -531,6 +531,19 @@ Settings auto-saved via `SharedPreferences`:
     - Clear all contacts with confirmation dialog
     - Uses `Card.filled` for Material 3 style
     - Keywords: contact, contacts, quick, dial, phone, call, speed, speeddial
+- **ShoppingList**: Shopping list management
+    - Add, edit, and delete shopping items
+    - Mark items as purchased/unpurchased
+    - Optional quantity tracking per item
+    - 6 categories: Groceries, Household, Electronics, Clothing, Health, Other
+    - Category-specific icons (🛒, 🏠, 📱, 👕, 💊, ⋯)
+    - Maximum 30 items stored (oldest removed when limit exceeded)
+    - Items persisted via SharedPreferences
+    - To buy/done count display
+    - Clear purchased items button
+    - Clear all items with confirmation dialog
+    - Uses `Card.filled` and `DropdownButton` for Material 3 style
+    - Keywords: shopping, list, shop, buy, grocery, market, item, add, cart
 
 ## Material 3 Design System
 
@@ -639,8 +652,9 @@ Test coverage includes:
 - Age provider tests (provider existence, keywords, model state, zodiac calculation, age calculation, birthday countdown, CRUD operations, widget rendering)
 - Percentage provider tests (provider existence, keywords, model state, percentage calculations, history, widget rendering)
 - Quick Contacts provider tests (provider existence, keywords, model state, CRUD operations, widget rendering)
+- Shopping List provider tests (provider existence, keywords, model state, CRUD operations, category handling, persistence, widget rendering)
   
-Total tests: 1165 tests
+Total tests: 1193 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -710,6 +724,7 @@ Technical documentation is available in `docs/`:
 - `age_provider.md` - Age Calculator provider implementation for birthdate/age calculation
 - `percentage_provider.md` - Percentage Calculator provider implementation for percentage calculations
 - `quickcontacts_provider.md` - Quick Contacts provider implementation for speed dial and messaging
+- `shoppinglist_provider.md` - Shopping List provider implementation for shopping list management
 - `calendar_model.md` - CalendarModel implementation for provider pattern consistency
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks
