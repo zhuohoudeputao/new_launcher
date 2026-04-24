@@ -36,6 +36,7 @@ import 'package:new_launcher/providers/provider_sleep.dart';
 import 'package:new_launcher/providers/provider_counter.dart';
 import 'package:new_launcher/providers/provider_tip.dart';
 import 'package:new_launcher/providers/provider_bmi.dart';
+import 'package:new_launcher/providers/provider_metronome.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2476,7 +2477,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 37);
+      expect(Global.providerList.length, 38);
     });
 
     test('Global.providerList names are correct', () {
@@ -3643,7 +3644,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 37);
+      expect(initCount, 38);
     });
   });
 
@@ -3961,7 +3962,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 37);
+      expect(Global.providerList.length, 38);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5305,7 +5306,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 37);
+      expect(Global.providerList.length, 38);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -10067,6 +10068,308 @@ void main() {
 
     testWidgets('BmiCard widget exists', (WidgetTester tester) async {
       expect(BmiCard, isNotNull);
+    });
+  });
+
+  group('Metronome provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('MetronomeModel initializes correctly', () {
+      final model = MetronomeModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.bpm, 120);
+      expect(model.timeSignature, 4);
+      expect(model.isRunning, false);
+      expect(model.history.length, 0);
+    });
+
+    test('MetronomeModel setBpm works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.setBpm(80);
+      expect(model.bpm, 80);
+    });
+
+    test('MetronomeModel setBpm clamps to min/max', () {
+      final model = MetronomeModel();
+      model.init();
+      model.setBpm(10);
+      expect(model.bpm, 20);
+      model.setBpm(400);
+      expect(model.bpm, 300);
+    });
+
+    test('MetronomeModel incrementBpm works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.incrementBpm(10);
+      expect(model.bpm, 130);
+    });
+
+    test('MetronomeModel decrementBpm works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.decrementBpm(10);
+      expect(model.bpm, 110);
+    });
+
+    test('MetronomeModel setTimeSignature works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.setTimeSignature(3);
+      expect(model.timeSignature, 3);
+    });
+
+    test('MetronomeModel setTimeSignature only accepts valid values', () {
+      final model = MetronomeModel();
+      model.init();
+      model.setTimeSignature(5);
+      expect(model.timeSignature, 4);
+    });
+
+    test('MetronomeModel start works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.start();
+      expect(model.isRunning, true);
+      expect(model.currentBeat, 1);
+      model.stop();
+    });
+
+    test('MetronomeModel pause works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.start();
+      expect(model.isRunning, true);
+      model.pause();
+      expect(model.isRunning, false);
+    });
+
+    test('MetronomeModel stop works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.start();
+      model.stop();
+      expect(model.isRunning, false);
+      expect(model.currentBeat, 0);
+    });
+
+    test('MetronomeModel toggle works', () {
+      final model = MetronomeModel();
+      model.init();
+      expect(model.isRunning, false);
+      model.toggle();
+      expect(model.isRunning, true);
+      model.toggle();
+      expect(model.isRunning, false);
+    });
+
+    test('MetronomeModel isAccentBeat works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.setTimeSignature(4);
+      model.start();
+      expect(model.isAccentBeat, true);
+      model.stop();
+    });
+
+    test('MetronomeModel saveToHistory works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.setBpm(80);
+      model.saveToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0], 80);
+    });
+
+    test('MetronomeModel saveToHistory max limit works', () {
+      final model = MetronomeModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setBpm(60 + i * 10);
+        model.saveToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('MetronomeModel saveToHistory removes duplicate', () {
+      final model = MetronomeModel();
+      model.init();
+      model.setBpm(80);
+      model.saveToHistory();
+      model.setBpm(100);
+      model.saveToHistory();
+      model.setBpm(80);
+      model.saveToHistory();
+      expect(model.history.length, 2);
+      expect(model.history[0], 80);
+    });
+
+    test('MetronomeModel loadFromHistory works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.setBpm(80);
+      model.saveToHistory();
+      model.setBpm(120);
+      model.loadFromHistory(80);
+      expect(model.bpm, 80);
+    });
+
+    test('MetronomeModel clearHistory works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.setBpm(80);
+      model.saveToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('MetronomeModel hasHistory getter works', () {
+      final model = MetronomeModel();
+      model.init();
+      expect(model.hasHistory, false);
+      model.setBpm(80);
+      model.saveToHistory();
+      expect(model.hasHistory, true);
+    });
+
+    test('MetronomeModel clearTapTimes works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.tapTempo();
+      model.tapTempo();
+      model.clearTapTimes();
+    });
+
+    test('MetronomeModel requestFocus works', () {
+      final model = MetronomeModel();
+      model.init();
+      model.requestFocus();
+      expect(model.shouldFocus, true);
+    });
+
+    test('MetronomeModel is ChangeNotifier', () {
+      final model = MetronomeModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('metronomeModel global instance exists', () {
+      expect(metronomeModel, isNotNull);
+    });
+
+    test('Global.providerList includes Metronome', () {
+      final hasMetronome = Global.providerList.any((p) => p.name == 'Metronome');
+      expect(hasMetronome, true);
+    });
+
+    test('providerMetronome exists', () {
+      expect(providerMetronome, isNotNull);
+      expect(providerMetronome.name, 'Metronome');
+    });
+
+    test('Metronome provider keywords include metronome', () {
+      final keywords = 'metronome beat bpm tempo rhythm music tap pulse';
+      expect(keywords.contains('metronome'), true);
+    });
+
+    test('Metronome provider keywords include bpm', () {
+      final keywords = 'metronome beat bpm tempo rhythm music tap pulse';
+      expect(keywords.contains('bpm'), true);
+    });
+
+    test('Metronome provider keywords include tempo', () {
+      final keywords = 'metronome beat bpm tempo rhythm music tap pulse';
+      expect(keywords.contains('tempo'), true);
+    });
+
+    test('MetronomeModel preset Bpm values are valid', () {
+      for (final bpm in MetronomeModel.presetBpm) {
+        expect(bpm >= MetronomeModel.minBpm, true);
+        expect(bpm <= MetronomeModel.maxBpm, true);
+      }
+    });
+
+    test('MetronomeModel time signature options are valid', () {
+      for (final ts in MetronomeModel.timeSignatureOptions) {
+        expect(ts > 0, true);
+        expect(ts < 20, true);
+      }
+    });
+
+    testWidgets('MetronomeCard renders loading state', (WidgetTester tester) async {
+      final model = MetronomeModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: MetronomeCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Metronome: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('MetronomeCard renders initialized state', (WidgetTester tester) async {
+      final model = MetronomeModel();
+      model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: MetronomeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Metronome'), findsOneWidget);
+    });
+
+    testWidgets('MetronomeCard shows BPM display', (WidgetTester tester) async {
+      final model = MetronomeModel();
+      model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: MetronomeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.textContaining('120'), findsWidgets);
+    });
+
+    testWidgets('MetronomeCard widget exists', (WidgetTester tester) async {
+      expect(MetronomeCard, isNotNull);
+    });
+
+    testWidgets('MetronomeCard shows play button', (WidgetTester tester) async {
+      final model = MetronomeModel();
+      model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: MetronomeCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.byIcon(Icons.play_arrow), findsOneWidget);
     });
   });
 }

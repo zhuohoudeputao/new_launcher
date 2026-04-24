@@ -458,6 +458,17 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
     - Keywords: bmi, body, mass, index, weight, height, health, calculator, metric, imperial
+- **Metronome**: Visual beat indicator for musicians
+    - Configurable BPM (20-300, default 120)
+    - Visual beat indicator with accent highlight for first beat
+    - Start/pause/stop controls
+    - Tap tempo feature (tap to set BPM)
+    - Preset BPM options (60, 80, 100, 120, 140, 160, 180)
+    - Time signature support (2/4, 3/4, 4/4, 6/4, 8/4)
+    - BPM history (up to 10 entries)
+    - Circular beat indicator with current beat number display
+    - Uses `Card.filled`, `SegmentedButton`, `ActionChip`, `FloatingActionButton` for Material 3 style
+    - Keywords: metronome, beat, bpm, tempo, rhythm, music, tap, pulse
 
 ## Material 3 Design System
 
@@ -560,8 +571,9 @@ Test coverage includes:
 - Counter provider tests (provider existence, keywords, model state, CRUD operations, increment/decrement, persistence, widget rendering)
 - Tip Calculator provider tests (provider existence, keywords, model state, bill calculations, split functionality, history, widget rendering)
 - BMI Calculator provider tests (provider existence, keywords, model state, BMI calculation, unit switching, history, widget rendering)
+- Metronome provider tests (provider existence, keywords, model state, BPM operations, time signature, tap tempo, history, widget rendering)
   
-Total tests: 981 tests
+Total tests: 1015 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -625,6 +637,7 @@ Technical documentation is available in `docs/`:
 - `counter_provider.md` - Counter provider implementation for multiple named counters
 - `tip_provider.md` - Tip Calculator provider implementation for dining/bill splitting
 - `bmi_provider.md` - BMI Calculator provider implementation for health tracking
+- `metronome_provider.md` - Metronome provider implementation for musicians
 - `calendar_model.md` - CalendarModel implementation for provider pattern consistency
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks
