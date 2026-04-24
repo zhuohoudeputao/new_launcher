@@ -348,9 +348,40 @@
         "Failed to load \"/home/linzuxuan/Documents/new_launcher/test/widget_test.dart\": Compilation failed for testPath=/home/linzuxuan/Documents/new_launcher/test/widget_test.dart",
         "00:01 +0 -1: Some tests failed."
       ]
+    },
+    {
+      "iteration": 14,
+      "startedAt": "2026-04-24T18:32:15.825Z",
+      "endedAt": "2026-04-24T18:42:52.616Z",
+      "durationMs": 628939,
+      "agent": "opencode",
+      "model": "",
+      "toolsUsed": {},
+      "filesModified": [
+        "AGENTS.md",
+        "docs/rockpaperscissors_provider.md",
+        "lib/data.dart",
+        "lib/main.dart",
+        "lib/providers/provider_rockpaperscissors.dart",
+        "test/widget_test.dart"
+      ],
+      "exitCode": 0,
+      "completionDetected": true,
+      "errors": [
+        "00:00 +0: loading /home/linzuxuan/Documents/new_launcher/test/widget_test.dart                                                                                                                         \r",
+        "test/widget_test.dart:17112:41: Error: The getter '_actionMap' isn't defined for the class 'ActionModel'.",
+        "test/widget_test.dart:17118:41: Error: The getter '_actionMap' isn't defined for the class 'ActionModel'.",
+        "test/widget_test.dart:17124:41: Error: The getter '_actionMap' isn't defined for the class 'ActionModel'.",
+        "test/widget_test.dart:17130:41: Error: The getter '_actionMap' isn't defined for the class 'ActionModel'.",
+        "test/widget_test.dart:17136:41: Error: The getter '_actionMap' isn't defined for the class 'ActionModel'.",
+        "test/widget_test.dart:17306:13: Error: The setter '_wins' isn't defined for the class 'RockPaperScissorsModel'.",
+        "test/widget_test.dart:17307:13: Error: The setter '_losses' isn't defined for the class 'RockPaperScissorsModel'.",
+        "test/widget_test.dart:17308:13: Error: The setter '_draws' isn't defined for the class 'RockPaperScissorsModel'.",
+        "Failed to load \"/home/linzuxuan/Documents/new_launcher/test/widget_test.dart\": Compilation failed for testPath=/home/linzuxuan/Documents/new_launcher/test/widget_test.dart"
+      ]
     }
   ],
-  "totalDurationMs": 7375326,
+  "totalDurationMs": 8004265,
   "struggleIndicators": {
     "repeatedErrors": {
       "I/flutter (11166): [ERROR] 2026-04-24T23:57:45.682722 - Network error: ClientException with SocketEx": 1,
@@ -366,9 +397,9 @@
       "test/widget_test.dart:15350:52: Error: The argument type 'Future<Null> Function(WidgetTester)' can't": 1,
       "test/widget_test.dart:15368:51: Error: The argument type 'Future<Null> Function(WidgetTester)' can't": 1,
       "lib/providers/provider_textcase.dart:201:29: Error: The method 'watch' isn't defined for the class '": 1,
-      "Failed to load \"/home/linzuxuan/Documents/new_launcher/test/widget_test.dart\": Compilation failed fo": 6,
+      "Failed to load \"/home/linzuxuan/Documents/new_launcher/test/widget_test.dart\": Compilation failed fo": 7,
       "00:01 +0 -1: Some tests failed.": 6,
-      "00:00 +0: loading /home/linzuxuan/Documents/new_launcher/test/widget_test.dart                      ": 5,
+      "00:00 +0: loading /home/linzuxuan/Documents/new_launcher/test/widget_test.dart                      ": 6,
       "00:12 +1457 -6: TextCase provider tests TextCaseModel clearHistory works                            ": 1,
       "lib/providers/provider_wordcounter.dart:53:25: Error: A value of type 'String' can't be returned fro": 1,
       "lib/providers/provider_wordcounter.dart:58:25: Error: A value of type 'String' can't be returned fro": 1,
@@ -410,7 +441,15 @@
       "lib/providers/provider_decisionmaker.dart:353:32: Error: Member not found: 'pick'.": 1,
       "lib/providers/provider_decisionmaker.dart:358:32: Error: Member not found: 'coin'.": 1,
       "lib/providers/provider_decisionmaker.dart:543:22: Error: Member not found: 'pick'.": 1,
-      "lib/providers/provider_decisionmaker.dart:545:22: Error: Member not found: 'coin'.": 1
+      "lib/providers/provider_decisionmaker.dart:545:22: Error: Member not found: 'coin'.": 1,
+      "test/widget_test.dart:17112:41: Error: The getter '_actionMap' isn't defined for the class 'ActionMo": 1,
+      "test/widget_test.dart:17118:41: Error: The getter '_actionMap' isn't defined for the class 'ActionMo": 1,
+      "test/widget_test.dart:17124:41: Error: The getter '_actionMap' isn't defined for the class 'ActionMo": 1,
+      "test/widget_test.dart:17130:41: Error: The getter '_actionMap' isn't defined for the class 'ActionMo": 1,
+      "test/widget_test.dart:17136:41: Error: The getter '_actionMap' isn't defined for the class 'ActionMo": 1,
+      "test/widget_test.dart:17306:13: Error: The setter '_wins' isn't defined for the class 'RockPaperScis": 1,
+      "test/widget_test.dart:17307:13: Error: The setter '_losses' isn't defined for the class 'RockPaperSc": 1,
+      "test/widget_test.dart:17308:13: Error: The setter '_draws' isn't defined for the class 'RockPaperSci": 1
     },
     "noProgressIterations": 0,
     "shortIterations": 0
