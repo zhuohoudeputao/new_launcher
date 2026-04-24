@@ -936,6 +936,17 @@ Settings auto-saved via `SharedPreferences`:
     - Location-based calculations using geolocator
     - Uses `Card.filled`, `ActionChip`, `showDatePicker` for Material 3 style
     - Keywords: sun, sunrise, sunset, golden, hour, solar, noon, day, length, altitude, azimuth, position
+- **RomanNumerals**: Roman numerals converter for educational use
+    - Convert numbers (1-3999) to Roman numerals
+    - Convert Roman numerals back to numbers
+    - Two conversion modes: Number → Roman and Roman → Number
+    - Swap conversion direction with one tap
+    - Input validation with error handling
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton` for Material 3 style
+    - Keywords: roman, numeral, convert, number, latin, I, V, X, L, C, D, M
 
 ## Material 3 Design System
 
@@ -1073,8 +1084,9 @@ Test coverage includes:
 - Sequence provider tests (provider existence, keywords, model state, Fibonacci generation, prime generation, arithmetic/geometric sequences, triangular/square/factorial, history, widget rendering)
 - FileSizeConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - SunPosition provider tests (provider existence, keywords, model state, time formatting, azimuth direction, day length, phase detection, widget rendering)
+- RomanNumerals provider tests (provider existence, keywords, model state, number to Roman conversion, Roman to number conversion, validation, history, widget rendering)
 
-Total tests: 2023 tests
+Total tests: 2052 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

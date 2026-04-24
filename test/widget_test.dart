@@ -75,6 +75,7 @@ import 'package:new_launcher/providers/provider_simon.dart';
 import 'package:new_launcher/providers/provider_sequence.dart';
 import 'package:new_launcher/providers/provider_filesize.dart';
 import 'package:new_launcher/providers/provider_sunposition.dart';
+import 'package:new_launcher/providers/provider_romannumerals.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2515,7 +2516,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 76);
+      expect(Global.providerList.length, 77);
     });
 
     test('Global.providerList names are correct', () {
@@ -3682,7 +3683,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 76);
+      expect(initCount, 77);
     });
   });
 
@@ -4000,7 +4001,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 76);
+      expect(Global.providerList.length, 77);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5344,7 +5345,7 @@ test('Global.providerList contains all providers (71 total)', () {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 76);
+      expect(Global.providerList.length, 77);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -20633,6 +20634,323 @@ test('WordleModel submitGuess works', () async {
 
     test('SunPositionCard widget class exists', () {
       expect(SunPositionCard, isNotNull);
+    });
+  });
+
+  group('RomanNumerals provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('RomanNumeralsModel is initialized correctly', () {
+      final model = RomanNumeralsModel();
+      expect(model.inputValue, '');
+      expect(model.mode, ConversionMode.numberToRoman);
+      expect(model.history.length, 0);
+    });
+
+    test('RomanNumeralsModel init works', () {
+      final model = RomanNumeralsModel();
+      model.init();
+      expect(model.isLoading, false);
+    });
+
+    test('RomanNumeralsModel number to Roman conversion', () {
+      final model = RomanNumeralsModel();
+      model.setInputValue('1');
+      expect(model.outputValue, 'I');
+      expect(model.error, '');
+
+      model.setInputValue('5');
+      expect(model.outputValue, 'V');
+
+      model.setInputValue('10');
+      expect(model.outputValue, 'X');
+
+      model.setInputValue('50');
+      expect(model.outputValue, 'L');
+
+      model.setInputValue('100');
+      expect(model.outputValue, 'C');
+
+      model.setInputValue('500');
+      expect(model.outputValue, 'D');
+
+      model.setInputValue('1000');
+      expect(model.outputValue, 'M');
+    });
+
+    test('RomanNumeralsModel complex number to Roman conversion', () {
+      final model = RomanNumeralsModel();
+      
+      model.setInputValue('4');
+      expect(model.outputValue, 'IV');
+
+      model.setInputValue('9');
+      expect(model.outputValue, 'IX');
+
+      model.setInputValue('40');
+      expect(model.outputValue, 'XL');
+
+      model.setInputValue('90');
+      expect(model.outputValue, 'XC');
+
+      model.setInputValue('400');
+      expect(model.outputValue, 'CD');
+
+      model.setInputValue('900');
+      expect(model.outputValue, 'CM');
+
+      model.setInputValue('1994');
+      expect(model.outputValue, 'MCMXCIV');
+
+      model.setInputValue('3999');
+      expect(model.outputValue, 'MMMCMXCIX');
+    });
+
+    test('RomanNumeralsModel Roman to number conversion', () {
+      final model = RomanNumeralsModel();
+      model.setMode(ConversionMode.romanToNumber);
+
+      model.setInputValue('I');
+      expect(model.outputValue, '1');
+      expect(model.error, '');
+
+      model.setInputValue('V');
+      expect(model.outputValue, '5');
+
+      model.setInputValue('X');
+      expect(model.outputValue, '10');
+
+      model.setInputValue('MCMXCIV');
+      expect(model.outputValue, '1994');
+    });
+
+    test('RomanNumeralsModel invalid number', () {
+      final model = RomanNumeralsModel();
+      
+      model.setInputValue('0');
+      expect(model.outputValue, '');
+      expect(model.error, 'Number must be >= 1');
+
+      model.setInputValue('4000');
+      expect(model.outputValue, '');
+      expect(model.error, 'Number must be <= 3999');
+
+      model.setInputValue('abc');
+      expect(model.outputValue, '');
+      expect(model.error, 'Invalid number');
+    });
+
+    test('RomanNumeralsModel invalid Roman numeral', () {
+      final model = RomanNumeralsModel();
+      model.setMode(ConversionMode.romanToNumber);
+
+      model.setInputValue('ABC');
+      expect(model.outputValue, '');
+      expect(model.error.isNotEmpty, true);
+
+      model.setInputValue('IIII');
+      expect(model.outputValue, '');
+      expect(model.error.isNotEmpty, true);
+
+      model.setInputValue('VV');
+      expect(model.outputValue, '');
+      expect(model.error.isNotEmpty, true);
+    });
+
+    test('RomanNumeralsModel setMode', () {
+      final model = RomanNumeralsModel();
+      expect(model.mode, ConversionMode.numberToRoman);
+      
+      model.setMode(ConversionMode.romanToNumber);
+      expect(model.mode, ConversionMode.romanToNumber);
+      expect(model.inputValue, '');
+
+      model.setInputValue('X');
+      model.setMode(ConversionMode.numberToRoman);
+      expect(model.mode, ConversionMode.numberToRoman);
+      expect(model.inputValue, '');
+    });
+
+    test('RomanNumeralsModel swapMode', () {
+      final model = RomanNumeralsModel();
+      model.setInputValue('10');
+      expect(model.mode, ConversionMode.numberToRoman);
+      expect(model.outputValue, 'X');
+
+      model.swapMode();
+      expect(model.mode, ConversionMode.romanToNumber);
+      expect(model.inputValue, 'X');
+    });
+
+    test('RomanNumeralsModel addToHistory', () {
+      final model = RomanNumeralsModel();
+      model.setInputValue('10');
+      expect(model.history.length, 0);
+      
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history.first.inputValue, '10');
+      expect(model.history.first.outputValue, 'X');
+      expect(model.history.first.mode, ConversionMode.numberToRoman);
+    });
+
+    test('RomanNumeralsModel addToHistory ignores invalid', () {
+      final model = RomanNumeralsModel();
+      model.setInputValue('4000');
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('RomanNumeralsModel addToHistory ignores empty', () {
+      final model = RomanNumeralsModel();
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('RomanNumeralsModel history respects max limit', () {
+      final model = RomanNumeralsModel();
+      for (int i = 1; i <= 15; i++) {
+        model.setInputValue('$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, RomanNumeralsModel.maxHistoryLength);
+    });
+
+    test('RomanNumeralsModel applyFromHistory', () {
+      final model = RomanNumeralsModel();
+      model.setInputValue('10');
+      model.addToHistory();
+      
+      model.setInputValue('100');
+      model.applyFromHistory(model.history.first);
+      expect(model.inputValue, '10');
+      expect(model.mode, ConversionMode.numberToRoman);
+    });
+
+    test('RomanNumeralsModel clearHistory', () {
+      final model = RomanNumeralsModel();
+      model.setInputValue('10');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('RomanNumeralsModel clearInput', () {
+      final model = RomanNumeralsModel();
+      model.setInputValue('10');
+      model.clearInput();
+      expect(model.inputValue, '');
+      expect(model.error, '');
+    });
+
+    test('RomanNumeralsModel refresh calls notifyListeners', () {
+      final model = RomanNumeralsModel();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('RomanNumeralsModel hasHistory', () {
+      final model = RomanNumeralsModel();
+      expect(model.hasHistory, false);
+      model.setInputValue('10');
+      model.addToHistory();
+      expect(model.hasHistory, true);
+    });
+
+    test('ConversionMode enum values', () {
+      expect(ConversionMode.values.length, 2);
+      expect(ConversionMode.values.contains(ConversionMode.numberToRoman), true);
+      expect(ConversionMode.values.contains(ConversionMode.romanToNumber), true);
+    });
+
+    test('RomanNumeralsModel static methods', () {
+      expect(RomanNumeralsModel.getModeLabel(ConversionMode.numberToRoman), 'Number → Roman');
+      expect(RomanNumeralsModel.getModeLabel(ConversionMode.romanToNumber), 'Roman → Number');
+      expect(RomanNumeralsModel.getModeIcon(ConversionMode.numberToRoman), '123');
+      expect(RomanNumeralsModel.getModeIcon(ConversionMode.romanToNumber), 'IV');
+    });
+
+    test('romanSymbols contains correct values', () {
+      expect(RomanNumeralsModel.romanSymbols.length, 13);
+      expect(RomanNumeralsModel.romanSymbols[0].key, 1000);
+      expect(RomanNumeralsModel.romanSymbols[0].value, 'M');
+      expect(RomanNumeralsModel.romanSymbols[12].key, 1);
+      expect(RomanNumeralsModel.romanSymbols[12].value, 'I');
+    });
+
+    test('providerRomanNumerals exists', () {
+      expect(providerRomanNumerals, isNotNull);
+      expect(providerRomanNumerals.name, 'RomanNumerals');
+    });
+
+    test('Global.providerList includes RomanNumerals', () {
+      final hasRomanNumerals = Global.providerList.any((p) => p.name == 'RomanNumerals');
+      expect(hasRomanNumerals, true);
+    });
+
+    test('RomanNumerals provider keywords include roman', () {
+      final keywords = 'roman numeral convert number latin I V X L C D M';
+      expect(keywords.contains('roman'), true);
+      expect(keywords.contains('numeral'), true);
+      expect(keywords.contains('convert'), true);
+    });
+
+    testWidgets('RomanNumeralsCard renders loading state', (WidgetTester tester) async {
+      final model = RomanNumeralsModel();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => RomanNumeralsCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Roman Numerals Converter'), findsOneWidget);
+    });
+
+    testWidgets('RomanNumeralsCard renders initialized state', (WidgetTester tester) async {
+      final model = RomanNumeralsModel();
+      model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => RomanNumeralsCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Roman Numerals Converter'), findsOneWidget);
+    });
+
+    test('RomanNumeralsCard widget exists', () {
+      expect(RomanNumeralsCard, isNotNull);
+    });
+
+    test('romanNumeralsModel global instance exists', () {
+      expect(romanNumeralsModel, isNotNull);
+    });
+
+    test('RomanNumeralsHistory class exists', () {
+      final entry = RomanNumeralsHistory(
+        inputValue: '10',
+        outputValue: 'X',
+        mode: ConversionMode.numberToRoman,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.inputValue, '10');
+      expect(entry.outputValue, 'X');
+      expect(entry.mode, ConversionMode.numberToRoman);
+    });
+
+    tearDownAll(() {
+      romanNumeralsModel.clearHistory();
     });
   });
 }

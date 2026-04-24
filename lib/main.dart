@@ -78,6 +78,7 @@ import 'package:new_launcher/providers/provider_simon.dart';
 import 'package:new_launcher/providers/provider_sequence.dart';
 import 'package:new_launcher/providers/provider_filesize.dart';
 import 'package:new_launcher/providers/provider_sunposition.dart';
+import 'package:new_launcher/providers/provider_romannumerals.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -229,8 +230,9 @@ ChangeNotifierProvider.value(value: hangmanModel),
 ChangeNotifierProvider.value(value: simonModel),
              ChangeNotifierProvider.value(value: sequenceModel),
              ChangeNotifierProvider.value(value: fileSizeConverterModel),
-             ChangeNotifierProvider.value(value: sunPositionModel),
-             ],
+ChangeNotifierProvider.value(value: sunPositionModel),
+              ChangeNotifierProvider.value(value: romanNumeralsModel),
+              ],
           child: MyApp(),
             )));
 }
