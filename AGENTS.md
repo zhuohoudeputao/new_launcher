@@ -999,6 +999,15 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `DropdownButton`, `TextField` for Material 3 style
     - Keywords: angle, convert, degree, radian, gradian, deg, rad, grad
+- **Prime**: Prime number checker for mathematical analysis
+    - Check if a number is prime with efficient algorithm
+    - Find prime factors for non-prime numbers (e.g., 12 = 2 × 2 × 3)
+    - Real-time checking as numbers are entered
+    - Save checked numbers to history (up to 10 entries)
+    - Load previous checks from history
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `TextField` for Material 3 style
+    - Keywords: prime, number, check, factor, math, divisor, isprime, prime factor
 
 ## Material 3 Design System
 
@@ -1142,8 +1151,9 @@ Test coverage includes:
 - SpeedConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - VolumeConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - AngleConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
+- Prime provider tests (provider existence, keywords, model state, prime checking, prime factor finding, history, widget rendering)
 
-Total tests: 2234 tests
+Total tests: 2252 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

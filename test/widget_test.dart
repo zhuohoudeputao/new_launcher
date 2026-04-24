@@ -81,6 +81,7 @@ import 'package:new_launcher/providers/provider_nato.dart';
 import 'package:new_launcher/providers/provider_speed.dart';
 import 'package:new_launcher/providers/provider_volume.dart';
 import 'package:new_launcher/providers/provider_angle.dart';
+import 'package:new_launcher/providers/provider_prime.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2521,7 +2522,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 82);
+      expect(Global.providerList.length, 83);
     });
 
     test('Global.providerList names are correct', () {
@@ -3688,7 +3689,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 82);
+      expect(initCount, 83);
     });
   });
 
@@ -4006,7 +4007,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 82);
+      expect(Global.providerList.length, 83);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5350,7 +5351,7 @@ test('Global.providerList contains all providers (71 total)', () {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 82);
+      expect(Global.providerList.length, 83);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -22593,6 +22594,206 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       angleConverterModel.clearHistory();
+    });
+  });
+
+  group('Prime Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('providerPrime exists in Global.providerList', () {
+      final primeProvider = Global.providerList.where((p) => p.name == 'Prime').first;
+      expect(primeProvider, isNotNull);
+      expect(primeProvider.name, 'Prime');
+    });
+
+    test('PrimeModel initializes correctly', () {
+      final model = PrimeModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.inputNumber, 0);
+      expect(model.isPrime, false);
+      expect(model.primeFactors, []);
+    });
+
+    test('PrimeModel checkPrime static method works', () {
+      expect(PrimeModel.checkPrime(2), true);
+      expect(PrimeModel.checkPrime(3), true);
+      expect(PrimeModel.checkPrime(5), true);
+      expect(PrimeModel.checkPrime(7), true);
+      expect(PrimeModel.checkPrime(11), true);
+      expect(PrimeModel.checkPrime(13), true);
+      expect(PrimeModel.checkPrime(17), true);
+      expect(PrimeModel.checkPrime(19), true);
+      expect(PrimeModel.checkPrime(23), true);
+      expect(PrimeModel.checkPrime(97), true);
+      expect(PrimeModel.checkPrime(4), false);
+      expect(PrimeModel.checkPrime(6), false);
+      expect(PrimeModel.checkPrime(8), false);
+      expect(PrimeModel.checkPrime(9), false);
+      expect(PrimeModel.checkPrime(10), false);
+      expect(PrimeModel.checkPrime(1), false);
+      expect(PrimeModel.checkPrime(0), false);
+      expect(PrimeModel.checkPrime(-1), false);
+    });
+
+    test('PrimeModel findPrimeFactors static method works', () {
+      expect(PrimeModel.findPrimeFactors(12), [2, 2, 3]);
+      expect(PrimeModel.findPrimeFactors(24), [2, 2, 2, 3]);
+      expect(PrimeModel.findPrimeFactors(36), [2, 2, 3, 3]);
+      expect(PrimeModel.findPrimeFactors(100), [2, 2, 5, 5]);
+      expect(PrimeModel.findPrimeFactors(7), [7]);
+      expect(PrimeModel.findPrimeFactors(1), []);
+      expect(PrimeModel.findPrimeFactors(0), []);
+    });
+
+    test('PrimeModel setInputNumber works', () {
+      final model = PrimeModel();
+      model.init();
+      model.setInputNumber(17);
+      expect(model.inputNumber, 17);
+      expect(model.isPrime, true);
+      expect(model.primeFactors, [17]);
+    });
+
+    test('PrimeModel setInputNumber for non-prime works', () {
+      final model = PrimeModel();
+      model.init();
+      model.setInputNumber(12);
+      expect(model.inputNumber, 12);
+      expect(model.isPrime, false);
+      expect(model.primeFactors, [2, 2, 3]);
+    });
+
+    test('PrimeModel clearInput works', () {
+      final model = PrimeModel();
+      model.init();
+      model.setInputNumber(17);
+      model.clearInput();
+      expect(model.inputNumber, 0);
+      expect(model.isPrime, false);
+      expect(model.primeFactors, []);
+    });
+
+    test('PrimeModel history works', () {
+      final model = PrimeModel();
+      model.init();
+      model.setInputNumber(17);
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0]['number'], 17);
+      expect(model.history[0]['isPrime'], true);
+    });
+
+    test('PrimeModel clearHistory works', () {
+      final model = PrimeModel();
+      model.init();
+      model.setInputNumber(17);
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history, []);
+    });
+
+    test('PrimeModel history max limit', () {
+      final model = PrimeModel();
+      model.init();
+      for (int i = 2; i < 15; i++) {
+        model.setInputNumber(i);
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('PrimeModel loadFromHistory works', () {
+      final model = PrimeModel();
+      model.init();
+      model.setInputNumber(17);
+      model.addToHistory();
+      model.clearInput();
+      model.loadFromHistory(model.history[0]);
+      expect(model.inputNumber, 17);
+      expect(model.isPrime, true);
+    });
+
+    test('PrimeModel refresh calls notifyListeners', () {
+      final model = PrimeModel();
+      model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('PrimeModel toggleShowFactors works', () {
+      final model = PrimeModel();
+      model.init();
+      expect(model.showFactors, false);
+      model.toggleShowFactors();
+      expect(model.showFactors, true);
+    });
+
+    testWidgets('PrimeCard renders loading state', (WidgetTester tester) async {
+      final model = PrimeModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PrimeCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('PrimeCard renders initialized state', (WidgetTester tester) async {
+      final model = PrimeModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PrimeCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Prime Number Checker'), findsOneWidget);
+      expect(find.byType(TextField), findsOneWidget);
+    });
+
+    testWidgets('PrimeCard shows input field', (WidgetTester tester) async {
+      final model = PrimeModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PrimeCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsOneWidget);
+    });
+
+    test('PrimeCard widget exists', () {
+      expect(PrimeCard, isNotNull);
+    });
+
+    test('Global.providerList includes Prime', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Prime'), true);
+    });
+
+    tearDownAll(() {
+      primeModel.clearHistory();
     });
   });
 }

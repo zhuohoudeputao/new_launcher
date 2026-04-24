@@ -84,6 +84,7 @@ import 'package:new_launcher/providers/provider_nato.dart';
 import 'package:new_launcher/providers/provider_speed.dart';
 import 'package:new_launcher/providers/provider_volume.dart';
 import 'package:new_launcher/providers/provider_angle.dart';
+import 'package:new_launcher/providers/provider_prime.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -242,6 +243,7 @@ ChangeNotifierProvider.value(value: sunPositionModel),
               ChangeNotifierProvider.value(value: speedConverterModel),
               ChangeNotifierProvider.value(value: volumeConverterModel),
               ChangeNotifierProvider.value(value: angleConverterModel),
+              ChangeNotifierProvider.value(value: primeModel),
               ],
           child: MyApp(),
             )));
