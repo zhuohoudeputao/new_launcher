@@ -47,6 +47,7 @@ import 'package:new_launcher/providers/provider_anniversary.dart';
 import 'package:new_launcher/providers/provider_sleep.dart';
 import 'package:new_launcher/providers/provider_counter.dart';
 import 'package:new_launcher/providers/provider_tip.dart';
+import 'package:new_launcher/providers/provider_bmi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -207,6 +208,7 @@ class Global {
     providerSleep,
     providerCounter,
     providerTip,
+    providerBMI,
   ];
 
   //_______________________________________________________________________

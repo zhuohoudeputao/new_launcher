@@ -448,6 +448,16 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
     - Keywords: tip, tipcalc, calculator, bill, restaurant, dining, split
+- **BMI**: Body Mass Index calculator for health tracking
+    - Unit system selection: Metric (kg/cm) or Imperial (lb/ft/in)
+    - Real-time BMI calculation as values are entered
+    - BMI categories: Underweight (<18.5), Normal (18.5-24.9), Overweight (25-29.9), Obese (>=30)
+    - Color-coded results with category-specific colors
+    - Calculation history (up to 10 entries)
+    - Load previous calculations from history
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
+    - Keywords: bmi, body, mass, index, weight, height, health, calculator, metric, imperial
 
 ## Material 3 Design System
 
@@ -549,8 +559,9 @@ Test coverage includes:
 - Sleep provider tests (provider existence, keywords, model state, sleep logging, statistics calculations, widget rendering)
 - Counter provider tests (provider existence, keywords, model state, CRUD operations, increment/decrement, persistence, widget rendering)
 - Tip Calculator provider tests (provider existence, keywords, model state, bill calculations, split functionality, history, widget rendering)
+- BMI Calculator provider tests (provider existence, keywords, model state, BMI calculation, unit switching, history, widget rendering)
   
-Total tests: 954 tests
+Total tests: 981 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -613,6 +624,7 @@ Technical documentation is available in `docs/`:
 - `sleep_provider.md` - Sleep tracker provider implementation
 - `counter_provider.md` - Counter provider implementation for multiple named counters
 - `tip_provider.md` - Tip Calculator provider implementation for dining/bill splitting
+- `bmi_provider.md` - BMI Calculator provider implementation for health tracking
 - `calendar_model.md` - CalendarModel implementation for provider pattern consistency
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks

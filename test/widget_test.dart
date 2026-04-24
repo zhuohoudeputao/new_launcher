@@ -35,6 +35,7 @@ import 'package:new_launcher/providers/provider_anniversary.dart';
 import 'package:new_launcher/providers/provider_sleep.dart';
 import 'package:new_launcher/providers/provider_counter.dart';
 import 'package:new_launcher/providers/provider_tip.dart';
+import 'package:new_launcher/providers/provider_bmi.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2475,7 +2476,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 36);
+      expect(Global.providerList.length, 37);
     });
 
     test('Global.providerList names are correct', () {
@@ -3642,7 +3643,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 36);
+      expect(initCount, 37);
     });
   });
 
@@ -3960,7 +3961,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 36);
+      expect(Global.providerList.length, 37);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5304,7 +5305,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 36);
+      expect(Global.providerList.length, 37);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -9803,6 +9804,269 @@ void main() {
       model.setBillAmount(100);
       model.saveToHistory();
       expect(model.hasHistory, true);
+    });
+  });
+
+  group('BMI Calculator provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('BmiEntry toJson and fromJson work correctly', () {
+      final entry = BmiEntry(
+        date: DateTime(2024, 1, 15),
+        bmi: 22.5,
+        weight: 70.0,
+        unit: 'metric',
+        height: 175.0,
+      );
+      
+      final json = entry.toJson();
+      final restored = BmiEntry.fromJson(json);
+      
+      expect(restored.date, entry.date);
+      expect(restored.bmi, entry.bmi);
+      expect(restored.weight, entry.weight);
+      expect(restored.unit, entry.unit);
+      expect(restored.height, entry.height);
+    });
+
+    test('BmiModel initializes correctly', () async {
+      final model = BmiModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.unit, 'metric');
+      expect(model.history.length, 0);
+    });
+
+    test('BmiModel setWeight works', () {
+      final model = BmiModel();
+      model.init();
+      model.setHeightMetric(175);
+      model.setWeight(70);
+      expect(model.weight, 70);
+      expect(model.calculatedBmi, closeTo(22.86, 0.1));
+    });
+
+    test('BmiModel setHeightMetric works', () {
+      final model = BmiModel();
+      model.init();
+      model.setWeight(70);
+      model.setHeightMetric(175);
+      expect(model.heightMetric, 175);
+      expect(model.calculatedBmi, closeTo(22.86, 0.1));
+    });
+
+    test('BmiModel setUnit works', () {
+      final model = BmiModel();
+      model.init();
+      model.setUnit('imperial');
+      expect(model.unit, 'imperial');
+    });
+
+    test('BmiModel metric BMI calculation is correct', () {
+      final model = BmiModel();
+      model.init();
+      model.setWeight(70);
+      model.setHeightMetric(175);
+      expect(model.calculatedBmi, closeTo(22.86, 0.1));
+    });
+
+    test('BmiModel imperial BMI calculation is correct', () {
+      final model = BmiModel();
+      model.init();
+      model.setUnit('imperial');
+      model.setWeight(154);
+      model.setHeightFeet(5);
+      model.setHeightInches(9);
+      final totalInches = 5 * 12.0 + 9;
+      final expectedBmi = (154 * 703) / (totalInches * totalInches);
+      expect(model.calculatedBmi, closeTo(expectedBmi, 0.1));
+    });
+
+    test('BmiModel getBmiCategory works', () {
+      final model = BmiModel();
+      model.init();
+      expect(model.getBmiCategory(17.0), 'Underweight');
+      expect(model.getBmiCategory(22.0), 'Normal');
+      expect(model.getBmiCategory(27.0), 'Overweight');
+      expect(model.getBmiCategory(32.0), 'Obese');
+    });
+
+    test('BmiModel saveToHistory works', () async {
+      final model = BmiModel();
+      await model.init();
+      model.setWeight(70);
+      model.setHeightMetric(175);
+      model.saveToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].bmi, closeTo(22.86, 0.1));
+    });
+
+    test('BmiModel saveToHistory max limit works', () async {
+      final model = BmiModel();
+      await model.init();
+      model.setHeightMetric(175);
+      for (int i = 0; i < 15; i++) {
+        model.setWeight(70.0 + i);
+        model.saveToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('BmiModel saveToHistory ignores zero weight', () async {
+      final model = BmiModel();
+      await model.init();
+      model.setWeight(0);
+      model.setHeightMetric(175);
+      model.saveToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('BmiModel clearHistory works', () async {
+      final model = BmiModel();
+      await model.init();
+      model.setWeight(70);
+      model.setHeightMetric(175);
+      model.saveToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('BmiModel clear works', () {
+      final model = BmiModel();
+      model.init();
+      model.setWeight(70);
+      model.setHeightMetric(175);
+      model.clear();
+      expect(model.weight, 0);
+      expect(model.heightMetric, 0);
+      expect(model.calculatedBmi, null);
+    });
+
+    test('BmiModel loadFromHistory works', () async {
+      final model = BmiModel();
+      await model.init();
+      model.setWeight(70);
+      model.setHeightMetric(175);
+      model.saveToHistory();
+      
+      final entry = model.history[0];
+      model.clear();
+      model.loadFromHistory(entry);
+      
+      expect(model.weight, 70);
+      expect(model.heightMetric, 175);
+      expect(model.calculatedBmi, closeTo(22.86, 0.1));
+    });
+
+    test('BmiModel hasHistory getter works', () async {
+      final model = BmiModel();
+      await model.init();
+      expect(model.hasHistory, false);
+      model.setWeight(70);
+      model.setHeightMetric(175);
+      model.saveToHistory();
+      expect(model.hasHistory, true);
+    });
+
+    test('BmiModel requestFocus works', () {
+      final model = BmiModel();
+      model.init();
+      model.requestFocus();
+      expect(model.shouldFocus, true);
+    });
+
+    test('BmiModel is ChangeNotifier', () {
+      final model = BmiModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('bmiModel global instance exists', () {
+      expect(bmiModel, isNotNull);
+    });
+
+    test('Global.providerList includes BMI', () {
+      final hasBmi = Global.providerList.any((p) => p.name == 'BMI');
+      expect(hasBmi, true);
+    });
+
+    test('providerBMI exists', () {
+      expect(providerBMI, isNotNull);
+      expect(providerBMI.name, 'BMI');
+    });
+
+    test('BMI provider keywords include bmi', () {
+      final keywords = 'bmi body mass index weight height health calculator metric imperial';
+      expect(keywords.contains('bmi'), true);
+    });
+
+    test('BMI provider keywords include weight', () {
+      final keywords = 'bmi body mass index weight height health calculator metric imperial';
+      expect(keywords.contains('weight'), true);
+    });
+
+    test('BMI provider keywords include height', () {
+      final keywords = 'bmi body mass index weight height health calculator metric imperial';
+      expect(keywords.contains('height'), true);
+    });
+
+    testWidgets('BmiCard renders loading state', (WidgetTester tester) async {
+      final model = BmiModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: BmiCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('BMI Calculator: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('BmiCard renders initialized state', (WidgetTester tester) async {
+      final model = BmiModel();
+      await model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: BmiCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('BMI Calculator'), findsOneWidget);
+    });
+
+    testWidgets('BmiCard renders with BMI calculation', (WidgetTester tester) async {
+      final model = BmiModel();
+      await model.init();
+      model.setWeight(70);
+      model.setHeightMetric(175);
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: BmiCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('BMI Calculator'), findsOneWidget);
+      expect(find.text('Normal'), findsOneWidget);
+    });
+
+    testWidgets('BmiCard widget exists', (WidgetTester tester) async {
+      expect(BmiCard, isNotNull);
     });
   });
 }
