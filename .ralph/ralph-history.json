@@ -317,9 +317,40 @@
         "Test failed. See exception logs above.",
         "00:13 +1607 -1: ReactionTime Provider tests ReactionTimeCard shows stats row                                                                                                                           \r"
       ]
+    },
+    {
+      "iteration": 13,
+      "startedAt": "2026-04-24T18:21:45.101Z",
+      "endedAt": "2026-04-24T18:32:06.937Z",
+      "durationMs": 613876,
+      "agent": "opencode",
+      "model": "",
+      "toolsUsed": {},
+      "filesModified": [
+        "AGENTS.md",
+        "docs/decisionmaker_provider.md",
+        "lib/data.dart",
+        "lib/main.dart",
+        "lib/providers/provider_decisionmaker.dart",
+        "test/widget_test.dart"
+      ],
+      "exitCode": 0,
+      "completionDetected": true,
+      "errors": [
+        "00:00 +0: loading /home/linzuxuan/Documents/new_launcher/test/widget_test.dart                                                                                                                         \r",
+        "lib/providers/provider_decisionmaker.dart:275:26: Error: Member not found: 'decision'.",
+        "lib/providers/provider_decisionmaker.dart:297:34: Error: Member not found: 'decision'.",
+        "lib/providers/provider_decisionmaker.dart:310:59: Error: Member not found: 'decision'.",
+        "lib/providers/provider_decisionmaker.dart:353:32: Error: Member not found: 'pick'.",
+        "lib/providers/provider_decisionmaker.dart:358:32: Error: Member not found: 'coin'.",
+        "lib/providers/provider_decisionmaker.dart:543:22: Error: Member not found: 'pick'.",
+        "lib/providers/provider_decisionmaker.dart:545:22: Error: Member not found: 'coin'.",
+        "Failed to load \"/home/linzuxuan/Documents/new_launcher/test/widget_test.dart\": Compilation failed for testPath=/home/linzuxuan/Documents/new_launcher/test/widget_test.dart",
+        "00:01 +0 -1: Some tests failed."
+      ]
     }
   ],
-  "totalDurationMs": 6761450,
+  "totalDurationMs": 7375326,
   "struggleIndicators": {
     "repeatedErrors": {
       "I/flutter (11166): [ERROR] 2026-04-24T23:57:45.682722 - Network error: ClientException with SocketEx": 1,
@@ -335,9 +366,9 @@
       "test/widget_test.dart:15350:52: Error: The argument type 'Future<Null> Function(WidgetTester)' can't": 1,
       "test/widget_test.dart:15368:51: Error: The argument type 'Future<Null> Function(WidgetTester)' can't": 1,
       "lib/providers/provider_textcase.dart:201:29: Error: The method 'watch' isn't defined for the class '": 1,
-      "Failed to load \"/home/linzuxuan/Documents/new_launcher/test/widget_test.dart\": Compilation failed fo": 5,
-      "00:01 +0 -1: Some tests failed.": 5,
-      "00:00 +0: loading /home/linzuxuan/Documents/new_launcher/test/widget_test.dart                      ": 4,
+      "Failed to load \"/home/linzuxuan/Documents/new_launcher/test/widget_test.dart\": Compilation failed fo": 6,
+      "00:01 +0 -1: Some tests failed.": 6,
+      "00:00 +0: loading /home/linzuxuan/Documents/new_launcher/test/widget_test.dart                      ": 5,
       "00:12 +1457 -6: TextCase provider tests TextCaseModel clearHistory works                            ": 1,
       "lib/providers/provider_wordcounter.dart:53:25: Error: A value of type 'String' can't be returned fro": 1,
       "lib/providers/provider_wordcounter.dart:58:25: Error: A value of type 'String' can't be returned fro": 1,
@@ -372,7 +403,14 @@
       "00:12 +1607 -1: ReactionTime Provider tests ReactionTimeCard shows stats row                        ": 1,
       "E/AndroidRuntime(28196): FATAL EXCEPTION: main": 1,
       "E/AndroidRuntime(28196): java.lang.RuntimeException: android.app.BackgroundServiceStartNotAllowedExc": 1,
-      "E/AndroidRuntime(28196): Caused by: android.app.BackgroundServiceStartNotAllowedException: Not allow": 1
+      "E/AndroidRuntime(28196): Caused by: android.app.BackgroundServiceStartNotAllowedException: Not allow": 1,
+      "lib/providers/provider_decisionmaker.dart:275:26: Error: Member not found: 'decision'.": 1,
+      "lib/providers/provider_decisionmaker.dart:297:34: Error: Member not found: 'decision'.": 1,
+      "lib/providers/provider_decisionmaker.dart:310:59: Error: Member not found: 'decision'.": 1,
+      "lib/providers/provider_decisionmaker.dart:353:32: Error: Member not found: 'pick'.": 1,
+      "lib/providers/provider_decisionmaker.dart:358:32: Error: Member not found: 'coin'.": 1,
+      "lib/providers/provider_decisionmaker.dart:543:22: Error: Member not found: 'pick'.": 1,
+      "lib/providers/provider_decisionmaker.dart:545:22: Error: Member not found: 'coin'.": 1
     },
     "noProgressIterations": 0,
     "shortIterations": 0
