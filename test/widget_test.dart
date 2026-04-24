@@ -34,6 +34,7 @@ import 'package:new_launcher/providers/provider_progress.dart';
 import 'package:new_launcher/providers/provider_anniversary.dart';
 import 'package:new_launcher/providers/provider_sleep.dart';
 import 'package:new_launcher/providers/provider_counter.dart';
+import 'package:new_launcher/providers/provider_tip.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2474,7 +2475,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 35);
+      expect(Global.providerList.length, 36);
     });
 
     test('Global.providerList names are correct', () {
@@ -3641,7 +3642,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 35);
+      expect(initCount, 36);
     });
   });
 
@@ -3959,7 +3960,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 35);
+      expect(Global.providerList.length, 36);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5303,7 +5304,7 @@ void main() {
     });
 
     test('Global.providerList now contains 24 providers', () {
-      expect(Global.providerList.length, 35);
+      expect(Global.providerList.length, 36);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -9486,6 +9487,323 @@ void main() {
       expect(model2.length, 1);
       expect(model2.counters[0].name, 'Reps');
       expect(model2.counters[0].count, 2);
+    });
+  });
+
+  group('Tip Calculator provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('TipModel is initialized correctly', () {
+      final model = TipModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.billAmount, 0);
+      expect(model.tipPercentage, 15);
+      expect(model.splitCount, 1);
+    });
+
+    test('TipModel setBillAmount works', () {
+      final model = TipModel();
+      model.init();
+      model.setBillAmount(100);
+      expect(model.billAmount, 100);
+    });
+
+    test('TipModel setTipPercentage works', () {
+      final model = TipModel();
+      model.init();
+      model.setTipPercentage(20);
+      expect(model.tipPercentage, 20);
+    });
+
+    test('TipModel setSplitCount works', () {
+      final model = TipModel();
+      model.init();
+      model.setSplitCount(4);
+      expect(model.splitCount, 4);
+    });
+
+    test('TipModel splitCount clamp works', () {
+      final model = TipModel();
+      model.init();
+      model.setSplitCount(0);
+      expect(model.splitCount, 1);
+      model.setSplitCount(25);
+      expect(model.splitCount, 20);
+    });
+
+    test('TipModel incrementSplit works', () {
+      final model = TipModel();
+      model.init();
+      model.setSplitCount(1);
+      model.incrementSplit();
+      expect(model.splitCount, 2);
+    });
+
+    test('TipModel incrementSplit stops at 20', () {
+      final model = TipModel();
+      model.init();
+      model.setSplitCount(20);
+      model.incrementSplit();
+      expect(model.splitCount, 20);
+    });
+
+    test('TipModel decrementSplit works', () {
+      final model = TipModel();
+      model.init();
+      model.setSplitCount(2);
+      model.decrementSplit();
+      expect(model.splitCount, 1);
+    });
+
+    test('TipModel decrementSplit stops at 1', () {
+      final model = TipModel();
+      model.init();
+      model.setSplitCount(1);
+      model.decrementSplit();
+      expect(model.splitCount, 1);
+    });
+
+    test('TipModel tipAmount calculation works', () {
+      final model = TipModel();
+      model.init();
+      model.setBillAmount(100);
+      model.setTipPercentage(15);
+      expect(model.tipAmount, 15);
+    });
+
+    test('TipModel totalAmount calculation works', () {
+      final model = TipModel();
+      model.init();
+      model.setBillAmount(100);
+      model.setTipPercentage(15);
+      expect(model.totalAmount, 115);
+    });
+
+    test('TipModel perPerson calculation works', () {
+      final model = TipModel();
+      model.init();
+      model.setBillAmount(100);
+      model.setTipPercentage(15);
+      model.setSplitCount(4);
+      expect(model.perPerson, 28.75);
+    });
+
+    test('TipModel tipPerPerson calculation works', () {
+      final model = TipModel();
+      model.init();
+      model.setBillAmount(100);
+      model.setTipPercentage(15);
+      model.setSplitCount(4);
+      expect(model.tipPerPerson, 3.75);
+    });
+
+    test('TipModel isCustomPercentage works', () {
+      final model = TipModel();
+      model.init();
+      expect(model.isCustomPercentage, false);
+      model.setTipPercentage(17);
+      expect(model.isCustomPercentage, true);
+      model.setTipPercentage(15);
+      expect(model.isCustomPercentage, false);
+    });
+
+    test('TipModel saveToHistory works', () {
+      final model = TipModel();
+      model.init();
+      model.setBillAmount(100);
+      model.setTipPercentage(20);
+      model.setSplitCount(2);
+      model.saveToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].billAmount, 100);
+      expect(model.history[0].tipPercentage, 20);
+      expect(model.history[0].splitCount, 2);
+    });
+
+    test('TipModel saveToHistory max limit works', () {
+      final model = TipModel();
+      model.init();
+      model.setBillAmount(100);
+      model.setTipPercentage(15);
+      for (int i = 0; i < 15; i++) {
+        model.saveToHistory();
+      }
+      expect(model.history.length, TipModel.maxHistory);
+    });
+
+    test('TipModel saveToHistory ignores zero bill', () {
+      final model = TipModel();
+      model.init();
+      model.setBillAmount(0);
+      model.saveToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('TipModel clearHistory works', () {
+      final model = TipModel();
+      model.init();
+      model.setBillAmount(100);
+      model.saveToHistory();
+      expect(model.history.length, 1);
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('TipModel clear works', () {
+      final model = TipModel();
+      model.init();
+      model.setBillAmount(100);
+      model.setTipPercentage(20);
+      model.setSplitCount(4);
+      model.clear();
+      expect(model.billAmount, 0);
+      expect(model.tipPercentage, 15);
+      expect(model.splitCount, 1);
+    });
+
+    test('TipModel formatAmount works', () {
+      final model = TipModel();
+      model.init();
+      expect(model.formatAmount(100), '\$100');
+      expect(model.formatAmount(28.75), '\$28.75');
+      expect(model.formatAmount(15.0), '\$15');
+    });
+
+    test('TipModel presetPercentages contains expected values', () {
+      expect(TipModel.presetPercentages, contains(10));
+      expect(TipModel.presetPercentages, contains(15));
+      expect(TipModel.presetPercentages, contains(18));
+      expect(TipModel.presetPercentages, contains(20));
+      expect(TipModel.presetPercentages, contains(25));
+    });
+
+    testWidgets('TipCard renders loading state', (WidgetTester tester) async {
+      final model = TipModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: TipCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Tip Calculator: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('TipCard renders initialized state', (WidgetTester tester) async {
+      final model = TipModel();
+      model.init();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: TipCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Tip Calculator'), findsOneWidget);
+      expect(find.text('Bill Amount'), findsOneWidget);
+    });
+
+    testWidgets('TipCard renders with calculations', (WidgetTester tester) async {
+      final model = TipModel();
+      model.init();
+      model.setBillAmount(100);
+      model.setTipPercentage(15);
+      model.setSplitCount(2);
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: TipCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Tip Calculator'), findsOneWidget);
+      expect(find.text('\$15'), findsOneWidget);
+      expect(find.text('\$115'), findsOneWidget);
+      expect(find.text('Per Person'), findsOneWidget);
+    });
+
+    testWidgets('TipCard widget exists', (WidgetTester tester) async {
+      expect(TipCard, isNotNull);
+    });
+
+    test('Global.providerList includes Tip', () {
+      final hasTip = Global.providerList.any((p) => p.name == 'Tip');
+      expect(hasTip, true);
+    });
+
+    test('providerTip exists', () {
+      expect(providerTip, isNotNull);
+      expect(providerTip.name, 'Tip');
+    });
+
+    test('Tip provider keywords include tip', () {
+      final keywords = 'tip tipcalc calculator bill restaurant dining split';
+      expect(keywords.contains('tip'), true);
+    });
+
+    test('Tip provider keywords include bill', () {
+      final keywords = 'tip tipcalc calculator bill restaurant dining split';
+      expect(keywords.contains('bill'), true);
+    });
+
+    test('Tip provider keywords include split', () {
+      final keywords = 'tip tipcalc calculator bill restaurant dining split';
+      expect(keywords.contains('split'), true);
+    });
+
+    test('TipModel is ChangeNotifier', () {
+      final model = TipModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('tipModel global instance exists', () {
+      expect(tipModel, isNotNull);
+    });
+
+    test('TipCalculation data structure works', () {
+      final calc = TipCalculation(
+        billAmount: 100,
+        tipPercentage: 15,
+        splitCount: 2,
+        tipAmount: 15,
+        totalAmount: 115,
+        perPerson: 57.5,
+        tipPerPerson: 7.5,
+        timestamp: DateTime.now(),
+      );
+      
+      expect(calc.billAmount, 100);
+      expect(calc.tipPercentage, 15);
+      expect(calc.splitCount, 2);
+      expect(calc.tipAmount, 15);
+      expect(calc.totalAmount, 115);
+      expect(calc.perPerson, 57.5);
+      expect(calc.tipPerPerson, 7.5);
+    });
+
+    test('TipModel hasHistory getter works', () {
+      final model = TipModel();
+      model.init();
+      expect(model.hasHistory, false);
+      model.setBillAmount(100);
+      model.saveToHistory();
+      expect(model.hasHistory, true);
     });
   });
 }

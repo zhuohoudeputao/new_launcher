@@ -37,6 +37,7 @@ import 'package:new_launcher/providers/provider_progress.dart';
 import 'package:new_launcher/providers/provider_anniversary.dart';
 import 'package:new_launcher/providers/provider_sleep.dart';
 import 'package:new_launcher/providers/provider_counter.dart';
+import 'package:new_launcher/providers/provider_tip.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -148,6 +149,7 @@ ChangeNotifierProvider.value(value: colorModel),
             ChangeNotifierProvider.value(value: anniversaryModel),
             ChangeNotifierProvider.value(value: sleepModel),
             ChangeNotifierProvider.value(value: counterModel),
+            ChangeNotifierProvider.value(value: tipModel),
            ],
           child: MyApp(),
          )));

@@ -437,6 +437,17 @@ Settings auto-saved via `SharedPreferences`:
     - Counters persisted via SharedPreferences
     - Uses `Card.filled` for Material 3 style
     - Keywords: counter, count, tap, tally, number, increment, add, track
+- **Tip**: Tip calculator for dining/bill splitting
+    - Bill amount input with dollar prefix
+    - Tip percentage selection (preset: 10%, 15%, 18%, 20%, 25%)
+    - Custom tip percentage input
+    - Split between 1-20 people with increment/decrement buttons
+    - Real-time calculation: tip amount, total, per person, tip per person
+    - Calculation history (up to 10 entries)
+    - Tap history to restore previous calculations
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
+    - Keywords: tip, tipcalc, calculator, bill, restaurant, dining, split
 
 ## Material 3 Design System
 
@@ -537,8 +548,9 @@ Test coverage includes:
 - Anniversary provider tests (provider existence, keywords, model state, CRUD operations, time formatting, widget rendering)
 - Sleep provider tests (provider existence, keywords, model state, sleep logging, statistics calculations, widget rendering)
 - Counter provider tests (provider existence, keywords, model state, CRUD operations, increment/decrement, persistence, widget rendering)
+- Tip Calculator provider tests (provider existence, keywords, model state, bill calculations, split functionality, history, widget rendering)
   
-Total tests: 920 tests
+Total tests: 954 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -600,6 +612,7 @@ Technical documentation is available in `docs/`:
 - `anniversary_provider.md` - Anniversary provider implementation
 - `sleep_provider.md` - Sleep tracker provider implementation
 - `counter_provider.md` - Counter provider implementation for multiple named counters
+- `tip_provider.md` - Tip Calculator provider implementation for dining/bill splitting
 - `calendar_model.md` - CalendarModel implementation for provider pattern consistency
 - `min_sdk_version_fix.md` - Minimum SDK version fix for torch_light plugin
 - `critical_bug_fixes_iteration29.md` - Critical bug fixes for missing MultiProvider models and memory leaks
