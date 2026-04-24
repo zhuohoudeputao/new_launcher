@@ -88,6 +88,7 @@ import 'package:new_launcher/providers/provider_sequence.dart';
 import 'package:new_launcher/providers/provider_filesize.dart';
 import 'package:new_launcher/providers/provider_sunposition.dart';
 import 'package:new_launcher/providers/provider_romannumerals.dart';
+import 'package:new_launcher/providers/provider_palindrome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -289,6 +290,7 @@ class Global {
     providerFileSizeConverter,
     providerSunPosition,
     providerRomanNumerals,
+    providerPalindrome,
   ];
 
   //_______________________________________________________________________

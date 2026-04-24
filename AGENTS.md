@@ -947,6 +947,18 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton` for Material 3 style
     - Keywords: roman, numeral, convert, number, latin, I, V, X, L, C, D, M
+- **Palindrome**: Palindrome checker for text analysis
+    - Check if text reads the same forward and backward
+    - Option to ignore spaces, punctuation, and case
+    - Visual result indicator with color coding (green for palindrome, red for non-palindrome)
+    - Reversed text display for comparison
+    - History tracking (up to 10 entries)
+    - Tap history entries to reuse previous checks
+    - Clear history with confirmation dialog
+    - Famous palindrome support (e.g., "A man a plan a canal Panama")
+    - Supports numbers and single characters
+    - Uses `Card.filled`, `FilterChip` for Material 3 style
+    - Keywords: palindrome, check, text, reverse, word, phrase, mirror, backwards
 
 ## Material 3 Design System
 
@@ -1085,8 +1097,9 @@ Test coverage includes:
 - FileSizeConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - SunPosition provider tests (provider existence, keywords, model state, time formatting, azimuth direction, day length, phase detection, widget rendering)
 - RomanNumerals provider tests (provider existence, keywords, model state, number to Roman conversion, Roman to number conversion, validation, history, widget rendering)
+- Palindrome provider tests (provider existence, keywords, model state, palindrome detection, options handling, history, widget rendering)
 
-Total tests: 2052 tests
+Total tests: 2083 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1176,6 +1189,7 @@ Technical documentation is available in `docs/`:
 - `memorygame_provider.md` - Memory Game provider implementation for card matching game
 - `hangman_provider.md` - Hangman provider implementation for word guessing game
 - `sudoku_provider.md` - Sudoku provider implementation for classic puzzle game
+- `palindrome_provider.md` - Palindrome Checker provider implementation for palindrome detection
 
 ## Notice
 DO NOT EDIT task*.md

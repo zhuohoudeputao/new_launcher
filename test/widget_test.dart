@@ -76,6 +76,7 @@ import 'package:new_launcher/providers/provider_sequence.dart';
 import 'package:new_launcher/providers/provider_filesize.dart';
 import 'package:new_launcher/providers/provider_sunposition.dart';
 import 'package:new_launcher/providers/provider_romannumerals.dart';
+import 'package:new_launcher/providers/provider_palindrome.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -20951,6 +20952,309 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       romanNumeralsModel.clearHistory();
+    });
+  });
+
+  group('Palindrome provider tests', () {
+    test('providerPalindrome exists', () {
+      expect(providerPalindrome, isNotNull);
+    });
+
+    test('providerPalindrome name is Palindrome', () {
+      expect(providerPalindrome.name, 'Palindrome');
+    });
+
+    test('providerPalindrome keywords contain palindrome', () {
+      expect(providerPalindrome.provideActions, isNotNull);
+    });
+
+    test('PalindromeModel initial state', () {
+      final model = PalindromeModel();
+      expect(model.inputText, '');
+      expect(model.isPalindrome, false);
+      expect(model.reversedText, '');
+      expect(model.ignoreSpaces, true);
+      expect(model.ignorePunctuation, true);
+      expect(model.ignoreCase, true);
+      expect(model.isInitialized, false);
+      expect(model.history, isEmpty);
+    });
+
+    test('PalindromeModel init() sets isInitialized', () {
+      final model = PalindromeModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('PalindromeModel setInputText() updates input', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('racecar');
+      expect(model.inputText, 'racecar');
+    });
+
+    test('PalindromeModel detects palindrome racecar', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('racecar');
+      expect(model.isPalindrome, true);
+    });
+
+    test('PalindromeModel detects palindrome radar', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('radar');
+      expect(model.isPalindrome, true);
+    });
+
+    test('PalindromeModel detects palindrome level', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('level');
+      expect(model.isPalindrome, true);
+    });
+
+    test('PalindromeModel detects palindrome madam', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('madam');
+      expect(model.isPalindrome, true);
+    });
+
+    test('PalindromeModel detects non-palindrome hello', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('hello');
+      expect(model.isPalindrome, false);
+    });
+
+    test('PalindromeModel detects non-palindrome world', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('world');
+      expect(model.isPalindrome, false);
+    });
+
+    test('PalindromeModel reversedText is correct', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('hello');
+      expect(model.reversedText, 'olleh');
+    });
+
+    test('PalindromeModel palindrome with spaces - ignore spaces', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('race car');
+      model.setIgnoreSpaces(true);
+      expect(model.isPalindrome, true);
+    });
+
+    test('PalindromeModel palindrome with spaces - not ignore spaces', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('race car');
+      model.setIgnoreSpaces(false);
+      expect(model.isPalindrome, false);
+    });
+
+    test('PalindromeModel palindrome with punctuation - ignore punctuation', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('race, car!');
+      model.setIgnorePunctuation(true);
+      expect(model.isPalindrome, true);
+    });
+
+    test('PalindromeModel palindrome with punctuation - not ignore punctuation', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('race, car!');
+      model.setIgnorePunctuation(false);
+      expect(model.isPalindrome, false);
+    });
+
+    test('PalindromeModel palindrome with case - ignore case', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('RaceCar');
+      model.setIgnoreCase(true);
+      expect(model.isPalindrome, true);
+    });
+
+    test('PalindromeModel palindrome with case - not ignore case', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('RaceCar');
+      model.setIgnoreCase(false);
+      expect(model.isPalindrome, false);
+    });
+
+    test('PalindromeModel famous palindrome "A man a plan a canal Panama"', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('A man a plan a canal Panama');
+      model.setIgnoreSpaces(true);
+      model.setIgnorePunctuation(true);
+      model.setIgnoreCase(true);
+      expect(model.isPalindrome, true);
+    });
+
+    test('PalindromeModel empty input is not palindrome', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('');
+      expect(model.isPalindrome, false);
+      expect(model.reversedText, '');
+    });
+
+    test('PalindromeModel clearInput() resets state', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('racecar');
+      model.clearInput();
+      expect(model.inputText, '');
+      expect(model.isPalindrome, false);
+      expect(model.reversedText, '');
+    });
+
+    test('PalindromeModel addToHistory() adds entry', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('racecar');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0]['text'], 'racecar');
+      expect(model.history[0]['isPalindrome'], true);
+    });
+
+    test('PalindromeModel addToHistory() max 10 entries', () {
+      final model = PalindromeModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputText('test$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('PalindromeModel loadFromHistory() restores entry', () {
+      final model = PalindromeModel();
+      model.init();
+      final entry = {
+        'text': 'radar',
+        'isPalindrome': true,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+      model.loadFromHistory(entry);
+      expect(model.inputText, 'radar');
+      expect(model.isPalindrome, true);
+    });
+
+    test('PalindromeModel clearHistory() removes all entries', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('racecar');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history, isEmpty);
+    });
+
+    test('PalindromeModel single character is palindrome', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('a');
+      expect(model.isPalindrome, true);
+    });
+
+    test('PalindromeModel numbers can be palindrome', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('12321');
+      expect(model.isPalindrome, true);
+    });
+
+    test('PalindromeModel numbers non-palindrome', () {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('12345');
+      expect(model.isPalindrome, false);
+    });
+
+    test('PalindromeCard widget exists', () {
+      expect(PalindromeCard, isNotNull);
+    });
+
+    test('palindromeModel global instance exists', () {
+      expect(palindromeModel, isNotNull);
+    });
+
+    testWidgets('PalindromeCard renders loading state', (WidgetTester tester) async {
+      final model = PalindromeModel();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => PalindromeCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Palindrome Checker'), findsOneWidget);
+    });
+
+    testWidgets('PalindromeCard renders initialized state', (WidgetTester tester) async {
+      final model = PalindromeModel();
+      model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => PalindromeCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Palindrome Checker'), findsOneWidget);
+      expect(find.text('Ignore spaces'), findsOneWidget);
+      expect(find.text('Ignore punctuation'), findsOneWidget);
+      expect(find.text('Ignore case'), findsOneWidget);
+    });
+
+    testWidgets('PalindromeCard shows palindrome result', (WidgetTester tester) async {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('racecar');
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => PalindromeCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Yes, it\'s a palindrome!'), findsOneWidget);
+    });
+
+    testWidgets('PalindromeCard shows non-palindrome result', (WidgetTester tester) async {
+      final model = PalindromeModel();
+      model.init();
+      model.setInputText('hello');
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => PalindromeCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Not a palindrome'), findsOneWidget);
+    });
+
+    tearDownAll(() {
+      palindromeModel.clearHistory();
     });
   });
 }
