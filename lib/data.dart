@@ -74,6 +74,7 @@ import 'package:new_launcher/providers/provider_moonphase.dart';
 import 'package:new_launcher/providers/provider_reactiontime.dart';
 import 'package:new_launcher/providers/provider_decisionmaker.dart';
 import 'package:new_launcher/providers/provider_rockpaperscissors.dart';
+import 'package:new_launcher/providers/provider_whosturn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -261,6 +262,7 @@ class Global {
     providerReactionTime,
     providerDecisionMaker,
     providerRockPaperScissors,
+    providerWhosTurn,
   ];
 
   //_______________________________________________________________________

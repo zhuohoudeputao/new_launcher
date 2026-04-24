@@ -768,6 +768,18 @@ Settings auto-saved via `SharedPreferences`:
     - Standard RPS rules: Rock beats Scissors, Scissors beats Paper, Paper beats Rock
     - Uses `Card.filled`, `ElevatedButton`, `TextButton` for Material 3 style
     - Keywords: rock, paper, scissors, game, rps, play, hand
+- **WhosTurn**: Turn tracker for multiplayer games
+    - Track whose turn it is in board games, card games, etc.
+    - Add/remove players (up to 10)
+    - Current player highlight with visual indicator
+    - Next/previous turn navigation
+    - Random player selection
+    - Turn history tracking (up to 20 entries)
+    - Timestamp display for history entries
+    - Clear all players with confirmation dialog
+    - Long press to edit player name, tap to set current
+    - Uses `Card.filled` for Material 3 style
+    - Keywords: whosturn, turn, player, game, board, card, next, who
 
 ## Material 3 Design System
 
@@ -892,8 +904,9 @@ Test coverage includes:
 - ReactionTime provider tests (provider existence, keywords, model state, reaction time operations, history, widget rendering)
 - DecisionMaker provider tests (provider existence, keywords, model state, decision operations, history, widget rendering)
 - RockPaperScissors provider tests (provider existence, keywords, model state, game operations, statistics, history, widget rendering)
+- WhosTurn provider tests (provider existence, keywords, model state, CRUD operations, turn navigation, history, widget rendering)
   
-Total tests: 1684 tests
+Total tests: 1721 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

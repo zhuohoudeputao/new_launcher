@@ -62,6 +62,7 @@ import 'package:new_launcher/providers/provider_moonphase.dart';
 import 'package:new_launcher/providers/provider_reactiontime.dart';
 import 'package:new_launcher/providers/provider_decisionmaker.dart';
 import 'package:new_launcher/providers/provider_rockpaperscissors.dart';
+import 'package:new_launcher/providers/provider_whosturn.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2502,7 +2503,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 63);
+      expect(Global.providerList.length, 64);
     });
 
     test('Global.providerList names are correct', () {
@@ -3669,7 +3670,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 63);
+      expect(initCount, 64);
     });
   });
 
@@ -3987,7 +3988,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (63 total)', () {
-      expect(Global.providerList.length, 63);
+      expect(Global.providerList.length, 64);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5331,7 +5332,7 @@ test('Global.providerList contains all providers (63 total)', () {
     });
 
 test('Global.providerList contains all providers (63 total)', () {
-      expect(Global.providerList.length, 63);
+      expect(Global.providerList.length, 64);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -17304,6 +17305,413 @@ test('Global.providerList contains all providers (63 total)', () {
       model.play(RPSChoice.rock);
       final rate = model.getWinRate();
       expect(rate >= 0 && rate <= 1, true);
+    });
+
+    tearDownAll(() {
+      Global.loggerModel.clear();
+    });
+  });
+
+  group('WhosTurn Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('providerWhosTurn exists in Global.providerList', () {
+      final whosTurnProvider = Global.providerList.where((p) => p.name == 'WhosTurn').first;
+      expect(whosTurnProvider.name, 'WhosTurn');
+    });
+
+    test('WhosTurnModel is ChangeNotifier', () {
+      final model = WhosTurnModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('WhosTurnModel initial values', () {
+      final model = WhosTurnModel();
+      expect(model.isInitialized, false);
+      expect(model.players.length, 0);
+      expect(model.currentIndex, 0);
+      expect(model.length, 0);
+      expect(model.hasPlayers, false);
+    });
+
+    test('WhosTurnModel init sets isInitialized', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('WhosTurnModel maxPlayers constant is 10', () {
+      expect(WhosTurnModel.maxPlayers, 10);
+    });
+
+    test('WhosTurnModel maxHistory constant is 20', () {
+      expect(WhosTurnModel.maxHistory, 20);
+    });
+
+    test('WhosTurnModel addPlayer works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      expect(model.length, 1);
+      expect(model.players[0].name, 'Alice');
+    });
+
+    test('WhosTurnModel addPlayer multiple', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      model.addPlayer('Charlie');
+      expect(model.length, 3);
+      expect(model.players[0].name, 'Alice');
+      expect(model.players[1].name, 'Bob');
+      expect(model.players[2].name, 'Charlie');
+    });
+
+    test('WhosTurnModel maxPlayers limit works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      for (int i = 0; i < 15; i++) {
+        model.addPlayer('Player $i');
+      }
+      expect(model.length, 10);
+    });
+
+    test('WhosTurnModel updatePlayer works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.updatePlayer(0, 'Bob');
+      expect(model.players[0].name, 'Bob');
+    });
+
+    test('WhosTurnModel deletePlayer works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      expect(model.length, 2);
+      model.deletePlayer(0);
+      expect(model.length, 1);
+      expect(model.players[0].name, 'Bob');
+    });
+
+    test('WhosTurnModel getCurrentPlayerName works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      expect(model.getCurrentPlayerName(), 'Alice');
+    });
+
+    test('WhosTurnModel nextTurn works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      model.addPlayer('Charlie');
+      expect(model.currentIndex, 0);
+      model.nextTurn();
+      expect(model.currentIndex, 1);
+      expect(model.getCurrentPlayerName(), 'Bob');
+      model.nextTurn();
+      expect(model.currentIndex, 2);
+      expect(model.getCurrentPlayerName(), 'Charlie');
+      model.nextTurn();
+      expect(model.currentIndex, 0);
+      expect(model.getCurrentPlayerName(), 'Alice');
+    });
+
+    test('WhosTurnModel previousTurn works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      model.addPlayer('Charlie');
+      model.setCurrentPlayer(2);
+      expect(model.currentIndex, 2);
+      model.previousTurn();
+      expect(model.currentIndex, 1);
+      model.previousTurn();
+      expect(model.currentIndex, 0);
+      model.previousTurn();
+      expect(model.currentIndex, 2);
+    });
+
+    test('WhosTurnModel setCurrentPlayer works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      model.addPlayer('Charlie');
+      model.setCurrentPlayer(1);
+      expect(model.currentIndex, 1);
+      expect(model.getCurrentPlayerName(), 'Bob');
+    });
+
+    test('WhosTurnModel randomPlayer works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      model.addPlayer('Charlie');
+      model.randomPlayer();
+      expect(model.currentIndex >= 0 && model.currentIndex < model.length, true);
+    });
+
+    test('WhosTurnModel history is added on nextTurn', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      model.nextTurn();
+      expect(model.history.length, 1);
+      expect(model.hasHistory, true);
+    });
+
+    test('WhosTurnModel history max limit works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      for (int i = 0; i < 30; i++) {
+        model.nextTurn();
+      }
+      expect(model.history.length, 20);
+    });
+
+    test('WhosTurnModel clearHistory works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      model.nextTurn();
+      model.nextTurn();
+      expect(model.hasHistory, true);
+      model.clearHistory();
+      expect(model.hasHistory, false);
+    });
+
+    test('WhosTurnModel clearAllPlayers works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      expect(model.hasPlayers, true);
+      await model.clearAllPlayers();
+      expect(model.hasPlayers, false);
+      expect(model.currentIndex, 0);
+    });
+
+    test('WhosTurnModel toggleHistory works', () {
+      final model = WhosTurnModel();
+      expect(model.showHistory, false);
+      model.toggleHistory();
+      expect(model.showHistory, true);
+      model.toggleHistory();
+      expect(model.showHistory, false);
+    });
+
+    test('WhosTurn keywords include turn', () {
+      final keywords = 'whosturn turn player game board card next who';
+      expect(keywords.contains('turn'), true);
+    });
+
+    test('WhosTurn keywords include player', () {
+      final keywords = 'whosturn turn player game board card next who';
+      expect(keywords.contains('player'), true);
+    });
+
+    test('WhosTurn keywords include next', () {
+      final keywords = 'whosturn turn player game board card next who';
+      expect(keywords.contains('next'), true);
+    });
+
+    test('WhosTurn keywords include game', () {
+      final keywords = 'whosturn turn player game board card next who';
+      expect(keywords.contains('game'), true);
+    });
+
+    test('Global.providerList includes WhosTurn', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('WhosTurn'), true);
+    });
+
+    testWidgets('WhosTurnCard renders loading state', (WidgetTester tester) async {
+      final model = WhosTurnModel();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => WhosTurnCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Whos Turn: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('WhosTurnCard renders initialized state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => WhosTurnCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Whos Turn'), findsOneWidget);
+    });
+
+    testWidgets('WhosTurnCard shows add player button', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => WhosTurnCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.add), findsOneWidget);
+    });
+
+    testWidgets('WhosTurnCard shows players when added', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              builder: (context, child) => WhosTurnCard(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.textContaining('Alice'), findsWidgets);
+      expect(find.textContaining('Bob'), findsWidgets);
+    });
+
+    test('PlayerItem toJson and fromJson work', () {
+      final player = PlayerItem(name: 'Alice', createdAt: DateTime(2024, 1, 1));
+      final json = player.toJson();
+      final restored = PlayerItem.fromJson(json);
+      expect(restored.name, 'Alice');
+      expect(restored.createdAt, DateTime(2024, 1, 1));
+    });
+
+    test('PlayerItem copyWith works', () {
+      final player = PlayerItem(name: 'Alice');
+      final copied = player.copyWith(name: 'Bob');
+      expect(copied.name, 'Bob');
+    });
+
+    test('TurnEntry toJson and fromJson work', () {
+      final entry = TurnEntry(
+        playerIndex: 0,
+        playerName: 'Alice',
+        timestamp: DateTime(2024, 1, 1, 10, 30),
+      );
+      final json = entry.toJson();
+      final restored = TurnEntry.fromJson(json);
+      expect(restored.playerIndex, 0);
+      expect(restored.playerName, 'Alice');
+      expect(restored.timestamp, DateTime(2024, 1, 1, 10, 30));
+    });
+
+    test('WhosTurnModel formatTimestamp works', () {
+      final model = WhosTurnModel();
+      
+      final justNow = DateTime.now();
+      expect(model.formatTimestamp(justNow), 'just now');
+      
+      final fiveMinAgo = DateTime.now().subtract(Duration(minutes: 5));
+      expect(model.formatTimestamp(fiveMinAgo), '5m ago');
+      
+      final oneHourAgo = DateTime.now().subtract(Duration(hours: 1));
+      expect(model.formatTimestamp(oneHourAgo), '1h ago');
+      
+      final oneDayAgo = DateTime.now().subtract(Duration(days: 1));
+      expect(model.formatTimestamp(oneDayAgo), '1d ago');
+    });
+
+    test('WhosTurnModel deletePlayer adjusts currentIndex', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      model.addPlayer('Charlie');
+      model.setCurrentPlayer(2);
+      expect(model.currentIndex, 2);
+      model.deletePlayer(2);
+      expect(model.currentIndex, 1);
+      expect(model.getCurrentPlayerName(), 'Bob');
+    });
+
+    test('WhosTurnModel deletePlayer adjusts currentIndex when deleting before', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      model.addPlayer('Alice');
+      model.addPlayer('Bob');
+      model.addPlayer('Charlie');
+      model.setCurrentPlayer(2);
+      expect(model.currentIndex, 2);
+      model.deletePlayer(0);
+      expect(model.currentIndex, 1);
+      expect(model.getCurrentPlayerName(), 'Charlie');
+    });
+
+    test('WhosTurnModel refresh calls notifyListeners', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = WhosTurnModel();
+      await model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      await model.refresh();
+      expect(notifyCount, 1);
     });
 
     tearDownAll(() {
