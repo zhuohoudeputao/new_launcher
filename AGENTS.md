@@ -761,7 +761,7 @@ Test coverage includes:
 - Debt provider tests (provider existence, keywords, model state, CRUD operations, owed tracking, history, widget rendering)
 - Interval Timer provider tests (provider existence, keywords, model state, presets, phase operations, timer controls, widget rendering)
   
-Total tests: 1419 tests
+Total tests: 1420 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
