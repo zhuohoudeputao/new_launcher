@@ -45,6 +45,7 @@ import 'package:new_launcher/providers/provider_quickcontacts.dart';
 import 'package:new_launcher/providers/provider_shoppinglist.dart';
 import 'package:new_launcher/providers/provider_caffeine.dart';
 import 'package:new_launcher/providers/provider_subscription.dart';
+import 'package:new_launcher/providers/provider_parking.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2485,7 +2486,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 46);
+      expect(Global.providerList.length, 47);
     });
 
     test('Global.providerList names are correct', () {
@@ -3652,7 +3653,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 46);
+      expect(initCount, 47);
     });
   });
 
@@ -3970,7 +3971,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (43 total)', () {
-      expect(Global.providerList.length, 46);
+      expect(Global.providerList.length, 47);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5314,7 +5315,7 @@ test('Global.providerList contains all providers (43 total)', () {
     });
 
 test('Global.providerList contains all providers (43 total)', () {
-      expect(Global.providerList.length, 46);
+      expect(Global.providerList.length, 47);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -12897,6 +12898,251 @@ test('Global.providerList contains all providers (43 total)', () {
 
     test('SubscriptionModel maxSubscriptions limit', () async {
       expect(SubscriptionModel.maxSubscriptions, 15);
+    });
+  });
+
+  group('Parking provider tests', () {
+    test('ParkingEntry toJson and fromJson work', () {
+      final entry = ParkingEntry(
+        location: 'Level 2, Spot 15',
+        notes: 'Near elevator',
+        parkedTime: DateTime(2024, 1, 15, 10, 30),
+        meterMinutes: 60,
+        meterRemainingSeconds: 3600,
+        meterActive: true,
+      );
+      final json = entry.toJson();
+      final restored = ParkingEntry.fromJson(json);
+      expect(restored.location, 'Level 2, Spot 15');
+      expect(restored.notes, 'Near elevator');
+      expect(restored.meterMinutes, 60);
+      expect(restored.meterRemainingSeconds, 3600);
+      expect(restored.meterActive, true);
+    });
+
+    test('ParkingEntry displayTime works', () {
+      final entry1 = ParkingEntry(
+        location: 'Test',
+        parkedTime: DateTime.now(),
+        meterMinutes: 60,
+        meterRemainingSeconds: 3661,
+      );
+      expect(entry1.displayTime, '1:01:01');
+
+      final entry2 = ParkingEntry(
+        location: 'Test',
+        parkedTime: DateTime.now(),
+        meterMinutes: 30,
+        meterRemainingSeconds: 1859,
+      );
+      expect(entry2.displayTime, '30:59');
+
+      final entry3 = ParkingEntry(
+        location: 'Test',
+        parkedTime: DateTime.now(),
+        meterMinutes: 30,
+        meterRemainingSeconds: 0,
+      );
+      expect(entry3.displayTime, '0:00');
+    });
+
+    test('ParkingEntry meterProgress works', () {
+      final entry1 = ParkingEntry(
+        location: 'Test',
+        parkedTime: DateTime.now(),
+        meterMinutes: 60,
+        meterRemainingSeconds: 3600,
+      );
+      expect(entry1.meterProgress, 1.0);
+
+      final entry2 = ParkingEntry(
+        location: 'Test',
+        parkedTime: DateTime.now(),
+        meterMinutes: 60,
+        meterRemainingSeconds: 1800,
+      );
+      expect(entry2.meterProgress, 0.5);
+
+      final entry3 = ParkingEntry(
+        location: 'Test',
+        parkedTime: DateTime.now(),
+        meterMinutes: 0,
+        meterRemainingSeconds: 0,
+      );
+      expect(entry3.meterProgress, 0);
+    });
+
+    test('ParkingEntry meterExpired works', () {
+      final entry1 = ParkingEntry(
+        location: 'Test',
+        parkedTime: DateTime.now(),
+        meterMinutes: 60,
+        meterRemainingSeconds: 0,
+      );
+      expect(entry1.meterExpired, true);
+
+      final entry2 = ParkingEntry(
+        location: 'Test',
+        parkedTime: DateTime.now(),
+        meterMinutes: 60,
+        meterRemainingSeconds: 100,
+      );
+      expect(entry2.meterExpired, false);
+
+      final entry3 = ParkingEntry(
+        location: 'Test',
+        parkedTime: DateTime.now(),
+        meterMinutes: 0,
+        meterRemainingSeconds: 0,
+      );
+      expect(entry3.meterExpired, false);
+    });
+
+    test('ParkingEntry parkedDuration works', () {
+      final now = DateTime.now();
+      final entry = ParkingEntry(
+        location: 'Test',
+        parkedTime: now.subtract(Duration(minutes: 45)),
+      );
+      expect(entry.parkedDuration, '45m');
+
+      final entry2 = ParkingEntry(
+        location: 'Test',
+        parkedTime: now.subtract(Duration(hours: 2, minutes: 30)),
+      );
+      expect(entry2.parkedDuration, '2h 30m');
+    });
+
+    test('ParkingModel setParking works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ParkingModel();
+      await model.init();
+      model.setParking('Level 1, Spot A', notes: 'Near entrance', meterMinutes: 30);
+      expect(model.hasParking, true);
+      expect(model.currentParking!.location, 'Level 1, Spot A');
+      expect(model.currentParking!.notes, 'Near entrance');
+      expect(model.currentParking!.meterMinutes, 30);
+      expect(model.hasMeter, true);
+    });
+
+    test('ParkingModel clearParking works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ParkingModel();
+      await model.init();
+      model.setParking('Test Location', meterMinutes: 30);
+      expect(model.hasParking, true);
+      model.clearParking();
+      expect(model.hasParking, false);
+      expect(model.currentParking, null);
+    });
+
+    test('ParkingModel addMeterTime works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ParkingModel();
+      await model.init();
+      model.setParking('Test', meterMinutes: 30);
+      expect(model.currentParking!.meterRemainingSeconds, 1800);
+      model.addMeterTime(15);
+      expect(model.currentParking!.meterMinutes, 45);
+      expect(model.currentParking!.meterRemainingSeconds, 2700);
+    });
+
+    test('ParkingModel updateLocation works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ParkingModel();
+      await model.init();
+      model.setParking('Old Location', notes: 'Old notes');
+      model.updateLocation('New Location');
+      expect(model.currentParking!.location, 'New Location');
+      expect(model.currentParking!.notes, 'Old notes');
+    });
+
+    test('ParkingModel updateNotes works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ParkingModel();
+      await model.init();
+      model.setParking('Test Location', notes: 'Old notes');
+      model.updateNotes('New notes');
+      expect(model.currentParking!.notes, 'New notes');
+    });
+
+    testWidgets('ParkingCard renders loading state', (WidgetTester tester) async {
+      final model = ParkingModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: ParkingCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Parking: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('ParkingCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ParkingModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ParkingCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Parking'), findsOneWidget);
+      expect(find.text('No active parking'), findsOneWidget);
+    });
+
+    testWidgets('ParkingCard renders parking info', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = ParkingModel();
+      await model.init();
+      model.setParking('Level 2, Spot 15', notes: 'Near elevator');
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ParkingCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Parking'), findsOneWidget);
+      expect(find.text('Level 2, Spot 15'), findsOneWidget);
+      expect(find.text('Near elevator'), findsOneWidget);
+    });
+
+    test('ParkingCard widget exists', () {
+      expect(ParkingCard, isNotNull);
+    });
+
+    test('SetParkingDialog widget exists', () {
+      expect(SetParkingDialog, isNotNull);
+    });
+
+    test('EditParkingDialog widget exists', () {
+      expect(EditParkingDialog, isNotNull);
+    });
+
+    test('Global.providerList includes Parking', () {
+      final hasParking = Global.providerList.any((p) => p.name == 'Parking');
+      expect(hasParking, true);
+    });
+
+    test('providerParking exists', () {
+      expect(providerParking, isNotNull);
+      expect(providerParking.name, 'Parking');
     });
   });
 }

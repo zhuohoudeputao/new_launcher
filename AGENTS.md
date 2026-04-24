@@ -567,6 +567,20 @@ Settings auto-saved via `SharedPreferences`:
     - Subscriptions persisted via SharedPreferences
     - Uses `Card.filled` and `SegmentedButton` for Material 3 style
     - Keywords: subscription, subscribe, bill, recurring, payment, netflix, spotify, membership, fee, monthly, yearly
+- **Parking**: Parking location and meter tracker
+    - Save parking location with custom description (e.g., "Level 2, Spot 15")
+    - Optional notes for additional details (e.g., "Near elevator")
+    - Parking meter countdown timer with expiration alert
+    - Quick add time buttons (+15m, +30m, +60m, +90m, +120m)
+    - Pause/resume meter timer controls
+    - Linear progress indicator for meter time remaining
+    - Parked duration display
+    - Edit location and notes without resetting meter
+    - Meter expiration notification via SnackBar
+    - Color coding: primary for active meter, error for expired
+    - Parking data persisted via SharedPreferences
+    - Uses `Card.filled`, `ActionChip`, `LinearProgressIndicator` for Material 3 style
+    - Keywords: parking, park, car, vehicle, meter, spot, location, level, garage
 
 ## Material 3 Design System
 
@@ -678,8 +692,9 @@ Test coverage includes:
 - Shopping List provider tests (provider existence, keywords, model state, CRUD operations, category handling, persistence, widget rendering)
 - Caffeine provider tests (provider existence, keywords, model state, add/remove caffeine, limit tracking, preset drinks, history, widget rendering)
 - Subscription provider tests (provider existence, keywords, model state, CRUD operations, renewal calculations, cost totals, widget rendering)
+- Parking provider tests (provider existence, keywords, model state, entry operations, meter controls, widget rendering)
   
-Total tests: 1236 tests
+Total tests: 1254 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
