@@ -39,7 +39,7 @@ Future<void> _initActions() async {
 }
 
 Future<void> _update() async {
-  intervalTimerModel.notifyListeners();
+  intervalTimerModel.refresh();
 }
 
 enum IntervalPhase { work, rest }
@@ -208,6 +208,10 @@ class IntervalTimerModel extends ChangeNotifier {
       Global.loggerModel.info("Phase skipped", source: "IntervalTimer");
       notifyListeners();
     }
+  }
+
+  void refresh() {
+    notifyListeners();
   }
 
   @override

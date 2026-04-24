@@ -13791,6 +13791,14 @@ test('Global.providerList contains all providers (50 total)', () {
       expect(providerIntervalTimer, isNotNull);
       expect(providerIntervalTimer.name, 'IntervalTimer');
     });
+
+    test('IntervalTimerModel refresh works', () {
+      final model = IntervalTimerModel();
+      int notificationCount = 0;
+      model.addListener(() => notificationCount++);
+      model.refresh();
+      expect(notificationCount, 1);
+    });
   });
 
   group('TextEncoder provider tests', () {
