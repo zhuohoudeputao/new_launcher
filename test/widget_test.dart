@@ -67,6 +67,7 @@ import 'package:new_launcher/providers/provider_tictactoe.dart';
 import 'package:new_launcher/providers/provider_memorygame.dart';
 import 'package:new_launcher/providers/provider_hangman.dart';
 import 'package:new_launcher/providers/provider_sudoku.dart';
+import 'package:new_launcher/providers/provider_minesweeper.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2507,7 +2508,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 68);
+      expect(Global.providerList.length, 69);
     });
 
     test('Global.providerList names are correct', () {
@@ -3674,7 +3675,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 68);
+      expect(initCount, 69);
     });
   });
 
@@ -3991,8 +3992,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
     });
 
-test('Global.providerList contains all providers (68 total)', () {
-      expect(Global.providerList.length, 68);
+test('Global.providerList contains all providers (69 total)', () {
+      expect(Global.providerList.length, 69);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5335,8 +5336,8 @@ test('Global.providerList contains all providers (68 total)', () {
       expect(UnitConverterCard, isNotNull);
     });
 
-test('Global.providerList contains all providers (68 total)', () {
-      expect(Global.providerList.length, 68);
+test('Global.providerList contains all providers (69 total)', () {
+      expect(Global.providerList.length, 69);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -18827,6 +18828,247 @@ test('Global.providerList contains all providers (68 total)', () {
 
       expect(find.text('1'), findsWidgets);
       expect(find.text('9'), findsWidgets);
+    });
+  });
+
+  group('Minesweeper provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('MinesweeperCell has required properties', () {
+      final cell = MinesweeperCell(row: 1, col: 2);
+      expect(cell.row, 1);
+      expect(cell.col, 2);
+      expect(cell.isMine, false);
+      expect(cell.adjacentMines, 0);
+      expect(cell.state, MinesweeperCellState.hidden);
+    });
+
+    test('MinesweeperGameEntry has required properties', () {
+      final entry = MinesweeperGameEntry(
+        difficulty: MinesweeperDifficulty.easy,
+        completed: true,
+        timeSeconds: 120,
+        revealedCount: 54,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.difficulty, MinesweeperDifficulty.easy);
+      expect(entry.completed, true);
+      expect(entry.timeSeconds, 120);
+      expect(entry.revealedCount, 54);
+    });
+
+    test('MinesweeperModel default values are correct', () {
+      final model = MinesweeperModel();
+      expect(model.isInitialized, false);
+      expect(model.revealedCount, 0);
+      expect(model.flaggedCount, 0);
+      expect(model.isGameOver, false);
+      expect(model.isWin, false);
+      expect(model.gamesPlayed, 0);
+      expect(model.gamesWon, 0);
+    });
+
+    test('MinesweeperModel init initializes correctly', () async {
+      final model = MinesweeperModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.gridRows, 8);
+      expect(model.gridCols, 8);
+      expect(model.totalMines, 10);
+    });
+
+    test('MinesweeperModel setDifficulty changes difficulty', () async {
+      final model = MinesweeperModel();
+      await model.init();
+      expect(model.difficulty, MinesweeperDifficulty.easy);
+      model.setDifficulty(MinesweeperDifficulty.medium);
+      expect(model.difficulty, MinesweeperDifficulty.medium);
+      expect(model.gridRows, 10);
+      expect(model.gridCols, 10);
+      expect(model.totalMines, 20);
+      model.setDifficulty(MinesweeperDifficulty.hard);
+      expect(model.difficulty, MinesweeperDifficulty.hard);
+      expect(model.gridRows, 12);
+      expect(model.gridCols, 12);
+      expect(model.totalMines, 35);
+    });
+
+    test('MinesweeperModel newGame resets state', () async {
+      final model = MinesweeperModel();
+      await model.init();
+      model.newGame();
+      expect(model.revealedCount, 0);
+      expect(model.flaggedCount, 0);
+      expect(model.isGameOver, false);
+      expect(model.isWin, false);
+    });
+
+    test('MinesweeperModel totalCells and safeCells are correct', () async {
+      final model = MinesweeperModel();
+      await model.init();
+      expect(model.totalCells, 64);
+      expect(model.safeCells, 54);
+      model.setDifficulty(MinesweeperDifficulty.medium);
+      expect(model.totalCells, 100);
+      expect(model.safeCells, 80);
+    });
+
+    test('MinesweeperModel getDifficultyText works', () {
+      final model = MinesweeperModel();
+      expect(model.getDifficultyText(MinesweeperDifficulty.easy), "easy");
+      expect(model.getDifficultyText(MinesweeperDifficulty.medium), "medium");
+      expect(model.getDifficultyText(MinesweeperDifficulty.hard), "hard");
+    });
+
+    test('MinesweeperModel getDifficultyLabel works', () {
+      final model = MinesweeperModel();
+      expect(model.getDifficultyLabel(MinesweeperDifficulty.easy), "Easy");
+      expect(model.getDifficultyLabel(MinesweeperDifficulty.medium), "Medium");
+      expect(model.getDifficultyLabel(MinesweeperDifficulty.hard), "Hard");
+    });
+
+    test('MinesweeperModel getDifficultyColor works', () {
+      final model = MinesweeperModel();
+      expect(model.getDifficultyColor(MinesweeperDifficulty.easy), Colors.green);
+      expect(model.getDifficultyColor(MinesweeperDifficulty.medium), Colors.orange);
+      expect(model.getDifficultyColor(MinesweeperDifficulty.hard), Colors.red);
+    });
+
+    test('MinesweeperModel formatTime works', () {
+      final model = MinesweeperModel();
+      expect(model.formatTime(0), "00:00");
+      expect(model.formatTime(60), "01:00");
+      expect(model.formatTime(120), "02:00");
+    });
+
+    test('MinesweeperModel getWinRate works', () async {
+      final model = MinesweeperModel();
+      await model.init();
+      expect(model.getWinRate(), 0);
+    });
+
+    test('MinesweeperModel getProgressPercentage works', () async {
+      final model = MinesweeperModel();
+      await model.init();
+      expect(model.getProgressPercentage(), 0);
+    });
+
+    test('MinesweeperModel remainingFlags is correct', () async {
+      final model = MinesweeperModel();
+      await model.init();
+      expect(model.remainingFlags, 10);
+    });
+
+    test('MinesweeperModel resetStats clears stats', () async {
+      final model = MinesweeperModel();
+      await model.init();
+      model.resetStats();
+      expect(model.gamesPlayed, 0);
+      expect(model.gamesWon, 0);
+    });
+
+    test('MinesweeperModel clearHistory clears history', () async {
+      final model = MinesweeperModel();
+      await model.init();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('MinesweeperModel history respects max limit', () async {
+      final model = MinesweeperModel();
+      await model.init();
+      expect(MinesweeperModel.maxHistory, 10);
+    });
+
+    test('MinesweeperModel refresh calls notifyListeners', () async {
+      final model = MinesweeperModel();
+      await model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('providerMinesweeper exists', () {
+      expect(providerMinesweeper.name, "Minesweeper");
+    });
+
+    test('providerMinesweeper keywords contain minesweeper related words', () {
+      expect(providerMinesweeper.name, 'Minesweeper');
+    });
+
+    testWidgets('MinesweeperCard renders loading state', (WidgetTester tester) async {
+      final model = MinesweeperModel();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => MinesweeperCard(),
+          ),
+        ),
+      ));
+      expect(find.text('Minesweeper: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('MinesweeperCard renders initialized state', (WidgetTester tester) async {
+      final model = MinesweeperModel();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => MinesweeperCard(),
+          ),
+        ),
+      ));
+      expect(find.text('Minesweeper'), findsOneWidget);
+    });
+
+    testWidgets('MinesweeperCard shows grid', (WidgetTester tester) async {
+      final model = MinesweeperModel();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => MinesweeperCard(),
+          ),
+        ),
+      ));
+      expect(find.byType(GridView), findsOneWidget);
+    });
+
+    testWidgets('MinesweeperCard shows difficulty selector', (WidgetTester tester) async {
+      final model = MinesweeperModel();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => MinesweeperCard(),
+          ),
+        ),
+      ));
+      expect(find.byType(SegmentedButton<MinesweeperDifficulty>), findsOneWidget);
+      expect(find.text('Easy'), findsOneWidget);
+      expect(find.text('Medium'), findsOneWidget);
+      expect(find.text('Hard'), findsOneWidget);
+    });
+
+    testWidgets('MinesweeperCard shows new game button', (WidgetTester tester) async {
+      final model = MinesweeperModel();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => MinesweeperCard(),
+          ),
+        ),
+      ));
+      expect(find.text('New Game'), findsOneWidget);
     });
   });
 }

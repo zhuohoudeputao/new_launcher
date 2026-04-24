@@ -828,6 +828,19 @@ Settings auto-saved via `SharedPreferences`:
     - Reset stats with confirmation dialog
     - Uses `Card.filled` and `SegmentedButton` for Material 3 style
     - Keywords: sudoku, puzzle, logic, grid, numbers, game
+- **Minesweeper**: Classic mine-finding puzzle game
+    - Find and reveal all safe cells while avoiding mines
+    - Three difficulty levels: Easy (8x8, 10 mines), Medium (10x10, 20 mines), Hard (12x12, 35 mines)
+    - Tap to reveal cells, long press to flag suspected mines
+    - Numbered cells show adjacent mine count (color-coded)
+    - Recursive reveal for empty cells (no adjacent mines)
+    - First click is always safe (mines placed after first click)
+    - Timer and remaining flags display
+    - Win/loss statistics and best time tracking per difficulty
+    - History tracking (up to 10 entries)
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `GridView` for Material 3 style
+    - Keywords: minesweeper, mine, bomb, puzzle, grid, reveal, flag, game
 
 ## Material 3 Design System
 
@@ -957,8 +970,9 @@ Test coverage includes:
 - MemoryGame provider tests (provider existence, keywords, model state, grid operations, card flipping, match detection, history, widget rendering)
 - Hangman provider tests (provider existence, keywords, model state, letter guessing, win/lose detection, statistics, history, widget rendering)
 - Sudoku provider tests (provider existence, keywords, model state, difficulty settings, grid operations, statistics, history, widget rendering)
+- Minesweeper provider tests (provider existence, keywords, model state, difficulty settings, grid operations, cell operations, statistics, history, widget rendering)
   
-Total tests: 1826 tests
+Total tests: 1851 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
