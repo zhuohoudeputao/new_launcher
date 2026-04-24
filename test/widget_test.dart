@@ -73,6 +73,7 @@ import 'package:new_launcher/providers/provider_wordle.dart';
 import 'package:new_launcher/providers/provider_typingtest.dart';
 import 'package:new_launcher/providers/provider_simon.dart';
 import 'package:new_launcher/providers/provider_sequence.dart';
+import 'package:new_launcher/providers/provider_filesize.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2513,7 +2514,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 74);
+      expect(Global.providerList.length, 75);
     });
 
     test('Global.providerList names are correct', () {
@@ -3680,7 +3681,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 74);
+      expect(initCount, 75);
     });
   });
 
@@ -3998,7 +3999,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 74);
+      expect(Global.providerList.length, 75);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5342,7 +5343,7 @@ test('Global.providerList contains all providers (71 total)', () {
     });
 
 test('Global.providerList contains all providers (71 total)', () {
-      expect(Global.providerList.length, 74);
+      expect(Global.providerList.length, 75);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -20250,6 +20251,229 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       sequenceModel.clearHistory();
+    });
+  });
+
+  group('FileSizeConverter Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('FileSizeConverterModel convertFileSize basic conversions', () {
+      expect(FileSizeConverterModel.convertFileSize(1024, SizeUnit.bytes, SizeUnit.kilobyte), closeTo(1, 0.001));
+      expect(FileSizeConverterModel.convertFileSize(1, SizeUnit.kilobyte, SizeUnit.bytes), closeTo(1024, 0.001));
+      expect(FileSizeConverterModel.convertFileSize(1024, SizeUnit.kilobyte, SizeUnit.megabyte), closeTo(1, 0.001));
+      expect(FileSizeConverterModel.convertFileSize(1, SizeUnit.megabyte, SizeUnit.kilobyte), closeTo(1024, 0.001));
+      expect(FileSizeConverterModel.convertFileSize(1024, SizeUnit.megabyte, SizeUnit.gigabyte), closeTo(1, 0.001));
+      expect(FileSizeConverterModel.convertFileSize(1, SizeUnit.gigabyte, SizeUnit.megabyte), closeTo(1024, 0.001));
+    });
+
+    test('FileSizeConverterModel convertFileSize same unit', () {
+      expect(FileSizeConverterModel.convertFileSize(100, SizeUnit.bytes, SizeUnit.bytes), 100);
+      expect(FileSizeConverterModel.convertFileSize(100, SizeUnit.megabyte, SizeUnit.megabyte), 100);
+    });
+
+    test('FileSizeConverterModel convertFileSize large values', () {
+      expect(FileSizeConverterModel.convertFileSize(1024, SizeUnit.gigabyte, SizeUnit.terabyte), closeTo(1, 0.001));
+      expect(FileSizeConverterModel.convertFileSize(1024, SizeUnit.terabyte, SizeUnit.petabyte), closeTo(1, 0.001));
+    });
+
+    test('FileSizeConverterModel init', () {
+      final model = FileSizeConverterModel();
+      expect(model.isInitialized, false);
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('FileSizeConverterModel setInputUnit', () {
+      final model = FileSizeConverterModel();
+      model.init();
+      model.setInputUnit(SizeUnit.gigabyte);
+      expect(model.inputUnit, SizeUnit.gigabyte);
+      expect(model.outputUnit, isNot(SizeUnit.gigabyte));
+    });
+
+    test('FileSizeConverterModel setOutputUnit', () {
+      final model = FileSizeConverterModel();
+      model.init();
+      model.setOutputUnit(SizeUnit.kilobyte);
+      expect(model.outputUnit, SizeUnit.kilobyte);
+      expect(model.inputUnit, isNot(SizeUnit.kilobyte));
+    });
+
+    test('FileSizeConverterModel setInputValue', () {
+      final model = FileSizeConverterModel();
+      model.init();
+      model.setInputValue('1024');
+      expect(model.inputValue, '1024');
+    });
+
+    test('FileSizeConverterModel swapUnits', () {
+      final model = FileSizeConverterModel();
+      model.init();
+      final originalInput = model.inputUnit;
+      final originalOutput = model.outputUnit;
+      model.swapUnits();
+      expect(model.inputUnit, originalOutput);
+      expect(model.outputUnit, originalInput);
+    });
+
+    test('FileSizeConverterModel clear', () {
+      final model = FileSizeConverterModel();
+      model.init();
+      model.setInputValue('1024');
+      model.clear();
+      expect(model.inputValue, '0');
+    });
+
+    test('FileSizeConverterModel addToHistory', () {
+      final model = FileSizeConverterModel();
+      model.init();
+      model.setInputValue('1024');
+      expect(model.history.length, 0);
+      model.addToHistory();
+      expect(model.history.length, 1);
+    });
+
+    test('FileSizeConverterModel addToHistory ignores zero', () {
+      final model = FileSizeConverterModel();
+      model.init();
+      model.setInputValue('0');
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('FileSizeConverterModel clearHistory', () {
+      final model = FileSizeConverterModel();
+      model.init();
+      model.setInputValue('1024');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('FileSizeConverterModel history respects max limit', () {
+      final model = FileSizeConverterModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputValue('${i * 100}');
+        model.addToHistory();
+      }
+      expect(model.history.length, FileSizeConverterModel.maxHistory);
+    });
+
+    test('FileSizeConverterModel useHistoryEntry', () {
+      final model = FileSizeConverterModel();
+      model.init();
+      model.setInputValue('1024');
+      model.addToHistory();
+      final entry = model.history.first;
+      model.useHistoryEntry(entry);
+      expect(model.inputUnit, entry.inputUnit);
+      expect(model.outputUnit, entry.outputUnit);
+    });
+
+    test('FileSizeConverterModel getHumanReadableSize', () {
+      final model = FileSizeConverterModel();
+      expect(model.getHumanReadableSize(0), '0 B');
+      expect(model.getHumanReadableSize(500), '500 B');
+      expect(model.getHumanReadableSize(1024), '1 KB');
+      expect(model.getHumanReadableSize(1024 * 1024), '1 MB');
+      expect(model.getHumanReadableSize(1024 * 1024 * 1024), '1 GB');
+    });
+
+    test('FileSizeConverterModel hasHistory', () {
+      final model = FileSizeConverterModel();
+      model.init();
+      expect(model.hasHistory, false);
+      model.setInputValue('1024');
+      model.addToHistory();
+      expect(model.hasHistory, true);
+    });
+
+    test('FileSizeConverterModel refresh calls notifyListeners', () {
+      final model = FileSizeConverterModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('SizeUnit enum values', () {
+      expect(SizeUnit.values.length, 6);
+      expect(SizeUnit.values.contains(SizeUnit.bytes), true);
+      expect(SizeUnit.values.contains(SizeUnit.kilobyte), true);
+      expect(SizeUnit.values.contains(SizeUnit.megabyte), true);
+      expect(SizeUnit.values.contains(SizeUnit.gigabyte), true);
+      expect(SizeUnit.values.contains(SizeUnit.terabyte), true);
+      expect(SizeUnit.values.contains(SizeUnit.petabyte), true);
+    });
+
+    test('SizeUnitInfo contains correct data', () {
+      expect(sizeUnits[SizeUnit.bytes]?.symbol, 'B');
+      expect(sizeUnits[SizeUnit.kilobyte]?.symbol, 'KB');
+      expect(sizeUnits[SizeUnit.megabyte]?.symbol, 'MB');
+      expect(sizeUnits[SizeUnit.gigabyte]?.symbol, 'GB');
+      expect(sizeUnits[SizeUnit.terabyte]?.symbol, 'TB');
+      expect(sizeUnits[SizeUnit.petabyte]?.symbol, 'PB');
+    });
+
+    test('providerFileSizeConverter exists', () {
+      expect(providerFileSizeConverter, isNotNull);
+      expect(providerFileSizeConverter.name, 'FileSizeConverter');
+    });
+
+    test('providerFileSizeConverter keywords', () {
+      final keywords = 'filesize size bytes kb mb gb tb pb converter file storage data';
+      expect(keywords.contains('filesize'), true);
+      expect(keywords.contains('kb'), true);
+      expect(keywords.contains('mb'), true);
+      expect(keywords.contains('gb'), true);
+    });
+
+    testWidgets('FileSizeConverterCard renders loading state', (WidgetTester tester) async {
+      final model = FileSizeConverterModel();
+      expect(model.isInitialized, false);
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => FileSizeConverterCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.textContaining('Loading'), findsOneWidget);
+    });
+
+    testWidgets('FileSizeConverterCard renders initialized state', (WidgetTester tester) async {
+      final model = FileSizeConverterModel();
+      model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => FileSizeConverterCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('FileSize Converter'), findsOneWidget);
+    });
+
+    test('FileSizeConverterCard widget exists', () {
+      expect(FileSizeConverterCard, isNotNull);
+    });
+
+    test('Global.providerList includes FileSizeConverter', () {
+      final hasFileSize = Global.providerList.any((p) => p.name == 'FileSizeConverter');
+      expect(hasFileSize, true);
+    });
+
+    tearDownAll(() {
+      fileSizeConverterModel.clearHistory();
     });
   });
 }

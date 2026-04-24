@@ -75,6 +75,8 @@ import 'package:new_launcher/providers/provider_2048.dart';
 import 'package:new_launcher/providers/provider_wordle.dart';
 import 'package:new_launcher/providers/provider_typingtest.dart';
 import 'package:new_launcher/providers/provider_simon.dart';
+import 'package:new_launcher/providers/provider_sequence.dart';
+import 'package:new_launcher/providers/provider_filesize.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -223,8 +225,10 @@ ChangeNotifierProvider.value(value: hangmanModel),
             ChangeNotifierProvider.value(value: game2048Model),
             ChangeNotifierProvider.value(value: wordleModel),
             ChangeNotifierProvider.value(value: typingTestModel),
-            ChangeNotifierProvider.value(value: simonModel),
-            ],
+ChangeNotifierProvider.value(value: simonModel),
+             ChangeNotifierProvider.value(value: sequenceModel),
+             ChangeNotifierProvider.value(value: fileSizeConverterModel),
+             ],
           child: MyApp(),
             )));
 }

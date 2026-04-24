@@ -910,6 +910,17 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `Slider`, `ActionChip` for Material 3 style
     - Keywords: sequence, fibonacci, prime, arithmetic, geometric, generate, math, numbers
+- **FileSizeConverter**: File size unit converter
+    - Convert file sizes between different units
+    - Supported units: Bytes (B), Kilobyte (KB), Megabyte (MB), Gigabyte (GB), Terabyte (TB), Petabyte (PB)
+    - Real-time conversion as you type
+    - Swap input/output units with one tap
+    - Human-readable size display (e.g., "1.5 GB")
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `DropdownButton`, `TextField` for Material 3 style
+    - Keywords: filesize, size, bytes, kb, mb, gb, tb, pb, converter, file, storage, data
 
 ## Material 3 Design System
 
@@ -1045,8 +1056,9 @@ Test coverage includes:
 - TypingTest provider tests (provider existence, keywords, model state, typing operations, WPM calculation, accuracy, history, widget rendering)
 - Simon provider tests (provider existence, keywords, model state, game operations, statistics, history, widget rendering)
 - Sequence provider tests (provider existence, keywords, model state, Fibonacci generation, prime generation, arithmetic/geometric sequences, triangular/square/factorial, history, widget rendering)
+- FileSizeConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 
-Total tests: 1976 tests
+Total tests: 2001 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
