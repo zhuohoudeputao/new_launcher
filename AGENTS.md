@@ -658,6 +658,16 @@ Settings auto-saved via `SharedPreferences`:
     - Clear input button
     - Uses `Card.filled` and `SegmentedButton` for Material 3 style
     - Keywords: timestamp, unix, datetime, epoch, time, convert, date
+- **TextCase**: Text case converter for developers and writers
+    - 9 case types: UPPERCASE, lowercase, Title Case, Sentence case, camelCase, PascalCase, snake_case, kebab-case, CONSTANT_CASE
+    - Real-time conversion as you type
+    - Word splitting handles spaces, underscores, and hyphens
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Clear input button
+    - Uses `Card.filled` and `SegmentedButton` for Material 3 style
+    - Keywords: textcase, case, uppercase, lowercase, title, sentence, camel, pascal, snake, kebab, constant, convert, text
 
 ## Material 3 Design System
 
@@ -773,8 +783,9 @@ Test coverage includes:
 - Gratitude provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
 - Debt provider tests (provider existence, keywords, model state, CRUD operations, owed tracking, history, widget rendering)
 - Interval Timer provider tests (provider existence, keywords, model state, presets, phase operations, timer controls, widget rendering)
+- TextCase provider tests (provider existence, keywords, model state, case conversions, history, widget rendering)
   
-Total tests: 1445 tests
+Total tests: 1470 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

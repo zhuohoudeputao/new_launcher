@@ -64,6 +64,7 @@ import 'package:new_launcher/providers/provider_interval_timer.dart';
 import 'package:new_launcher/providers/provider_textencoder.dart';
 import 'package:new_launcher/providers/provider_morse.dart';
 import 'package:new_launcher/providers/provider_timestamp.dart';
+import 'package:new_launcher/providers/provider_textcase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -241,6 +242,7 @@ class Global {
     providerTextEncoder,
     providerMorseCode,
     providerTimestamp,
+    providerTextCase,
   ];
 
   //_______________________________________________________________________

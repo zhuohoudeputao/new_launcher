@@ -52,6 +52,7 @@ import 'package:new_launcher/providers/provider_interval_timer.dart';
 import 'package:new_launcher/providers/provider_textencoder.dart';
 import 'package:new_launcher/providers/provider_morse.dart';
 import 'package:new_launcher/providers/provider_timestamp.dart';
+import 'package:new_launcher/providers/provider_textcase.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2492,7 +2493,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 53);
+      expect(Global.providerList.length, 54);
     });
 
     test('Global.providerList names are correct', () {
@@ -3659,7 +3660,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 53);
+      expect(initCount, 54);
     });
   });
 
@@ -3977,7 +3978,7 @@ void main() {
     });
 
 test('Global.providerList contains all providers (51 total)', () {
-      expect(Global.providerList.length, 53);
+      expect(Global.providerList.length, 54);
     });
 
     test('Global.providerList includes Flashlight', () {
@@ -5321,7 +5322,7 @@ test('Global.providerList contains all providers (51 total)', () {
     });
 
 test('Global.providerList contains all providers (51 total)', () {
-      expect(Global.providerList.length, 53);
+      expect(Global.providerList.length, 54);
     });
 
     test('Global.providerList includes UnitConverter', () {
@@ -15140,6 +15141,255 @@ test('Global.providerList contains all providers (51 total)', () {
     test('Timestamp keywords are registered', () {
       final provider = Global.providerList.firstWhere((p) => p.name == 'Timestamp');
       expect(provider.name, 'Timestamp');
+    });
+  });
+
+  group('TextCase provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    tearDownAll(() {
+      textCaseModel.clearHistory();
+    });
+
+    test('providerTextCase exists in Global.providerList', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'TextCase');
+      expect(provider.name, 'TextCase');
+    });
+
+    test('TextCaseModel initializes correctly', () async {
+      final model = TextCaseModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.inputText, '');
+      expect(model.outputText, '');
+      expect(model.caseType, 'uppercase');
+      expect(model.history.length, 0);
+    });
+
+    test('TextCaseModel converts to uppercase', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setCaseType('uppercase');
+      model.setInputText('hello world');
+      expect(model.outputText, 'HELLO WORLD');
+    });
+
+    test('TextCaseModel converts to lowercase', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setCaseType('lowercase');
+      model.setInputText('HELLO WORLD');
+      expect(model.outputText, 'hello world');
+    });
+
+    test('TextCaseModel converts to title case', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setCaseType('title');
+      model.setInputText('hello world');
+      expect(model.outputText, 'Hello World');
+    });
+
+    test('TextCaseModel converts to sentence case', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setCaseType('sentence');
+      model.setInputText('HELLO WORLD');
+      expect(model.outputText, 'Hello world');
+    });
+
+    test('TextCaseModel converts to camelCase', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setCaseType('camel');
+      model.setInputText('hello world');
+      expect(model.outputText, 'helloWorld');
+    });
+
+    test('TextCaseModel converts to PascalCase', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setCaseType('pascal');
+      model.setInputText('hello world');
+      expect(model.outputText, 'HelloWorld');
+    });
+
+    test('TextCaseModel converts to snake_case', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setCaseType('snake');
+      model.setInputText('hello world');
+      expect(model.outputText, 'hello_world');
+    });
+
+    test('TextCaseModel converts to kebab-case', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setCaseType('kebab');
+      model.setInputText('hello world');
+      expect(model.outputText, 'hello-world');
+    });
+
+    test('TextCaseModel converts to CONSTANT_CASE', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setCaseType('constant');
+      model.setInputText('hello world');
+      expect(model.outputText, 'HELLO_WORLD');
+    });
+
+    test('TextCaseModel handles empty input', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setInputText('');
+      expect(model.outputText, '');
+    });
+
+    test('TextCaseModel converts snake_case input to other cases', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setInputText('hello_world_test');
+      model.setCaseType('camel');
+      expect(model.outputText, 'helloWorldTest');
+    });
+
+    test('TextCaseModel converts kebab-case input to other cases', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setInputText('hello-world-test');
+      model.setCaseType('pascal');
+      expect(model.outputText, 'HelloWorldTest');
+    });
+
+    test('TextCaseModel addToHistory works', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setInputText('hello');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0]['input'], 'hello');
+    });
+
+    test('TextCaseModel addToHistory limits to 10 entries', () async {
+      final model = TextCaseModel();
+      await model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputText('text$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('TextCaseModel addToHistory does not add empty input', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = TextCaseModel();
+      await model.init();
+      model.setInputText('');
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('TextCaseModel applyFromHistory works', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = TextCaseModel();
+      await model.init();
+      model.setInputText('hello');
+      model.setCaseType('uppercase');
+      model.addToHistory();
+      model.clearInput();
+      model.applyFromHistory(0);
+      expect(model.inputText, 'hello');
+      expect(model.caseType, 'uppercase');
+      expect(model.outputText, 'HELLO');
+    });
+
+    test('TextCaseModel clearHistory works', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setInputText('hello');
+      model.addToHistory();
+      await model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('TextCaseModel clearInput works', () async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setInputText('hello');
+      model.clearInput();
+      expect(model.inputText, '');
+      expect(model.outputText, '');
+    });
+
+    test('TextCaseModel refresh notifies listeners', () async {
+      final model = TextCaseModel();
+      await model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('TextCaseCard renders loading state', (WidgetTester tester) async {
+      final model = TextCaseModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: TextCaseCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Text Case Converter'), findsOneWidget);
+    });
+
+    testWidgets('TextCaseCard renders initialized state', (WidgetTester tester) async {
+      final model = TextCaseModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: TextCaseCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Text Case Converter'), findsOneWidget);
+    });
+
+    testWidgets('TextCaseCard shows output after input', (WidgetTester tester) async {
+      final model = TextCaseModel();
+      await model.init();
+      model.setInputText('hello');
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: TextCaseCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Text Case Converter'), findsOneWidget);
+      expect(find.text('HELLO'), findsOneWidget);
+    });
+
+    test('TextCase keywords are registered', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'TextCase');
+      expect(provider.name, 'TextCase');
     });
   });
 }
