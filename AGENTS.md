@@ -1384,6 +1384,18 @@ Settings auto-saved via `SharedPreferences`:
     - Reset stats with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `GridView` for Material 3 style
     - Keywords: sliding, puzzle, 15, slide, tile, game, arrange
+- **MathQuiz**: Mental math practice and quiz game
+    - Random math problems with four operations: addition, subtraction, multiplication, division
+    - Three difficulty levels: Easy (numbers 1-10), Medium (numbers 1-50), Hard (numbers 1-100)
+    - Optional timer: No Timer, 10s, 30s, 60s per question
+    - Answer input with number keyboard
+    - Skip button for difficult problems
+    - Statistics tracking: correct count, accuracy percentage, current streak, best streak
+    - History tracking (up to 20 entries) with question, answer, and timestamp
+    - Streak tracking with fire icon for consecutive correct answers
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `ActionChip`, `TextField` for Material 3 style
+    - Keywords: math, quiz, arithmetic, mental, calculate, addition, subtraction, multiplication, division, practice
 
 ## Material 3 Design System
 
@@ -1558,8 +1570,9 @@ Test coverage includes:
 - Gradient provider tests (provider existence, keywords, model state, gradient type/direction operations, color management, CSS/Flutter output generation, history management, widget rendering)
 - ReadingTime provider tests (provider existence, keywords, model state, text operations, word count, character count, sentence/paragraph count, reading time calculation, speaking time calculation, WPM settings, history management, widget rendering)
 - SlidingPuzzle provider tests (provider existence, keywords, model state, tile operations, difficulty settings, move counting, give up functionality, statistics tracking, history, widget rendering)
+- MathQuiz provider tests (provider existence, keywords, model state, problem generation, difficulty settings, answer submission, streak tracking, accuracy calculation, history, widget rendering)
 
-Total tests: 2767 tests
+Total tests: 2790 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

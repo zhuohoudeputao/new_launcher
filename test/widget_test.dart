@@ -112,6 +112,7 @@ import 'package:new_launcher/providers/provider_palette.dart';
 import 'package:new_launcher/providers/provider_gradient.dart';
 import 'package:new_launcher/providers/provider_readingtime.dart';
 import 'package:new_launcher/providers/provider_sliding_puzzle.dart';
+import 'package:new_launcher/providers/provider_mathquiz.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -30648,7 +30649,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test', () {
-      expect(Global.providerList.length, 113);
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
@@ -30897,7 +30898,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test updated', () {
-      expect(Global.providerList.length, 113);
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
@@ -31120,7 +31121,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test final', () {
-      expect(Global.providerList.length, 113);
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
@@ -31305,11 +31306,246 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test with SlidingPuzzle', () {
-      expect(Global.providerList.length, 113);
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
       slidingPuzzleModel.clearHistory();
+    });
+  });
+
+  group('MathQuiz provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('MathQuizModel initializes correctly', () {
+      final model = MathQuizModel();
+      expect(model.isInitialized, false);
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.currentProblem, isNotNull);
+    });
+
+    test('MathQuizModel setDifficulty works', () {
+      final model = MathQuizModel();
+      model.init();
+      model.setDifficulty(MathDifficulty.medium);
+      expect(model.difficulty, MathDifficulty.medium);
+      model.setDifficulty(MathDifficulty.hard);
+      expect(model.difficulty, MathDifficulty.hard);
+    });
+
+    test('MathQuizModel generateNewProblem creates problems', () {
+      final model = MathQuizModel();
+      model.init();
+      model.generateNewProblem();
+      expect(model.currentProblem, isNotNull);
+      expect(model.currentProblem!.questionString.contains('+') ||
+             model.currentProblem!.questionString.contains('-') ||
+             model.currentProblem!.questionString.contains('×') ||
+             model.currentProblem!.questionString.contains('÷'), true);
+    });
+
+    test('MathQuizModel updateInput filters non-digits', () {
+      final model = MathQuizModel();
+      model.init();
+      model.updateInput('12abc34');
+      expect(model.userInput, '1234');
+    });
+
+    test('MathQuizModel submitAnswer works for correct answer', () {
+      final model = MathQuizModel();
+      model.init();
+      final problem = model.currentProblem!;
+      model.updateInput('${problem.answer}');
+      model.submitAnswer();
+      expect(model.correctCount, 1);
+      expect(model.currentStreak, 1);
+    });
+
+    test('MathQuizModel submitAnswer works for wrong answer', () {
+      final model = MathQuizModel();
+      model.init();
+      final problem = model.currentProblem!;
+      final wrongAnswer = problem.answer + 1;
+      model.updateInput('$wrongAnswer');
+      model.submitAnswer();
+      expect(model.correctCount, 0);
+      expect(model.currentStreak, 0);
+    });
+
+    test('MathQuizModel streak tracking works', () {
+      final model = MathQuizModel();
+      model.init();
+      for (int i = 0; i < 3; i++) {
+        model.generateNewProblem();
+        model.updateInput('${model.currentProblem!.answer}');
+        model.submitAnswer();
+      }
+      expect(model.currentStreak, 3);
+      expect(model.bestStreak, 3);
+      
+      model.generateNewProblem();
+      model.updateInput('${model.currentProblem!.answer + 1}');
+      model.submitAnswer();
+      expect(model.currentStreak, 0);
+      expect(model.bestStreak, 3);
+    });
+
+    test('MathQuizModel accuracy calculation works', () {
+      final model = MathQuizModel();
+      model.init();
+      model.generateNewProblem();
+      model.updateInput('${model.currentProblem!.answer}');
+      model.submitAnswer();
+      model.generateNewProblem();
+      model.updateInput('${model.currentProblem!.answer + 1}');
+      model.submitAnswer();
+      expect(model.accuracy, 50.0);
+    });
+
+    test('MathQuizModel history limits to 20 entries', () {
+      final model = MathQuizModel();
+      model.init();
+      for (int i = 0; i < 25; i++) {
+        model.generateNewProblem();
+        model.updateInput('${model.currentProblem!.answer}');
+        model.submitAnswer();
+      }
+      expect(model.history.length, 20);
+    });
+
+    test('MathQuizModel clearHistory works', () {
+      final model = MathQuizModel();
+      model.init();
+      model.generateNewProblem();
+      model.updateInput('${model.currentProblem!.answer}');
+      model.submitAnswer();
+      expect(model.history.length, 1);
+      model.clearHistory();
+      expect(model.history.length, 0);
+      expect(model.correctCount, 0);
+      expect(model.currentStreak, 0);
+    });
+
+    test('MathQuizModel toggleHistory works', () {
+      final model = MathQuizModel();
+      model.init();
+      expect(model.showHistory, false);
+      model.toggleHistory();
+      expect(model.showHistory, true);
+      model.toggleHistory();
+      expect(model.showHistory, false);
+    });
+
+    test('MathQuizModel getDifficultyName works', () {
+      final model = MathQuizModel();
+      model.init();
+      model.setDifficulty(MathDifficulty.easy);
+      expect(model.getDifficultyName(), 'Easy');
+      model.setDifficulty(MathDifficulty.medium);
+      expect(model.getDifficultyName(), 'Medium');
+      model.setDifficulty(MathDifficulty.hard);
+      expect(model.getDifficultyName(), 'Hard');
+    });
+
+    test('MathQuizModel formatTimeAgo works', () {
+      final model = MathQuizModel();
+      final now = DateTime.now();
+      expect(model.formatTimeAgo(now), 'just now');
+      expect(model.formatTimeAgo(now.subtract(Duration(minutes: 5))), '5m ago');
+      expect(model.formatTimeAgo(now.subtract(Duration(hours: 2))), '2h ago');
+      expect(model.formatTimeAgo(now.subtract(Duration(days: 3))), '3d ago');
+    });
+
+    test('MathQuizModel skipProblem works', () {
+      final model = MathQuizModel();
+      model.init();
+      final initialTotal = model.totalAttempts;
+      model.skipProblem();
+      expect(model.totalAttempts, initialTotal + 1);
+      expect(model.correctCount, 0);
+    });
+
+    test('MathQuizProblem checkAnswer works', () {
+      final problem = MathProblem(5, 3, MathOperation.addition, 8);
+      expect(problem.checkAnswer(8), true);
+      expect(problem.checkAnswer(7), false);
+    });
+
+    test('MathQuizProblem operationSymbol works', () {
+      expect(MathProblem(1, 1, MathOperation.addition, 2).operationSymbol, '+');
+      expect(MathProblem(5, 3, MathOperation.subtraction, 2).operationSymbol, '-');
+      expect(MathProblem(2, 3, MathOperation.multiplication, 6).operationSymbol, '×');
+      expect(MathProblem(6, 2, MathOperation.division, 3).operationSymbol, '÷');
+    });
+
+    test('MathQuizProblem questionString works', () {
+      final problem = MathProblem(5, 3, MathOperation.addition, 8);
+      expect(problem.questionString, '5 + 3 = ?');
+    });
+
+    test('MathQuizEntry stores correct data', () {
+      final entry = MathQuizEntry(
+        question: '5 + 3 = ?',
+        correctAnswer: 8,
+        userAnswer: 8,
+        isCorrect: true,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.question, '5 + 3 = ?');
+      expect(entry.correctAnswer, 8);
+      expect(entry.userAnswer, 8);
+      expect(entry.isCorrect, true);
+      expect(entry.resultText, 'Correct');
+    });
+
+    testWidgets('MathQuizCard renders loading state', (WidgetTester tester) async {
+      final model = MathQuizModel();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: MathQuizCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('MathQuiz: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('MathQuizCard renders initialized state', (WidgetTester tester) async {
+      final model = MathQuizModel();
+      model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: MathQuizCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Math Quiz'), findsOneWidget);
+    });
+
+    testWidgets('MathQuizCard widget exists', (WidgetTester tester) async {
+      expect(MathQuizCard, isNotNull);
+    });
+
+    test('Global.providerList includes MathQuiz', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('MathQuiz'), true);
+    });
+
+    test('provider keywords test', () {
+      expect(providerMathQuiz.name, 'MathQuiz');
+    });
+
+    tearDownAll(() {
+      mathQuizModel.clearHistory();
     });
   });
 }

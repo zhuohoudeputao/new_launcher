@@ -33,6 +33,7 @@ import 'package:new_launcher/providers/provider_todo.dart';
 import 'package:new_launcher/providers/provider_qrcode.dart';
 import 'package:new_launcher/providers/provider_random.dart';
 import 'package:new_launcher/providers/provider_readingtime.dart';
+import 'package:new_launcher/providers/provider_mathquiz.dart';
 import 'package:new_launcher/providers/provider_color.dart';
 import 'package:new_launcher/providers/provider_currency.dart';
 import 'package:new_launcher/providers/provider_bookmarks.dart';
@@ -360,6 +361,7 @@ class Global {
     providerPalette,
     providerGradient,
     providerReadingTime,
+    providerMathQuiz,
     providerSlidingPuzzle,
   ];
 
