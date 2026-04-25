@@ -1153,6 +1153,19 @@ Settings auto-saved via `SharedPreferences`:
     - Error message display for invalid JSON
     - Uses `Card.filled`, `SegmentedButton`, `Switch`, `TextField` for Material 3 style
     - Keywords: json, format, validate, pretty, minify, indent, parse
+- **RegexTester**: Regular expression tester for developers
+    - Test regex patterns against sample text with real-time matching
+    - Highlighted matches display with color coding
+    - Three regex options: Case Sensitive, Multiline, Dot All (FilterChip toggles)
+    - Match count and position information (start, end, matched text)
+    - Captured groups display for patterns with capture groups
+    - Invalid regex detection with error message display
+    - Clear pattern and test string buttons
+    - Save regex patterns to history (up to 10 entries)
+    - Load previous patterns from history
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `FilterChip`, `TextField`, `RichText` for Material 3 style
+    - Keywords: regex, regular, expression, test, match, pattern
 
 ## Material 3 Design System
 
@@ -1310,8 +1323,9 @@ Test coverage includes:
 - VigenereCipher provider tests (provider existence, keywords, model state, encryption/decryption operations, keyword handling, history, widget rendering)
 - HashGenerator provider tests (provider existence, keywords, model state, hash generation, MD5/SHA1/SHA256/SHA512 operations, history, widget rendering)
 - JsonFormatter provider tests (provider existence, keywords, model state, JSON validation, formatting, indentation, minification, history, widget rendering)
+- RegexTester provider tests (provider existence, keywords, model state, pattern matching, case sensitivity, multiline, dotAll, capture groups, history, widget rendering)
 
-Total tests: 2683 tests
+Total tests: 2719 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

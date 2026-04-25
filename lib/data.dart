@@ -107,6 +107,7 @@ import 'package:new_launcher/providers/provider_caesar.dart';
 import 'package:new_launcher/providers/provider_vigenere.dart';
 import 'package:new_launcher/providers/provider_hash.dart';
 import 'package:new_launcher/providers/provider_json.dart';
+import 'package:new_launcher/providers/provider_regex.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -327,6 +328,7 @@ class Global {
     providerVigenereCipher,
     providerHashGenerator,
     providerJsonFormatter,
+    providerRegexTester,
   ];
 
   //_______________________________________________________________________

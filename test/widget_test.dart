@@ -95,6 +95,7 @@ import 'package:new_launcher/providers/provider_caesar.dart';
 import 'package:new_launcher/providers/provider_vigenere.dart';
 import 'package:new_launcher/providers/provider_hash.dart';
 import 'package:new_launcher/providers/provider_json.dart';
+import 'package:new_launcher/providers/provider_regex.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2535,7 +2536,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 96);
+      expect(Global.providerList.length, 97);
     });
 
     test('Global.providerList names are correct', () {
@@ -3702,7 +3703,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 96);
+      expect(initCount, 97);
     });
   });
 
@@ -4020,7 +4021,7 @@ void main() {
 });
 
 test('Global.providerList contains all providers (96 total)', () {
-      expect(Global.providerList.length, 96);
+      expect(Global.providerList.length, 97);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5364,7 +5365,7 @@ test('Global.providerList includes Flashlight', () {
 });
 
 test('Global.providerList contains all providers (96 total)', () {
-      expect(Global.providerList.length, 96);
+      expect(Global.providerList.length, 97);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -26546,11 +26547,352 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (96 total)', () {
-      expect(Global.providerList.length, 96);
+      expect(Global.providerList.length, 97);
     });
 
     tearDownAll(() {
       jsonModel.clearHistory();
+    });
+  });
+
+  group('Regex Tester Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('providerRegexTester exists in Global.providerList', () {
+      final regexProvider = Global.providerList.where((p) => p.name == 'RegexTester').first;
+      expect(regexProvider.name, 'RegexTester');
+    });
+
+    test('Regex Tester provider keywords include regex', () {
+      final keywords = 'regex regular expression test match pattern';
+      expect(keywords.contains('regex'), true);
+      expect(keywords.contains('regular'), true);
+      expect(keywords.contains('expression'), true);
+      expect(keywords.contains('test'), true);
+      expect(keywords.contains('match'), true);
+      expect(keywords.contains('pattern'), true);
+    });
+
+    test('RegexModel starts uninitialized', () {
+      final model = RegexModel();
+      expect(model.isInitialized, false);
+      expect(model.pattern, '');
+      expect(model.testString, '');
+      expect(model.matches, []);
+      expect(model.isValid, true);
+    });
+
+    test('RegexModel init works', () {
+      final model = RegexModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('RegexModel is ChangeNotifier', () {
+      final model = RegexModel();
+      expect(model.hasListeners, false);
+      model.addListener(() {});
+      expect(model.hasListeners, true);
+    });
+
+    test('RegexModel setPattern finds matches', () {
+      final model = RegexModel();
+      model.init();
+      model.setTestString('hello world');
+      model.setPattern('hello');
+      expect(model.isValid, true);
+      expect(model.matches.length, 1);
+      expect(model.matches[0].matched, 'hello');
+    });
+
+    test('RegexModel setPattern invalid regex', () {
+      final model = RegexModel();
+      model.init();
+      model.setTestString('hello world');
+      model.setPattern('[invalid');
+      expect(model.isValid, false);
+      expect(model.errorMessage.isNotEmpty, true);
+    });
+
+    test('RegexModel setPattern empty clears matches', () {
+      final model = RegexModel();
+      model.init();
+      model.setTestString('hello world');
+      model.setPattern('hello');
+      expect(model.matches.length, 1);
+      model.setPattern('');
+      expect(model.matches.length, 0);
+    });
+
+    test('RegexModel setTestString empty clears matches', () {
+      final model = RegexModel();
+      model.init();
+      model.setTestString('hello world');
+      model.setPattern('hello');
+      expect(model.matches.length, 1);
+      model.setTestString('');
+      expect(model.matches.length, 0);
+    });
+
+    test('RegexModel caseSensitive option', () {
+      final model = RegexModel();
+      model.init();
+      model.setTestString('Hello World');
+      model.setPattern('hello');
+      expect(model.caseSensitive, true);
+      expect(model.matches.length, 0);
+      model.toggleCaseSensitive();
+      expect(model.caseSensitive, false);
+      expect(model.matches.length, 1);
+    });
+
+    test('RegexModel multiline option', () {
+      final model = RegexModel();
+      model.init();
+      expect(model.multiline, false);
+      model.toggleMultiline();
+      expect(model.multiline, true);
+      model.toggleMultiline();
+      expect(model.multiline, false);
+    });
+
+    test('RegexModel dotAll option', () {
+      final model = RegexModel();
+      model.init();
+      expect(model.dotAll, false);
+      model.toggleDotAll();
+      expect(model.dotAll, true);
+      model.toggleDotAll();
+      expect(model.dotAll, false);
+    });
+
+    test('RegexModel multiple matches', () {
+      final model = RegexModel();
+      model.init();
+      model.setTestString('hello hello hello');
+      model.setPattern('hello');
+      expect(model.matches.length, 3);
+    });
+
+    test('RegexModel groups captured', () {
+      final model = RegexModel();
+      model.init();
+      model.setTestString('hello123world');
+      model.setPattern('hello(\\d+)world');
+      expect(model.isValid, true);
+      expect(model.matches.length, 1);
+      expect(model.matches[0].matched, 'hello123world');
+      expect(model.matches[0].groups.length, 1);
+      expect(model.matches[0].groups[0], '123');
+    });
+
+    test('RegexModel addToHistory works', () {
+      final model = RegexModel();
+      model.init();
+      model.setPattern('test');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].pattern, 'test');
+    });
+
+    test('RegexModel addToHistory ignores empty pattern', () {
+      final model = RegexModel();
+      model.init();
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('RegexModel addToHistory limit is 10', () {
+      final model = RegexModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setPattern('pattern$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+      expect(model.history[0].pattern, 'pattern5');
+    });
+
+    test('RegexModel loadFromHistory works', () {
+      final model = RegexModel();
+      model.init();
+      model.setPattern('pattern1');
+      model.addToHistory();
+      model.setPattern('pattern2');
+      model.addToHistory();
+      model.loadFromHistory(0);
+      expect(model.pattern, 'pattern1');
+    });
+
+    test('RegexModel clearHistory works', () {
+      final model = RegexModel();
+      model.init();
+      model.setPattern('test');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('RegexModel clearPattern works', () {
+      final model = RegexModel();
+      model.init();
+      model.setPattern('hello');
+      model.clearPattern();
+      expect(model.pattern, '');
+      expect(model.matches.length, 0);
+    });
+
+    test('RegexModel clearTestString works', () {
+      final model = RegexModel();
+      model.init();
+      model.setTestString('hello');
+      model.clearTestString();
+      expect(model.testString, '');
+      expect(model.matches.length, 0);
+    });
+
+    test('RegexModel clearAll works', () {
+      final model = RegexModel();
+      model.init();
+      model.setPattern('hello');
+      model.setTestString('hello world');
+      model.clearAll();
+      expect(model.pattern, '');
+      expect(model.testString, '');
+      expect(model.matches.length, 0);
+    });
+
+    test('RegexModel refresh calls notifyListeners', () {
+      final model = RegexModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('RegexTesterCard renders loading state', (WidgetTester tester) async {
+      final model = RegexModel();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: RegexTesterCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Regex Tester'), findsOneWidget);
+    });
+
+    testWidgets('RegexTesterCard renders initialized state', (WidgetTester tester) async {
+      final model = RegexModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: RegexTesterCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Regex Tester'), findsOneWidget);
+    });
+
+    testWidgets('RegexTesterCard shows header', (WidgetTester tester) async {
+      final model = RegexModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: RegexTesterCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Regex Tester'), findsOneWidget);
+      expect(find.byIcon(Icons.search), findsOneWidget);
+    });
+
+    testWidgets('RegexTesterCard shows options chips', (WidgetTester tester) async {
+      final model = RegexModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: RegexTesterCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Case Sensitive'), findsOneWidget);
+      expect(find.text('Multiline'), findsOneWidget);
+      expect(find.text('Dot All'), findsOneWidget);
+    });
+
+    testWidgets('RegexTesterCard shows pattern field', (WidgetTester tester) async {
+      final model = RegexModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: RegexTesterCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Regex Pattern'), findsOneWidget);
+    });
+
+    testWidgets('RegexTesterCard shows test string field', (WidgetTester tester) async {
+      final model = RegexModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: RegexTesterCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Test String'), findsOneWidget);
+    });
+
+    test('RegexTesterCard widget exists', () {
+      expect(RegexTesterCard, isNotNull);
+    });
+
+    test('Global.providerList includes RegexTester', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('RegexTester'), true);
+    });
+
+    test('providerRegexTester exists', () {
+      expect(providerRegexTester, isNotNull);
+      expect(providerRegexTester.name, 'RegexTester');
+    });
+
+    test('Global.providerList contains all providers (97 total)', () {
+      expect(Global.providerList.length, 97);
+    });
+
+    tearDownAll(() {
+      regexModel.clearHistory();
     });
   });
 }
