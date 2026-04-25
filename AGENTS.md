@@ -1441,6 +1441,19 @@ Settings auto-saved via `SharedPreferences`:
     - Quote display with author attribution
     - Uses `Card.filled`, `IconButton` for Material 3 style
     - Keywords: quote, motivational, inspiration, inspire, daily, wisdom, motivation
+- **Reminder**: Simple timed reminders with notifications
+    - Add reminders with custom messages and target times
+    - Date and time picker integration
+    - Countdown display showing time remaining (days, hours, minutes)
+    - Expired reminder detection with visual indicators
+    - Dismiss expired reminders
+    - Maximum 10 reminders stored (oldest removed when limit exceeded)
+    - Reminders persisted via SharedPreferences
+    - Notification via SnackBar when reminder expires
+    - Urgency indicator for reminders less than 5 minutes away
+    - Clear all reminders with confirmation dialog
+    - Uses `Card.filled`, `showDatePicker`, `showTimePicker` for Material 3 style
+    - Keywords: reminder, alarm, notify, alert, schedule, time, remind
 
 ## Material 3 Design System
 
@@ -1621,7 +1634,7 @@ Test coverage includes:
 - GitIgnore provider tests (provider existence, keywords, model state, search/filter operations, category handling, template selection, generated output, category name/color validation, widget rendering)
 - MotivationalQuote provider tests (provider existence, model state, quote operations, favorites management, navigation, widget rendering)
 
-Total tests: 3254 tests
+Total tests: 3276 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

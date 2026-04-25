@@ -117,6 +117,7 @@ import 'package:new_launcher/providers/provider_httpstatus.dart';
 import 'package:new_launcher/providers/provider_keyboard_shortcuts.dart';
 import 'package:new_launcher/providers/provider_gitignore.dart';
 import 'package:new_launcher/providers/provider_motivationalquote.dart';
+import 'package:new_launcher/providers/provider_reminder.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -32142,6 +32143,163 @@ test('Global.providerList contains all providers (117 total)', () {
 
     tearDownAll(() async {
       motivationalQuoteModel.favorites.clear();
+    });
+  });
+
+  group('Reminder provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      await reminderModel.init();
+    });
+
+    test('Provider exists', () {
+      expect(providerReminder, isNotNull);
+      expect(providerReminder.name, 'Reminder');
+    });
+
+    test('Model is initialized', () {
+      expect(reminderModel.isInitialized, true);
+    });
+
+    test('Max reminders limit', () {
+      expect(ReminderModel.maxReminders, 10);
+    });
+
+    test('Initially no reminders', () {
+      expect(reminderModel.reminders.isEmpty, true);
+      expect(reminderModel.length, 0);
+      expect(reminderModel.hasReminders, false);
+    });
+
+    test('Add reminder', () async {
+      final targetTime = DateTime.now().add(Duration(hours: 1));
+      await reminderModel.addReminder(targetTime, 'Test reminder');
+      expect(reminderModel.length, 1);
+      expect(reminderModel.hasReminders, true);
+    });
+
+    test('Reminder entry properties', () {
+      final reminder = reminderModel.reminders.first;
+      expect(reminder.message, 'Test reminder');
+      expect(reminder.isActive, true);
+      expect(reminder.isExpired, false);
+      expect(reminder.notified, false);
+      expect(reminder.dismissed, false);
+    });
+
+    test('Reminder display time format', () {
+      final reminder = reminderModel.reminders.first;
+      expect(reminder.displayTime, contains('m'));
+    });
+
+    test('Reminder target time string', () {
+      final reminder = reminderModel.reminders.first;
+      expect(reminder.targetTimeString.length, 5);
+    });
+
+    test('Delete reminder', () async {
+      final reminder = reminderModel.reminders.first;
+      await reminderModel.deleteReminder(reminder.id);
+      expect(reminderModel.length, 0);
+    });
+
+    test('Expired reminder detection', () async {
+      final targetTime = DateTime.now().subtract(Duration(minutes: 1));
+      await reminderModel.addReminder(targetTime, 'Expired reminder');
+      expect(reminderModel.expiredReminders.length, 1);
+    });
+
+    test('Dismiss expired reminder', () async {
+      final expired = reminderModel.expiredReminders.first;
+      await reminderModel.dismissReminder(expired.id);
+      expect(expired.dismissed, true);
+    });
+
+    test('Clear all reminders', () async {
+      final targetTime = DateTime.now().add(Duration(hours: 2));
+      await reminderModel.addReminder(targetTime, 'Another reminder');
+      expect(reminderModel.length, 1);
+      await reminderModel.clearAll();
+      expect(reminderModel.length, 0);
+      expect(reminderModel.hasReminders, false);
+    });
+
+    test('ReminderEntry toJson', () {
+      final entry = ReminderEntry(
+        id: 'test-id',
+        targetTime: DateTime.now(),
+        message: 'Test',
+      );
+      final json = entry.toJson();
+      expect(json['id'], 'test-id');
+      expect(json['message'], 'Test');
+    });
+
+    test('ReminderEntry fromJson', () {
+      final json = {
+        'id': 'test-id',
+        'targetTime': '2026-01-01T12:00:00.000',
+        'message': 'Test from json',
+        'notified': false,
+        'dismissed': false,
+      };
+      final entry = ReminderEntry.fromJson(json);
+      expect(entry.id, 'test-id');
+      expect(entry.message, 'Test from json');
+    });
+
+    test('Refresh calls notifyListeners', () {
+      var notified = false;
+      reminderModel.addListener(() => notified = true);
+      reminderModel.refresh();
+      expect(notified, true);
+      reminderModel.removeListener(() => notified = false);
+    });
+
+    testWidgets('ReminderCard renders loading state', (WidgetTester tester) async {
+      final model = ReminderModel();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: ReminderCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Reminders: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('ReminderCard renders initialized state', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: reminderModel,
+              child: ReminderCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Reminders'), findsOneWidget);
+    });
+
+    testWidgets('ReminderCard widget exists', (WidgetTester tester) async {
+      expect(ReminderCard, isNotNull);
+    });
+
+    testWidgets('AddReminderDialog widget exists', (WidgetTester tester) async {
+      expect(AddReminderDialog, isNotNull);
+    });
+
+    test('Global.providerList includes Reminder', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Reminder'), true);
+    });
+
+    tearDownAll(() async {
+      reminderModel.clearAll();
     });
   });
 }

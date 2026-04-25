@@ -129,6 +129,7 @@ import 'package:new_launcher/providers/provider_httpstatus.dart';
 import 'package:new_launcher/providers/provider_keyboard_shortcuts.dart';
 import 'package:new_launcher/providers/provider_gitignore.dart';
 import 'package:new_launcher/providers/provider_motivationalquote.dart';
+import 'package:new_launcher/providers/provider_reminder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -371,6 +372,7 @@ class Global {
     providerKeyboardShortcuts,
     providerGitIgnoreGenerator,
     providerMotivationalQuote,
+    providerReminder,
   ];
 
   //_______________________________________________________________________
