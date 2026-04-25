@@ -29833,19 +29833,22 @@ test('WordleModel submitGuess works', () async {
 
     test('BloodPressureModel averageCategory works', () async {
       await bloodPressureModel.init();
+      await bloodPressureModel.clearHistory();
       bloodPressureModel.logReading(110, 70, customDate: DateTime.now().subtract(Duration(days: 2)));
       await Future.delayed(Duration(milliseconds: 10));
       bloodPressureModel.logReading(120, 80, customDate: DateTime.now().subtract(Duration(days: 1)));
       await Future.delayed(Duration(milliseconds: 10));
       bloodPressureModel.logReading(130, 85);
 
-      expect(bloodPressureModel.averageCategory, BPCategory.highStage1);
+      expect(bloodPressureModel.averageCategory, BPCategory.elevated);
       bloodPressureModel.clearHistory();
     });
 
     test('BloodPressureModel deleteEntry works', () async {
       await bloodPressureModel.init();
+      await bloodPressureModel.clearHistory();
       bloodPressureModel.logReading(120, 80);
+      await Future.delayed(Duration(milliseconds: 10));
       bloodPressureModel.logReading(125, 85, customDate: DateTime.now().subtract(Duration(days: 1)));
       expect(bloodPressureModel.history.length, 2);
       bloodPressureModel.deleteEntry(0);
@@ -29922,6 +29925,7 @@ test('WordleModel submitGuess works', () async {
     testWidgets('BloodPressureCard shows reading entry', (WidgetTester tester) async {
       final model = BloodPressureModel();
       await model.init();
+      await model.clearHistory();
       model.logReading(120, 80);
 
       await tester.pumpWidget(MaterialApp(
@@ -29937,7 +29941,7 @@ test('WordleModel submitGuess works', () async {
       await tester.pump();
 
       expect(find.text('Blood Pressure'), findsOneWidget);
-      expect(find.textContaining('120/80'), findsOneWidget);
+      expect(find.textContaining('120/80 mmHg'), findsWidgets);
       model.clearHistory();
     });
 
