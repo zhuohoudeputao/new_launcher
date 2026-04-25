@@ -1258,6 +1258,22 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
     - Keywords: exponent, power, root, square, cube, log, logarithm, math, calculate
+- **WeightTracker**: Body weight tracking for health monitoring
+    - Track daily body weight measurements
+    - Support for both kg and lb units
+    - Goal weight setting with progress visualization
+    - Weight change calculation over time
+    - Statistics: average weight, min/max weight
+    - Log weight for custom dates (within 30 days)
+    - Progress percentage toward goal weight
+    - Weight trend indicator (up/down arrows)
+    - History view showing past entries
+    - Delete individual entries via history view
+    - Clear all history with confirmation dialog
+    - Maximum 30 entries stored (oldest removed when limit exceeded)
+    - Weight entries persisted via SharedPreferences
+    - Uses `Card.filled`, `ActionChip`, `LinearProgressIndicator` for Material 3 style
+    - Keywords: weight, tracker, body, scale, kg, lb, pound, kilogram, measure, log, track
 
 ## Material 3 Design System
 
@@ -1423,8 +1439,9 @@ Test coverage includes:
 - AspectRatio provider tests (provider existence, keywords, model state, gcd calculation, ratio calculation, decimal ratio, preset selection, target dimension calculation, history, widget rendering)
 - Loan provider tests (provider existence, keywords, model state, payment calculations, total payment/interest, interest percentage, amortization schedule, history, widget rendering)
 - Exponent provider tests (provider existence, keywords, model state, power calculation, sqrt/cbrt/nthroot calculations, log/ln calculations, history, widget rendering)
+- Weight Tracker provider tests (provider existence, keywords, model state, weight logging, unit conversion, goal setting, statistics calculations, widget rendering)
 
-Total tests: 2923 tests
+Total tests: 2950 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

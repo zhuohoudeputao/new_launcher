@@ -103,6 +103,7 @@ import 'package:new_launcher/providers/provider_diff.dart';
 import 'package:new_launcher/providers/provider_cron.dart';
 import 'package:new_launcher/providers/provider_aspectratio.dart';
 import 'package:new_launcher/providers/provider_loan.dart';
+import 'package:new_launcher/providers/provider_weight_tracker.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -28914,6 +28915,381 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       loanModel.clearHistory();
+    });
+  });
+
+  group('Weight Tracker Provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      await weightTrackerModel.init();
+    });
+
+    test('providerWeightTracker exists', () {
+      expect(providerWeightTracker, isNotNull);
+      expect(providerWeightTracker.name, 'WeightTracker');
+    });
+
+    test('Weight Tracker keywords contain expected terms', () {
+      final keywords = 'weight tracker body scale kg lb pound kilogram measure log track';
+      expect(keywords.contains('weight'), true);
+      expect(keywords.contains('tracker'), true);
+      expect(keywords.contains('scale'), true);
+    });
+
+    test('WeightTrackerModel initial state', () {
+      expect(weightTrackerModel.isInitialized, true);
+      expect(weightTrackerModel.history.isEmpty, true);
+      expect(weightTrackerModel.unit, WeightUnit.kg);
+      expect(weightTrackerModel.goalWeightKg, 0);
+    });
+
+    test('WeightUnit extension works correctly', () {
+      expect(WeightUnit.kg.label, 'kg');
+      expect(WeightUnit.lb.label, 'lb');
+      expect(WeightUnit.kg.fullName, 'Kilograms');
+      expect(WeightUnit.lb.fullName, 'Pounds');
+    });
+
+    test('WeightUnit conversion works correctly', () {
+      expect(WeightUnit.kg.toKg(70), 70);
+      expect(WeightUnit.lb.toKg(154.32), closeTo(69.85, 0.01));
+      expect(WeightUnit.kg.fromKg(70), 70);
+      expect(WeightUnit.lb.fromKg(70), closeTo(154.32, 0.01));
+    });
+
+    test('WeightEntry toJson and fromJson work', () {
+      final entry = WeightEntry(
+        date: DateTime(2025, 1, 15),
+        weightKg: 70.5,
+      );
+      String json = entry.toJson();
+      final parsed = WeightEntry.fromJson(json);
+      expect(parsed.date.year, 2025);
+      expect(parsed.date.month, 1);
+      expect(parsed.date.day, 15);
+      expect(parsed.weightKg, 70.5);
+    });
+
+    test('WeightEntry formatWeight works', () {
+      final entry = WeightEntry(
+        date: DateTime.now(),
+        weightKg: 70,
+      );
+      expect(entry.formatWeight(WeightUnit.kg), '70.0 kg');
+      expect(entry.formatWeight(WeightUnit.lb).contains('lb'), true);
+    });
+
+    test('WeightEntry getDayKey works', () {
+      final date = DateTime(2025, 1, 15);
+      final key = WeightEntry.getDayKey(date);
+      expect(key, '2025-1-15');
+    });
+
+    test('WeightTrackerModel logWeight adds entry', () async {
+      await weightTrackerModel.init();
+      weightTrackerModel.logWeight(70.5, WeightUnit.kg);
+      expect(weightTrackerModel.history.length, 1);
+      expect(weightTrackerModel.latestEntry?.weightKg, 70.5);
+      weightTrackerModel.clearHistory();
+    });
+
+    test('WeightTrackerModel logWeight with custom date', () async {
+      await weightTrackerModel.init();
+      final customDate = DateTime(2025, 1, 10);
+      weightTrackerModel.logWeight(72, WeightUnit.kg, customDate: customDate);
+      expect(weightTrackerModel.history.length, 1);
+      expect(weightTrackerModel.history.first.date.year, 2025);
+      weightTrackerModel.clearHistory();
+    });
+
+    test('WeightTrackerModel logWeight updates existing entry', () async {
+      await weightTrackerModel.init();
+      weightTrackerModel.logWeight(70, WeightUnit.kg);
+      expect(weightTrackerModel.history.length, 1);
+      weightTrackerModel.logWeight(71, WeightUnit.kg);
+      expect(weightTrackerModel.history.length, 1);
+      expect(weightTrackerModel.latestEntry?.weightKg, 71);
+      weightTrackerModel.clearHistory();
+    });
+
+    test('WeightTrackerModel setUnit works', () async {
+      await weightTrackerModel.init();
+      weightTrackerModel.setUnit(WeightUnit.lb);
+      expect(weightTrackerModel.unit, WeightUnit.lb);
+      weightTrackerModel.setUnit(WeightUnit.kg);
+      expect(weightTrackerModel.unit, WeightUnit.kg);
+    });
+
+    test('WeightTrackerModel setGoal works', () async {
+      await weightTrackerModel.init();
+      weightTrackerModel.setGoal(65, WeightUnit.kg);
+      expect(weightTrackerModel.goalWeightKg, closeTo(65, 0.01));
+      expect(weightTrackerModel.hasGoal, true);
+      weightTrackerModel.clearGoal();
+      expect(weightTrackerModel.goalWeightKg, 0);
+      expect(weightTrackerModel.hasGoal, false);
+    });
+
+    test('WeightTrackerModel statistics work correctly', () async {
+      await weightTrackerModel.init();
+      weightTrackerModel.logWeight(70, WeightUnit.kg);
+      await Future.delayed(Duration(milliseconds: 10));
+      weightTrackerModel.logWeight(71, WeightUnit.kg, customDate: DateTime.now().subtract(Duration(days: 1)));
+      await Future.delayed(Duration(milliseconds: 10));
+      weightTrackerModel.logWeight(72, WeightUnit.kg, customDate: DateTime.now().subtract(Duration(days: 2)));
+
+      expect(weightTrackerModel.hasHistory, true);
+      expect(weightTrackerModel.averageWeight, closeTo(71, 0.01));
+      expect(weightTrackerModel.minWeight, 70);
+      expect(weightTrackerModel.maxWeight, 72);
+      expect(weightTrackerModel.daysLogged, 3);
+      weightTrackerModel.clearHistory();
+    });
+
+    test('WeightTrackerModel weightChange works', () async {
+      await weightTrackerModel.init();
+      weightTrackerModel.logWeight(70, WeightUnit.kg, customDate: DateTime.now().subtract(Duration(days: 2)));
+      await Future.delayed(Duration(milliseconds: 10));
+      weightTrackerModel.logWeight(71, WeightUnit.kg, customDate: DateTime.now().subtract(Duration(days: 1)));
+      await Future.delayed(Duration(milliseconds: 10));
+      weightTrackerModel.logWeight(72, WeightUnit.kg);
+
+      expect(weightTrackerModel.weightChange, closeTo(2, 0.01));
+      expect(weightTrackerModel.weightChangeLabel.contains('2'), true);
+      weightTrackerModel.clearHistory();
+    });
+
+    test('WeightTrackerModel goalProgress works', () async {
+      await weightTrackerModel.init();
+      weightTrackerModel.setGoal(65, WeightUnit.kg);
+      weightTrackerModel.logWeight(70, WeightUnit.kg, customDate: DateTime.now().subtract(Duration(days: 2)));
+      await Future.delayed(Duration(milliseconds: 10));
+      weightTrackerModel.logWeight(68, WeightUnit.kg, customDate: DateTime.now().subtract(Duration(days: 1)));
+      await Future.delayed(Duration(milliseconds: 10));
+      weightTrackerModel.logWeight(67, WeightUnit.kg);
+
+      expect(weightTrackerModel.hasGoal, true);
+      expect(weightTrackerModel.goalProgress, greaterThan(0));
+      weightTrackerModel.clearHistory();
+      weightTrackerModel.clearGoal();
+    });
+
+    test('WeightTrackerModel deleteEntry works', () async {
+      await weightTrackerModel.init();
+      weightTrackerModel.logWeight(70, WeightUnit.kg);
+      weightTrackerModel.logWeight(71, WeightUnit.kg, customDate: DateTime.now().subtract(Duration(days: 1)));
+      expect(weightTrackerModel.history.length, 2);
+      weightTrackerModel.deleteEntry(0);
+      expect(weightTrackerModel.history.length, 1);
+      weightTrackerModel.clearHistory();
+    });
+
+    test('WeightTrackerModel clearHistory works', () async {
+      await weightTrackerModel.init();
+      weightTrackerModel.logWeight(70, WeightUnit.kg);
+      weightTrackerModel.logWeight(71, WeightUnit.kg, customDate: DateTime.now().subtract(Duration(days: 1)));
+      expect(weightTrackerModel.hasHistory, true);
+      await weightTrackerModel.clearHistory();
+      expect(weightTrackerModel.history.isEmpty, true);
+      expect(weightTrackerModel.hasHistory, false);
+    });
+
+    test('WeightTrackerModel refresh calls notifyListeners', () async {
+      await weightTrackerModel.init();
+      weightTrackerModel.logWeight(70, WeightUnit.kg);
+      await weightTrackerModel.refresh();
+      expect(weightTrackerModel.isInitialized, true);
+      weightTrackerModel.clearHistory();
+    });
+
+    test('WeightTrackerModel maxHistoryDays limit works', () async {
+      await weightTrackerModel.init();
+      for (int i = 0; i < 35; i++) {
+        weightTrackerModel.logWeight(
+          (70 + i).toDouble(),
+          WeightUnit.kg,
+          customDate: DateTime.now().subtract(Duration(days: i)),
+        );
+        await Future.delayed(Duration(milliseconds: 5));
+      }
+      expect(weightTrackerModel.history.length, lessThanOrEqualTo(WeightTrackerModel.maxHistoryDays));
+      weightTrackerModel.clearHistory();
+    });
+
+    testWidgets('WeightTrackerCard renders loading state', (WidgetTester tester) async {
+      final model = WeightTrackerModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: WeightTrackerCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Weight Tracker: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('WeightTrackerCard renders initialized state', (WidgetTester tester) async {
+      final model = WeightTrackerModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: WeightTrackerCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Weight Tracker'), findsOneWidget);
+      expect(find.text('No weight logged yet'), findsOneWidget);
+    });
+
+    testWidgets('WeightTrackerCard shows weight entry', (WidgetTester tester) async {
+      final model = WeightTrackerModel();
+      await model.init();
+      model.logWeight(70.5, WeightUnit.kg);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: WeightTrackerCard(),
+            ),
+          ),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.text('Weight Tracker'), findsOneWidget);
+      expect(find.text('70.5 kg'), findsOneWidget);
+      model.clearHistory();
+    });
+
+    testWidgets('WeightTrackerCard shows statistics', (WidgetTester tester) async {
+      final model = WeightTrackerModel();
+      await model.init();
+      model.logWeight(70, WeightUnit.kg, customDate: DateTime.now().subtract(Duration(days: 2)));
+      await Future.delayed(Duration(milliseconds: 10));
+      model.logWeight(71, WeightUnit.kg, customDate: DateTime.now().subtract(Duration(days: 1)));
+      await Future.delayed(Duration(milliseconds: 10));
+      model.logWeight(72, WeightUnit.kg);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: WeightTrackerCard(),
+            ),
+          ),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.text('Weight Tracker'), findsOneWidget);
+      expect(find.textContaining('Avg'), findsOneWidget);
+      expect(find.textContaining('Min'), findsOneWidget);
+      expect(find.textContaining('Max'), findsOneWidget);
+      model.clearHistory();
+    });
+
+    testWidgets('WeightTrackerCard shows goal progress', (WidgetTester tester) async {
+      final model = WeightTrackerModel();
+      await model.init();
+      model.setGoal(65, WeightUnit.kg);
+      model.logWeight(70, WeightUnit.kg);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: WeightTrackerCard(),
+            ),
+          ),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.text('Weight Tracker'), findsOneWidget);
+      expect(find.textContaining('Goal'), findsOneWidget);
+      model.clearHistory();
+      model.clearGoal();
+    });
+
+    testWidgets('WeightTrackerCard widget exists', (WidgetTester tester) async {
+      expect(WeightTrackerCard, isNotNull);
+    });
+
+    testWidgets('WeightLogDialog renders correctly', (WidgetTester tester) async {
+      await weightTrackerModel.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => WeightLogDialog(),
+              ),
+              child: Text('Show Dialog'),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text('Show Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Log Weight'), findsOneWidget);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('WeightGoalDialog renders correctly', (WidgetTester tester) async {
+      await weightTrackerModel.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => WeightGoalDialog(),
+              ),
+              child: Text('Show Dialog'),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text('Show Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Set Goal Weight'), findsOneWidget);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+    });
+
+    test('Global.providerList includes WeightTracker', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('WeightTracker'), true);
+    });
+
+    test('Global.providerList contains all providers (105 total)', () {
+      expect(Global.providerList.length, 105);
+    });
+
+    tearDownAll(() {
+      weightTrackerModel.clearHistory();
+      weightTrackerModel.clearGoal();
     });
   });
 }
