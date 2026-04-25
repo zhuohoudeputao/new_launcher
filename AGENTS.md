@@ -1204,6 +1204,18 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `TextField`, `ActionChip` for Material 3 style
     - Keywords: cron, expression, schedule, parser, time, crontab, job
+- **AspectRatio**: Aspect ratio calculator for image/video dimensions
+    - Calculate aspect ratios from width/height dimensions
+    - Display simplified ratio (e.g., 1920x1080 → 16:9)
+    - Display decimal ratio (e.g., 1.778)
+    - Common preset ratios: 1:1, 4:3, 3:2, 16:9, 16:10, 21:9, 2:3, 3:4, 9:16, 10:16
+    - Calculate target dimensions from preset ratio
+    - Enter target width/height to get matching height/width
+    - History tracking for previous calculations (up to 10 entries)
+    - Load previous calculations from history
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `ActionChip`, `TextField` for Material 3 style
+    - Keywords: aspectratio, aspect, ratio, dimensions, width, height, calculate, calculator, image, video, resize, screen, resolution
 
 ## Material 3 Design System
 
@@ -1365,8 +1377,9 @@ Test coverage includes:
 - Bitwise provider tests (provider existence, keywords, model state, bitwise operations, AND, OR, XOR, NOT, shift operations, binary/hex conversion, history, widget rendering)
 - DiffChecker provider tests (provider existence, keywords, model state, diff operations, additions/deletions detection, word diff, history, widget rendering)
 - CronExpressionParser provider tests (provider existence, keywords, model state, expression parsing, description generation, next runs calculation, history, widget rendering)
+- AspectRatio provider tests (provider existence, keywords, model state, gcd calculation, ratio calculation, decimal ratio, preset selection, target dimension calculation, history, widget rendering)
 
-Total tests: 2811 tests
+Total tests: 2839 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

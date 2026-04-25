@@ -99,6 +99,7 @@ import 'package:new_launcher/providers/provider_regex.dart';
 import 'package:new_launcher/providers/provider_bitwise.dart';
 import 'package:new_launcher/providers/provider_diff.dart';
 import 'package:new_launcher/providers/provider_cron.dart';
+import 'package:new_launcher/providers/provider_aspectratio.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2539,7 +2540,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 100);
+      expect(Global.providerList.length, 101);
     });
 
     test('Global.providerList names are correct', () {
@@ -3706,7 +3707,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 100);
+      expect(initCount, 101);
     });
   });
 
@@ -4023,8 +4024,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (100 total)', () {
-      expect(Global.providerList.length, 100);
+test('Global.providerList contains all providers (101 total)', () {
+      expect(Global.providerList.length, 101);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5367,8 +5368,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (100 total)', () {
-      expect(Global.providerList.length, 100);
+test('Global.providerList contains all providers (101 total)', () {
+      expect(Global.providerList.length, 101);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -26549,8 +26550,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerJsonFormatter.name, 'JsonFormatter');
     });
 
-    test('Global.providerList contains all providers (100 total)', () {
-      expect(Global.providerList.length, 100);
+    test('Global.providerList contains all providers (101 total)', () {
+      expect(Global.providerList.length, 101);
     });
 
     tearDownAll(() {
@@ -26890,8 +26891,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerRegexTester.name, 'RegexTester');
     });
 
-    test('Global.providerList contains all providers (100 total)', () {
-      expect(Global.providerList.length, 100);
+    test('Global.providerList contains all providers (101 total)', () {
+      expect(Global.providerList.length, 101);
     });
 
     tearDownAll(() {
@@ -27229,8 +27230,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerBitwise.name, 'Bitwise');
     });
 
-    test('Global.providerList contains all providers (100 total)', () {
-      expect(Global.providerList.length, 100);
+    test('Global.providerList contains all providers (101 total)', () {
+      expect(Global.providerList.length, 101);
     });
 
     tearDownAll(() {
@@ -27494,8 +27495,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerDiffChecker.name, 'DiffChecker');
     });
 
-    test('Global.providerList contains all providers (100 total)', () {
-      expect(Global.providerList.length, 100);
+    test('Global.providerList contains all providers (101 total)', () {
+      expect(Global.providerList.length, 101);
     });
 
     tearDownAll(() {
@@ -27791,12 +27792,255 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('CronExpressionParser'), true);
     });
 
-    test('Global.providerList contains all providers (100 total)', () {
-      expect(Global.providerList.length, 100);
+    test('Global.providerList contains all providers (101 total)', () {
+      expect(Global.providerList.length, 101);
     });
 
     tearDownAll(() {
       cronModel.clearHistory();
+    });
+  });
+
+  group('AspectRatio Calculator Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('providerAspectRatio exists', () {
+      expect(providerAspectRatio, isNotNull);
+      expect(providerAspectRatio.name, 'AspectRatio');
+    });
+
+    test('AspectRatioModel initializes correctly', () {
+      final model = AspectRatioModel();
+      expect(model.width, 1920);
+      expect(model.height, 1080);
+      expect(model.targetWidth, 0);
+      expect(model.targetHeight, 0);
+      expect(model.selectedPresetIndex, 1);
+      expect(model.history, []);
+      expect(model.showHistory, false);
+    });
+
+    test('AspectRatioModel presets exist', () {
+      final model = AspectRatioModel();
+      expect(model.presets.length, 10);
+      expect(model.presets[0].name, '1:1');
+      expect(model.presets[3].name, '16:9');
+    });
+
+    test('AspectRatioModel setWidth works', () {
+      final model = AspectRatioModel();
+      model.setWidth(800);
+      expect(model.width, 800);
+    });
+
+    test('AspectRatioModel setHeight works', () {
+      final model = AspectRatioModel();
+      model.setHeight(600);
+      expect(model.height, 600);
+    });
+
+    test('AspectRatioModel setTargetWidth works', () {
+      final model = AspectRatioModel();
+      model.setSelectedPreset(3);
+      model.setTargetWidth(1920);
+      expect(model.targetWidth, 1920);
+      expect(model.targetHeight, 1080);
+    });
+
+    test('AspectRatioModel setTargetHeight works', () {
+      final model = AspectRatioModel();
+      model.setSelectedPreset(3);
+      model.setTargetHeight(1080);
+      expect(model.targetHeight, 1080);
+      expect(model.targetWidth, 1920);
+    });
+
+    test('AspectRatioModel setSelectedPreset works', () {
+      final model = AspectRatioModel();
+      model.setSelectedPreset(0);
+      expect(model.selectedPresetIndex, 0);
+    });
+
+    test('AspectRatioModel gcd works', () {
+      final model = AspectRatioModel();
+      expect(model.gcd(1920, 1080), 120);
+      expect(model.gcd(100, 25), 25);
+      expect(model.gcd(17, 13), 1);
+    });
+
+    test('AspectRatioModel calculateRatio works', () {
+      final model = AspectRatioModel();
+      expect(model.calculateRatio(1920, 1080), '16:9');
+      expect(model.calculateRatio(800, 600), '4:3');
+      expect(model.calculateRatio(100, 100), '1:1');
+      expect(model.calculateRatio(0, 100), 'N/A');
+    });
+
+    test('AspectRatioModel calculateDecimalRatio works', () {
+      final model = AspectRatioModel();
+      expect(model.calculateDecimalRatio(1920, 1080), closeTo(1.777, 0.01));
+      expect(model.calculateDecimalRatio(100, 100), 1.0);
+      expect(model.calculateDecimalRatio(0, 100), 0);
+    });
+
+    test('AspectRatioModel addToHistory works', () {
+      final model = AspectRatioModel();
+      model.addToHistory(1920, 1080);
+      expect(model.history.length, 1);
+      expect(model.history[0].width, 1920);
+      expect(model.history[0].height, 1080);
+      expect(model.history[0].ratio, '16:9');
+    });
+
+    test('AspectRatioModel history max length', () {
+      final model = AspectRatioModel();
+      for (int i = 0; i < 15; i++) {
+        model.addToHistory(i * 100, i * 50);
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('AspectRatioModel loadFromHistory works', () {
+      final model = AspectRatioModel();
+      model.addToHistory(800, 600);
+      model.addToHistory(1920, 1080);
+      model.loadFromHistory(model.history[1]);
+      expect(model.width, 800);
+      expect(model.height, 600);
+    });
+
+    test('AspectRatioModel clearHistory works', () {
+      final model = AspectRatioModel();
+      model.addToHistory(1920, 1080);
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('AspectRatioModel toggleHistory works', () {
+      final model = AspectRatioModel();
+      expect(model.showHistory, false);
+      model.toggleHistory();
+      expect(model.showHistory, true);
+      model.toggleHistory();
+      expect(model.showHistory, false);
+    });
+
+    test('AspectRatioModel clearInputs works', () {
+      final model = AspectRatioModel();
+      model.setWidth(800);
+      model.setHeight(600);
+      model.setTargetWidth(1920);
+      model.setTargetHeight(1080);
+      model.clearInputs();
+      expect(model.width, 1920);
+      expect(model.height, 1080);
+      expect(model.targetWidth, 0);
+      expect(model.targetHeight, 0);
+    });
+
+    test('AspectRatioModel refresh calls notifyListeners', () {
+      final model = AspectRatioModel();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('AspectRatioHistoryEntry properties correct', () {
+      final entry = AspectRatioHistoryEntry(
+        width: 1920,
+        height: 1080,
+        ratio: '16:9',
+        timestamp: DateTime.now(),
+      );
+      expect(entry.width, 1920);
+      expect(entry.height, 1080);
+      expect(entry.ratio, '16:9');
+    });
+
+    test('AspectRatioPreset properties correct', () {
+      final preset = AspectRatioPreset(name: '16:9', width: 16, height: 9);
+      expect(preset.name, '16:9');
+      expect(preset.width, 16);
+      expect(preset.height, 9);
+    });
+
+    testWidgets('AspectRatioCalculatorCard renders correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AspectRatioCalculatorCard(),
+          ),
+        ),
+      );
+      expect(find.text('AspectRatio Calculator'), findsOneWidget);
+    });
+
+    testWidgets('AspectRatioCalculatorCard shows input fields', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AspectRatioCalculatorCard(),
+          ),
+        ),
+      );
+      expect(find.text('Enter Dimensions'), findsOneWidget);
+    });
+
+    testWidgets('AspectRatioCalculatorCard shows result section', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AspectRatioCalculatorCard(),
+          ),
+        ),
+      );
+      expect(find.text('Ratio'), findsOneWidget);
+      expect(find.text('Decimal'), findsOneWidget);
+    });
+
+    testWidgets('AspectRatioCalculatorCard shows preset section', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AspectRatioCalculatorCard(),
+          ),
+        ),
+      );
+      expect(find.text('Common Ratios'), findsOneWidget);
+    });
+
+    testWidgets('AspectRatioCalculatorCard shows buttons', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AspectRatioCalculatorCard(),
+          ),
+        ),
+      );
+      expect(find.text('Clear'), findsOneWidget);
+      expect(find.text('History'), findsOneWidget);
+    });
+
+    test('AspectRatioCalculatorCard widget exists', () {
+      expect(AspectRatioCalculatorCard, isNotNull);
+    });
+
+    test('Global.providerList includes AspectRatio', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('AspectRatio'), true);
+    });
+
+    test('Global.providerList contains all providers (101 total)', () {
+      expect(Global.providerList.length, 101);
+    });
+
+    tearDownAll(() {
+      aspectRatioModel.clearHistory();
     });
   });
 }
