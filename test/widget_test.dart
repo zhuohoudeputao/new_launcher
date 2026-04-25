@@ -96,6 +96,7 @@ import 'package:new_launcher/providers/provider_vigenere.dart';
 import 'package:new_launcher/providers/provider_hash.dart';
 import 'package:new_launcher/providers/provider_json.dart';
 import 'package:new_launcher/providers/provider_regex.dart';
+import 'package:new_launcher/providers/provider_bitwise.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2536,7 +2537,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 97);
+      expect(Global.providerList.length, 98);
     });
 
     test('Global.providerList names are correct', () {
@@ -3703,7 +3704,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 97);
+      expect(initCount, 98);
     });
   });
 
@@ -4020,8 +4021,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (96 total)', () {
-      expect(Global.providerList.length, 97);
+test('Global.providerList contains all providers (97 total)', () {
+      expect(Global.providerList.length, 98);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5364,8 +5365,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (96 total)', () {
-      expect(Global.providerList.length, 97);
+test('Global.providerList contains all providers (97 total)', () {
+      expect(Global.providerList.length, 98);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -26546,8 +26547,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerJsonFormatter.name, 'JsonFormatter');
     });
 
-    test('Global.providerList contains all providers (96 total)', () {
-      expect(Global.providerList.length, 97);
+    test('Global.providerList contains all providers (97 total)', () {
+      expect(Global.providerList.length, 98);
     });
 
     tearDownAll(() {
@@ -26887,12 +26888,351 @@ test('WordleModel submitGuess works', () async {
       expect(providerRegexTester.name, 'RegexTester');
     });
 
-    test('Global.providerList contains all providers (97 total)', () {
-      expect(Global.providerList.length, 97);
+    test('Global.providerList contains all providers (98 total)', () {
+      expect(Global.providerList.length, 98);
     });
 
     tearDownAll(() {
       regexModel.clearHistory();
+    });
+  });
+
+  group('Bitwise Calculator Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('providerBitwise exists', () {
+      expect(providerBitwise, isNotNull);
+      expect(providerBitwise.name, 'Bitwise');
+    });
+
+    test('BitwiseModel initializes correctly', () {
+      final model = BitwiseModel();
+      model.init();
+      expect(model.input1, 0);
+      expect(model.input2, 0);
+      expect(model.operation, 'and');
+      expect(model.history.length, 0);
+      expect(model.isLoading, false);
+    });
+
+    test('BitwiseModel setInput1 works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput1(15);
+      expect(model.input1, 15);
+      expect(model.input1Binary, '1111');
+      expect(model.input1Hex, 'F');
+    });
+
+    test('BitwiseModel setInput2 works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput2(7);
+      expect(model.input2, 7);
+      expect(model.input2Binary, '111');
+      expect(model.input2Hex, '7');
+    });
+
+    test('BitwiseModel setOperation works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setOperation('xor');
+      expect(model.operation, 'xor');
+    });
+
+    test('BitwiseModel AND operation works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput1(12);
+      model.setInput2(10);
+      model.setOperation('and');
+      expect(model.result, 8);
+    });
+
+    test('BitwiseModel OR operation works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput1(12);
+      model.setInput2(10);
+      model.setOperation('or');
+      expect(model.result, 14);
+    });
+
+    test('BitwiseModel XOR operation works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput1(12);
+      model.setInput2(10);
+      model.setOperation('xor');
+      expect(model.result, 6);
+    });
+
+    test('BitwiseModel NOT operation works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput1(5);
+      model.setOperation('not');
+      expect(model.result, ~5);
+    });
+
+    test('BitwiseModel left shift operation works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput1(5);
+      model.setInput2(2);
+      model.setOperation('leftShift');
+      expect(model.result, 20);
+    });
+
+    test('BitwiseModel right shift operation works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput1(20);
+      model.setInput2(2);
+      model.setOperation('rightShift');
+      expect(model.result, 5);
+    });
+
+    test('BitwiseModel requiresTwoInputs correct for two-input operations', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setOperation('and');
+      expect(model.requiresTwoInputs, true);
+      model.setOperation('or');
+      expect(model.requiresTwoInputs, true);
+      model.setOperation('xor');
+      expect(model.requiresTwoInputs, true);
+      model.setOperation('leftShift');
+      expect(model.requiresTwoInputs, true);
+      model.setOperation('rightShift');
+      expect(model.requiresTwoInputs, true);
+    });
+
+    test('BitwiseModel requiresTwoInputs correct for NOT operation', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setOperation('not');
+      expect(model.requiresTwoInputs, false);
+    });
+
+    test('BitwiseModel binary conversion works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput1(255);
+      expect(model.input1Binary, '11111111');
+    });
+
+    test('BitwiseModel hex conversion works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput1(255);
+      expect(model.input1Hex, 'FF');
+    });
+
+    test('BitwiseModel addToHistory works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput1(12);
+      model.setInput2(10);
+      model.setOperation('and');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].input1, 12);
+      expect(model.history[0].input2, 10);
+      expect(model.history[0].operation, 'and');
+      expect(model.history[0].result, 8);
+    });
+
+    test('BitwiseModel history max length', () {
+      final model = BitwiseModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInput1(i);
+        model.setInput2(10);
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('BitwiseModel applyFromHistory works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput1(12);
+      model.setInput2(10);
+      model.setOperation('xor');
+      model.addToHistory();
+      
+      model.setInput1(0);
+      model.setInput2(0);
+      model.setOperation('and');
+      
+      model.applyFromHistory(model.history[0]);
+      expect(model.input1, 12);
+      expect(model.input2, 10);
+      expect(model.operation, 'xor');
+    });
+
+    test('BitwiseModel clearHistory works', () {
+      final model = BitwiseModel();
+      model.init();
+      model.setInput1(12);
+      model.setInput2(10);
+      model.addToHistory();
+      model.addToHistory();
+      expect(model.history.length, 2);
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('BitwiseModel refresh calls notifyListeners', () {
+      final model = BitwiseModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('BitwiseHistory expression correct for two-input operations', () {
+      final history = BitwiseHistory(
+        input1: 12,
+        input2: 10,
+        operation: 'and',
+        result: 8,
+        timestamp: DateTime.now(),
+      );
+      expect(history.expression, '12 & 10 = 8');
+    });
+
+    test('BitwiseHistory expression correct for NOT operation', () {
+      final history = BitwiseHistory(
+        input1: 5,
+        input2: null,
+        operation: 'not',
+        result: ~5,
+        timestamp: DateTime.now(),
+      );
+      expect(history.expression.contains('~'), true);
+    });
+
+    test('BitwiseHistory operationSymbol correct', () {
+      final history = BitwiseHistory(
+        input1: 12,
+        input2: 10,
+        operation: 'xor',
+        result: 6,
+        timestamp: DateTime.now(),
+      );
+      expect(history.operationSymbol, '^');
+    });
+
+    test('BitwiseHistory operationName correct', () {
+      final history = BitwiseHistory(
+        input1: 12,
+        input2: 10,
+        operation: 'leftShift',
+        result: 20,
+        timestamp: DateTime.now(),
+      );
+      expect(history.operationName, 'Left Shift');
+    });
+
+    testWidgets('BitwiseCard renders correctly', (WidgetTester tester) async {
+      final model = BitwiseModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: BitwiseCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Bitwise Calculator'), findsOneWidget);
+    });
+
+    testWidgets('BitwiseCard shows operation buttons', (WidgetTester tester) async {
+      final model = BitwiseModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: BitwiseCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('&'), findsOneWidget);
+      expect(find.text('|'), findsOneWidget);
+      expect(find.text('^'), findsOneWidget);
+      expect(find.text('~'), findsOneWidget);
+      expect(find.text('<<'), findsOneWidget);
+      expect(find.text('>>'), findsOneWidget);
+    });
+
+    testWidgets('BitwiseCard shows result section', (WidgetTester tester) async {
+      final model = BitwiseModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: BitwiseCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Result'), findsOneWidget);
+      expect(find.text('DEC'), findsWidgets);
+      expect(find.text('BIN'), findsWidgets);
+      expect(find.text('HEX'), findsWidgets);
+    });
+
+    testWidgets('BitwiseCard shows input fields', (WidgetTester tester) async {
+      final model = BitwiseModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: BitwiseCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Input 1'), findsOneWidget);
+      expect(find.text('Input 2'), findsOneWidget);
+    });
+
+    test('BitwiseCard widget exists', () {
+      expect(BitwiseCard, isNotNull);
+    });
+
+    test('Global.providerList includes Bitwise', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Bitwise'), true);
+    });
+
+    test('providerBitwise exists', () {
+      expect(providerBitwise, isNotNull);
+      expect(providerBitwise.name, 'Bitwise');
+    });
+
+    test('Global.providerList contains all providers (98 total)', () {
+      expect(Global.providerList.length, 98);
+    });
+
+    tearDownAll(() {
+      bitwiseModel.clearHistory();
     });
   });
 }

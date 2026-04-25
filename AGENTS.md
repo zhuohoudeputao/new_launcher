@@ -1166,6 +1166,18 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `FilterChip`, `TextField`, `RichText` for Material 3 style
     - Keywords: regex, regular, expression, test, match, pattern
+- **Bitwise**: Bitwise calculator for developers
+    - Perform bitwise operations: AND, OR, XOR, NOT
+    - Shift operations: Left Shift (<<), Right Shift (>>)
+    - Input values in Decimal, Binary, or Hexadecimal format
+    - Real-time conversion between DEC, BIN, HEX representations
+    - Result displayed in multiple formats simultaneously
+    - NOT operation requires only one input
+    - Calculation history (up to 10 entries)
+    - Tap history entries to reuse previous calculations
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
+    - Keywords: bitwise, bit, and, or, xor, not, shift, calculator, binary, logic
 
 ## Material 3 Design System
 
@@ -1324,8 +1336,9 @@ Test coverage includes:
 - HashGenerator provider tests (provider existence, keywords, model state, hash generation, MD5/SHA1/SHA256/SHA512 operations, history, widget rendering)
 - JsonFormatter provider tests (provider existence, keywords, model state, JSON validation, formatting, indentation, minification, history, widget rendering)
 - RegexTester provider tests (provider existence, keywords, model state, pattern matching, case sensitivity, multiline, dotAll, capture groups, history, widget rendering)
+- Bitwise provider tests (provider existence, keywords, model state, bitwise operations, AND, OR, XOR, NOT, shift operations, binary/hex conversion, history, widget rendering)
 
-Total tests: 2719 tests
+Total tests: 2751 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1423,6 +1436,8 @@ Technical documentation is available in `docs/`:
 - `fuel_consumption_provider.md` - Fuel Consumption Converter provider implementation for fuel efficiency conversions
 - `hash_generator_provider.md` - Hash Generator provider implementation for cryptographic hash generation
 - `json_formatter_provider.md` - JSON Formatter provider implementation for JSON validation and formatting
+- `regex_tester_provider.md` - Regex Tester provider implementation for regular expression testing
+- `bitwise_provider.md` - Bitwise Calculator provider implementation for bitwise operations
 
 ## Notice
 DO NOT EDIT task*.md
