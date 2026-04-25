@@ -1218,7 +1218,7 @@ Test coverage includes:
 - PeriodicTable provider tests (provider existence, keywords, model state, search/filter operations, element data, category handling, widget rendering)
 - PressureConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 
-Total tests: 2479 tests
+Total tests: 2470 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
