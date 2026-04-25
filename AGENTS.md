@@ -1557,6 +1557,17 @@ Settings auto-saved via `SharedPreferences`:
     - Conversion formula explanation display
     - Uses `Card.filled`, `TextField`, `Icon(Icons.pets)` for Material 3 style
     - Keywords: dog, age, pet, puppy, canine, human, years, convert
+- **CatAge**: Cat age to human years conversion calculator
+    - Convert cat age to human equivalent years using scientific formula
+    - First year of cat's life = 15 human years
+    - Second year = +10 human years (so 2 cat years = 25 human years)
+    - Each subsequent year = +4 human years
+    - Human age description display (Newborn, Infant, Child, Teenager, Young Adult, Adult, Middle-aged, Senior)
+    - Cat life stage display (Newborn, Kitten, Junior, Adult, Mature, Senior, Geriatric)
+    - Decimal years support for kittens
+    - Conversion formula explanation display
+    - Uses `Card.filled`, `TextField`, `Icon(Icons.pets)` for Material 3 style
+    - Keywords: cat, age, pet, kitten, feline, human, years, convert
 
 ## Material 3 Design System
 
@@ -1745,7 +1756,7 @@ Test coverage includes:
 - Markdown Preview provider tests (provider existence, model state, input text operations, history management, time formatting, widget rendering)
 - Stretch Reminder provider tests (provider existence, model state, start/stop timer, reset operations, interval setting, skipStretch, clearStats, formatted elapsed time, progress percentage, needsStretch detection, widget rendering)
 
-Total tests: 3461 tests
+Total tests: 3480 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1908,6 +1919,7 @@ Technical documentation is available in `docs/`:
 - `markdown_provider.md` - Markdown Preview provider implementation for markdown text rendering
 - `stretch_reminder_provider.md` - Stretch Reminder provider implementation for health and posture reminders
 - `dog_age_provider.md` - DogAge provider implementation for dog age to human years conversion
+- `cat_age_provider.md` - CatAge provider implementation for cat age to human years conversion
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 - `critical_bug_fixes_iteration89.md` - Critical bug fix for missing lotteryModel and gitIgnoreModel in MultiProvider
 

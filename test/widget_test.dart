@@ -126,6 +126,7 @@ import 'package:new_launcher/providers/provider_statistics.dart';
 import 'package:new_launcher/providers/provider_markdown.dart';
 import 'package:new_launcher/providers/provider_stretch_reminder.dart';
 import 'package:new_launcher/providers/provider_dog_age.dart';
+import 'package:new_launcher/providers/provider_cat_age.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2566,7 +2567,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 127);
+      expect(Global.providerList.length, 128);
     });
 
     test('Global.providerList names are correct', () {
@@ -3731,7 +3732,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 127);
+      expect(initCount, 128);
     });
   });
 
@@ -4048,8 +4049,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5392,8 +5393,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -12928,8 +12929,8 @@ test('Global.providerList includes UnitConverter', () {
       expect(CalorieModel.defaultGoal, 2000);
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
   });
 
@@ -23326,8 +23327,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Exponent'), true);
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -27070,8 +27071,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerJsonFormatter.name, 'JsonFormatter');
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -27414,8 +27415,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerRegexTester.name, 'RegexTester');
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -27753,8 +27754,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerBitwise.name, 'Bitwise');
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -28018,8 +28019,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerDiffChecker.name, 'DiffChecker');
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -28315,8 +28316,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('CronExpressionParser'), true);
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -28558,8 +28559,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('AspectRatio'), true);
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -28929,8 +28930,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Loan'), true);
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -29303,8 +29304,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('WeightTracker'), true);
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -29634,8 +29635,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Pace'), true);
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -30664,7 +30665,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test', () {
-      expect(Global.providerList.length, 127);
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -30913,7 +30914,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test updated', () {
-      expect(Global.providerList.length, 127);
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -31136,7 +31137,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test final', () {
-      expect(Global.providerList.length, 127);
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -31321,7 +31322,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test with SlidingPuzzle', () {
-      expect(Global.providerList.length, 127);
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -31695,8 +31696,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('HTTPStatus'), true);
     });
 
-test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -31837,8 +31838,8 @@ test('Global.providerList contains all providers (127 total)', () {
       expect(names.contains('KeyboardShortcuts'), true);
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -31994,8 +31995,8 @@ test('Global.providerList contains all providers (127 total)', () {
       expect(names.contains('GitIgnore'), true);
     });
 
-    test('Global.providerList contains all providers (127 total)', () {
-      expect(Global.providerList.length, 127);
+    test('Global.providerList contains all providers (128 total)', () {
+      expect(Global.providerList.length, 128);
     });
 
     tearDownAll(() {
@@ -34063,6 +34064,128 @@ test('Global.providerList contains all providers (127 total)', () {
       expect(actionKeywords.contains('age'), true);
       expect(actionKeywords.contains('pet'), true);
       expect(actionKeywords.contains('puppy'), true);
+    });
+  });
+
+  group('CatAge Provider Tests', () {
+    test('providerCatAge exists in Global.providerList', () {
+      final catAgeProvider = Global.providerList.where((p) => p.name == 'CatAge').first;
+      expect(catAgeProvider.name, 'CatAge');
+    });
+
+    test('providerCatAge provides actions', () {
+      final catAgeProvider = Global.providerList.where((p) => p.name == 'CatAge').first;
+      expect(catAgeProvider.provideActions, isNotNull);
+    });
+
+    test('CatAgeModel initial state', () {
+      expect(catAgeModel.catYears, 0);
+      expect(catAgeModel.hasValue, false);
+    });
+
+    test('CatAgeModel calculateHumanYears for 1 year', () {
+      expect(catAgeModel.calculateHumanYears(1), 15);
+    });
+
+    test('CatAgeModel calculateHumanYears for 2 years', () {
+      expect(catAgeModel.calculateHumanYears(2), 25);
+    });
+
+    test('CatAgeModel calculateHumanYears for 3 years', () {
+      expect(catAgeModel.calculateHumanYears(3), 29);
+    });
+
+    test('CatAgeModel calculateHumanYears for 5 years', () {
+      expect(catAgeModel.calculateHumanYears(5), 37);
+    });
+
+    test('CatAgeModel calculateHumanYears for 0 years', () {
+      expect(catAgeModel.calculateHumanYears(0), 0);
+    });
+
+    test('CatAgeModel calculateHumanYears for partial years', () {
+      expect(catAgeModel.calculateHumanYears(0.5), closeTo(7.5, 0.1));
+    });
+
+    test('CatAgeModel getHumanAgeDescription', () {
+      expect(catAgeModel.getHumanAgeDescription(0), 'Newborn');
+      expect(catAgeModel.getHumanAgeDescription(2), 'Infant');
+      expect(catAgeModel.getHumanAgeDescription(10), 'Child');
+      expect(catAgeModel.getHumanAgeDescription(15), 'Teenager');
+      expect(catAgeModel.getHumanAgeDescription(30), 'Young Adult');
+      expect(catAgeModel.getHumanAgeDescription(50), 'Adult');
+      expect(catAgeModel.getHumanAgeDescription(70), 'Middle-aged');
+      expect(catAgeModel.getHumanAgeDescription(80), 'Senior');
+    });
+
+    test('CatAgeModel getLifeStage', () {
+      expect(catAgeModel.getLifeStage(0), 'Newborn');
+      expect(catAgeModel.getLifeStage(0.5), 'Kitten');
+      expect(catAgeModel.getLifeStage(1.5), 'Junior');
+      expect(catAgeModel.getLifeStage(4), 'Adult');
+      expect(catAgeModel.getLifeStage(8), 'Mature');
+      expect(catAgeModel.getLifeStage(12), 'Senior');
+      expect(catAgeModel.getLifeStage(16), 'Geriatric');
+    });
+
+    test('CatAgeModel setCatYears', () {
+      catAgeModel.setCatYears(5);
+      expect(catAgeModel.catYears, 5);
+      expect(catAgeModel.hasValue, true);
+      catAgeModel.clear();
+    });
+
+    test('CatAgeModel clear', () {
+      catAgeModel.setCatYears(7);
+      expect(catAgeModel.hasValue, true);
+      catAgeModel.clear();
+      expect(catAgeModel.catYears, 0);
+      expect(catAgeModel.hasValue, false);
+    });
+
+    test('CatAgeModel requestFocus sets flag', () {
+      catAgeModel.requestFocus();
+      expect(catAgeModel.shouldFocus, true);
+    });
+
+    test('CatAgeModel notifyListeners on setCatYears', () {
+      var notified = false;
+      catAgeModel.addListener(() => notified = true);
+      catAgeModel.setCatYears(3);
+      expect(notified, true);
+      catAgeModel.clear();
+    });
+
+    testWidgets('CatAgeCard renders', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: catAgeModel,
+              builder: (context, child) => CatAgeCard(),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(find.text('Cat Age Calculator'), findsOneWidget);
+    });
+
+    testWidgets('CatAgeCard widget exists', (WidgetTester tester) async {
+      expect(CatAgeCard, isNotNull);
+    });
+
+    test('Global.providerList includes CatAge', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('CatAge'), true);
+    });
+
+    test('Provider has correct keywords', () {
+      final actionKeywords = 'cat age pet kitten feline human years convert';
+      expect(actionKeywords.contains('cat'), true);
+      expect(actionKeywords.contains('age'), true);
+      expect(actionKeywords.contains('pet'), true);
+      expect(actionKeywords.contains('kitten'), true);
     });
   });
 }
