@@ -102,6 +102,7 @@ import 'package:new_launcher/providers/provider_periodic.dart';
 import 'package:new_launcher/providers/provider_pressure.dart';
 import 'package:new_launcher/providers/provider_frequency.dart';
 import 'package:new_launcher/providers/provider_fuel.dart';
+import 'package:new_launcher/providers/provider_compass.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -317,6 +318,7 @@ class Global {
     providerPressureConverter,
     providerFrequencyConverter,
     providerFuel,
+    providerCompass,
   ];
 
   //_______________________________________________________________________

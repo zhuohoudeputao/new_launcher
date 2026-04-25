@@ -1088,6 +1088,16 @@ Settings auto-saved via `SharedPreferences`:
     - Discovery year for synthetic elements
     - Uses `Card.filled`, `GridView`, `ActionChip`, `TextField` for Material 3 style
     - Keywords: periodic, table, element, chemistry, atomic, science
+- **Compass**: Compass direction display with visual indicator
+    - Manual compass heading control with rotation buttons
+    - Cardinal direction display (N, E, S, W, NE, SE, SW, NW)
+    - Degree heading display (0-360°)
+    - Visual compass needle pointing to current heading
+    - Quick direction buttons for N/E/S/W
+    - Rotate +/-15° buttons for fine adjustment
+    - Custom painted compass dial with tick marks
+    - Uses `Card.filled`, `CustomPaint`, `ActionChip`, `IconButton` for Material 3 style
+    - Keywords: compass, direction, north, south, east, west, heading, orientation, navigate
 
 ## Material 3 Design System
 
@@ -1240,7 +1250,7 @@ Test coverage includes:
 - FrequencyConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - FuelConsumption provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 
-Total tests: 2536 tests
+Total tests: 2571 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

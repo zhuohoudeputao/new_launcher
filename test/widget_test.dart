@@ -90,6 +90,7 @@ import 'package:new_launcher/providers/provider_periodic.dart';
 import 'package:new_launcher/providers/provider_pressure.dart';
 import 'package:new_launcher/providers/provider_frequency.dart';
 import 'package:new_launcher/providers/provider_fuel.dart';
+import 'package:new_launcher/providers/provider_compass.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2530,7 +2531,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 91);
+      expect(Global.providerList.length, 92);
     });
 
     test('Global.providerList names are correct', () {
@@ -3697,7 +3698,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 91);
+      expect(initCount, 92);
     });
   });
 
@@ -4014,8 +4015,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (88 total)', () {
-      expect(Global.providerList.length, 91);
+test('Global.providerList contains all providers (92 total)', () {
+      expect(Global.providerList.length, 92);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5358,8 +5359,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (88 total)', () {
-      expect(Global.providerList.length, 91);
+test('Global.providerList contains all providers (92 total)', () {
+      expect(Global.providerList.length, 92);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -25228,6 +25229,238 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       fuelConsumptionModel.clearHistory();
+    });
+  });
+
+  group('Compass Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('Compass provider exists', () {
+      final compassProvider = Global.providerList.where((p) => p.name == 'Compass').first;
+      expect(compassProvider.name, 'Compass');
+    });
+
+    test('Compass provider keywords include compass', () {
+      final keywords = 'compass direction north south east west heading orientation navigate';
+      expect(keywords.contains('compass'), true);
+      expect(keywords.contains('direction'), true);
+      expect(keywords.contains('north'), true);
+    });
+
+    test('CompassModel starts uninitialized', () {
+      final model = CompassModel();
+      expect(model.initialized, false);
+    });
+
+    test('CompassModel is ChangeNotifier', () {
+      final model = CompassModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('CompassModel init works', () {
+      final model = CompassModel();
+      model.init();
+      expect(model.initialized, true);
+    });
+
+    test('CompassModel heading starts at 0', () {
+      final model = CompassModel();
+      expect(model.heading, 0.0);
+    });
+
+    test('CompassModel setHeading works', () {
+      final model = CompassModel();
+      model.setHeading(45.0);
+      expect(model.heading, 45.0);
+    });
+
+    test('CompassModel setHeading wraps negative values', () {
+      final model = CompassModel();
+      model.setHeading(-15.0);
+      expect(model.heading, 345.0);
+    });
+
+    test('CompassModel setHeading wraps values >= 360', () {
+      final model = CompassModel();
+      model.setHeading(370.0);
+      expect(model.heading, 10.0);
+    });
+
+    test('CompassModel adjustHeading works', () {
+      final model = CompassModel();
+      model.adjustHeading(30.0);
+      expect(model.heading, 30.0);
+    });
+
+    test('CompassModel adjustHeading wraps negative', () {
+      final model = CompassModel();
+      model.setHeading(10.0);
+      model.adjustHeading(-20.0);
+      expect(model.heading, 350.0);
+    });
+
+    test('CompassModel setToNorth works', () {
+      final model = CompassModel();
+      model.setHeading(180.0);
+      model.setToNorth();
+      expect(model.heading, 0.0);
+    });
+
+    test('CompassModel setToEast works', () {
+      final model = CompassModel();
+      model.setToEast();
+      expect(model.heading, 90.0);
+    });
+
+    test('CompassModel setToSouth works', () {
+      final model = CompassModel();
+      model.setToSouth();
+      expect(model.heading, 180.0);
+    });
+
+    test('CompassModel setToWest works', () {
+      final model = CompassModel();
+      model.setToWest();
+      expect(model.heading, 270.0);
+    });
+
+    test('CompassModel directionAbbreviation for North (0 degrees)', () {
+      final model = CompassModel();
+      expect(model.directionAbbreviation, 'N');
+    });
+
+    test('CompassModel directionAbbreviation for East (90 degrees)', () {
+      final model = CompassModel();
+      model.setHeading(90.0);
+      expect(model.directionAbbreviation, 'E');
+    });
+
+    test('CompassModel directionAbbreviation for South (180 degrees)', () {
+      final model = CompassModel();
+      model.setHeading(180.0);
+      expect(model.directionAbbreviation, 'S');
+    });
+
+    test('CompassModel directionAbbreviation for West (270 degrees)', () {
+      final model = CompassModel();
+      model.setHeading(270.0);
+      expect(model.directionAbbreviation, 'W');
+    });
+
+    test('CompassModel directionAbbreviation for NE (45 degrees)', () {
+      final model = CompassModel();
+      model.setHeading(45.0);
+      expect(model.directionAbbreviation, 'NE');
+    });
+
+    test('CompassModel directionAbbreviation for SE (135 degrees)', () {
+      final model = CompassModel();
+      model.setHeading(135.0);
+      expect(model.directionAbbreviation, 'SE');
+    });
+
+    test('CompassModel directionAbbreviation for SW (225 degrees)', () {
+      final model = CompassModel();
+      model.setHeading(225.0);
+      expect(model.directionAbbreviation, 'SW');
+    });
+
+    test('CompassModel directionAbbreviation for NW (315 degrees)', () {
+      final model = CompassModel();
+      model.setHeading(315.0);
+      expect(model.directionAbbreviation, 'NW');
+    });
+
+    test('CompassModel directionName for North', () {
+      final model = CompassModel();
+      expect(model.directionName, 'North');
+    });
+
+    test('CompassModel directionName for East', () {
+      final model = CompassModel();
+      model.setHeading(90.0);
+      expect(model.directionName, 'East');
+    });
+
+    test('CompassModel directionName for South', () {
+      final model = CompassModel();
+      model.setHeading(180.0);
+      expect(model.directionName, 'South');
+    });
+
+    test('CompassModel directionName for West', () {
+      final model = CompassModel();
+      model.setHeading(270.0);
+      expect(model.directionName, 'West');
+    });
+
+    test('CompassModel directionNames contains all directions', () {
+      expect(CompassModel.directionNames.containsKey('N'), true);
+      expect(CompassModel.directionNames.containsKey('NE'), true);
+      expect(CompassModel.directionNames.containsKey('E'), true);
+      expect(CompassModel.directionNames.containsKey('SE'), true);
+      expect(CompassModel.directionNames.containsKey('S'), true);
+      expect(CompassModel.directionNames.containsKey('SW'), true);
+      expect(CompassModel.directionNames.containsKey('W'), true);
+      expect(CompassModel.directionNames.containsKey('NW'), true);
+    });
+
+    test('CompassModel refresh calls notifyListeners', () {
+      final model = CompassModel();
+      model.init();
+      var notified = false;
+      model.addListener(() {
+        notified = true;
+      });
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('CompassCard renders loading state', () {
+      final card = CompassCard();
+      expect(card, isNotNull);
+    });
+
+    test('CompassCard renders initialized state', () {
+      compassModel.init();
+      final card = CompassCard();
+      expect(card, isNotNull);
+    });
+
+    testWidgets('CompassCard shows compass widget', (WidgetTester tester) async {
+      final model = CompassModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: CompassCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Compass'), findsOneWidget);
+    });
+
+    test('CompassCard widget exists', () {
+      expect(CompassCard, isNotNull);
+    });
+
+    test('Global.providerList includes Compass', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Compass'), true);
+    });
+
+    test('CompassPainter exists', () {
+      expect(CompassPainter, isNotNull);
+    });
+
+    tearDownAll(() {
+      compassModel.refresh();
     });
   });
 }

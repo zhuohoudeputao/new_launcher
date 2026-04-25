@@ -92,6 +92,7 @@ import 'package:new_launcher/providers/provider_periodic.dart';
 import 'package:new_launcher/providers/provider_pressure.dart';
 import 'package:new_launcher/providers/provider_frequency.dart';
 import 'package:new_launcher/providers/provider_fuel.dart';
+import 'package:new_launcher/providers/provider_compass.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -256,9 +257,10 @@ ChangeNotifierProvider.value(value: sunPositionModel),
 ChangeNotifierProvider.value(value: powerConverterModel),
                 ChangeNotifierProvider.value(value: periodicTableModel),
 ChangeNotifierProvider.value(value: pressureConverterModel),
-                ChangeNotifierProvider.value(value: frequencyConverterModel),
-                ChangeNotifierProvider.value(value: fuelConsumptionModel),
-                 ],
+ChangeNotifierProvider.value(value: frequencyConverterModel),
+                 ChangeNotifierProvider.value(value: fuelConsumptionModel),
+                 ChangeNotifierProvider.value(value: compassModel),
+                  ],
           child: MyApp(),
             )));
 }
