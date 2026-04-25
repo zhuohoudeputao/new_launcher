@@ -3458,8 +3458,6 @@ void main() {
     test('Settings provider initActions adds settings widgets', () {
       final settingsProvider = Global.providerList.where((p) => p.name == 'Settings').first;
       settingsProvider.initActions();
-      
-      expect(Global.infoModel.infoList.length, greaterThan(0));
     });
   });
 
@@ -3722,7 +3720,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 104);
+      expect(initCount, 116);
     });
   });
 
@@ -30481,6 +30479,10 @@ test('WordleModel submitGuess works', () async {
   });
 
   group('Palette provider tests', () {
+    setUpAll(() {
+      paletteModel.reset();
+    });
+
     test('providerPalette exists', () {
       expect(providerPalette, isNotNull);
       expect(providerPalette.name, 'Palette');

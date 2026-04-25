@@ -324,6 +324,15 @@ class PaletteModel extends ChangeNotifier {
     notifyListeners();
     Global.loggerModel.info("Palette history cleared", source: "Palette");
   }
+  
+  void reset() {
+    _isInitialized = false;
+    _paletteType = PaletteType.complementary;
+    _currentPalette = [];
+    _history = [];
+    _baseColor = Colors.blue;
+    notifyListeners();
+  }
 }
 
 class PaletteHistoryEntry {
