@@ -1406,6 +1406,16 @@ Settings auto-saved via `SharedPreferences`:
     - Copy status code info to clipboard
     - Uses `Card.filled`, `TextField`, `ActionChip`, `ListTile` for Material 3 style
     - Keywords: http, status, code, response, error, web, server, api, rest, 404, 500, 200
+- **KeyboardShortcuts**: Keyboard shortcut reference for developers and users
+    - Comprehensive reference of keyboard shortcuts across platforms
+    - 50 shortcuts covering General, Browser, Text Editing, File Manager, Developer, and System categories
+    - Search by action name or key combination
+    - Category filtering with ActionChips
+    - Platform-specific shortcuts: Windows, Mac, Linux
+    - Detailed view showing shortcuts for all platforms
+    - Copy shortcut info to clipboard
+    - Uses `Card.filled`, `TextField`, `ActionChip`, `ListTile` for Material 3 style
+    - Keywords: keyboard, shortcut, hotkey, key, combo, reference, windows, mac, linux
 
 ## Material 3 Design System
 
@@ -1582,8 +1592,9 @@ Test coverage includes:
 - SlidingPuzzle provider tests (provider existence, keywords, model state, tile operations, difficulty settings, move counting, give up functionality, statistics tracking, history, widget rendering)
 - MathQuiz provider tests (provider existence, keywords, model state, problem generation, difficulty settings, answer submission, streak tracking, accuracy calculation, history, widget rendering)
 - HTTPStatus provider tests (provider existence, keywords, model state, search/filter operations, category handling, code selection, category name/color validation, widget rendering)
+- KeyboardShortcuts provider tests (provider existence, keywords, model state, search/filter operations, category handling, shortcut selection, category name/color validation, widget rendering)
 
-Total tests: 2811 tests
+Total tests: 2828 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

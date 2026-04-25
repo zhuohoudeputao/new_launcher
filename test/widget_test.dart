@@ -114,6 +114,7 @@ import 'package:new_launcher/providers/provider_readingtime.dart';
 import 'package:new_launcher/providers/provider_sliding_puzzle.dart';
 import 'package:new_launcher/providers/provider_mathquiz.dart';
 import 'package:new_launcher/providers/provider_httpstatus.dart';
+import 'package:new_launcher/providers/provider_keyboard_shortcuts.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -4039,7 +4040,7 @@ void main() {
 });
 
 test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5383,7 +5384,7 @@ test('Global.providerList includes Flashlight', () {
 });
 
 test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -12919,7 +12920,7 @@ test('Global.providerList includes UnitConverter', () {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
   });
 
@@ -23317,7 +23318,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -27061,7 +27062,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -27405,7 +27406,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -27744,7 +27745,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -28009,7 +28010,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -28306,7 +28307,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -28549,7 +28550,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -28920,7 +28921,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -29294,7 +29295,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -30650,7 +30651,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -30899,7 +30900,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test updated', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -31122,7 +31123,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test final', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -31307,7 +31308,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test with SlidingPuzzle', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
@@ -31682,11 +31683,153 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (115 total)', () {
-      expect(Global.providerList.length, 115);
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {
       httpStatusModel.clearSelection();
+    });
+  });
+
+  group('Keyboard Shortcuts Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      keyboardShortcutsModel.init();
+    });
+
+    test('providerKeyboardShortcuts exists', () {
+      expect(providerKeyboardShortcuts, isNotNull);
+      expect(providerKeyboardShortcuts.name, 'KeyboardShortcuts');
+    });
+
+    test('KeyboardShortcuts keywords contain expected terms', () {
+      expect(providerKeyboardShortcuts.name, 'KeyboardShortcuts');
+    });
+
+    test('KeyboardShortcutsModel initial state', () {
+      expect(keyboardShortcutsModel.initialized, true);
+      expect(keyboardShortcutsModel.searchQuery, '');
+      expect(keyboardShortcutsModel.selectedShortcut, null);
+      expect(keyboardShortcutsModel.selectedCategory, null);
+    });
+
+    test('KeyboardShortcutsModel contains all shortcuts', () {
+      expect(keyboardShortcutsModel.allShortcuts.length, greaterThan(40));
+      expect(keyboardShortcutsModel.allShortcuts.any((s) => s.action == 'Copy'), true);
+      expect(keyboardShortcutsModel.allShortcuts.any((s) => s.action == 'Paste'), true);
+      expect(keyboardShortcutsModel.allShortcuts.any((s) => s.action == 'Undo'), true);
+    });
+
+    test('KeyboardShortcutsModel setSearchQuery works', () {
+      keyboardShortcutsModel.setSearchQuery('Copy');
+      expect(keyboardShortcutsModel.searchQuery, 'Copy');
+      expect(keyboardShortcutsModel.filteredShortcuts.any((s) => s.action == 'Copy'), true);
+      keyboardShortcutsModel.setSearchQuery('');
+    });
+
+    test('KeyboardShortcutsModel setSelectedCategory works', () {
+      keyboardShortcutsModel.setSelectedCategory(ShortcutCategory.browser);
+      expect(keyboardShortcutsModel.selectedCategory, ShortcutCategory.browser);
+      expect(keyboardShortcutsModel.filteredShortcuts.every((s) => s.category == ShortcutCategory.browser), true);
+      keyboardShortcutsModel.setSelectedCategory(null);
+    });
+
+    test('KeyboardShortcutsModel setSelectedShortcut works', () {
+      final copyShortcut = keyboardShortcutsModel.allShortcuts.firstWhere((s) => s.action == 'Copy');
+      keyboardShortcutsModel.setSelectedShortcut(copyShortcut);
+      expect(keyboardShortcutsModel.selectedShortcut, copyShortcut);
+      expect(keyboardShortcutsModel.selectedShortcut?.action, 'Copy');
+      expect(keyboardShortcutsModel.selectedShortcut?.windows, 'Ctrl+C');
+      keyboardShortcutsModel.clearSelection();
+    });
+
+    test('KeyboardShortcutsModel clearSelection works', () {
+      final pasteShortcut = keyboardShortcutsModel.allShortcuts.firstWhere((s) => s.action == 'Paste');
+      keyboardShortcutsModel.setSelectedShortcut(pasteShortcut);
+      keyboardShortcutsModel.clearSelection();
+      expect(keyboardShortcutsModel.selectedShortcut, null);
+    });
+
+    test('KeyboardShortcutsModel refresh calls notifyListeners', () {
+      var notified = false;
+      keyboardShortcutsModel.addListener(() => notified = true);
+      keyboardShortcutsModel.refresh();
+      expect(notified, true);
+      keyboardShortcutsModel.removeListener(() => notified = false);
+    });
+
+    test('KeyboardShortcut properties correct', () {
+      final copyShortcut = keyboardShortcutsModel.allShortcuts.firstWhere((s) => s.action == 'Copy');
+      expect(copyShortcut.action, 'Copy');
+      expect(copyShortcut.windows, 'Ctrl+C');
+      expect(copyShortcut.mac, 'Cmd+C');
+      expect(copyShortcut.linux, 'Ctrl+C');
+      expect(copyShortcut.category, ShortcutCategory.textEditing);
+    });
+
+    test('getShortcutCategoryName works correctly', () {
+      expect(getShortcutCategoryName(ShortcutCategory.general), 'General');
+      expect(getShortcutCategoryName(ShortcutCategory.browser), 'Browser');
+      expect(getShortcutCategoryName(ShortcutCategory.textEditing), 'Text Editing');
+      expect(getShortcutCategoryName(ShortcutCategory.fileManager), 'File Manager');
+      expect(getShortcutCategoryName(ShortcutCategory.developer), 'Developer');
+      expect(getShortcutCategoryName(ShortcutCategory.system), 'System');
+    });
+
+    test('getShortcutCategoryColor returns valid colors', () {
+      final colorScheme = ColorScheme.light();
+      expect(getShortcutCategoryColor(ShortcutCategory.general, colorScheme), isNotNull);
+      expect(getShortcutCategoryColor(ShortcutCategory.browser, colorScheme), isNotNull);
+      expect(getShortcutCategoryColor(ShortcutCategory.textEditing, colorScheme), isNotNull);
+      expect(getShortcutCategoryColor(ShortcutCategory.fileManager, colorScheme), isNotNull);
+      expect(getShortcutCategoryColor(ShortcutCategory.developer, colorScheme), isNotNull);
+      expect(getShortcutCategoryColor(ShortcutCategory.system, colorScheme), isNotNull);
+    });
+
+    testWidgets('KeyboardShortcutsCard renders loading state', (WidgetTester tester) async {
+      final model = KeyboardShortcutsModel();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: KeyboardShortcutsCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('KeyboardShortcutsCard renders initialized state', (WidgetTester tester) async {
+      final model = KeyboardShortcutsModel();
+      model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: KeyboardShortcutsCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Keyboard Shortcuts'), findsOneWidget);
+    });
+
+    testWidgets('KeyboardShortcutsCard widget exists', (WidgetTester tester) async {
+      expect(KeyboardShortcutsCard, isNotNull);
+    });
+
+    test('Global.providerList includes KeyboardShortcuts', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('KeyboardShortcuts'), true);
+    });
+
+    test('Global.providerList contains all providers (116 total)', () {
+      expect(Global.providerList.length, 116);
+    });
+
+    tearDownAll(() {
+      keyboardShortcutsModel.clearSelection();
     });
   });
 }
