@@ -137,6 +137,7 @@ import 'package:new_launcher/providers/provider_fraction.dart';
 import 'package:new_launcher/providers/provider_statistics.dart';
 import 'package:new_launcher/providers/provider_markdown.dart';
 import 'package:new_launcher/providers/provider_stretch_reminder.dart';
+import 'package:new_launcher/providers/provider_dog_age.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -387,6 +388,7 @@ class Global {
     providerStatisticsCalculator,
     providerMarkdownPreview,
     providerStretchReminder,
+    providerDogAge,
   ];
 
   //_______________________________________________________________________
