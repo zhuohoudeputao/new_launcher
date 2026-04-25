@@ -109,6 +109,7 @@ import 'package:new_launcher/providers/provider_bloodpressure.dart';
 import 'package:new_launcher/providers/provider_bandwidth.dart';
 import 'package:new_launcher/providers/provider_coordinates.dart';
 import 'package:new_launcher/providers/provider_palette.dart';
+import 'package:new_launcher/providers/provider_gradient.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -30646,6 +30647,255 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       paletteModel.clearHistory();
+    });
+  });
+
+  group('Gradient provider tests', () {
+    test('providerGradient exists', () {
+      expect(providerGradient, isNotNull);
+      expect(providerGradient.name, 'Gradient');
+    });
+
+    test('GradientModel initial values', () {
+      final model = GradientModel();
+      expect(model.isInitialized, false);
+      expect(model.gradientType, GradientType.linear);
+      expect(model.gradientDirection, GradientDirection.horizontal);
+      expect(model.colors.length, 2);
+      expect(model.history, isEmpty);
+    });
+
+    test('GradientModel init works', () {
+      final model = GradientModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.colors.length >= 2, true);
+      expect(model.colors.length <= 5, true);
+    });
+
+    test('GradientModel setGradientType works', () {
+      final model = GradientModel();
+      model.init();
+      model.setGradientType(GradientType.radial);
+      expect(model.gradientType, GradientType.radial);
+      expect(model.gradientDirection, GradientDirection.radialCenter);
+    });
+
+    test('GradientModel setGradientDirection works', () {
+      final model = GradientModel();
+      model.init();
+      model.setGradientDirection(GradientDirection.vertical);
+      expect(model.gradientDirection, GradientDirection.vertical);
+    });
+
+    test('GradientModel setColor works', () {
+      final model = GradientModel();
+      model.init();
+      final newColor = Color(0xFF2196F3);
+      model.setColor(0, newColor);
+      expect(model.colors[0], newColor);
+    });
+
+    test('GradientModel addColor works', () {
+      final model = GradientModel();
+      model.init();
+      model.clearHistory();
+      model.addColor();
+      expect(model.colors.length, 3);
+    });
+
+    test('GradientModel addColor limits to 5 colors', () {
+      final model = GradientModel();
+      model.init();
+      model.clearHistory();
+      for (int i = 0; i < 10; i++) {
+        model.addColor();
+      }
+      expect(model.colors.length, 5);
+    });
+
+    test('GradientModel removeColor works', () {
+      final model = GradientModel();
+      model.init();
+      model.clearHistory();
+      model.addColor();
+      model.removeColor(2);
+      expect(model.colors.length, 2);
+    });
+
+    test('GradientModel removeColor keeps minimum 2 colors', () {
+      final model = GradientModel();
+      model.init();
+      model.clearHistory();
+      model.removeColor(0);
+      model.removeColor(0);
+      expect(model.colors.length, 2);
+    });
+
+    test('GradientModel generateRandomGradient works', () {
+      final model = GradientModel();
+      model.init();
+      model.generateRandomGradient();
+      expect(model.colors.length >= 2, true);
+      expect(model.colors.length <= 5, true);
+      expect(model.history.isNotEmpty, true);
+    });
+
+    test('GradientModel colorToHex works', () {
+      final model = GradientModel();
+      final color = Color(0xFF2196F3);
+      final hex = model.colorToHex(color);
+      expect(hex, '#2196F3');
+    });
+
+    test('GradientModel getCssGradient returns linear gradient string', () {
+      final model = GradientModel();
+      model.init();
+      model.setGradientType(GradientType.linear);
+      model.setGradientDirection(GradientDirection.horizontal);
+      final css = model.getCssGradient();
+      expect(css, contains('linear-gradient'));
+      expect(css, contains('to right'));
+    });
+
+    test('GradientModel getCssGradient returns radial gradient string', () {
+      final model = GradientModel();
+      model.init();
+      model.setGradientType(GradientType.radial);
+      final css = model.getCssGradient();
+      expect(css, contains('radial-gradient'));
+      expect(css, contains('circle'));
+    });
+
+    test('GradientModel getFlutterGradient returns linear gradient string', () {
+      final model = GradientModel();
+      model.init();
+      model.setGradientType(GradientType.linear);
+      final flutter = model.getFlutterGradient();
+      expect(flutter, contains('LinearGradient'));
+    });
+
+    test('GradientModel getFlutterGradient returns radial gradient string', () {
+      final model = GradientModel();
+      model.init();
+      model.setGradientType(GradientType.radial);
+      final flutter = model.getFlutterGradient();
+      expect(flutter, contains('RadialGradient'));
+    });
+
+    test('GradientModel history limits to 10 entries', () {
+      final model = GradientModel();
+      model.init();
+      model.clearHistory();
+      for (int i = 0; i < 15; i++) {
+        model.generateRandomGradient();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('GradientModel useHistoryEntry works', () {
+      final model = GradientModel();
+      model.init();
+      model.generateRandomGradient();
+      if (model.history.isNotEmpty) {
+        final entry = model.history.first;
+        model.useHistoryEntry(entry);
+        expect(model.gradientType, entry.gradientType);
+        expect(model.gradientDirection, entry.gradientDirection);
+      }
+    });
+
+    test('GradientModel clearHistory works', () {
+      final model = GradientModel();
+      model.init();
+      model.generateRandomGradient();
+      model.clearHistory();
+      expect(model.history, isEmpty);
+    });
+
+    test('GradientModel getGradientTypeName works', () {
+      expect(GradientModel.getGradientTypeName(GradientType.linear), 'Linear');
+      expect(GradientModel.getGradientTypeName(GradientType.radial), 'Radial');
+    });
+
+    test('GradientModel getGradientDirectionName works', () {
+      expect(GradientModel.getGradientDirectionName(GradientDirection.horizontal), 'Horizontal');
+      expect(GradientModel.getGradientDirectionName(GradientDirection.vertical), 'Vertical');
+      expect(GradientModel.getGradientDirectionName(GradientDirection.diagonalUp), 'Diagonal Up');
+      expect(GradientModel.getGradientDirectionName(GradientDirection.diagonalDown), 'Diagonal Down');
+      expect(GradientModel.getGradientDirectionName(GradientDirection.radialCenter), 'Center');
+    });
+
+    test('GradientHistoryEntry getFormattedTime works', () {
+      final entry = GradientHistoryEntry(
+        gradientType: GradientType.linear,
+        gradientDirection: GradientDirection.horizontal,
+        colors: [Colors.blue, Colors.purple],
+        timestamp: DateTime.now(),
+      );
+      expect(entry.getFormattedTime(), 'just now');
+    });
+
+    test('GradientHistoryEntry stores correct data', () {
+      final entry = GradientHistoryEntry(
+        gradientType: GradientType.radial,
+        gradientDirection: GradientDirection.radialCenter,
+        colors: [Colors.red, Colors.green, Colors.blue],
+        timestamp: DateTime.now(),
+      );
+      expect(entry.gradientType, GradientType.radial);
+      expect(entry.gradientDirection, GradientDirection.radialCenter);
+      expect(entry.colors.length, 3);
+    });
+
+    testWidgets('GradientCard renders loading state', (WidgetTester tester) async {
+      final model = GradientModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: GradientCard(),
+          ),
+        ),
+      ));
+
+      expect(find.textContaining('Loading'), findsOneWidget);
+    });
+
+    testWidgets('GradientCard renders initialized state', (WidgetTester tester) async {
+      final model = GradientModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: GradientCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Gradient Generator'), findsOneWidget);
+    });
+
+    testWidgets('GradientCard widget exists', (WidgetTester tester) async {
+      expect(GradientCard, isNotNull);
+    });
+
+    test('Global.providerList includes Gradient', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Gradient'), true);
+    });
+
+    test('provider count test updated', () {
+      expect(Global.providerList.length, 111);
+    });
+
+    tearDownAll(() {
+      gradientModel.clearHistory();
     });
   });
 }

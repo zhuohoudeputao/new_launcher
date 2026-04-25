@@ -111,6 +111,7 @@ import 'package:new_launcher/providers/provider_loan.dart';
 import 'package:new_launcher/providers/provider_bandwidth.dart';
 import 'package:new_launcher/providers/provider_coordinates.dart';
 import 'package:new_launcher/providers/provider_palette.dart';
+import 'package:new_launcher/providers/provider_gradient.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -295,8 +296,9 @@ ChangeNotifierProvider.value(value: paceModel),
 ChangeNotifierProvider.value(value: bloodPressureModel),
                            ChangeNotifierProvider.value(value: bandwidthCalculatorModel),
 ChangeNotifierProvider.value(value: coordinatesConverterModel),
-                            ChangeNotifierProvider.value(value: paletteModel),
-                              ],
+                             ChangeNotifierProvider.value(value: paletteModel),
+                             ChangeNotifierProvider.value(value: gradientModel),
+                               ],
           child: MyApp(),
             )));
 }

@@ -1344,6 +1344,21 @@ Settings auto-saved via `SharedPreferences`:
     - Uses HSV color space for palette generation
     - Uses `Card.filled`, `SegmentedButton`, `ElevatedButton` for Material 3 style
     - Keywords: palette, color, scheme, harmony, complementary, analogous, triadic, monochromatic, tetradic, split, design
+- **Gradient**: Gradient generator for designers and developers
+    - Two gradient types: Linear and Radial
+    - Gradient directions: Horizontal, Vertical, Diagonal Up, Diagonal Down (linear), Center (radial)
+    - Color management: 2-5 colors per gradient
+    - Add/remove colors with visual color picker
+    - CSS output: `background: linear-gradient(to right, #2196F3, #9C27B0);`
+    - Flutter output: `LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [...])`
+    - Copy CSS or Flutter code to clipboard
+    - Random gradient generation with 2-5 colors
+    - Gradient history tracking (up to 10 entries)
+    - Clear history with confirmation dialog
+    - Visual gradient preview with direction display
+    - Code view toggle for CSS/Flutter export
+    - Uses `Card.filled`, `SegmentedButton`, `ActionChip` for Material 3 style
+    - Keywords: gradient, linear, radial, colors, css, flutter, design, background
 
 ## Material 3 Design System
 
@@ -1515,8 +1530,9 @@ Test coverage includes:
 - BandwidthCalculator provider tests (provider existence, keywords, model state, calculation modes, unit operations, history, widget rendering)
 - CoordinatesConverter provider tests (provider existence, keywords, model state, latitude/longitude setting, coordinate clamping, DMS conversion, swap coordinates, history, widget rendering)
 - Palette provider tests (provider existence, keywords, model state, palette type generation, color count validation, base color setting, history management, color to HEX conversion, palette type names and descriptions, history entry formatting, widget rendering)
+- Gradient provider tests (provider existence, keywords, model state, gradient type/direction operations, color management, CSS/Flutter output generation, history management, widget rendering)
 
-Total tests: 2693 tests
+Total tests: 2721 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

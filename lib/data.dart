@@ -121,6 +121,7 @@ import 'package:new_launcher/providers/provider_bloodpressure.dart';
 import 'package:new_launcher/providers/provider_bandwidth.dart';
 import 'package:new_launcher/providers/provider_coordinates.dart';
 import 'package:new_launcher/providers/provider_palette.dart';
+import 'package:new_launcher/providers/provider_gradient.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -355,6 +356,7 @@ class Global {
     providerBandwidthCalculator,
     providerCoordinatesConverter,
     providerPalette,
+    providerGradient,
   ];
 
   //_______________________________________________________________________
