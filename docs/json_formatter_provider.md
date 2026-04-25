@@ -1,98 +1,95 @@
-# JSON Formatter Provider
+# JSON Formatter Provider Implementation
 
 ## Overview
 
-The JSON Formatter provider is a developer utility for validating and formatting JSON data. It provides real-time validation, configurable formatting options, and history tracking.
+The JSON Formatter provider validates and formats JSON input for developers.
 
-## Implementation Details
+## Provider Details
 
-### Model: JsonModel
+- **Provider Name**: JsonFormatter
+- **Keywords**: json, format, validate, pretty, minify, indent, parse
+- **Model**: jsonModel
 
-Located in `lib/providers/provider_json.dart`, the `JsonModel` class manages:
-- Input/output JSON strings
-- Validation state and error messages
-- Formatting configuration (indentation, minification)
-- History of saved JSON entries
+## Features
 
-### Key Features
+### Validation
 
-1. **Real-time Validation**
-   - Validates JSON input as user types
-   - Displays error messages for invalid JSON
-   - Shows formatted output for valid JSON
+- Real-time JSON validation
+- Error message display for invalid JSON
+- Visual indication of validity
 
-2. **Configurable Formatting**
-   - Indentation options: 2, 4, or 8 spaces
-   - Minification toggle for compact output
-   - Uses `JsonEncoder.withIndent()` for formatting
+### Formatting Options
 
-3. **History Management**
-   - Save valid JSON to history (max 10 entries)
-   - Load previous entries with one tap
-   - Clear history with confirmation dialog
+- Indentation: 2, 4, or 8 spaces (SegmentedButton)
+- Minify option (compact output)
+- Switch toggle for minification
 
-4. **Material 3 Components**
-   - `Card.filled` for container
-   - `SegmentedButton` for indentation selection
-   - `Switch` for minification toggle
-   - `TextField` for input
-   - `SelectableText` for output
+### History
 
-## Usage
+- Save formatted JSON to history (up to 10 entries)
+- Load previous JSON inputs from history
+- Clear history with confirmation dialog
 
-### Keywords
-- json, format, validate, pretty, minify, indent, parse
-
-### Actions
-The provider adds one action: "JSON Formatter" which displays the formatter card.
-
-### State Management
-- Uses `ChangeNotifier` pattern
-- Registered in `MultiProvider` in `main.dart`
-- Global instance: `jsonModel`
-
-## Code Structure
+## Model (JsonModel)
 
 ```dart
 class JsonModel extends ChangeNotifier {
   String _input = '';
   String _output = '';
+  int _indentation = 2;
+  bool _minify = false;
   bool _isValid = false;
-  String _errorMessage = '';
-  int _indentSpaces = 2;
-  List<JsonHistoryEntry> _history = [];
-  bool _showMinified = false;
+  String? _errorMessage;
+  final List<JsonHistoryEntry> _history = [];
+  static const int maxHistory = 10;
   
   void setInput(String value);
-  void setIndentSpaces(int value);
-  void toggleMinified();
+  void setIndentation(int value);
+  void toggleMinify();
+  void _formatJson();
   void addToHistory();
-  void loadFromHistory(int index);
   void clearHistory();
-  void clear();
+  void useHistoryEntry(JsonHistoryEntry entry);
 }
 ```
 
+## JSON Processing
+
+```dart
+import 'dart:convert';
+
+// Parse and validate
+final decoded = jsonDecode(input);
+
+// Format with indentation
+final encoded = JsonEncoder.withIndent('  ').convert(decoded);
+
+// Minify
+final minified = jsonEncode(decoded);
+```
+
+## Widget (JsonFormatterCard)
+
+- Card.filled style
+- SegmentedButton for indentation selection
+- Switch for minify toggle
+- TextField for JSON input
+- SelectableText for formatted output
+- Error message display
+- History toggle view
+
 ## Testing
 
-Tests cover:
-- Provider registration in Global.providerList
+Tests verify:
+- Provider existence in Global.providerList
+- Keywords matching
 - Model initialization and state
-- JSON validation (valid and invalid)
-- Formatting with different indentation levels
-- Minification toggle
-- History management
+- JSON validation (valid/invalid)
+- Formatting with indentation
+- Minification
+- History operations
 - Widget rendering
 
-## Dependencies
+## Related Files
 
-- `dart:convert` for JSON encoding/decoding
-- `flutter/material.dart` for UI components
-- `provider` for state management
-
-## Notes
-
-- History entries include timestamp for display
-- Error messages use Material 3 error container colors
-- Output is scrollable for large JSON objects
-- Clear button appears when input is present
+- `lib/providers/provider_json.dart` - Provider implementation

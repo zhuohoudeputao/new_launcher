@@ -1,124 +1,94 @@
-# RegexTester Provider
+# Regex Tester Provider Implementation
 
 ## Overview
 
-The RegexTester provider is a developer utility for testing regular expressions against sample text with real-time matching and highlighted results.
+The Regex Tester provider tests regular expressions against sample text with real-time matching.
+
+## Provider Details
+
+- **Provider Name**: RegexTester
+- **Keywords**: regex, regular, expression, test, match, pattern
+- **Model**: regexModel
 
 ## Features
 
 ### Pattern Testing
-- Real-time regex pattern matching as you type
-- Match highlighting with color-coded display
+
+- Real-time regex matching
+- Highlighted matches with color coding
 - Match count and position information
-- Invalid regex detection with error messages
 
 ### Regex Options
-- **Case Sensitive**: Toggle case-sensitive matching
-- **Multiline**: Enable multiline mode (^ and $ match line boundaries)
-- **Dot All**: Enable dotAll mode (. matches newlines)
 
-### Captured Groups
-- Automatic extraction of captured groups from patterns
-- Group position information (start, end, matched text)
+- Case Sensitive (FilterChip toggle)
+- Multiline (FilterChip toggle)
+- Dot All (FilterChip toggle)
 
-### History
-- Save regex patterns to history (up to 10 entries)
-- Load previous patterns from history
-- Clear history with confirmation dialog
+### Match Information
 
-## Implementation
+- Match start/end positions
+- Matched text display
+- Captured groups display
 
-### Model: RegexModel
+## Model (RegexModel)
 
 ```dart
 class RegexModel extends ChangeNotifier {
   String _pattern = '';
   String _testString = '';
-  List<RegexMatch> _matches = [];
-  bool _isValid = true;
-  String _errorMessage = '';
   bool _caseSensitive = true;
   bool _multiline = false;
   bool _dotAll = false;
-  List<RegexHistoryEntry> _history = [];
-  bool _isInitialized = false;
-
-  // Methods:
-  void init();
+  List<RegexMatch> _matches = [];
+  String? _errorMessage;
+  final List<RegexHistoryEntry> _history = [];
+  static const int maxHistory = 10;
+  
   void setPattern(String value);
   void setTestString(String value);
   void toggleCaseSensitive();
   void toggleMultiline();
   void toggleDotAll();
+  void _testRegex();
   void addToHistory();
-  void loadFromHistory(int index);
   void clearHistory();
-  void clearPattern();
-  void clearTestString();
-  void clearAll();
-  void refresh();
+  void useHistoryEntry(RegexHistoryEntry entry);
 }
 ```
 
-### Match Structure
+### RegexMatch
 
 ```dart
 class RegexMatch {
-  final int start;
-  final int end;
-  final String matched;
-  final List<String?> groups;
+  int start;
+  int end;
+  String matchedText;
+  List<String> groups;
 }
 ```
 
-### History Entry
+## Widget (RegexTesterCard)
 
-```dart
-class RegexHistoryEntry {
-  final String pattern;
-  final String testString;
-  final int matchCount;
-  final DateTime timestamp;
-}
-```
-
-### Widget: RegexTesterCard
-
-Uses Material 3 components:
-- `Card.filled` for container
-- `FilterChip` for regex options toggles
-- `TextField` for pattern and test string input
-- `RichText` for highlighted match display
-
-## Keywords
-
-`regex, regular, expression, test, match, pattern`
+- Card.filled style
+- TextField for regex pattern
+- TextField for test string
+- FilterChip toggles for options
+- RichText with highlighted matches
+- Match count display
+- History toggle view
 
 ## Testing
 
-Provider tests include:
+Tests verify:
 - Provider existence in Global.providerList
-- Keywords verification
-- Model initialization
-- Pattern matching functionality
-- Case sensitivity toggling
-- Multiline and dotAll options
-- Captured groups extraction
-- History operations (add, load, clear)
+- Keywords matching
+- Model initialization and state
+- Pattern matching
+- Option toggles (case sensitive, multiline, dotAll)
+- Invalid regex detection
+- History operations
 - Widget rendering
 
-## Usage Example
+## Related Files
 
-```dart
-// Access through Global.infoModel
-Global.infoModel.addInfoWidget("RegexTester", RegexTesterCard(), title: "Regex Tester");
-
-// Or use keywords to search
-// Type "regex" or "pattern" in search field
-```
-
-## Related Providers
-
-- **TextEncoder**: Base64, URL, HTML, JSON encoding/decoding
-- **JsonFormatter**: JSON validation and formatting
-- **HashGenerator**: MD5, SHA1, SHA256, SHA512 hash generation
+- `lib/providers/provider_regex.dart` - Provider implementation
