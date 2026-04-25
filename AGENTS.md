@@ -1594,7 +1594,7 @@ Test coverage includes:
 - HTTPStatus provider tests (provider existence, keywords, model state, search/filter operations, category handling, code selection, category name/color validation, widget rendering)
 - KeyboardShortcuts provider tests (provider existence, keywords, model state, search/filter operations, category handling, shortcut selection, category name/color validation, widget rendering)
 
-Total tests: 2828 tests
+Total tests: 3209 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
