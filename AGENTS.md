@@ -1274,6 +1274,19 @@ Settings auto-saved via `SharedPreferences`:
     - Weight entries persisted via SharedPreferences
     - Uses `Card.filled`, `ActionChip`, `LinearProgressIndicator` for Material 3 style
     - Keywords: weight, tracker, body, scale, kg, lb, pound, kilogram, measure, log, track
+- **Pace**: Running pace calculator for fitness and race prediction
+    - Calculate pace (min/km or min/mile) from distance and time
+    - Calculate time from distance and pace
+    - Calculate distance from time and pace
+    - Three calculation modes: Pace, Time, Distance
+    - Unit selection: kilometers or miles
+    - Predicted race times for 5K, 10K, Half Marathon, Marathon
+    - Race predictions toggle for viewing finish times
+    - Calculation history (up to 10 entries)
+    - Tap history entries to reuse calculations
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `TextField`, `FilterChip` for Material 3 style
+    - Keywords: pace, run, running, calculator, time, distance, speed, marathon, race
 
 ## Material 3 Design System
 
@@ -1440,8 +1453,9 @@ Test coverage includes:
 - Loan provider tests (provider existence, keywords, model state, payment calculations, total payment/interest, interest percentage, amortization schedule, history, widget rendering)
 - Exponent provider tests (provider existence, keywords, model state, power calculation, sqrt/cbrt/nthroot calculations, log/ln calculations, history, widget rendering)
 - Weight Tracker provider tests (provider existence, keywords, model state, weight logging, unit conversion, goal setting, statistics calculations, widget rendering)
+- Pace provider tests (provider existence, keywords, model state, pace calculations, time/distance calculations, predicted race times, history, widget rendering)
 
-Total tests: 2950 tests
+Total tests: 2978 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

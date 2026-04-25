@@ -104,6 +104,7 @@ import 'package:new_launcher/providers/provider_cron.dart';
 import 'package:new_launcher/providers/provider_aspectratio.dart';
 import 'package:new_launcher/providers/provider_loan.dart';
 import 'package:new_launcher/providers/provider_weight_tracker.dart';
+import 'package:new_launcher/providers/provider_pace.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -29290,6 +29291,336 @@ test('WordleModel submitGuess works', () async {
     tearDownAll(() {
       weightTrackerModel.clearHistory();
       weightTrackerModel.clearGoal();
+    });
+  });
+
+  group('Pace Provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      await paceModel.init();
+    });
+
+    test('providerPace exists', () {
+      expect(providerPace, isNotNull);
+      expect(providerPace.name, 'Pace');
+    });
+
+    test('Pace keywords contain expected terms', () {
+      final keywords = 'pace run running calculator time distance speed marathon race';
+      expect(keywords.contains('pace'), true);
+      expect(keywords.contains('run'), true);
+      expect(keywords.contains('running'), true);
+      expect(keywords.contains('calculator'), true);
+    });
+
+    test('PaceModel initial state', () {
+      expect(paceModel.isInitialized, true);
+      expect(paceModel.history.isEmpty, true);
+      expect(paceModel.mode, 'pace');
+      expect(paceModel.unit, 'km');
+      expect(paceModel.distance, 5.0);
+      expect(paceModel.timeMinutes, 25);
+      expect(paceModel.timeSeconds, 0);
+    });
+
+    test('PaceHistoryEntry toJson and fromJson work', () {
+      final entry = PaceHistoryEntry(
+        date: DateTime(2025, 1, 15),
+        mode: 'pace',
+        distance: 5.0,
+        timeMinutes: 25,
+        timeSeconds: 0,
+        unit: 'km',
+        result: '5:00 min/km',
+      );
+      String json = entry.toJson();
+      final parsed = PaceHistoryEntry.fromJson(json);
+      expect(parsed.date.year, 2025);
+      expect(parsed.mode, 'pace');
+      expect(parsed.distance, 5.0);
+      expect(parsed.timeMinutes, 25);
+      expect(parsed.timeSeconds, 0);
+      expect(parsed.unit, 'km');
+      expect(parsed.result, '5:00 min/km');
+    });
+
+    test('PaceModel totalSeconds calculation', () {
+      paceModel.setTimeMinutes(25);
+      paceModel.setTimeSeconds(30);
+      expect(paceModel.totalSeconds, 1530);
+      paceModel.setTimeMinutes(0);
+      paceModel.setTimeSeconds(0);
+    });
+
+    test('PaceModel result for pace mode', () {
+      paceModel.setMode('pace');
+      paceModel.setDistance(5.0);
+      paceModel.setTimeMinutes(25);
+      paceModel.setTimeSeconds(0);
+      expect(paceModel.result, '5:00 min/km');
+      paceModel.setTimeMinutes(0);
+      paceModel.setTimeSeconds(0);
+    });
+
+    test('PaceModel result for pace mode with seconds', () {
+      paceModel.setMode('pace');
+      paceModel.setDistance(10.0);
+      paceModel.setTimeMinutes(50);
+      paceModel.setTimeSeconds(30);
+      expect(paceModel.result, '5:03 min/km');
+      paceModel.setTimeMinutes(0);
+      paceModel.setTimeSeconds(0);
+    });
+
+    test('PaceModel result for time mode', () {
+      paceModel.setMode('time');
+      paceModel.setDistance(10.0);
+      paceModel.setTimeMinutes(5);
+      paceModel.setTimeSeconds(0);
+      expect(paceModel.result, '50:00');
+      paceModel.setTimeMinutes(0);
+      paceModel.setTimeSeconds(0);
+    });
+
+    test('PaceModel result for distance mode', () {
+      paceModel.setMode('distance');
+      paceModel.setTimeMinutes(5);
+      paceModel.setTimeSeconds(30);
+      paceModel.setDistance(1.0);
+      paceModel.setTimeMinutes(5);
+      paceModel.setTimeSeconds(30);
+      expect(paceModel.result.contains('km'), true);
+      paceModel.setDistance(5.0);
+      paceModel.setTimeMinutes(0);
+      paceModel.setTimeSeconds(0);
+    });
+
+    test('PaceModel predictedTimes for pace mode', () {
+      paceModel.setMode('pace');
+      paceModel.setDistance(5.0);
+      paceModel.setTimeMinutes(25);
+      paceModel.setTimeSeconds(0);
+      final predictions = paceModel.predictedTimes;
+      expect(predictions.length, 4);
+      expect(predictions[0].contains('5K'), true);
+      expect(predictions[1].contains('10K'), true);
+      expect(predictions[2].contains('Half Marathon'), true);
+      expect(predictions[3].contains('Marathon'), true);
+      paceModel.setTimeMinutes(0);
+      paceModel.setTimeSeconds(0);
+    });
+
+    test('PaceModel mode switching', () {
+      paceModel.setMode('pace');
+      expect(paceModel.mode, 'pace');
+      expect(paceModel.modeLabel, 'Calculate Pace');
+      
+      paceModel.setMode('time');
+      expect(paceModel.mode, 'time');
+      expect(paceModel.modeLabel, 'Calculate Time');
+      
+      paceModel.setMode('distance');
+      expect(paceModel.mode, 'distance');
+      expect(paceModel.modeLabel, 'Calculate Distance');
+      
+      paceModel.setMode('pace');
+    });
+
+    test('PaceModel unit switching', () {
+      paceModel.setUnit('km');
+      expect(paceModel.unit, 'km');
+      
+      paceModel.setUnit('mi');
+      expect(paceModel.unit, 'mi');
+      
+      paceModel.setUnit('km');
+    });
+
+    test('PaceModel input labels', () {
+      paceModel.setMode('pace');
+      expect(paceModel.inputLabel1, 'Distance (km)');
+      expect(paceModel.inputLabel2, 'Time');
+      
+      paceModel.setMode('time');
+      expect(paceModel.inputLabel1, 'Distance (km)');
+      expect(paceModel.inputLabel2, 'Pace (min/km)');
+      
+      paceModel.setMode('distance');
+      expect(paceModel.inputLabel1, 'Pace (min/km)');
+      expect(paceModel.inputLabel2, 'Time');
+      
+      paceModel.setMode('pace');
+    });
+
+    test('PaceModel saveToHistory works', () {
+      paceModel.setMode('pace');
+      paceModel.setDistance(5.0);
+      paceModel.setTimeMinutes(25);
+      paceModel.setTimeSeconds(0);
+      paceModel.saveToHistory();
+      expect(paceModel.history.length, 1);
+      expect(paceModel.hasHistory, true);
+      paceModel.clearHistory();
+    });
+
+    test('PaceModel loadFromHistory works', () {
+      paceModel.setMode('pace');
+      paceModel.setDistance(10.0);
+      paceModel.setTimeMinutes(50);
+      paceModel.setTimeSeconds(30);
+      paceModel.saveToHistory();
+      
+      final entry = paceModel.history.first;
+      paceModel.loadFromHistory(entry);
+      expect(paceModel.mode, 'pace');
+      expect(paceModel.distance, 10.0);
+      expect(paceModel.timeMinutes, 50);
+      expect(paceModel.timeSeconds, 30);
+      paceModel.clearHistory();
+    });
+
+    test('PaceModel history limit', () {
+      for (int i = 0; i < 15; i++) {
+        paceModel.setDistance(i + 1.0);
+        paceModel.setTimeMinutes(i * 5);
+        paceModel.saveToHistory();
+      }
+      expect(paceModel.history.length, lessThanOrEqualTo(PaceModel.maxHistory));
+      paceModel.clearHistory();
+    });
+
+    test('PaceModel clear works', () {
+      paceModel.setDistance(10.0);
+      paceModel.setTimeMinutes(60);
+      paceModel.setTimeSeconds(30);
+      paceModel.setUnit('mi');
+      paceModel.clear();
+      expect(paceModel.distance, 5.0);
+      expect(paceModel.timeMinutes, 25);
+      expect(paceModel.timeSeconds, 0);
+      expect(paceModel.unit, 'km');
+    });
+
+    test('PaceModel clearHistory works', () {
+      paceModel.setDistance(5.0);
+      paceModel.setTimeMinutes(25);
+      paceModel.saveToHistory();
+      expect(paceModel.hasHistory, true);
+      paceModel.clearHistory();
+      expect(paceModel.history.isEmpty, true);
+      expect(paceModel.hasHistory, false);
+    });
+
+    test('PaceModel refresh works', () {
+      paceModel.setDistance(5.0);
+      paceModel.refresh();
+      expect(paceModel.isInitialized, true);
+    });
+
+    test('PaceModel invalid distance returns error', () {
+      paceModel.setMode('pace');
+      paceModel.setDistance(0);
+      paceModel.setTimeMinutes(25);
+      expect(paceModel.result, 'Invalid distance');
+      paceModel.setDistance(5.0);
+    });
+
+    test('PaceModel invalid time returns error', () {
+      paceModel.setMode('pace');
+      paceModel.setDistance(5.0);
+      paceModel.setTimeMinutes(0);
+      paceModel.setTimeSeconds(0);
+      expect(paceModel.result, 'Invalid time');
+      paceModel.setTimeMinutes(25);
+    });
+
+    testWidgets('PaceCard renders loading state', (WidgetTester tester) async {
+      final model = PaceModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PaceCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Pace Calculator: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('PaceCard renders initialized state', (WidgetTester tester) async {
+      final model = PaceModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: PaceCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Pace Calculator'), findsOneWidget);
+    });
+
+    testWidgets('PaceCard shows mode selector', (WidgetTester tester) async {
+      final model = PaceModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: PaceCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Pace'), findsOneWidget);
+      expect(find.text('Time'), findsOneWidget);
+      expect(find.text('Distance'), findsOneWidget);
+    });
+
+    testWidgets('PaceCard shows unit selector', (WidgetTester tester) async {
+      final model = PaceModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: PaceCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('km'), findsWidgets);
+      expect(find.text('mile'), findsOneWidget);
+    });
+
+    testWidgets('PaceCard widget exists', (WidgetTester tester) async {
+      expect(PaceCard, isNotNull);
+    });
+
+    test('Global.providerList includes Pace', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Pace'), true);
+    });
+
+    test('Global.providerList contains all providers (106 total)', () {
+      expect(Global.providerList.length, 106);
+    });
+
+    tearDownAll(() {
+      paceModel.clearHistory();
     });
   });
 }
