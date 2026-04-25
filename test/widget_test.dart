@@ -2534,7 +2534,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 94);
+      expect(Global.providerList.length, 95);
     });
 
     test('Global.providerList names are correct', () {
@@ -3701,7 +3701,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 94);
+      expect(initCount, 95);
     });
   });
 
@@ -4018,8 +4018,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (94 total)', () {
-      expect(Global.providerList.length, 94);
+test('Global.providerList contains all providers (95 total)', () {
+      expect(Global.providerList.length, 95);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5362,8 +5362,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (94 total)', () {
-      expect(Global.providerList.length, 94);
+test('Global.providerList contains all providers (95 total)', () {
+      expect(Global.providerList.length, 95);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -25033,7 +25033,7 @@ test('WordleModel submitGuess works', () async {
 
     test('FuelConsumptionModel is ChangeNotifier', () {
       final model = FuelConsumptionModel();
-      expect(model is ChangeNotifier, true);
+      expect(model, isA<ChangeNotifier>());
     });
 
     test('FuelConsumptionModel init works', () {
