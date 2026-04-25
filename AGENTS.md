@@ -1316,6 +1316,17 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `DropdownButton`, `TextField` for Material 3 style
     - Keywords: bandwidth, download, upload, speed, time, calculate, network, transfer
+- **CoordinatesConverter**: Geographical coordinate format converter
+    - Convert between Decimal Degrees (DD) and Degrees Minutes Seconds (DMS)
+    - Latitude and longitude input with validation
+    - Latitude clamped to -90 to 90, Longitude clamped to -180 to 180
+    - Direction indicators: N/S for latitude, E/W for longitude
+    - DMS format display (e.g., 40° 42' 45" N, 74° 0' 21" W)
+    - Swap coordinates with one tap
+    - Save coordinates to history (up to 10 entries)
+    - Tap history entries to reload previous coordinates
+    - Uses `Card.filled`, `TextField`, `IconButton` for Material 3 style
+    - Keywords: coordinates, convert, decimal, dms, degree, latitude, longitude, gps, location
 
 ## Material 3 Design System
 
@@ -1485,8 +1496,9 @@ Test coverage includes:
 - Pace provider tests (provider existence, keywords, model state, pace calculations, time/distance calculations, predicted race times, history, widget rendering)
 - BloodPressure provider tests (provider existence, keywords, model state, CRUD operations, category classification, statistics calculations, widget rendering)
 - BandwidthCalculator provider tests (provider existence, keywords, model state, calculation modes, unit operations, history, widget rendering)
+- CoordinatesConverter provider tests (provider existence, keywords, model state, latitude/longitude setting, coordinate clamping, DMS conversion, swap coordinates, history, widget rendering)
 
-Total tests: 2607 tests
+Total tests: 2669 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

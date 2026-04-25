@@ -107,6 +107,7 @@ import 'package:new_launcher/providers/provider_weight_tracker.dart';
 import 'package:new_launcher/providers/provider_pace.dart';
 import 'package:new_launcher/providers/provider_bloodpressure.dart';
 import 'package:new_launcher/providers/provider_bandwidth.dart';
+import 'package:new_launcher/providers/provider_coordinates.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -30248,6 +30249,223 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       bandwidthCalculatorModel.clearHistory();
+    });
+  });
+
+  group('CoordinatesConverter provider tests', () {
+    setUp(() {
+      coordinatesConverterModel.init();
+      coordinatesConverterModel.clearHistory();
+    });
+
+    test('providerCoordinatesConverter exists', () {
+      expect(providerCoordinatesConverter, isNotNull);
+      expect(providerCoordinatesConverter.name, 'CoordinatesConverter');
+    });
+
+    test('CoordinatesConverterModel initial values', () {
+      expect(coordinatesConverterModel.latitude, 40.7128);
+      expect(coordinatesConverterModel.longitude, -74.0060);
+      expect(coordinatesConverterModel.isInitialized, true);
+    });
+
+    test('CoordinatesConverterModel setLatitude works', () {
+      coordinatesConverterModel.setLatitude(51.5074);
+      expect(coordinatesConverterModel.latitude, 51.5074);
+    });
+
+    test('CoordinatesConverterModel setLongitude works', () {
+      coordinatesConverterModel.setLongitude(-0.1278);
+      expect(coordinatesConverterModel.longitude, -0.1278);
+    });
+
+    test('CoordinatesConverterModel latitude clamp to -90 to 90', () {
+      coordinatesConverterModel.setLatitude(100);
+      expect(coordinatesConverterModel.latitude, 90.0);
+
+      coordinatesConverterModel.setLatitude(-100);
+      expect(coordinatesConverterModel.latitude, -90.0);
+    });
+
+    test('CoordinatesConverterModel longitude clamp to -180 to 180', () {
+      coordinatesConverterModel.setLongitude(200);
+      expect(coordinatesConverterModel.longitude, 180.0);
+
+      coordinatesConverterModel.setLongitude(-200);
+      expect(coordinatesConverterModel.longitude, -180.0);
+    });
+
+    test('CoordinatesConverterModel DMS conversion for positive latitude', () {
+      coordinatesConverterModel.setLatitude(40.7128);
+      expect(coordinatesConverterModel.dmsLatitude.contains('40°'), true);
+      expect(coordinatesConverterModel.dmsLatitude.contains('N'), true);
+    });
+
+    test('CoordinatesConverterModel DMS conversion for negative latitude', () {
+      coordinatesConverterModel.setLatitude(-33.8688);
+      expect(coordinatesConverterModel.dmsLatitude.contains('33°'), true);
+      expect(coordinatesConverterModel.dmsLatitude.contains('S'), true);
+    });
+
+    test('CoordinatesConverterModel DMS conversion for positive longitude', () {
+      coordinatesConverterModel.setLongitude(151.2093);
+      expect(coordinatesConverterModel.dmsLongitude.contains('151°'), true);
+      expect(coordinatesConverterModel.dmsLongitude.contains('E'), true);
+    });
+
+    test('CoordinatesConverterModel DMS conversion for negative longitude', () {
+      coordinatesConverterModel.setLongitude(-74.0060);
+      expect(coordinatesConverterModel.dmsLongitude.contains('74°'), true);
+      expect(coordinatesConverterModel.dmsLongitude.contains('W'), true);
+    });
+
+    test('CoordinatesConverterModel convertDMStoDecimal works', () {
+      final decimal = CoordinatesConverterModel.convertDMStoDecimal(40, 42, 46, 'N');
+      expect(decimal, closeTo(40.7128, 0.001));
+
+      final decimalSouth = CoordinatesConverterModel.convertDMStoDecimal(33, 52, 7, 'S');
+      expect(decimalSouth, closeTo(-33.8686, 0.001));
+    });
+
+    test('CoordinatesConverterModel swapCoordinates works', () {
+      coordinatesConverterModel.setLatitude(10.0);
+      coordinatesConverterModel.setLongitude(20.0);
+      coordinatesConverterModel.swapCoordinates();
+
+      expect(coordinatesConverterModel.latitude, 20.0);
+      expect(coordinatesConverterModel.longitude, 10.0);
+    });
+
+    test('CoordinatesConverterModel clear works', () {
+      coordinatesConverterModel.setLatitude(50.0);
+      coordinatesConverterModel.setLongitude(100.0);
+      coordinatesConverterModel.clear();
+
+      expect(coordinatesConverterModel.latitude, 0.0);
+      expect(coordinatesConverterModel.longitude, 0.0);
+    });
+
+    test('CoordinatesConverterModel addToHistory works', () {
+      coordinatesConverterModel.setLatitude(35.6895);
+      coordinatesConverterModel.setLongitude(139.6917);
+      coordinatesConverterModel.addToHistory();
+
+      expect(coordinatesConverterModel.hasHistory, true);
+      expect(coordinatesConverterModel.history.length, 1);
+      expect(coordinatesConverterModel.history.first.latitude, 35.6895);
+      expect(coordinatesConverterModel.history.first.longitude, 139.6917);
+    });
+
+    test('CoordinatesConverterModel does not add zero coordinates to history', () {
+      coordinatesConverterModel.clear();
+      coordinatesConverterModel.addToHistory();
+
+      expect(coordinatesConverterModel.hasHistory, false);
+    });
+
+    test('CoordinatesConverterModel clearHistory works', () {
+      coordinatesConverterModel.setLatitude(48.8566);
+      coordinatesConverterModel.setLongitude(2.3522);
+      coordinatesConverterModel.addToHistory();
+      coordinatesConverterModel.clearHistory();
+
+      expect(coordinatesConverterModel.hasHistory, false);
+      expect(coordinatesConverterModel.history.length, 0);
+    });
+
+    test('CoordinatesConverterModel useHistoryEntry works', () {
+      coordinatesConverterModel.setLatitude(55.7558);
+      coordinatesConverterModel.setLongitude(37.6173);
+      coordinatesConverterModel.addToHistory();
+
+      coordinatesConverterModel.setLatitude(0.0);
+      coordinatesConverterModel.setLongitude(0.0);
+
+      final entry = coordinatesConverterModel.history.first;
+      coordinatesConverterModel.useHistoryEntry(entry);
+
+      expect(coordinatesConverterModel.latitude, 55.7558);
+      expect(coordinatesConverterModel.longitude, 37.6173);
+    });
+
+    test('CoordinatesConverterModel max history limit works', () {
+      for (int i = 0; i < 15; i++) {
+        coordinatesConverterModel.setLatitude(i + 1.0);
+        coordinatesConverterModel.setLongitude(i + 10.0);
+        coordinatesConverterModel.addToHistory();
+      }
+
+      expect(coordinatesConverterModel.history.length, lessThanOrEqualTo(CoordinatesConverterModel.maxHistory));
+    });
+
+    test('CoordinatesConverterModel refresh calls notifyListeners', () async {
+      bool notified = false;
+      coordinatesConverterModel.addListener(() => notified = true);
+      coordinatesConverterModel.refresh();
+      await Future.delayed(Duration(milliseconds: 10));
+      expect(notified, true);
+    });
+
+    test('CoordinatesConverterModel setLatitudeFromString works', () {
+      coordinatesConverterModel.setLatitudeFromString('35.6895');
+      expect(coordinatesConverterModel.latitude, 35.6895);
+    });
+
+    test('CoordinatesConverterModel setLongitudeFromString works', () {
+      coordinatesConverterModel.setLongitudeFromString('139.6917');
+      expect(coordinatesConverterModel.longitude, 139.6917);
+    });
+
+    test('CoordinatesConverterModel ignores invalid string input', () {
+      final originalLat = coordinatesConverterModel.latitude;
+      coordinatesConverterModel.setLatitudeFromString('invalid');
+      expect(coordinatesConverterModel.latitude, originalLat);
+    });
+
+    testWidgets('CoordinatesConverterCard renders loading state', (WidgetTester tester) async {
+      final model = CoordinatesConverterModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: CoordinatesConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.textContaining('Loading'), findsOneWidget);
+    });
+
+    testWidgets('CoordinatesConverterCard renders initialized state', (WidgetTester tester) async {
+      final model = CoordinatesConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: CoordinatesConverterCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Coordinates Converter'), findsOneWidget);
+    });
+
+    testWidgets('CoordinatesConverterCard widget exists', (WidgetTester tester) async {
+      expect(CoordinatesConverterCard, isNotNull);
+    });
+
+    test('Global.providerList includes CoordinatesConverter', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('CoordinatesConverter'), true);
+    });
+
+    tearDownAll(() {
+      coordinatesConverterModel.clearHistory();
     });
   });
 }
