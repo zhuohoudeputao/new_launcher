@@ -362,8 +362,6 @@ class _ExponentCardState extends State<ExponentCard> {
   }
 
   Widget _buildOperationSelector(ExponentModel exp) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return SegmentedButton<String>(
       segments: [
         ButtonSegment(value: 'power', label: Text('Power')),

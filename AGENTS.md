@@ -558,6 +558,19 @@ Settings auto-saved via `SharedPreferences`:
     - Caffeine entries persisted via SharedPreferences
     - Uses `Card.filled` and `ActionChip` for Material 3 style
     - Keywords: caffeine, coffee, tea, energy, drink, cola, beverage, intake, track, daily, health
+- **Calorie**: Daily calorie intake tracker
+    - Track daily calorie consumption
+    - 12 preset food options: Apple (95), Banana (105), Egg (78), Toast (75), Coffee (5), Salad (150), Sandwich (350), Pizza Slice (285), Burger (500), Rice (200), Chicken Breast (165), Soup (100)
+    - Emoji-based food icons (🍎, 🍌, 🥚, 🍞, ☕, 🥗, 🥪, 🍕, 🍔, 🍚, 🍗, 🥣)
+    - Custom calorie amount input via dialog
+    - Daily goal setting (default 2000 cal, adjustable 100-5000 cal)
+    - Progress bar with color coding (tertiary under goal, primary at goal, error over goal)
+    - Remaining calories display
+    - Over-goal warning indicator
+    - History tracking for up to 30 days
+    - Calorie entries persisted via SharedPreferences
+    - Uses `Card.filled`, `ActionChip`, `LinearProgressIndicator` for Material 3 style
+    - Keywords: calorie, calories, food, eat, meal, intake, track, daily, health, nutrition, diet
 - **Subscription**: Subscription and recurring payment tracker
     - Track recurring subscriptions with name, cost, and renewal date
     - Three frequency options: Weekly, Monthly, Yearly
@@ -1356,6 +1369,7 @@ Test coverage includes:
 - Quick Contacts provider tests (provider existence, keywords, model state, CRUD operations, widget rendering)
 - Shopping List provider tests (provider existence, keywords, model state, CRUD operations, category handling, persistence, widget rendering)
 - Caffeine provider tests (provider existence, keywords, model state, add/remove caffeine, limit tracking, preset drinks, history, widget rendering)
+- Calorie provider tests (provider existence, keywords, model state, add/remove calories, goal setting, preset foods, remaining calories, history, widget rendering)
 - Subscription provider tests (provider existence, keywords, model state, CRUD operations, renewal calculations, cost totals, widget rendering)
 - Parking provider tests (provider existence, keywords, model state, entry operations, meter controls, widget rendering)
 - Gratitude provider tests (provider existence, keywords, model state, CRUD operations, streak tracking, widget rendering)
@@ -1410,7 +1424,7 @@ Test coverage includes:
 - Loan provider tests (provider existence, keywords, model state, payment calculations, total payment/interest, interest percentage, amortization schedule, history, widget rendering)
 - Exponent provider tests (provider existence, keywords, model state, power calculation, sqrt/cbrt/nthroot calculations, log/ln calculations, history, widget rendering)
 
-Total tests: 2899 tests
+Total tests: 2923 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

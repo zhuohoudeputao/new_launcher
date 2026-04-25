@@ -44,6 +44,7 @@ import 'package:new_launcher/providers/provider_percentage.dart';
 import 'package:new_launcher/providers/provider_quickcontacts.dart';
 import 'package:new_launcher/providers/provider_shoppinglist.dart';
 import 'package:new_launcher/providers/provider_caffeine.dart';
+import 'package:new_launcher/providers/provider_calorie.dart';
 import 'package:new_launcher/providers/provider_subscription.dart';
 import 'package:new_launcher/providers/provider_parking.dart';
 import 'package:new_launcher/providers/provider_gratitude.dart';
@@ -2542,7 +2543,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 103);
+      expect(Global.providerList.length, 104);
     });
 
     test('Global.providerList names are correct', () {
@@ -3709,7 +3710,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 103);
+      expect(initCount, 104);
     });
   });
 
@@ -4026,8 +4027,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (103 total)', () {
-      expect(Global.providerList.length, 103);
+test('Global.providerList contains all providers (104 total)', () {
+      expect(Global.providerList.length, 104);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5370,8 +5371,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (103 total)', () {
-      expect(Global.providerList.length, 103);
+test('Global.providerList contains all providers (104 total)', () {
+      expect(Global.providerList.length, 104);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -12689,6 +12690,225 @@ test('Global.providerList includes UnitConverter', () {
 
     test('CaffeineModel defaultLimit constant', () async {
       expect(CaffeineModel.defaultLimit, 400);
+    });
+  });
+
+  group('Calorie provider tests', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('CalorieModel is initialized correctly', () async {
+      final model = CalorieModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.history.length, 1);
+      expect(model.todayCal, 0);
+    });
+
+    test('CalorieModel addCalorie works', () async {
+      final model = CalorieModel();
+      await model.init();
+      expect(model.todayCal, 0);
+      model.addCalorie(95, 'Apple');
+      expect(model.todayCal, 95);
+      model.addCalorie(105, 'Banana');
+      expect(model.todayCal, 200);
+    });
+
+    test('CalorieModel removeLastEntry works', () async {
+      final model = CalorieModel();
+      await model.init();
+      model.addCalorie(95, 'Apple');
+      model.addCalorie(105, 'Banana');
+      expect(model.todayCal, 200);
+      model.removeLastEntry();
+      expect(model.todayCal, 95);
+      model.removeLastEntry();
+      expect(model.todayCal, 0);
+      model.removeLastEntry();
+      expect(model.todayCal, 0);
+    });
+
+    test('CalorieModel setGoal works', () async {
+      final model = CalorieModel();
+      await model.init();
+      expect(model.dailyGoal, CalorieModel.defaultGoal);
+      model.setGoal(1500);
+      expect(model.dailyGoal, 1500);
+    });
+
+    test('CalorieModel progress calculates correctly', () async {
+      final model = CalorieModel();
+      await model.init();
+      model.setGoal(2000);
+      model.addCalorie(500, 'Lunch');
+      expect(model.progress, 0.25);
+    });
+
+    test('CalorieModel goalReached works', () async {
+      final model = CalorieModel();
+      await model.init();
+      model.setGoal(300);
+      expect(model.goalReached, false);
+      model.addCalorie(95, 'Apple');
+      model.addCalorie(105, 'Banana');
+      model.addCalorie(100, 'Salad');
+      expect(model.goalReached, true);
+    });
+
+    test('CalorieModel overGoal works', () async {
+      final model = CalorieModel();
+      await model.init();
+      model.setGoal(300);
+      expect(model.overGoal, false);
+      model.addCalorie(95, 'Apple');
+      model.addCalorie(105, 'Banana');
+      model.addCalorie(105, 'Banana');
+      expect(model.overGoal, true);
+    });
+
+    test('CalorieModel remainingCal works', () async {
+      final model = CalorieModel();
+      await model.init();
+      model.setGoal(500);
+      expect(model.remainingCal, 500);
+      model.addCalorie(95, 'Apple');
+      expect(model.remainingCal, 405);
+      model.addCalorie(105, 'Banana');
+      expect(model.remainingCal, 300);
+    });
+
+    test('CalorieModel clearHistory works', () async {
+      final model = CalorieModel();
+      await model.init();
+      model.addCalorie(95, 'Apple');
+      expect(model.todayCal, 95);
+      await model.clearHistory();
+      expect(model.history.length, 1);
+      expect(model.todayCal, 0);
+    });
+
+    test('CalorieEntry toJson and fromJson work', () {
+      final entry = CalorieEntry(
+        date: DateTime.now(),
+        amountCal: 95,
+        goal: 2000,
+        foodType: 'Apple',
+      );
+      final json = entry.toJson();
+      final restored = CalorieEntry.fromJson(json);
+      expect(restored.amountCal, 95);
+      expect(restored.goal, 2000);
+      expect(restored.foodType, 'Apple');
+    });
+
+    test('CalorieEntry getDayKey works', () {
+      final date = DateTime(2024, 1, 15);
+      final key = CalorieEntry.getDayKey(date);
+      expect(key, '2024-1-15');
+    });
+
+    test('DailyCalorieSummary toJson and fromJson work', () {
+      final summary = DailyCalorieSummary(
+        date: DateTime.now(),
+        totalCal: 1500,
+        goal: 2000,
+      );
+      final json = summary.toJson();
+      final restored = DailyCalorieSummary.fromJson(json);
+      expect(restored.totalCal, 1500);
+      expect(restored.goal, 2000);
+    });
+
+    test('DailyCalorieSummary getDayKey works', () {
+      final date = DateTime(2024, 1, 15);
+      final key = DailyCalorieSummary.getDayKey(date);
+      expect(key, '2024-1-15');
+    });
+
+    test('FoodOption properties work', () {
+      final option = FoodOption(name: 'Apple', calories: 95, icon: '🍎');
+      expect(option.name, 'Apple');
+      expect(option.calories, 95);
+      expect(option.icon, '🍎');
+    });
+
+    test('CalorieModel foodOptions contains expected foods', () async {
+      expect(CalorieModel.foodOptions.length, 12);
+      expect(CalorieModel.foodOptions.any((f) => f.name.contains('Apple')), true);
+      expect(CalorieModel.foodOptions.any((f) => f.name.contains('Banana')), true);
+      expect(CalorieModel.foodOptions.any((f) => f.name.contains('Burger')), true);
+    });
+
+    test('CalorieModel addQuickFood works', () async {
+      final model = CalorieModel();
+      await model.init();
+      model.addQuickFood('apple');
+      expect(model.todayCal, 95);
+    });
+
+    testWidgets('CalorieCard renders loading state', (WidgetTester tester) async {
+      final model = CalorieModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: CalorieCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Calorie Tracker: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('CalorieCard renders empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final model = CalorieModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: CalorieCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Calorie Tracker'), findsOneWidget);
+      expect(find.text('0/2000 cal'), findsOneWidget);
+    });
+
+    test('CalorieCard widget exists', () {
+      expect(CalorieCard, isNotNull);
+    });
+
+    test('Global.providerList includes Calorie', () {
+      final hasCalorie = Global.providerList.any((p) => p.name == 'Calorie');
+      expect(hasCalorie, true);
+    });
+
+    test('providerCalorie exists', () {
+      expect(providerCalorie, isNotNull);
+      expect(providerCalorie.name, 'Calorie');
+    });
+
+    test('CalorieModel maxHistoryDays limit', () async {
+      final model = CalorieModel();
+      await model.init();
+      expect(CalorieModel.maxHistoryDays, 30);
+    });
+
+    test('CalorieModel defaultGoal constant', () async {
+      expect(CalorieModel.defaultGoal, 2000);
+    });
+
+    test('Global.providerList contains all providers (104 total)', () {
+      expect(Global.providerList.length, 104);
     });
   });
 
@@ -23085,8 +23305,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Exponent'), true);
     });
 
-    test('Global.providerList contains all providers (103 total)', () {
-      expect(Global.providerList.length, 103);
+    test('Global.providerList contains all providers (104 total)', () {
+      expect(Global.providerList.length, 104);
     });
 
     tearDownAll(() {
@@ -26829,8 +27049,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerJsonFormatter.name, 'JsonFormatter');
     });
 
-    test('Global.providerList contains all providers (103 total)', () {
-      expect(Global.providerList.length, 103);
+    test('Global.providerList contains all providers (104 total)', () {
+      expect(Global.providerList.length, 104);
     });
 
     tearDownAll(() {
@@ -26876,9 +27096,12 @@ test('WordleModel submitGuess works', () async {
 
     test('RegexModel is ChangeNotifier', () {
       final model = RegexModel();
-      expect(model.hasListeners, false);
-      model.addListener(() {});
-      expect(model.hasListeners, true);
+      var notified = false;
+      model.addListener(() {
+        notified = true;
+      });
+      model.setPattern('test');
+      expect(notified, true);
     });
 
     test('RegexModel setPattern finds matches', () {
@@ -27170,8 +27393,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerRegexTester.name, 'RegexTester');
     });
 
-    test('Global.providerList contains all providers (103 total)', () {
-      expect(Global.providerList.length, 103);
+    test('Global.providerList contains all providers (104 total)', () {
+      expect(Global.providerList.length, 104);
     });
 
     tearDownAll(() {
@@ -27509,8 +27732,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerBitwise.name, 'Bitwise');
     });
 
-    test('Global.providerList contains all providers (103 total)', () {
-      expect(Global.providerList.length, 103);
+    test('Global.providerList contains all providers (104 total)', () {
+      expect(Global.providerList.length, 104);
     });
 
     tearDownAll(() {
@@ -27774,8 +27997,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerDiffChecker.name, 'DiffChecker');
     });
 
-    test('Global.providerList contains all providers (103 total)', () {
-      expect(Global.providerList.length, 103);
+    test('Global.providerList contains all providers (104 total)', () {
+      expect(Global.providerList.length, 104);
     });
 
     tearDownAll(() {
@@ -28071,8 +28294,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('CronExpressionParser'), true);
     });
 
-    test('Global.providerList contains all providers (103 total)', () {
-      expect(Global.providerList.length, 103);
+    test('Global.providerList contains all providers (104 total)', () {
+      expect(Global.providerList.length, 104);
     });
 
     tearDownAll(() {
@@ -28314,8 +28537,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('AspectRatio'), true);
     });
 
-    test('Global.providerList contains all providers (103 total)', () {
-      expect(Global.providerList.length, 103);
+    test('Global.providerList contains all providers (104 total)', () {
+      expect(Global.providerList.length, 104);
     });
 
     tearDownAll(() {
@@ -28685,8 +28908,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Loan'), true);
     });
 
-    test('Global.providerList contains all providers (103 total)', () {
-      expect(Global.providerList.length, 103);
+    test('Global.providerList contains all providers (104 total)', () {
+      expect(Global.providerList.length, 104);
     });
 
     tearDownAll(() {

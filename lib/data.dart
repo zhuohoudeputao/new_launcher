@@ -56,6 +56,7 @@ import 'package:new_launcher/providers/provider_percentage.dart';
 import 'package:new_launcher/providers/provider_quickcontacts.dart';
 import 'package:new_launcher/providers/provider_shoppinglist.dart';
 import 'package:new_launcher/providers/provider_caffeine.dart';
+import 'package:new_launcher/providers/provider_calorie.dart';
 import 'package:new_launcher/providers/provider_subscription.dart';
 import 'package:new_launcher/providers/provider_parking.dart';
 import 'package:new_launcher/providers/provider_gratitude.dart';
@@ -283,6 +284,7 @@ class Global {
     providerQuickContacts,
     providerShoppingList,
     providerCaffeine,
+    providerCalorie,
     providerSubscription,
     providerParking,
     providerGratitude,
