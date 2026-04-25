@@ -1431,6 +1431,16 @@ Settings auto-saved via `SharedPreferences`:
     - Copy generated content to clipboard
     - Uses `Card.filled`, `TextField`, `ActionChip`, `FilterChip` for Material 3 style
     - Keywords: gitignore, git, ignore, template, generate, language, framework
+- **MotivationalQuote**: Daily motivational and inspirational quotes
+    - 49 inspirational quotes from famous authors and leaders
+    - Daily quote rotation based on date
+    - Navigate through quotes with previous/next buttons
+    - Random quote selection
+    - Favorite quotes feature with persistence
+    - Copy quote to clipboard
+    - Quote display with author attribution
+    - Uses `Card.filled`, `IconButton` for Material 3 style
+    - Keywords: quote, motivational, inspiration, inspire, daily, wisdom, motivation
 
 ## Material 3 Design System
 
@@ -1609,8 +1619,9 @@ Test coverage includes:
 - HTTPStatus provider tests (provider existence, keywords, model state, search/filter operations, category handling, code selection, category name/color validation, widget rendering)
 - KeyboardShortcuts provider tests (provider existence, keywords, model state, search/filter operations, category handling, shortcut selection, category name/color validation, widget rendering)
 - GitIgnore provider tests (provider existence, keywords, model state, search/filter operations, category handling, template selection, generated output, category name/color validation, widget rendering)
+- MotivationalQuote provider tests (provider existence, model state, quote operations, favorites management, navigation, widget rendering)
 
-Total tests: 3228 tests
+Total tests: 3249 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1737,6 +1748,7 @@ Technical documentation is available in `docs/`:
 - `httpstatus_provider.md` - HTTP Status provider implementation for HTTP status code reference
 - `keyboardshortcuts_provider.md` - Keyboard Shortcuts provider implementation for keyboard shortcut reference
 - `gitignore_provider.md` - GitIgnore Generator provider implementation for .gitignore template generation
+- `motivationalquote_provider.md` - MotivationalQuote provider implementation for daily motivational and inspirational quotes
 - `loan_provider.md` - Loan Calculator provider implementation for loan/mortgage calculations
 - `loremipsum_provider.md` - Lorem Ipsum provider implementation for placeholder text generation
 - `mathquiz_provider.md` - Math Quiz provider implementation for mental math practice game

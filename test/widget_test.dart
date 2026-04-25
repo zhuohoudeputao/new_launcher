@@ -116,6 +116,7 @@ import 'package:new_launcher/providers/provider_mathquiz.dart';
 import 'package:new_launcher/providers/provider_httpstatus.dart';
 import 'package:new_launcher/providers/provider_keyboard_shortcuts.dart';
 import 'package:new_launcher/providers/provider_gitignore.dart';
+import 'package:new_launcher/providers/provider_motivationalquote.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2556,7 +2557,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     test('Global.providerList names are correct', () {
@@ -4039,7 +4040,7 @@ void main() {
 });
 
 test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5383,7 +5384,7 @@ test('Global.providerList includes Flashlight', () {
 });
 
 test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -12919,7 +12920,7 @@ test('Global.providerList includes UnitConverter', () {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
   });
 
@@ -23317,7 +23318,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -27061,7 +27062,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -27405,7 +27406,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -27744,7 +27745,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -28009,7 +28010,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -28306,7 +28307,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -28549,7 +28550,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -28920,7 +28921,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -29294,7 +29295,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -29625,7 +29626,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -30654,7 +30655,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -30903,7 +30904,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test updated', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -31126,7 +31127,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test final', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -31311,7 +31312,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test with SlidingPuzzle', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -31686,7 +31687,7 @@ test('WordleModel submitGuess works', () async {
     });
 
 test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -31828,7 +31829,7 @@ test('Global.providerList contains all providers (117 total)', () {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
@@ -31985,11 +31986,162 @@ test('Global.providerList contains all providers (117 total)', () {
     });
 
     test('Global.providerList contains all providers (117 total)', () {
-      expect(Global.providerList.length, 117);
+      expect(Global.providerList.length, 118);
     });
 
     tearDownAll(() {
       gitIgnoreModel.clearAllTemplates();
+    });
+  });
+
+  group('MotivationalQuote provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      await motivationalQuoteModel.init();
+    });
+
+    test('Provider exists', () {
+      expect(providerMotivationalQuote, isNotNull);
+      expect(providerMotivationalQuote.name, 'MotivationalQuote');
+    });
+
+    test('Model is initialized', () {
+      expect(motivationalQuoteModel.isInitialized, true);
+    });
+
+    test('Total quotes count', () {
+      expect(motivationalQuoteModel.totalQuotes, 49);
+    });
+
+    test('Current quote is valid', () {
+      final quote = motivationalQuoteModel.currentQuote;
+      expect(quote.text, isNotEmpty);
+      expect(quote.author, isNotEmpty);
+    });
+
+    test('Quote fullText format', () {
+      final quote = motivationalQuoteModel.currentQuote;
+      expect(quote.fullText, startsWith('"'));
+      expect(quote.fullText, contains('-'));
+    });
+
+    test('Current index within range', () {
+      expect(motivationalQuoteModel.currentIndex >= 0, true);
+      expect(motivationalQuoteModel.currentIndex < motivationalQuoteModel.totalQuotes, true);
+    });
+
+    test('Next quote advances index', () {
+      final initialIndex = motivationalQuoteModel.currentIndex;
+      motivationalQuoteModel.nextQuote();
+      expect(motivationalQuoteModel.currentIndex, (initialIndex + 1) % motivationalQuoteModel.totalQuotes);
+    });
+
+    test('Previous quote decreases index', () {
+      final initialIndex = motivationalQuoteModel.currentIndex;
+      motivationalQuoteModel.previousQuote();
+      expect(motivationalQuoteModel.currentIndex, (initialIndex - 1) % motivationalQuoteModel.totalQuotes);
+    });
+
+    test('Set quote index works', () {
+      motivationalQuoteModel.setQuoteIndex(5);
+      expect(motivationalQuoteModel.currentIndex, 5);
+    });
+
+    test('Set quote index negative handled', () {
+      final current = motivationalQuoteModel.currentIndex;
+      motivationalQuoteModel.setQuoteIndex(-1);
+      expect(motivationalQuoteModel.currentIndex, current);
+    });
+
+    test('Set quote index out of bounds handled', () {
+      final current = motivationalQuoteModel.currentIndex;
+      motivationalQuoteModel.setQuoteIndex(100);
+      expect(motivationalQuoteModel.currentIndex, current);
+    });
+
+    test('Favorites initially empty', () {
+      expect(motivationalQuoteModel.favorites, isEmpty);
+    });
+
+    test('isFavorite initially false', () {
+      motivationalQuoteModel.setQuoteIndex(0);
+      expect(motivationalQuoteModel.isFavorite, false);
+    });
+
+    test('Toggle favorite adds', () async {
+      motivationalQuoteModel.setQuoteIndex(0);
+      await motivationalQuoteModel.toggleFavorite();
+      expect(motivationalQuoteModel.favorites.contains(0), true);
+      expect(motivationalQuoteModel.isFavorite, true);
+    });
+
+    test('Toggle favorite removes', () async {
+      if (motivationalQuoteModel.favorites.contains(0)) {
+        await motivationalQuoteModel.toggleFavorite();
+      }
+      motivationalQuoteModel.setQuoteIndex(0);
+      await motivationalQuoteModel.toggleFavorite();
+      expect(motivationalQuoteModel.isFavorite, true);
+      await motivationalQuoteModel.toggleFavorite();
+      expect(motivationalQuoteModel.favorites.contains(0), false);
+      expect(motivationalQuoteModel.isFavorite, false);
+    });
+
+    test('Random quote changes index', () {
+      motivationalQuoteModel.setQuoteIndex(0);
+      motivationalQuoteModel.getRandomQuote();
+      expect(motivationalQuoteModel.currentIndex >= 0, true);
+      expect(motivationalQuoteModel.currentIndex < motivationalQuoteModel.totalQuotes, true);
+    });
+
+    test('Refresh calls notifyListeners', () {
+      var notified = false;
+      motivationalQuoteModel.addListener(() => notified = true);
+      motivationalQuoteModel.refresh();
+      expect(notified, true);
+      motivationalQuoteModel.removeListener(() => notified = false);
+    });
+
+    testWidgets('MotivationalQuoteCard renders loading state', (WidgetTester tester) async {
+      final model = MotivationalQuoteModel();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: MotivationalQuoteCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Motivational Quote: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('MotivationalQuoteCard renders initialized state', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: motivationalQuoteModel,
+              child: MotivationalQuoteCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Daily Inspiration'), findsOneWidget);
+    });
+
+    testWidgets('MotivationalQuoteCard widget exists', (WidgetTester tester) async {
+      expect(MotivationalQuoteCard, isNotNull);
+    });
+
+    test('Global.providerList includes MotivationalQuote', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('MotivationalQuote'), true);
+    });
+
+    tearDownAll(() async {
+      motivationalQuoteModel.favorites.clear();
     });
   });
 }
