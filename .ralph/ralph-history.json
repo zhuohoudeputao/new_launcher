@@ -2038,11 +2038,32 @@
       "exitCode": 0,
       "completionDetected": true,
       "errors": []
+    },
+    {
+      "iteration": 76,
+      "startedAt": "2026-04-25T10:09:25.783Z",
+      "endedAt": "2026-04-25T10:19:57.271Z",
+      "durationMs": 623478,
+      "agent": "opencode",
+      "model": "",
+      "toolsUsed": {},
+      "filesModified": [
+        "AGENTS.md",
+        "docs/critical_bug_fixes_iteration76.md",
+        "lib/main.dart"
+      ],
+      "exitCode": 0,
+      "completionDetected": true,
+      "errors": [
+        "Error: the Dart compiler exited unexpectedly."
+      ]
     }
   ],
-  "totalDurationMs": 62557127,
+  "totalDurationMs": 63180605,
   "struggleIndicators": {
-    "repeatedErrors": {},
+    "repeatedErrors": {
+      "Error: the Dart compiler exited unexpectedly.": 1
+    },
     "noProgressIterations": 0,
     "shortIterations": 0
   }
