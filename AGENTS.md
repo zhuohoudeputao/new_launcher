@@ -1128,6 +1128,19 @@ Settings auto-saved via `SharedPreferences`:
     - Copy output to clipboard
     - Uses `Card.filled`, `SegmentedButton` for Material 3 style
     - Keywords: vigenere, cipher, encrypt, decrypt, keyword, polyalphabetic, classic
+- **HashGenerator**: Cryptographic hash generator for text input
+    - Generate MD5, SHA1, SHA256, SHA512 hashes from text
+    - Real-time hash generation as you type
+    - MD5: 128-bit hash, 32 character output
+    - SHA1: 160-bit hash, 40 character output
+    - SHA256: 256-bit hash, 64 character output (recommended)
+    - SHA512: 512-bit hash, 128 character output
+    - Copy hash to clipboard with one tap
+    - Hash generation history (up to 10 entries)
+    - Tap history entries to reuse previous inputs
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton` for Material 3 style
+    - Keywords: hash, md5, sha1, sha256, sha512, generate, digest, checksum, security
 
 ## Material 3 Design System
 
@@ -1177,6 +1190,7 @@ Key packages (pubspec.yaml):
 - `torch_light: ^1.0.0` - Flashlight control
 - `qr_flutter: ^4.1.0` - QR code generation
 - `url_launcher: ^6.3.0` - URL/bookmark opening in external browser
+- `crypto: ^3.0.0` - Cryptographic hash generation
 
 ## Testing
 
@@ -1282,8 +1296,9 @@ Test coverage includes:
 - Compass provider tests (provider existence, keywords, model state, heading operations, direction calculations, widget rendering)
 - CaesarCipher provider tests (provider existence, keywords, model state, encryption/decryption operations, shift handling, history, widget rendering)
 - VigenereCipher provider tests (provider existence, keywords, model state, encryption/decryption operations, keyword handling, history, widget rendering)
+- HashGenerator provider tests (provider existence, keywords, model state, hash generation, MD5/SHA1/SHA256/SHA512 operations, history, widget rendering)
 
-Total tests: 2634 tests
+Total tests: 2654 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1379,6 +1394,7 @@ Technical documentation is available in `docs/`:
 - `pressure_converter_provider.md` - Pressure Converter provider implementation for pressure unit conversions
 - `frequency_converter_provider.md` - Frequency Converter provider implementation for frequency unit conversions
 - `fuel_consumption_provider.md` - Fuel Consumption Converter provider implementation for fuel efficiency conversions
+- `hash_generator_provider.md` - Hash Generator provider implementation for cryptographic hash generation
 
 ## Notice
 DO NOT EDIT task*.md

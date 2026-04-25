@@ -93,6 +93,7 @@ import 'package:new_launcher/providers/provider_fuel.dart';
 import 'package:new_launcher/providers/provider_compass.dart';
 import 'package:new_launcher/providers/provider_caesar.dart';
 import 'package:new_launcher/providers/provider_vigenere.dart';
+import 'package:new_launcher/providers/provider_hash.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -26061,6 +26062,229 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       vigenereCipherModel.clearHistory();
+    });
+  });
+
+  group('Hash Generator Provider tests', () {
+    test('HashGeneratorModel initializes correctly', () {
+      final model = HashGeneratorModel();
+      expect(model.isInitialized, false);
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('HashGeneratorModel default values', () {
+      final model = HashGeneratorModel();
+      expect(model.inputText, '');
+      expect(model.outputHash, '');
+      expect(model.mode, 'sha256');
+      expect(model.history.length, 0);
+    });
+
+    test('HashGeneratorModel setInputText generates hash', () {
+      final model = HashGeneratorModel();
+      model.init();
+      model.setInputText('test');
+      expect(model.outputHash.isNotEmpty, true);
+      expect(model.outputHash.length, 64);
+    });
+
+    test('HashGeneratorModel MD5 hash correct', () {
+      final model = HashGeneratorModel();
+      model.init();
+      model.setMode('md5');
+      model.setInputText('test');
+      expect(model.outputHash, '098f6bcd4621d373cade4e832627b4f6');
+    });
+
+    test('HashGeneratorModel SHA1 hash correct', () {
+      final model = HashGeneratorModel();
+      model.init();
+      model.setMode('sha1');
+      model.setInputText('test');
+      expect(model.outputHash, 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3');
+    });
+
+    test('HashGeneratorModel SHA256 hash correct', () {
+      final model = HashGeneratorModel();
+      model.init();
+      model.setMode('sha256');
+      model.setInputText('test');
+      expect(model.outputHash, '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08');
+    });
+
+    test('HashGeneratorModel SHA512 hash correct', () {
+      final model = HashGeneratorModel();
+      model.init();
+      model.setMode('sha512');
+      model.setInputText('test');
+      expect(model.outputHash.length, 128);
+    });
+
+    test('HashGeneratorModel setMode works', () {
+      final model = HashGeneratorModel();
+      model.init();
+      model.setMode('md5');
+      expect(model.mode, 'md5');
+      model.setMode('sha1');
+      expect(model.mode, 'sha1');
+    });
+
+    test('HashGeneratorModel clearInput works', () {
+      final model = HashGeneratorModel();
+      model.init();
+      model.setInputText('test');
+      expect(model.outputHash.isNotEmpty, true);
+      model.clearInput();
+      expect(model.inputText, '');
+      expect(model.outputHash, '');
+    });
+
+    test('HashGeneratorModel addToHistory works', () {
+      final model = HashGeneratorModel();
+      model.init();
+      model.setInputText('test');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].input, 'test');
+    });
+
+    test('HashGeneratorModel history limit is 10', () {
+      final model = HashGeneratorModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputText('test$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('HashGeneratorModel loadFromHistory works', () {
+      final model = HashGeneratorModel();
+      model.init();
+      model.setInputText('test1');
+      model.addToHistory();
+      model.setInputText('test2');
+      model.addToHistory();
+      model.loadFromHistory(1);
+      expect(model.inputText, 'test1');
+    });
+
+    test('HashGeneratorModel clearHistory works', () {
+      final model = HashGeneratorModel();
+      model.init();
+      model.setInputText('test');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('HashGeneratorModel getModeLabel works', () {
+      final model = HashGeneratorModel();
+      expect(model.getModeLabel('md5'), 'MD5');
+      expect(model.getModeLabel('sha1'), 'SHA1');
+      expect(model.getModeLabel('sha256'), 'SHA256');
+      expect(model.getModeLabel('sha512'), 'SHA512');
+    });
+
+    test('HashGeneratorModel getHashLength works', () {
+      final model = HashGeneratorModel();
+      expect(model.getHashLength('md5'), 32);
+      expect(model.getHashLength('sha1'), 40);
+      expect(model.getHashLength('sha256'), 64);
+      expect(model.getHashLength('sha512'), 128);
+    });
+
+    test('HashGeneratorModel refresh calls notifyListeners', () {
+      final model = HashGeneratorModel();
+      model.init();
+      var notified = false;
+      model.addListener(() {
+        notified = true;
+      });
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('HashGeneratorCard renders loading state', () {
+      final card = HashGeneratorCard();
+      expect(card, isNotNull);
+    });
+
+    test('HashGeneratorCard renders initialized state', () {
+      hashGeneratorModel.init();
+      final card = HashGeneratorCard();
+      expect(card, isNotNull);
+    });
+
+    testWidgets('HashGeneratorCard shows header', (WidgetTester tester) async {
+      final model = HashGeneratorModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: HashGeneratorCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Hash Generator'), findsOneWidget);
+    });
+
+    testWidgets('HashGeneratorCard shows mode selector', (WidgetTester tester) async {
+      final model = HashGeneratorModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: HashGeneratorCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('MD5'), findsOneWidget);
+      expect(find.text('SHA1'), findsOneWidget);
+      expect(find.text('SHA256'), findsOneWidget);
+      expect(find.text('SHA512'), findsOneWidget);
+    });
+
+    testWidgets('HashGeneratorCard shows input field', (WidgetTester tester) async {
+      final model = HashGeneratorModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: HashGeneratorCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Input:'), findsOneWidget);
+    });
+
+    test('HashGeneratorCard widget exists', () {
+      expect(HashGeneratorCard, isNotNull);
+    });
+
+    test('Global.providerList includes HashGenerator', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('HashGenerator'), true);
+    });
+
+    test('providerHashGenerator exists', () {
+      expect(providerHashGenerator, isNotNull);
+      expect(providerHashGenerator.name, 'HashGenerator');
+    });
+
+    tearDownAll(() {
+      hashGeneratorModel.clearHistory();
     });
   });
 }
