@@ -1178,6 +1178,21 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
     - Keywords: bitwise, bit, and, or, xor, not, shift, calculator, binary, logic
+- **DiffChecker**: Text comparison utility for developers
+    - Compare two text inputs and show differences
+    - Line-by-line comparison with color coding
+    - Additions shown in green (primary color)
+    - Deletions shown in red (error color)
+    - Unchanged lines shown in neutral color
+    - Optional word-level diff within lines
+    - Toggle word diff with FilterChip
+    - Statistics display: additions count, deletions count
+    - Save comparisons to history (up to 10 entries)
+    - Tap history entries to restore previous comparisons
+    - Clear history with confirmation dialog
+    - Clear text inputs button
+    - Uses `Card.filled`, `FilterChip`, `TextField` for Material 3 style
+    - Keywords: diff, compare, text, difference, checker, compare, lines
 
 ## Material 3 Design System
 
@@ -1337,8 +1352,9 @@ Test coverage includes:
 - JsonFormatter provider tests (provider existence, keywords, model state, JSON validation, formatting, indentation, minification, history, widget rendering)
 - RegexTester provider tests (provider existence, keywords, model state, pattern matching, case sensitivity, multiline, dotAll, capture groups, history, widget rendering)
 - Bitwise provider tests (provider existence, keywords, model state, bitwise operations, AND, OR, XOR, NOT, shift operations, binary/hex conversion, history, widget rendering)
+- DiffChecker provider tests (provider existence, keywords, model state, diff operations, additions/deletions detection, word diff, history, widget rendering)
 
-Total tests: 2751 tests
+Total tests: 2778 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

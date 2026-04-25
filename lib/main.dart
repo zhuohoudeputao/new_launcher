@@ -99,6 +99,7 @@ import 'package:new_launcher/providers/provider_hash.dart';
 import 'package:new_launcher/providers/provider_json.dart';
 import 'package:new_launcher/providers/provider_regex.dart';
 import 'package:new_launcher/providers/provider_bitwise.dart';
+import 'package:new_launcher/providers/provider_diff.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -271,8 +272,9 @@ ChangeNotifierProvider.value(value: vigenereCipherModel),
                     ChangeNotifierProvider.value(value: hashGeneratorModel),
                     ChangeNotifierProvider.value(value: jsonModel),
 ChangeNotifierProvider.value(value: regexModel),
-                      ChangeNotifierProvider.value(value: bitwiseModel),
-                      ],
+                       ChangeNotifierProvider.value(value: bitwiseModel),
+                       ChangeNotifierProvider.value(value: diffCheckerModel),
+                       ],
           child: MyApp(),
             )));
 }

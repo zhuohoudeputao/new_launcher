@@ -97,6 +97,7 @@ import 'package:new_launcher/providers/provider_hash.dart';
 import 'package:new_launcher/providers/provider_json.dart';
 import 'package:new_launcher/providers/provider_regex.dart';
 import 'package:new_launcher/providers/provider_bitwise.dart';
+import 'package:new_launcher/providers/provider_diff.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2537,7 +2538,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 98);
+      expect(Global.providerList.length, 99);
     });
 
     test('Global.providerList names are correct', () {
@@ -3704,7 +3705,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 98);
+      expect(initCount, 99);
     });
   });
 
@@ -4021,8 +4022,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (97 total)', () {
-      expect(Global.providerList.length, 98);
+test('Global.providerList contains all providers (99 total)', () {
+      expect(Global.providerList.length, 99);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5365,8 +5366,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (97 total)', () {
-      expect(Global.providerList.length, 98);
+test('Global.providerList contains all providers (99 total)', () {
+      expect(Global.providerList.length, 99);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -26547,8 +26548,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerJsonFormatter.name, 'JsonFormatter');
     });
 
-    test('Global.providerList contains all providers (97 total)', () {
-      expect(Global.providerList.length, 98);
+    test('Global.providerList contains all providers (99 total)', () {
+      expect(Global.providerList.length, 99);
     });
 
     tearDownAll(() {
@@ -26888,8 +26889,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerRegexTester.name, 'RegexTester');
     });
 
-    test('Global.providerList contains all providers (98 total)', () {
-      expect(Global.providerList.length, 98);
+    test('Global.providerList contains all providers (99 total)', () {
+      expect(Global.providerList.length, 99);
     });
 
     tearDownAll(() {
@@ -27227,12 +27228,277 @@ test('WordleModel submitGuess works', () async {
       expect(providerBitwise.name, 'Bitwise');
     });
 
-    test('Global.providerList contains all providers (98 total)', () {
-      expect(Global.providerList.length, 98);
+    test('Global.providerList contains all providers (99 total)', () {
+      expect(Global.providerList.length, 99);
     });
 
     tearDownAll(() {
       bitwiseModel.clearHistory();
+    });
+  });
+
+  group('Diff Checker Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('providerDiffChecker exists', () {
+      expect(providerDiffChecker, isNotNull);
+      expect(providerDiffChecker.name, 'DiffChecker');
+    });
+
+    test('DiffCheckerModel initializes correctly', () {
+      final model = DiffCheckerModel();
+      model.init();
+      expect(model.originalText, '');
+      expect(model.modifiedText, '');
+      expect(model.diffLines.length, 0);
+      expect(model.history.length, 0);
+      expect(model.isLoading, false);
+      expect(model.showWordDiff, false);
+    });
+
+    test('DiffCheckerModel setOriginalText works', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.setOriginalText('Hello World');
+      expect(model.originalText, 'Hello World');
+    });
+
+    test('DiffCheckerModel setModifiedText works', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.setModifiedText('Hello Dart');
+      expect(model.modifiedText, 'Hello Dart');
+    });
+
+    test('DiffCheckerModel computes diff correctly', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.setOriginalText('Line 1\nLine 2');
+      model.setModifiedText('Line 1\nLine 3');
+      expect(model.diffLines.length, 3);
+    });
+
+    test('DiffCheckerModel detects additions', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.setOriginalText('Line 1');
+      model.setModifiedText('Line 1\nLine 2');
+      expect(model.additions, 1);
+    });
+
+    test('DiffCheckerModel detects deletions', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.setOriginalText('Line 1\nLine 2');
+      model.setModifiedText('Line 1');
+      expect(model.deletions, 1);
+    });
+
+    test('DiffCheckerModel detects unchanged lines', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.setOriginalText('Line 1\nLine 2');
+      model.setModifiedText('Line 1\nLine 2');
+      expect(model.additions, 0);
+      expect(model.deletions, 0);
+    });
+
+    test('DiffCheckerModel toggleWordDiff works', () {
+      final model = DiffCheckerModel();
+      model.init();
+      expect(model.showWordDiff, false);
+      model.toggleWordDiff();
+      expect(model.showWordDiff, true);
+      model.toggleWordDiff();
+      expect(model.showWordDiff, false);
+    });
+
+    test('DiffCheckerModel hasChanges correct', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.setOriginalText('Line 1');
+      model.setModifiedText('Line 2');
+      expect(model.hasChanges, true);
+    });
+
+    test('DiffCheckerModel hasChanges false when identical', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.setOriginalText('Same');
+      model.setModifiedText('Same');
+      expect(model.hasChanges, false);
+    });
+
+    test('DiffCheckerModel addToHistory works', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.setOriginalText('Original');
+      model.setModifiedText('Modified');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].original, 'Original');
+      expect(model.history[0].modified, 'Modified');
+    });
+
+    test('DiffCheckerModel addToHistory does not add empty texts', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('DiffCheckerModel history max length', () {
+      final model = DiffCheckerModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setOriginalText('Original $i');
+        model.setModifiedText('Modified $i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('DiffCheckerModel applyFromHistory works', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.setOriginalText('Original');
+      model.setModifiedText('Modified');
+      model.addToHistory();
+      
+      model.setOriginalText('');
+      model.setModifiedText('');
+      
+      model.applyFromHistory(model.history[0]);
+      expect(model.originalText, 'Original');
+      expect(model.modifiedText, 'Modified');
+    });
+
+    test('DiffCheckerModel clearHistory works', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.setOriginalText('Original');
+      model.setModifiedText('Modified');
+      model.addToHistory();
+      model.addToHistory();
+      expect(model.history.length, 2);
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('DiffCheckerModel clearTexts works', () {
+      final model = DiffCheckerModel();
+      model.init();
+      model.setOriginalText('Some text');
+      model.setModifiedText('Other text');
+      model.clearTexts();
+      expect(model.originalText, '');
+      expect(model.modifiedText, '');
+      expect(model.diffLines.length, 0);
+    });
+
+    test('DiffCheckerModel refresh calls notifyListeners', () {
+      final model = DiffCheckerModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('DiffHistory summary correct', () {
+      final history = DiffHistory(
+        original: 'Original',
+        modified: 'Modified',
+        additions: 2,
+        deletions: 1,
+        timestamp: DateTime.now(),
+      );
+      expect(history.summary, '+2 -1');
+    });
+
+    test('DiffHistory summary shows No changes', () {
+      final history = DiffHistory(
+        original: 'Same',
+        modified: 'Same',
+        additions: 0,
+        deletions: 0,
+        timestamp: DateTime.now(),
+      );
+      expect(history.summary, 'No changes');
+    });
+
+    testWidgets('DiffCheckerCard renders correctly', (WidgetTester tester) async {
+      final model = DiffCheckerModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: DiffCheckerCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Diff Checker'), findsOneWidget);
+    });
+
+    testWidgets('DiffCheckerCard shows Word Diff toggle', (WidgetTester tester) async {
+      final model = DiffCheckerModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: DiffCheckerCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Word Diff'), findsOneWidget);
+    });
+
+    testWidgets('DiffCheckerCard shows input fields', (WidgetTester tester) async {
+      final model = DiffCheckerModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: DiffCheckerCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Original Text'), findsOneWidget);
+      expect(find.text('Modified Text'), findsOneWidget);
+    });
+
+    test('DiffCheckerCard widget exists', () {
+      expect(DiffCheckerCard, isNotNull);
+    });
+
+    test('Global.providerList includes DiffChecker', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('DiffChecker'), true);
+    });
+
+    test('providerDiffChecker exists', () {
+      expect(providerDiffChecker, isNotNull);
+      expect(providerDiffChecker.name, 'DiffChecker');
+    });
+
+    test('Global.providerList contains all providers (99 total)', () {
+      expect(Global.providerList.length, 99);
+    });
+
+    tearDownAll(() {
+      diffCheckerModel.clearHistory();
     });
   });
 }
