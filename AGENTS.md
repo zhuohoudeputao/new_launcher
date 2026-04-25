@@ -1511,6 +1511,19 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history option
     - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
     - Keywords: fraction, calculator, math, add, subtract, multiply, divide, numerator, denominator, simplify, reduce
+- **Statistics**: Statistics calculator for numerical data analysis
+    - Calculate mean, median, mode from a set of numbers
+    - Calculate standard deviation and variance
+    - Calculate min, max, range, sum, count
+    - Input numbers separated by commas or spaces
+    - Support for decimal and negative numbers
+    - Support for multiple modes (when values have equal frequency)
+    - Calculation history (up to 10 entries)
+    - Tap history entries to reload previous calculations
+    - Clear history with confirmation dialog
+    - Copy all statistics to clipboard
+    - Uses `Card.filled`, `TextField`, `Wrap` for Material 3 style
+    - Keywords: statistics, mean, median, mode, stddev, variance, average, calculator, math
 
 ## Material 3 Design System
 
@@ -1695,8 +1708,9 @@ Test coverage includes:
 - Lottery provider tests (provider existence, model state, lottery type selection, number generation, unique/sorted numbers, history management, JSON encoding/decoding, widget rendering)
 - IPCalculator provider tests (provider existence, model state, IP address validation, CIDR validation, subnet mask calculation, network/broadcast address calculation, usable hosts calculation, IP class/type determination, history management, widget rendering)
 - Fraction Calculator provider tests (provider existence, model state, Fraction class simplify/add/subtract/multiply/divide operations, divide by zero handling, toStringDisplay, fraction validity, swap fractions, history management, widget rendering)
+- Statistics provider tests (provider existence, model state, mean/median/mode/stddev/variance calculations, min/max/range/sum/count calculations, input handling, history management, widget rendering)
 
-Total tests: 3376 tests
+Total tests: 3407 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1855,6 +1869,7 @@ Technical documentation is available in `docs/`:
 - `lottery_provider.md` - Lottery provider implementation for lottery number generation
 - `ip_calculator_provider.md` - IPCalculator provider implementation for IP address and subnet calculations
 - `fraction_calculator_provider.md` - Fraction Calculator provider implementation for fraction arithmetic operations
+- `statistics_provider.md` - Statistics provider implementation for numerical data analysis
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 - `critical_bug_fixes_iteration89.md` - Critical bug fix for missing lotteryModel and gitIgnoreModel in MultiProvider
 

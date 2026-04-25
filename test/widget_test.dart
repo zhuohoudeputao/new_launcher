@@ -122,6 +122,7 @@ import 'package:new_launcher/providers/provider_shape.dart';
 import 'package:new_launcher/providers/provider_lottery.dart';
 import 'package:new_launcher/providers/provider_ipcalculator.dart';
 import 'package:new_launcher/providers/provider_fraction.dart';
+import 'package:new_launcher/providers/provider_statistics.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -33317,6 +33318,306 @@ test('Global.providerList contains all providers (120 total)', () {
 
     tearDownAll(() {
       fractionCalculatorModel.clearHistory();
+    });
+  });
+
+  group('Statistics provider tests', () {
+    setUpAll(() {
+      statisticsModel = StatisticsModel();
+    });
+
+    test('StatisticsModel initializes correctly', () {
+      final model = StatisticsModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('StatisticsModel setInputNumbers works', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("1, 2, 3");
+      expect(model.inputNumbers, "1, 2, 3");
+      expect(model.error, "");
+    });
+
+    test('StatisticsModel calculate with valid numbers', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("1, 2, 3, 4, 5");
+      model.calculate();
+      
+      expect(model.error, "");
+      expect(model.count, 5);
+      expect(model.sum, 15);
+      expect(model.mean, 3);
+      expect(model.median, 3);
+      expect(model.min, 1);
+      expect(model.max, 5);
+      expect(model.range, 4);
+    });
+
+    test('StatisticsModel calculate mean correctly', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("2, 4, 6, 8");
+      model.calculate();
+      
+      expect(model.mean, 5);
+    });
+
+    test('StatisticsModel calculate median odd count', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("1, 3, 5, 7, 9");
+      model.calculate();
+      
+      expect(model.median, 5);
+    });
+
+    test('StatisticsModel calculate median even count', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("1, 2, 3, 4");
+      model.calculate();
+      
+      expect(model.median, 2.5);
+    });
+
+    test('StatisticsModel calculate median unsorted input', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("5, 1, 3, 9, 7");
+      model.calculate();
+      
+      expect(model.median, 5);
+    });
+
+    test('StatisticsModel calculate mode single', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("1, 2, 2, 3, 4");
+      model.calculate();
+      
+      expect(model.mode!.length, 1);
+      expect(model.mode!.first, 2);
+    });
+
+    test('StatisticsModel calculate mode multiple', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("1, 1, 2, 2, 3");
+      model.calculate();
+      
+      expect(model.mode!.length, 2);
+      expect(model.mode!.contains(1), true);
+      expect(model.mode!.contains(2), true);
+    });
+
+    test('StatisticsModel calculate variance', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("2, 4, 6, 8");
+      model.calculate();
+      
+      expect(model.variance, closeTo(5, 0.001));
+    });
+
+    test('StatisticsModel calculate std dev', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("2, 4, 6, 8");
+      model.calculate();
+      
+      expect(model.stdDev, closeTo(2.236, 0.001));
+    });
+
+    test('StatisticsModel empty input returns error', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("");
+      model.calculate();
+      
+      expect(model.error.isNotEmpty, true);
+    });
+
+    test('StatisticsModel invalid input returns error', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("1, abc, 3");
+      model.calculate();
+      
+      expect(model.error.contains("Invalid"), true);
+    });
+
+    test('StatisticsModel space separated input works', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("1 2 3 4 5");
+      model.calculate();
+      
+      expect(model.error, "");
+      expect(model.count, 5);
+    });
+
+    test('StatisticsModel mixed comma and space works', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("1, 2 3,4 5");
+      model.calculate();
+      
+      expect(model.error, "");
+      expect(model.count, 5);
+    });
+
+    test('StatisticsModel decimal numbers work', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("1.5, 2.5, 3.5");
+      model.calculate();
+      
+      expect(model.error, "");
+      expect(model.count, 3);
+      expect(model.sum, closeTo(7.5, 0.001));
+      expect(model.mean, closeTo(2.5, 0.001));
+    });
+
+    test('StatisticsModel negative numbers work', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("-1, -2, -3");
+      model.calculate();
+      
+      expect(model.error, "");
+      expect(model.count, 3);
+      expect(model.sum, -6);
+      expect(model.mean, -2);
+    });
+
+    test('StatisticsModel formatNumber works for integers', () {
+      final model = StatisticsModel();
+      model.init();
+      
+      expect(model.formatNumber(5.0), "5");
+      expect(model.formatNumber(10.0), "10");
+    });
+
+    test('StatisticsModel formatNumber works for decimals', () {
+      final model = StatisticsModel();
+      model.init();
+      
+      expect(model.formatNumber(5.5), "5.5000");
+      expect(model.formatNumber(3.14159), "3.1416");
+    });
+
+    test('StatisticsModel formatNumber null returns dash', () {
+      final model = StatisticsModel();
+      model.init();
+      
+      expect(model.formatNumber(null), "-");
+    });
+
+    test('StatisticsModel formatMode single value', () {
+      final model = StatisticsModel();
+      model.init();
+      
+      expect(model.formatMode([2.0]), "2");
+    });
+
+    test('StatisticsModel formatMode multiple values', () {
+      final model = StatisticsModel();
+      model.init();
+      
+      expect(model.formatMode([1.0, 2.0]), "1, 2");
+    });
+
+    test('StatisticsModel formatMode null returns dash', () {
+      final model = StatisticsModel();
+      model.init();
+      
+      expect(model.formatMode(null), "-");
+    });
+
+    test('StatisticsModel history operations', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("1, 2, 3");
+      model.calculate();
+      
+      expect(model.history.length, 1);
+      expect(model.history.first.contains("Mean"), true);
+      
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('StatisticsModel history max limit', () {
+      final model = StatisticsModel();
+      model.init();
+      
+      for (int i = 0; i < 15; i++) {
+        model.setInputNumbers("$i, ${i+1}, ${i+2}");
+        model.calculate();
+      }
+      
+      expect(model.history.length <= 10, true);
+    });
+
+    test('StatisticsModel clearInput works', () {
+      final model = StatisticsModel();
+      model.init();
+      model.setInputNumbers("1, 2, 3");
+      model.calculate();
+      
+      model.clearInput();
+      expect(model.inputNumbers, "");
+      expect(model.count, null);
+      expect(model.sum, null);
+      expect(model.mean, null);
+    });
+
+    test('StatisticsModel refresh calls notifyListeners', () {
+      final model = StatisticsModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('StatisticsCard renders', (WidgetTester tester) async {
+      statisticsModel.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: statisticsModel,
+              child: StatisticsCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Statistics Calculator'), findsOneWidget);
+    });
+
+    testWidgets('StatisticsCard widget exists', (WidgetTester tester) async {
+      expect(StatisticsCard, isNotNull);
+    });
+
+    test('Global.providerList includes Statistics', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Statistics'), true);
+    });
+
+    test('Provider has correct keywords', () {
+      final actionKeywords = 'statistics mean median mode stddev variance average calculator math';
+      expect(actionKeywords.contains('statistics'), true);
+      expect(actionKeywords.contains('mean'), true);
+      expect(actionKeywords.contains('median'), true);
+      expect(actionKeywords.contains('mode'), true);
+    });
+
+    tearDownAll(() {
+      statisticsModel.clearHistory();
     });
   });
 }
