@@ -124,6 +124,7 @@ import 'package:new_launcher/providers/provider_ipcalculator.dart';
 import 'package:new_launcher/providers/provider_fraction.dart';
 import 'package:new_launcher/providers/provider_statistics.dart';
 import 'package:new_launcher/providers/provider_markdown.dart';
+import 'package:new_launcher/providers/provider_stretch_reminder.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -33780,6 +33781,165 @@ test('Global.providerList contains all providers (120 total)', () {
 
     tearDownAll(() {
       markdownPreviewModel.clearHistory();
+    });
+  });
+
+  group('Stretch Reminder provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('StretchReminderModel initializes correctly', () {
+      final model = StretchReminderModel();
+      expect(model.isInitialized, false);
+      expect(model.intervalMinutes, 30);
+      expect(model.elapsedSeconds, 0);
+      expect(model.isRunning, false);
+      expect(model.todayStretches, 0);
+    });
+
+    test('StretchReminderModel init works', () async {
+      final model = StretchReminderModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.intervalMinutes, 30);
+    });
+
+    test('StretchReminderModel start and stop work', () async {
+      final model = StretchReminderModel();
+      await model.init();
+      model.start();
+      expect(model.isRunning, true);
+      await Future.delayed(Duration(seconds: 2));
+      expect(model.elapsedSeconds >= 2, true);
+      model.stop();
+      expect(model.isRunning, false);
+      model.dispose();
+    });
+
+    test('StretchReminderModel reset increments stretches', () async {
+      final model = StretchReminderModel();
+      await model.init();
+      model.reset();
+      expect(model.todayStretches, 1);
+      expect(model.elapsedSeconds, 0);
+      model.reset();
+      expect(model.todayStretches, 2);
+    });
+
+    test('StretchReminderModel setInterval works', () async {
+      final model = StretchReminderModel();
+      await model.init();
+      model.setInterval(20);
+      expect(model.intervalMinutes, 20);
+    });
+
+    test('StretchReminderModel setInterval ignores invalid values', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = StretchReminderModel();
+      await model.init();
+      model.setInterval(2);
+      expect(model.intervalMinutes, 30);
+      model.setInterval(150);
+      expect(model.intervalMinutes, 30);
+    });
+
+    test('StretchReminderModel skipStretch resets elapsed', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = StretchReminderModel();
+      await model.init();
+      model.setElapsedSecondsForTest(100);
+      model.skipStretch();
+      expect(model.elapsedSeconds, 0);
+    });
+
+    test('StretchReminderModel clearStats resets all', () async {
+      SharedPreferences.setMockInitialValues({});
+      final model = StretchReminderModel();
+      await model.init();
+      model.reset();
+      model.reset();
+      expect(model.todayStretches, 2);
+      model.clearStats();
+      expect(model.todayStretches, 0);
+      expect(model.lastStretchTime, null);
+    });
+
+    test('StretchReminderModel formattedElapsed works', () async {
+      final model = StretchReminderModel();
+      await model.init();
+      model.setElapsedSecondsForTest(45);
+      expect(model.formattedElapsed, '45s');
+      model.setElapsedSecondsForTest(90);
+      expect(model.formattedElapsed, '1m 30s');
+      model.setElapsedSecondsForTest(3661);
+      expect(model.formattedElapsed, '1h 1m 1s');
+    });
+
+    test('StretchReminderModel progressPercent works', () async {
+      final model = StretchReminderModel();
+      await model.init();
+      model.setInterval(10);
+      model.setElapsedSecondsForTest(300);
+      expect(model.progressPercent, 0.5);
+      model.setElapsedSecondsForTest(600);
+      expect(model.progressPercent, 1.0);
+    });
+
+    test('StretchReminderModel needsStretch works', () async {
+      final model = StretchReminderModel();
+      await model.init();
+      model.setInterval(10);
+      model.setElapsedSecondsForTest(300);
+      expect(model.needsStretch, false);
+      model.setElapsedSecondsForTest(600);
+      expect(model.needsStretch, true);
+    });
+
+    test('StretchReminderModel refresh calls notifyListeners', () async {
+      final model = StretchReminderModel();
+      await model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('StretchReminderCard renders', (WidgetTester tester) async {
+      await stretchReminderModel.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: stretchReminderModel,
+              child: StretchReminderCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Stretch Reminder'), findsOneWidget);
+    });
+
+    testWidgets('StretchReminderCard widget exists', (WidgetTester tester) async {
+      expect(StretchReminderCard, isNotNull);
+    });
+
+    test('Global.providerList includes StretchReminder', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('StretchReminder'), true);
+    });
+
+    test('Provider has correct keywords', () {
+      final actionKeywords = 'stretch, reminder, health, fitness, break, sit, posture, exercise, move, standup';
+      expect(actionKeywords.contains('stretch'), true);
+      expect(actionKeywords.contains('reminder'), true);
+      expect(actionKeywords.contains('health'), true);
+    });
+
+    tearDownAll(() {
+      stretchReminderModel.clearStats();
+      stretchReminderModel.dispose();
     });
   });
 }

@@ -127,6 +127,7 @@ import 'package:new_launcher/providers/provider_ipcalculator.dart';
 import 'package:new_launcher/providers/provider_fraction.dart';
 import 'package:new_launcher/providers/provider_statistics.dart';
 import 'package:new_launcher/providers/provider_markdown.dart';
+import 'package:new_launcher/providers/provider_stretch_reminder.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -328,6 +329,7 @@ ChangeNotifierProvider.value(value: ipCalculatorModel),
 ChangeNotifierProvider.value(value: fractionCalculatorModel),
             ChangeNotifierProvider.value(value: statisticsModel),
             ChangeNotifierProvider.value(value: markdownPreviewModel),
+            ChangeNotifierProvider.value(value: stretchReminderModel),
           ],
           child: MyApp(),
             )));

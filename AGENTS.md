@@ -1534,6 +1534,18 @@ Settings auto-saved via `SharedPreferences`:
     - Selectable preview text for easy copying
     - Uses `Card.filled`, `TextField`, `Markdown` widget for Material 3 style
     - Keywords: markdown, preview, md, text, format, render, document
+- **StretchReminder**: Stretch reminder for health and posture
+    - Configurable reminder interval (10, 15, 20, 30, 45, 60 minutes)
+    - Elapsed time display showing time since last stretch
+    - Progress bar visualization
+    - Visual warning when stretch time exceeded
+    - Daily stretch count tracking
+    - Start/stop timer controls
+    - "Stretched!" button to reset timer and increment count
+    - Clear statistics with confirmation dialog
+    - Stretch entries persisted via SharedPreferences
+    - Uses `Card.filled`, `LinearProgressIndicator`, `ActionChip` for Material 3 style
+    - Keywords: stretch, reminder, health, fitness, break, sit, posture, exercise, move, standup
 
 ## Material 3 Design System
 
@@ -1720,8 +1732,9 @@ Test coverage includes:
 - Fraction Calculator provider tests (provider existence, model state, Fraction class simplify/add/subtract/multiply/divide operations, divide by zero handling, toStringDisplay, fraction validity, swap fractions, history management, widget rendering)
 - Statistics provider tests (provider existence, model state, mean/median/mode/stddev/variance calculations, min/max/range/sum/count calculations, input handling, history management, widget rendering)
 - Markdown Preview provider tests (provider existence, model state, input text operations, history management, time formatting, widget rendering)
+- Stretch Reminder provider tests (provider existence, model state, start/stop timer, reset operations, interval setting, skipStretch, clearStats, formatted elapsed time, progress percentage, needsStretch detection, widget rendering)
 
-Total tests: 3425 tests
+Total tests: 3442 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1882,6 +1895,7 @@ Technical documentation is available in `docs/`:
 - `fraction_calculator_provider.md` - Fraction Calculator provider implementation for fraction arithmetic operations
 - `statistics_provider.md` - Statistics provider implementation for numerical data analysis
 - `markdown_provider.md` - Markdown Preview provider implementation for markdown text rendering
+- `stretch_reminder_provider.md` - Stretch Reminder provider implementation for health and posture reminders
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 - `critical_bug_fixes_iteration89.md` - Critical bug fix for missing lotteryModel and gitIgnoreModel in MultiProvider
 
