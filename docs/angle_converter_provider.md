@@ -2,121 +2,75 @@
 
 ## Overview
 
-The Angle Converter provider provides angle unit conversion functionality for mathematics, engineering, physics, and graphics programming. It converts between degrees, radians, and gradians.
+The Angle Converter provider converts between different angle measurement units.
 
-## Implementation Details
+## Provider Details
 
-### Provider File: `lib/providers/provider_angle.dart`
+- **Provider Name**: AngleConverter
+- **Keywords**: angle, convert, degree, radian, gradian, deg, rad, grad
+- **Model**: angleConverterModel
 
-### Model: `AngleConverterModel`
+## Supported Units
 
-#### Properties
-- `inputUnit`: Current input unit (default: 'deg')
-- `outputUnit`: Current output unit (default: 'rad')
-- `inputValue`: User input value as string
-- `outputValue`: Converted result as string
-- `isInitialized`: Boolean indicating initialization status
-- `history`: List of conversion history entries (max 10)
-- `hasHistory`: Boolean indicating if history has entries
-- `availableUnits`: List of supported units
+| Unit | Symbol | Description |
+|------|--------|-------------|
+| deg | ° | Degree |
+| rad | rad | Radian |
+| grad | grad | Gradian |
 
-#### Supported Units
-- `deg`: Degrees (°)
-- `rad`: Radians (rad)
-- `grad`: Gradians (grad)
+## Conversion Formula
 
-#### Conversion Formulas
-- Degrees to Radians: `rad = deg × (π / 180)`
-- Radians to Degrees: `deg = rad × (180 / π)`
-- Degrees to Gradians: `grad = deg × (10 / 9)`
-- Gradians to Degrees: `deg = grad × (9 / 10)`
-- Radians to Gradians: `grad = rad × (200 / π)`
-- Gradians to Radians: `rad = grad × (π / 200)`
+All conversions go through degrees as base unit:
+- Radians: deg × (π/180) = rad, rad × (180/π) = deg
+- Gradians: deg × (10/9) = grad, grad × (9/10) = deg
 
-#### Methods
-- `init()`: Initialize the model
-- `refresh()`: Notify listeners
-- `setInputUnit(unit)`: Set input unit, prevents same input/output
-- `setOutputUnit(unit)`: Set output unit, prevents same input/output
-- `setInputValue(value)`: Set input value and trigger conversion
-- `swapUnits()`: Swap input and output units with values
-- `clear()`: Clear input value to 0
-- `addToHistory()`: Add current conversion to history
-- `clearHistory()`: Clear all history entries
-- `useHistoryEntry(entry)`: Apply a history entry to current state
-- `convert(value, fromUnit, toUnit)`: Static conversion method
-
-### Widget: `AngleConverterCard`
-
-#### Features
-- Material 3 `Card.filled` design
-- Input/output unit dropdowns
-- Input TextField with numeric keyboard
-- Output display in styled container
-- Swap units button with primary color
-- History toggle view with history icon
-- Clear history button with confirmation dialog
-- Loading state indicator when uninitialized
-
-### Integration
-
-#### Provider Registration
-Added to `Global.providerList` in `lib/data.dart`:
 ```dart
-providerAngleConverter,
+const degPerUnit = {
+  'deg': 1.0,
+  'rad': 180.0 / 3.1415926535897932,
+  'grad': 0.9,
+};
 ```
 
-#### MultiProvider Registration
-Added to `MultiProvider` in `lib/main.dart`:
+## Features
+
+- Real-time conversion as values are typed
+- Swap input/output units with one tap
+- Same unit prevention (auto-selects different unit)
+- Conversion history (up to 10 entries)
+- Tap history entries to reuse conversions
+- Clear history with confirmation dialog
+
+## Model (AngleConverterModel)
+
 ```dart
-ChangeNotifierProvider.value(value: angleConverterModel),
+class AngleConverterModel extends ChangeNotifier {
+  String _inputUnit = 'deg';
+  String _outputUnit = 'rad';
+  static const int maxHistory = 10;
+  
+  static double convert(double value, String fromUnit, String toUnit);
+}
 ```
 
-### Keywords
-```
-angle convert degree radian gradian deg rad grad
-```
+## Widget (AngleConverterCard)
+
+- Card.filled style
+- DropdownButton for unit selection
+- TextField for input value
+- Swap button between input/output
+- History toggle view
 
 ## Testing
 
-### Test Coverage
+Tests verify:
 - Provider existence in Global.providerList
-- Keywords verification
-- Model initialization
-- ChangeNotifier implementation
-- Default units verification
-- Unit selection methods
-- Value input handling
-- Unit swap functionality
-- Clear functionality
-- Conversion accuracy tests (deg↔rad, deg↔grad, rad↔grad)
-- Static convert method tests
-- Invalid input handling
-- Negative value handling
-- Decimal value handling
-- History operations (add, clear, max limit)
-- Available units verification
-- Refresh notification
-- History entry reuse
-- Widget rendering (loading state, initialized state)
-- Widget components (input field, dropdowns)
-- Same unit prevention
-- Global provider list inclusion
+- Keywords matching
+- Model initialization and state
+- Conversion accuracy
+- History operations
+- Widget rendering
 
-### Test Count
-36 tests added for AngleConverter provider.
+## Related Files
 
-## Use Cases
-
-1. **Mathematics**: Convert between radians and degrees for trigonometric calculations
-2. **Engineering**: Convert angles for CAD software and technical drawings
-3. **Physics**: Convert angular measurements for physics calculations
-4. **Graphics Programming**: Convert between degrees and radians for rotation matrices
-5. **Navigation**: Convert angular measurements for bearing calculations
-
-## History Feature
-
-- Stores up to 10 conversion entries
-- Each entry includes input value, input unit, output value, output unit, and timestamp
-- Tap history entry to reuse previous conversion settings
-- Clear all history with confirmation dialog
+- `lib/providers/provider_angle.dart` - Provider implementation

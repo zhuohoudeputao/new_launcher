@@ -1,36 +1,35 @@
-# Frequency Converter Provider
+# Frequency Converter Provider Implementation
 
 ## Overview
 
-The FrequencyConverter provider is a utility for converting between frequency units (Hz, kHz, MHz, GHz, THz). It is useful for electronics, audio, radio, and signal processing applications.
+The Frequency Converter provider converts between different frequency/Hz units for electronics and audio applications.
 
-## Implementation
+## Provider Details
 
-### Provider Structure
+- **Provider Name**: FrequencyConverter
+- **Keywords**: frequency, hz, khz, mhz, ghz, thz, convert, audio, radio, wave, signal
+- **Model**: frequencyConverterModel
 
-- **File**: `lib/providers/provider_frequency.dart`
-- **Model**: `FrequencyConverterModel`
-- **Widget**: `FrequencyConverterCard`
-- **Provider**: `providerFrequencyConverter`
-
-### Supported Units
+## Supported Units
 
 | Unit | Symbol | Description |
 |------|--------|-------------|
-| Hertz | Hz | Base unit of frequency |
-| Kilohertz | kHz | 1,000 Hz |
-| Megahertz | MHz | 1,000,000 Hz |
-| Gigahertz | GHz | 1,000,000,000 Hz |
-| Terahertz | THz | 1,000,000,000,000 Hz |
+| Hz | Hz | Hertz |
+| kHz | kHz | Kilohertz |
+| MHz | MHz | Megahertz |
+| GHz | GHz | Gigahertz |
+| THz | THz | Terahertz |
 
-### Conversion Logic
+## Conversion Formula
 
-Conversions use the SI prefix system:
-- Each unit is a multiple of Hz by powers of 1000
-- `convert(value, fromUnit, toUnit)` handles all conversions
+All conversions use powers of 10:
+- kHz = Hz × 1000
+- MHz = kHz × 1000 = Hz × 1000000
+- GHz = MHz × 1000
+- THz = GHz × 1000
 
 ```dart
-const hertzPerUnit = {
+const hzPerUnit = {
   'Hz': 1.0,
   'kHz': 1000.0,
   'MHz': 1000000.0,
@@ -39,47 +38,45 @@ const hertzPerUnit = {
 };
 ```
 
-### Model Features
+## Features
 
-- **Input/Output Units**: Configurable dropdowns for unit selection
-- **Real-time Conversion**: Converts as user types
-- **Unit Swapping**: Swap input/output units with one tap
-- **History Tracking**: Up to 10 conversion history entries
-- **Same Unit Prevention**: Automatically prevents input and output units being the same
+- Real-time conversion as values are typed
+- Swap input/output units with one tap
+- Same unit prevention (auto-selects different unit)
+- Conversion history (up to 10 entries)
+- Tap history entries to reuse conversions
+- Clear history with confirmation dialog
 
-### UI Components
+## Model (FrequencyConverterModel)
 
-- **Card.filled**: Material 3 styled card
-- **DropdownButton**: Unit selection dropdowns
-- **TextField**: Numeric input field
-- **IconButton**: Swap units and history controls
-- **History View**: List of previous conversions
+```dart
+class FrequencyConverterModel extends ChangeNotifier {
+  String _inputUnit = 'MHz';
+  String _outputUnit = 'kHz';
+  static const int maxHistory = 10;
+  
+  static double convert(double value, String fromUnit, String toUnit);
+}
+```
 
-### Keywords
+## Widget (FrequencyConverterCard)
 
-`frequency hz khz mhz ghz thz convert audio radio wave signal`
-
-### Integration
-
-The provider is registered in:
-- `lib/data.dart`: Added to `Global.providerList`
-- `lib/main.dart`: Added to `MultiProvider` as `frequencyConverterModel`
+- Card.filled style
+- DropdownButton for unit selection
+- TextField for input value
+- Swap button between input/output
+- History toggle view
 
 ## Testing
 
-Tests are located in `test/widget_test.dart` under the `FrequencyConverter Provider tests` group:
+Tests verify:
+- Provider existence in Global.providerList
+- Keywords matching
+- Model initialization and state
+- Conversion accuracy
+- History operations
+- Widget rendering
 
-- Provider existence and configuration
-- Model initialization and state management
-- Unit conversion accuracy (MHz→kHz, GHz→MHz, kHz→Hz, THz→GHz, Hz→kHz)
-- Static conversion method verification
-- History operations (add, clear, use entry, max limit)
-- UI widget rendering (loading state, initialized state, input field)
-- Same unit prevention logic
+## Related Files
 
-## Usage Examples
-
-- Audio: Convert 44.1 kHz to Hz (44,100 Hz)
-- CPU Speed: Convert 3.5 GHz to MHz (3,500 MHz)
-- Radio: Convert 100 MHz to kHz (100,000 kHz)
-- Network: Convert 5 GHz (WiFi frequency) to MHz (5,000 MHz)
+- `lib/providers/provider_frequency.dart` - Provider implementation

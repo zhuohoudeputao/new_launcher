@@ -2,90 +2,69 @@
 
 ## Overview
 
-The AreaConverter provider enables quick conversion between different area units, useful for real estate, construction, agriculture, and land measurement applications.
+The Area Converter provider converts between different area/surface measurement units.
+
+## Provider Details
+
+- **Provider Name**: AreaConverter
+- **Keywords**: area, convert, square, meter, kilometer, centimeter, hectare, acre, foot, yard, inch, mile, sq, m2, km2
+- **Model**: areaConverterModel
+
+## Supported Units
+
+| Unit | Symbol | Description |
+|------|--------|-------------|
+| m² | m² | Square Meter |
+| km² | km² | Square Kilometer |
+| cm² | cm² | Square Centimeter |
+| mm² | mm² | Square Millimeter |
+| ha | ha | Hectare |
+| ac | ac | Acre |
+| ft² | ft² | Square Foot |
+| yd² | yd² | Square Yard |
+| in² | in² | Square Inch |
+| mi² | mi² | Square Mile |
+
+## Conversion Formula
+
+All conversions go through square meters:
+- km² = m² × 0.000001 = m² / 1000000
+- cm² = m² × 10000
+- mm² = m² × 1000000
+- ha = m² × 0.0001 = 10000 m²
+- ac = m² × 0.000247105 (approximately 4047 m²)
+- ft² = m² × 10.7639 (approximately 0.0929 m²)
+- yd² = m² × 1.19599 (approximately 0.836 m²)
+- in² = m² × 1550.003
+- mi² = m² × 0.000000386102
 
 ## Features
 
-- Convert between 10 area units:
-  - m² (square meter)
-  - km² (square kilometer)
-  - cm² (square centimeter)
-  - mm² (square millimeter)
-  - ha (hectare)
-  - ac (acre)
-  - ft² (square foot)
-  - yd² (square yard)
-  - in² (square inch)
-  - mi² (square mile)
-- Real-time conversion as values are entered
+- Real-time conversion as values are typed
 - Swap input/output units with one tap
+- Same unit prevention (auto-selects different unit)
 - Conversion history (up to 10 entries)
 - Tap history entries to reuse conversions
 - Clear history with confirmation dialog
 
-## Implementation Details
+## Widget (AreaConverterCard)
 
-### Model Class: AreaConverterModel
-
-Located in `lib/providers/provider_area.dart`, implements:
-- `ChangeNotifier` for reactive state management
-- Area unit conversion logic using square meters as base unit
-- History tracking with timestamps
-- Input validation and error handling
-
-### Conversion Logic
-
-All conversions use square meters as the base unit:
-
-```
-Conversion factors to square meters:
-- m²: 1.0
-- km²: 1000000.0
-- cm²: 0.0001
-- mm²: 0.000001
-- hectare: 10000.0
-- acre: 4046.8564224
-- ft²: 0.09290304
-- yd²: 0.83612736
-- in²: 0.00064516
-- mi²: 2589988.110336
-```
-
-### UI Components
-
-- `AreaConverterCard`: Material 3 Card.filled design
-- Two DropdownButton widgets for unit selection
+- Card.filled style
+- DropdownButtonFormField for unit selection
 - TextField for input value
-- IconButton for swap functionality
-- History view with ListView.builder
-- Confirmation dialog for clearing history
+- Swap button between input/output
+- History toggle view
 
 ## Testing
 
-Tests are located in `test/widget_test.dart` under 'AreaConverter Provider tests' group:
+Tests verify:
+- Provider existence in Global.providerList
+- Keywords matching
+- Model initialization and state
+- Conversion accuracy
+- History operations
+- Widget rendering
 
-- Provider existence tests
-- Model initialization tests
-- Unit conversion accuracy tests (m² to acre, acre to m², m² to km², hectare to m², ft² to m², etc.)
-- Swap functionality tests
-- History operations tests
-- Input validation tests
-- Widget rendering tests
-- Edge case handling tests (negative values, decimal values, invalid input)
+## Related Files
 
-Total tests: 43
-
-## Usage
-
-The AreaConverter appears as an info widget in the launcher's main list. Users can:
-
-1. Select input and output units via dropdown menus
-2. Enter area value in the input field
-3. View converted result in the output field
-4. Swap units using the swap button
-5. Access history via the history button
-6. Clear history via the clear button
-
-## Keywords
-
-Area, convert, square, meter, kilometer, centimeter, hectare, acre, foot, yard, inch, mile, sq, m2, km2
+- `lib/providers/provider_area.dart` - Provider implementation

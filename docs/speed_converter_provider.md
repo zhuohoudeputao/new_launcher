@@ -2,80 +2,87 @@
 
 ## Overview
 
-The SpeedConverter provider enables quick conversion between different speed units, useful for travel, automotive, aviation, and sports applications.
+The Speed Converter provider converts between different speed/velocity units.
+
+## Provider Details
+
+- **Provider Name**: SpeedConverter
+- **Keywords**: speed, convert, kmh, mph, ms, knots, velocity, fast
+- **Model**: speedConverterModel
+
+## Supported Units
+
+| Unit | Symbol | Description |
+|------|--------|-------------|
+| kmh | km/h | Kilometers per hour |
+| mph | mph | Miles per hour |
+| ms | m/s | Meters per second |
+| fts | ft/s | Feet per second |
+| knot | knot | Nautical miles per hour |
+
+## Conversion Formula
+
+All conversions go through meters per second as base unit:
+```dart
+const metersPerSecondPerUnit = {
+  'kmh': 1000.0 / 3600.0,    // 0.2778
+  'mph': 1609.344 / 3600.0,  // 0.4470
+  'ms': 1.0,
+  'fts': 0.3048,
+  'knot': 1852.0 / 3600.0,   // 0.5144
+};
+```
 
 ## Features
 
-- Convert between 5 speed units:
-  - km/h (kilometers per hour)
-  - mph (miles per hour)
-  - m/s (meters per second)
-  - ft/s (feet per second)
-  - knot (nautical miles per hour)
-- Real-time conversion as values are entered
+- Real-time conversion as values are typed
 - Swap input/output units with one tap
+- Same unit prevention (auto-selects different unit)
 - Conversion history (up to 10 entries)
 - Tap history entries to reuse conversions
 - Clear history with confirmation dialog
 
-## Implementation Details
+## Model (SpeedConverterModel)
 
-### Model Class: SpeedConverterModel
-
-Located in `lib/providers/provider_speed.dart`, implements:
-- `ChangeNotifier` for reactive state management
-- Speed unit conversion logic using meters per second as base unit
-- History tracking with timestamps
-- Input validation and error handling
-
-### Conversion Logic
-
-All conversions use meters per second (m/s) as the base unit:
-
+```dart
+class SpeedConverterModel extends ChangeNotifier {
+  String _inputUnit = 'kmh';
+  String _outputUnit = 'mph';
+  String _inputValue = '0';
+  String _outputValue = '0';
+  final List<SpeedConversionHistory> _history = [];
+  static const int maxHistory = 10;
+  
+  void setInputUnit(String unit);
+  void setOutputUnit(String unit);
+  void setInputValue(String value);
+  void swapUnits();
+  void clear();
+  static double convert(double value, String fromUnit, String toUnit);
+  void addToHistory();
+  void clearHistory();
+  void useHistoryEntry(SpeedConversionHistory entry);
+}
 ```
-Conversion factors to m/s:
-- km/h: 1000/3600 = 0.277778
-- mph: 1609.344/3600 = 0.44704
-- m/s: 1.0
-- ft/s: 0.3048
-- knot: 1852/3600 = 0.514444
-```
 
-### UI Components
+## Widget (SpeedConverterCard)
 
-- `SpeedConverterCard`: Material 3 Card.filled design
-- Two DropdownButton widgets for unit selection
+- Card.filled style
+- DropdownButton for unit selection
 - TextField for input value
-- IconButton for swap functionality
-- History view with ListView.builder
-- Confirmation dialog for clearing history
+- Swap button between input/output
+- History toggle view
 
 ## Testing
 
-Tests are located in `test/widget_test.dart` under 'SpeedConverter Provider tests' group:
+Tests verify:
+- Provider existence in Global.providerList
+- Keywords matching
+- Model initialization and state
+- Conversion accuracy
+- History operations
+- Widget rendering
 
-- Provider existence tests
-- Model initialization tests
-- Unit conversion accuracy tests
-- Swap functionality tests
-- History operations tests
-- Input validation tests
-- Widget rendering tests
-- Edge case handling tests
+## Related Files
 
-Total tests: 36
-
-## Usage
-
-The SpeedConverter appears as an info widget in the launcher's main list. Users can:
-
-1. Select input and output units via dropdown menus
-2. Enter speed value in the input field
-3. View converted result in the output field
-4. Swap units using the swap button
-5. Access history via the history button
-6. Clear history via the clear button
-
-## Keywords
-
-Speed, convert, kmh, mph, ms, knots, velocity, fast
+- `lib/providers/provider_speed.dart` - Provider implementation
