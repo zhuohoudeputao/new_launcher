@@ -4037,8 +4037,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (105 total)', () {
-      expect(Global.providerList.length, 105);
+test('Global.providerList contains all providers (114 total)', () {
+      expect(Global.providerList.length, 114);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5381,8 +5381,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (105 total)', () {
-      expect(Global.providerList.length, 105);
+test('Global.providerList contains all providers (114 total)', () {
+      expect(Global.providerList.length, 114);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -12917,8 +12917,8 @@ test('Global.providerList includes UnitConverter', () {
       expect(CalorieModel.defaultGoal, 2000);
     });
 
-    test('Global.providerList contains all providers (105 total)', () {
-      expect(Global.providerList.length, 105);
+    test('Global.providerList contains all providers (114 total)', () {
+      expect(Global.providerList.length, 114);
     });
   });
 
@@ -23315,8 +23315,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Exponent'), true);
     });
 
-    test('Global.providerList contains all providers (105 total)', () {
-      expect(Global.providerList.length, 105);
+    test('Global.providerList contains all providers (114 total)', () {
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
@@ -27059,8 +27059,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerJsonFormatter.name, 'JsonFormatter');
     });
 
-    test('Global.providerList contains all providers (105 total)', () {
-      expect(Global.providerList.length, 105);
+    test('Global.providerList contains all providers (114 total)', () {
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
@@ -27403,8 +27403,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerRegexTester.name, 'RegexTester');
     });
 
-    test('Global.providerList contains all providers (105 total)', () {
-      expect(Global.providerList.length, 105);
+    test('Global.providerList contains all providers (114 total)', () {
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
@@ -27742,8 +27742,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerBitwise.name, 'Bitwise');
     });
 
-    test('Global.providerList contains all providers (105 total)', () {
-      expect(Global.providerList.length, 105);
+    test('Global.providerList contains all providers (114 total)', () {
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
@@ -28007,8 +28007,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerDiffChecker.name, 'DiffChecker');
     });
 
-    test('Global.providerList contains all providers (105 total)', () {
-      expect(Global.providerList.length, 105);
+    test('Global.providerList contains all providers (114 total)', () {
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
@@ -28304,8 +28304,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('CronExpressionParser'), true);
     });
 
-    test('Global.providerList contains all providers (105 total)', () {
-      expect(Global.providerList.length, 105);
+    test('Global.providerList contains all providers (114 total)', () {
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
@@ -28547,8 +28547,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('AspectRatio'), true);
     });
 
-    test('Global.providerList contains all providers (105 total)', () {
-      expect(Global.providerList.length, 105);
+    test('Global.providerList contains all providers (114 total)', () {
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
@@ -28918,8 +28918,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Loan'), true);
     });
 
-    test('Global.providerList contains all providers (105 total)', () {
-      expect(Global.providerList.length, 105);
+    test('Global.providerList contains all providers (114 total)', () {
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
@@ -29292,8 +29292,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('WeightTracker'), true);
     });
 
-    test('Global.providerList contains all providers (105 total)', () {
-      expect(Global.providerList.length, 105);
+    test('Global.providerList contains all providers (114 total)', () {
+      expect(Global.providerList.length, 114);
     });
 
     tearDownAll(() {
