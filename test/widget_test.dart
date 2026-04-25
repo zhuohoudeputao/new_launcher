@@ -100,6 +100,7 @@ import 'package:new_launcher/providers/provider_bitwise.dart';
 import 'package:new_launcher/providers/provider_diff.dart';
 import 'package:new_launcher/providers/provider_cron.dart';
 import 'package:new_launcher/providers/provider_aspectratio.dart';
+import 'package:new_launcher/providers/provider_loan.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2540,7 +2541,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 101);
+      expect(Global.providerList.length, 102);
     });
 
     test('Global.providerList names are correct', () {
@@ -3707,7 +3708,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 101);
+      expect(initCount, 102);
     });
   });
 
@@ -4024,8 +4025,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (101 total)', () {
-      expect(Global.providerList.length, 101);
+test('Global.providerList contains all providers (102 total)', () {
+      expect(Global.providerList.length, 102);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5368,8 +5369,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (101 total)', () {
-      expect(Global.providerList.length, 101);
+test('Global.providerList contains all providers (102 total)', () {
+      expect(Global.providerList.length, 102);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -26550,8 +26551,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerJsonFormatter.name, 'JsonFormatter');
     });
 
-    test('Global.providerList contains all providers (101 total)', () {
-      expect(Global.providerList.length, 101);
+    test('Global.providerList contains all providers (102 total)', () {
+      expect(Global.providerList.length, 102);
     });
 
     tearDownAll(() {
@@ -26891,8 +26892,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerRegexTester.name, 'RegexTester');
     });
 
-    test('Global.providerList contains all providers (101 total)', () {
-      expect(Global.providerList.length, 101);
+    test('Global.providerList contains all providers (102 total)', () {
+      expect(Global.providerList.length, 102);
     });
 
     tearDownAll(() {
@@ -27230,8 +27231,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerBitwise.name, 'Bitwise');
     });
 
-    test('Global.providerList contains all providers (101 total)', () {
-      expect(Global.providerList.length, 101);
+    test('Global.providerList contains all providers (102 total)', () {
+      expect(Global.providerList.length, 102);
     });
 
     tearDownAll(() {
@@ -27495,8 +27496,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerDiffChecker.name, 'DiffChecker');
     });
 
-    test('Global.providerList contains all providers (101 total)', () {
-      expect(Global.providerList.length, 101);
+    test('Global.providerList contains all providers (102 total)', () {
+      expect(Global.providerList.length, 102);
     });
 
     tearDownAll(() {
@@ -27792,8 +27793,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('CronExpressionParser'), true);
     });
 
-    test('Global.providerList contains all providers (101 total)', () {
-      expect(Global.providerList.length, 101);
+    test('Global.providerList contains all providers (102 total)', () {
+      expect(Global.providerList.length, 102);
     });
 
     tearDownAll(() {
@@ -28035,12 +28036,383 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('AspectRatio'), true);
     });
 
-    test('Global.providerList contains all providers (101 total)', () {
-      expect(Global.providerList.length, 101);
+    test('Global.providerList contains all providers (102 total)', () {
+      expect(Global.providerList.length, 102);
     });
 
     tearDownAll(() {
       aspectRatioModel.clearHistory();
+    });
+  });
+
+  group('Loan Calculator Provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      await TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('providerLoan exists', () {
+      expect(providerLoan, isNotNull);
+      expect(providerLoan.name, 'Loan');
+    });
+
+    test('LoanModel initializes correctly', () async {
+      final model = LoanModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.principal, 0);
+      expect(model.annualRate, 5.0);
+      expect(model.termYears, 30);
+    });
+
+    test('LoanModel setPrincipal works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setPrincipal(100000);
+      expect(model.principal, 100000);
+    });
+
+    test('LoanModel setAnnualRate works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setAnnualRate(7.5);
+      expect(model.annualRate, 7.5);
+    });
+
+    test('LoanModel setAnnualRate clamp works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setAnnualRate(0);
+      expect(model.annualRate, 0.1);
+      model.setAnnualRate(50);
+      expect(model.annualRate, 30);
+    });
+
+    test('LoanModel setTermYears works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setTermYears(15);
+      expect(model.termYears, 15);
+    });
+
+    test('LoanModel setTermYears clamp works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setTermYears(0);
+      expect(model.termYears, 1);
+      model.setTermYears(100);
+      expect(model.termYears, 50);
+    });
+
+    test('LoanModel monthlyPayment calculation works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setPrincipal(100000);
+      model.setAnnualRate(5);
+      model.setTermYears(30);
+      double expectedPayment = 536.82;
+      expect(model.monthlyPayment, closeTo(expectedPayment, 0.5));
+    });
+
+    test('LoanModel monthlyPayment zero principal returns 0', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setPrincipal(0);
+      model.setAnnualRate(5);
+      model.setTermYears(30);
+      expect(model.monthlyPayment, 0);
+    });
+
+    test('LoanModel totalPayment calculation works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setPrincipal(100000);
+      model.setAnnualRate(5);
+      model.setTermYears(30);
+      double expectedTotal = model.monthlyPayment * 360;
+      expect(model.totalPayment, closeTo(expectedTotal, 1));
+    });
+
+    test('LoanModel totalInterest calculation works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setPrincipal(100000);
+      model.setAnnualRate(5);
+      model.setTermYears(30);
+      expect(model.totalInterest, model.totalPayment - model.principal);
+    });
+
+    test('LoanModel interestPercentage calculation works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setPrincipal(100000);
+      model.setAnnualRate(5);
+      model.setTermYears(30);
+      double expectedPercent = (model.totalInterest / model.principal) * 100;
+      expect(model.interestPercentage, closeTo(expectedPercent, 1));
+    });
+
+    test('LoanModel interestPercentage zero principal returns 0', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setPrincipal(0);
+      expect(model.interestPercentage, 0);
+    });
+
+    test('LoanModel amortizationSchedule works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setPrincipal(100000);
+      model.setAnnualRate(5);
+      model.setTermYears(30);
+      List<AmortizationEntry> schedule = model.amortizationSchedule;
+      expect(schedule.length, 360);
+      expect(schedule[0].month, 1);
+      expect(schedule[0].payment, closeTo(model.monthlyPayment, 0.01));
+    });
+
+    test('LoanModel amortizationSchedule zero principal returns empty', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setPrincipal(0);
+      expect(model.amortizationSchedule.length, 0);
+    });
+
+    test('LoanModel amortizationSchedule balance decreases', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setPrincipal(100000);
+      model.setAnnualRate(5);
+      model.setTermYears(1);
+      List<AmortizationEntry> schedule = model.amortizationSchedule;
+      expect(schedule.last.balance, closeTo(0, 1));
+    });
+
+    test('LoanModel toggleAmortization works', () async {
+      final model = LoanModel();
+      await model.init();
+      expect(model.showAmortization, false);
+      model.toggleAmortization();
+      expect(model.showAmortization, true);
+      model.toggleAmortization();
+      expect(model.showAmortization, false);
+    });
+
+    test('LoanModel saveToHistory works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.clearHistory();
+      model.setPrincipal(100000);
+      model.setAnnualRate(5);
+      model.setTermYears(30);
+      model.saveToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].principal, 100000);
+      expect(model.history[0].annualRate, 5);
+      expect(model.history[0].termYears, 30);
+    });
+
+    test('LoanModel saveToHistory max limit works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.clearHistory();
+      model.setPrincipal(100000);
+      model.setAnnualRate(5);
+      model.setTermYears(30);
+      for (int i = 0; i < 15; i++) {
+        model.saveToHistory();
+      }
+      expect(model.history.length, LoanModel.maxHistory);
+    });
+
+    test('LoanModel saveToHistory ignores zero principal', () async {
+      final model = LoanModel();
+      await model.init();
+      model.clearHistory();
+      model.setPrincipal(0);
+      model.saveToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('LoanModel loadFromHistory works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.clearHistory();
+      model.setPrincipal(100000);
+      model.setAnnualRate(5);
+      model.setTermYears(30);
+      model.saveToHistory();
+      model.setPrincipal(200000);
+      model.loadFromHistory(model.history[0]);
+      expect(model.principal, 100000);
+      expect(model.annualRate, 5);
+      expect(model.termYears, 30);
+    });
+
+    test('LoanModel clearHistory works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.clearHistory();
+      model.setPrincipal(100000);
+      model.saveToHistory();
+      expect(model.history.length, 1);
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('LoanModel clear works', () async {
+      final model = LoanModel();
+      await model.init();
+      model.setPrincipal(100000);
+      model.setAnnualRate(7.5);
+      model.setTermYears(15);
+      model.toggleAmortization();
+      model.clear();
+      expect(model.principal, 0);
+      expect(model.annualRate, 5.0);
+      expect(model.termYears, 30);
+      expect(model.showAmortization, false);
+    });
+
+    test('LoanModel formatAmount works', () async {
+      final model = LoanModel();
+      await model.init();
+      expect(model.formatAmount(100), '\$100');
+      expect(model.formatAmount(536.82), '\$536.82');
+      expect(model.formatAmount(1000.0), '\$1000');
+    });
+
+    test('LoanModel refresh calls notifyListeners', () async {
+      final model = LoanModel();
+      await model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('LoanEntry toJson and fromJson work', () async {
+      final entry = LoanEntry(
+        date: DateTime.now(),
+        principal: 100000,
+        annualRate: 5.0,
+        termYears: 30,
+        monthlyPayment: 536.82,
+        totalInterest: 93256,
+        totalPayment: 193256,
+      );
+      String json = entry.toJson();
+      final parsed = LoanEntry.fromJson(json);
+      expect(parsed.principal, 100000);
+      expect(parsed.annualRate, 5.0);
+      expect(parsed.termYears, 30);
+    });
+
+    test('LoanEntry properties correct', () {
+      final entry = LoanEntry(
+        date: DateTime(2025, 1, 15),
+        principal: 250000,
+        annualRate: 6.5,
+        termYears: 25,
+        monthlyPayment: 1704.22,
+        totalInterest: 261266,
+        totalPayment: 511266,
+      );
+      expect(entry.date.year, 2025);
+      expect(entry.principal, 250000);
+      expect(entry.annualRate, 6.5);
+      expect(entry.termYears, 25);
+    });
+
+    test('AmortizationEntry properties correct', () {
+      final entry = AmortizationEntry(
+        month: 1,
+        payment: 536.82,
+        principal: 120.15,
+        interest: 416.67,
+        balance: 99879.85,
+      );
+      expect(entry.month, 1);
+      expect(entry.payment, 536.82);
+      expect(entry.principal, 120.15);
+      expect(entry.interest, 416.67);
+      expect(entry.balance, 99879.85);
+    });
+
+    testWidgets('LoanCard renders loading state', (WidgetTester tester) async {
+      final model = LoanModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: LoanCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Loan Calculator: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('LoanCard renders initialized state', (WidgetTester tester) async {
+      final model = LoanModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: LoanCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Loan Calculator'), findsOneWidget);
+      expect(find.text('Principal Amount'), findsOneWidget);
+    });
+
+    testWidgets('LoanCard shows results with principal', (WidgetTester tester) async {
+      final model = LoanModel();
+      await model.init();
+      model.setPrincipal(100000);
+      model.setAnnualRate(5);
+      model.setTermYears(30);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: LoanCard(),
+            ),
+          ),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.text('Loan Calculator'), findsOneWidget);
+      expect(find.text('Monthly Payment'), findsOneWidget);
+      expect(find.text('Total Payment'), findsOneWidget);
+      expect(find.text('Total Interest'), findsOneWidget);
+    });
+
+    testWidgets('LoanCard widget exists', (WidgetTester tester) async {
+      expect(LoanCard, isNotNull);
+    });
+
+    test('Global.providerList includes Loan', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Loan'), true);
+    });
+
+    test('Global.providerList contains all providers (102 total)', () {
+      expect(Global.providerList.length, 102);
+    });
+
+    tearDownAll(() {
+      loanModel.clearHistory();
     });
   });
 }

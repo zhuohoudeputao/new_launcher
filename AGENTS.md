@@ -1216,6 +1216,21 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `ActionChip`, `TextField` for Material 3 style
     - Keywords: aspectratio, aspect, ratio, dimensions, width, height, calculate, calculator, image, video, resize, screen, resolution
+- **Loan**: Loan/mortgage payment calculator
+    - Calculate monthly loan/mortgage payments
+    - Calculate total payment amount over loan term
+    - Calculate total interest paid over loan term
+    - Calculate interest percentage vs principal
+    - Amortization schedule table (month-by-month breakdown)
+    - Principal amount input with dollar prefix
+    - Annual interest rate input (0.1-30%, default 5%)
+    - Loan term input (1-50 years, default 30)
+    - Toggle amortization table view
+    - Save calculations to history (up to 10 entries)
+    - Load previous calculations from history
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `TextField` for Material 3 style
+    - Keywords: loan, calculator, mortgage, payment, interest, amortization, finance
 
 ## Material 3 Design System
 
@@ -1379,7 +1394,7 @@ Test coverage includes:
 - CronExpressionParser provider tests (provider existence, keywords, model state, expression parsing, description generation, next runs calculation, history, widget rendering)
 - AspectRatio provider tests (provider existence, keywords, model state, gcd calculation, ratio calculation, decimal ratio, preset selection, target dimension calculation, history, widget rendering)
 
-Total tests: 2839 tests
+Total tests: 2873 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

@@ -112,6 +112,7 @@ import 'package:new_launcher/providers/provider_bitwise.dart';
 import 'package:new_launcher/providers/provider_diff.dart';
 import 'package:new_launcher/providers/provider_cron.dart';
 import 'package:new_launcher/providers/provider_aspectratio.dart';
+import 'package:new_launcher/providers/provider_loan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -337,6 +338,7 @@ class Global {
     providerDiffChecker,
     providerCronExpressionParser,
     providerAspectRatio,
+    providerLoan,
   ];
 
   //_______________________________________________________________________
