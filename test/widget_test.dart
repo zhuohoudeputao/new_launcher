@@ -118,6 +118,7 @@ import 'package:new_launcher/providers/provider_keyboard_shortcuts.dart';
 import 'package:new_launcher/providers/provider_gitignore.dart';
 import 'package:new_launcher/providers/provider_motivationalquote.dart';
 import 'package:new_launcher/providers/provider_reminder.dart';
+import 'package:new_launcher/providers/provider_shape.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -32317,6 +32318,268 @@ test('Global.providerList contains all providers (117 total)', () {
 
     tearDownAll(() async {
       reminderModel.clearAll();
+    });
+  });
+
+  group('Shape provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      await shapeModel.init();
+    });
+
+    test('Provider exists', () {
+      expect(providerShape, isNotNull);
+      expect(providerShape.name, 'Shape');
+    });
+
+    test('Model is initialized', () {
+      expect(shapeModel.isInitialized, true);
+    });
+
+    test('Max history limit', () {
+      expect(ShapeModel.maxHistory, 10);
+    });
+
+    test('Initially no history', () {
+      expect(shapeModel.history.isEmpty, true);
+      expect(shapeModel.hasHistory, false);
+    });
+
+    test('Default shape type is circle', () {
+      expect(shapeModel.shapeType, 'circle');
+    });
+
+    test('Shape name is correct', () {
+      expect(shapeModel.shapeName, 'Circle');
+    });
+
+    test('Shape icon is correct', () {
+      expect(shapeModel.shapeIcon, '⭕');
+    });
+
+    test('Circle input labels', () {
+      expect(shapeModel.inputLabels, ['radius']);
+    });
+
+    test('Circle result labels', () {
+      expect(shapeModel.resultLabels, ['Diameter', 'Circumference', 'Area']);
+    });
+
+    test('Set shape type to rectangle', () {
+      shapeModel.setShapeType('rectangle');
+      expect(shapeModel.shapeType, 'rectangle');
+      expect(shapeModel.shapeName, 'Rectangle');
+      expect(shapeModel.inputLabels, ['width', 'height']);
+      expect(shapeModel.resultLabels, ['Area', 'Perimeter', 'Diagonal']);
+    });
+
+    test('Set shape type to triangle', () {
+      shapeModel.setShapeType('triangle');
+      expect(shapeModel.shapeType, 'triangle');
+      expect(shapeModel.shapeName, 'Triangle');
+      expect(shapeModel.inputLabels, ['base', 'height']);
+    });
+
+    test('Set shape type to sphere', () {
+      shapeModel.setShapeType('sphere');
+      expect(shapeModel.shapeType, 'sphere');
+      expect(shapeModel.shapeName, 'Sphere');
+      expect(shapeModel.inputLabels, ['radius']);
+    });
+
+    test('Set shape type to cylinder', () {
+      shapeModel.setShapeType('cylinder');
+      expect(shapeModel.shapeType, 'cylinder');
+      expect(shapeModel.shapeName, 'Cylinder');
+      expect(shapeModel.inputLabels, ['radius', 'height']);
+    });
+
+    test('Set shape type to cone', () {
+      shapeModel.setShapeType('cone');
+      expect(shapeModel.shapeType, 'cone');
+      expect(shapeModel.shapeName, 'Cone');
+      expect(shapeModel.inputLabels, ['radius', 'height']);
+    });
+
+    test('Circle calculations', () {
+      shapeModel.setShapeType('circle');
+      shapeModel.setInput('radius', 5);
+      final results = shapeModel.results;
+      expect(results['diameter'], closeTo(10, 0.001));
+      expect(results['circumference'], closeTo(31.416, 0.01));
+      expect(results['area'], closeTo(78.54, 0.01));
+    });
+
+    test('Rectangle calculations', () {
+      shapeModel.setShapeType('rectangle');
+      shapeModel.setInput('width', 6);
+      shapeModel.setInput('height', 4);
+      final results = shapeModel.results;
+      expect(results['area'], 24);
+      expect(results['perimeter'], 20);
+      expect(results['diagonal'], closeTo(7.21, 0.01));
+    });
+
+    test('Triangle calculations', () {
+      shapeModel.setShapeType('triangle');
+      shapeModel.setInput('base', 10);
+      shapeModel.setInput('height', 5);
+      final results = shapeModel.results;
+      expect(results['area'], 25);
+    });
+
+    test('Sphere calculations', () {
+      shapeModel.setShapeType('sphere');
+      shapeModel.setInput('radius', 3);
+      final results = shapeModel.results;
+      expect(results['diameter'], 6);
+      expect(results['surfaceArea'], closeTo(113.1, 0.1));
+      expect(results['volume'], closeTo(113.1, 0.1));
+    });
+
+    test('Cylinder calculations', () {
+      shapeModel.setShapeType('cylinder');
+      shapeModel.setInput('radius', 2);
+      shapeModel.setInput('height', 5);
+      final results = shapeModel.results;
+      expect(results['volume'], closeTo(62.83, 0.01));
+      expect(results['surfaceArea'], closeTo(87.96, 0.01));
+    });
+
+    test('Cone calculations', () {
+      shapeModel.setShapeType('cone');
+      shapeModel.setInput('radius', 3);
+      shapeModel.setInput('height', 4);
+      final results = shapeModel.results;
+      expect(results['volume'], closeTo(37.7, 0.1));
+      expect(results['surfaceArea'], closeTo(75.4, 0.1));
+    });
+
+    test('Invalid input returns empty results', () {
+      shapeModel.setShapeType('circle');
+      shapeModel.setInput('radius', 0);
+      expect(shapeModel.results.isEmpty, true);
+    });
+
+    test('Has valid input check', () {
+      shapeModel.setShapeType('circle');
+      shapeModel.setInput('radius', 5);
+      expect(shapeModel.hasValidInput(), true);
+      shapeModel.setInput('radius', 0);
+      expect(shapeModel.hasValidInput(), false);
+    });
+
+    test('Save to history', () {
+      shapeModel.setShapeType('circle');
+      shapeModel.setInput('radius', 10);
+      shapeModel.saveToHistory();
+      expect(shapeModel.hasHistory, true);
+      expect(shapeModel.history.length, 1);
+    });
+
+    test('Load from history', () {
+      final entry = shapeModel.history.first;
+      shapeModel.loadFromHistory(entry);
+      expect(shapeModel.shapeType, 'circle');
+      expect(shapeModel.inputs['radius'], 10);
+    });
+
+    test('Clear history', () {
+      shapeModel.clearHistory();
+      expect(shapeModel.hasHistory, false);
+      expect(shapeModel.history.length, 0);
+    });
+
+    test('ShapeHistoryEntry toJson', () {
+      final entry = ShapeHistoryEntry(
+        date: DateTime.now(),
+        shapeType: 'circle',
+        inputs: {'radius': 5.0},
+        results: {'area': 78.54, 'diameter': 10.0, 'circumference': 31.42},
+      );
+      final json = entry.toJson();
+      expect(json.contains('circle'), true);
+    });
+
+    test('ShapeHistoryEntry fromJson', () {
+      final entry = ShapeHistoryEntry(
+        date: DateTime(2026, 1, 1),
+        shapeType: 'rectangle',
+        inputs: {'width': 6.0, 'height': 4.0},
+        results: {'area': 24.0, 'perimeter': 20.0, 'diagonal': 7.21},
+      );
+      final json = entry.toJson();
+      final decoded = ShapeHistoryEntry.fromJson(json);
+      expect(decoded.shapeType, 'rectangle');
+      expect(decoded.inputs['width'], 6.0);
+      expect(decoded.inputs['height'], 4.0);
+    });
+
+    test('ShapeHistoryEntry displayText', () {
+      final entry = ShapeHistoryEntry(
+        date: DateTime.now(),
+        shapeType: 'circle',
+        inputs: {'radius': 5.0},
+        results: {'area': 78.54, 'circumference': 31.42},
+      );
+      expect(entry.displayText.contains('Circle'), true);
+      expect(entry.displayText.contains('r=5'), true);
+    });
+
+    test('Refresh calls notifyListeners', () {
+      var notified = false;
+      shapeModel.addListener(() => notified = true);
+      shapeModel.refresh();
+      expect(notified, true);
+    });
+
+    test('Clear inputs', () {
+      shapeModel.setShapeType('circle');
+      shapeModel.setInput('radius', 5);
+      shapeModel.clear();
+      expect(shapeModel.inputs.isEmpty, true);
+    });
+
+    testWidgets('ShapeCard renders loading state', (WidgetTester tester) async {
+      final model = ShapeModel();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: ShapeCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Shape Calculator: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('ShapeCard renders initialized state', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: shapeModel,
+              child: ShapeCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Shape Calculator'), findsOneWidget);
+    });
+
+    testWidgets('ShapeCard widget exists', (WidgetTester tester) async {
+      expect(ShapeCard, isNotNull);
+    });
+
+    test('Global.providerList includes Shape', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Shape'), true);
+    });
+
+    tearDownAll(() async {
+      shapeModel.clearHistory();
     });
   });
 }

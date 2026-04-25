@@ -1454,6 +1454,18 @@ Settings auto-saved via `SharedPreferences`:
     - Clear all reminders with confirmation dialog
     - Uses `Card.filled`, `showDatePicker`, `showTimePicker` for Material 3 style
     - Keywords: reminder, alarm, notify, alert, schedule, time, remind
+- **Shape**: Geometry calculator for 2D and 3D shapes
+    - Six shape types: Circle, Rectangle, Triangle, Sphere, Cylinder, Cone
+    - 2D shapes: Circle (radius → diameter, circumference, area), Rectangle (width/height → area, perimeter, diagonal), Triangle (base/height → area)
+    - 3D shapes: Sphere (radius → diameter, surface area, volume), Cylinder (radius/height → volume, surface area), Cone (radius/height → volume, surface area)
+    - Real-time calculation as input values are entered
+    - Shape type selector with SegmentedButton
+    - Emoji icons for each shape type (⭕ Circle, ⬛ Rectangle, 🔺 Triangle, 🔮 Sphere, 🛢️ Cylinder, 📐 Cone)
+    - History tracking (up to 10 entries)
+    - Load previous calculations from history
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
+    - Keywords: shape, geometry, circle, rectangle, triangle, sphere, cylinder, cone, area, perimeter, volume, surface, diagonal, radius, diameter
 
 ## Material 3 Design System
 
@@ -1633,8 +1645,10 @@ Test coverage includes:
 - KeyboardShortcuts provider tests (provider existence, keywords, model state, search/filter operations, category handling, shortcut selection, category name/color validation, widget rendering)
 - GitIgnore provider tests (provider existence, keywords, model state, search/filter operations, category handling, template selection, generated output, category name/color validation, widget rendering)
 - MotivationalQuote provider tests (provider existence, model state, quote operations, favorites management, navigation, widget rendering)
+- Reminder provider tests (provider existence, model state, CRUD operations, time formatting, JSON encoding/decoding, widget rendering)
+- Shape provider tests (provider existence, model state, shape type selection, calculations for circle/rectangle/triangle/sphere/cylinder/cone, history management, JSON encoding/decoding, widget rendering)
 
-Total tests: 3275 tests
+Total tests: 3309 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1789,6 +1803,7 @@ Technical documentation is available in `docs/`:
 - `whosturn_provider.md` - Whos Turn provider implementation for multiplayer game turn tracking
 - `wordle_provider.md` - Wordle provider implementation for the word guessing game
 - `reminder_provider.md` - Reminder provider implementation for simple timed reminders with notifications
+- `shape_provider.md` - Shape provider implementation for geometry calculations
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 
 ## Notice
