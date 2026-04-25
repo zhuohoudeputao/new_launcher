@@ -108,6 +108,7 @@ import 'package:new_launcher/providers/provider_pace.dart';
 import 'package:new_launcher/providers/provider_bloodpressure.dart';
 import 'package:new_launcher/providers/provider_bandwidth.dart';
 import 'package:new_launcher/providers/provider_coordinates.dart';
+import 'package:new_launcher/providers/provider_palette.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -30466,6 +30467,185 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       coordinatesConverterModel.clearHistory();
+    });
+  });
+
+  group('Palette provider tests', () {
+    test('providerPalette exists', () {
+      expect(providerPalette, isNotNull);
+      expect(providerPalette.name, 'Palette');
+    });
+
+    test('PaletteModel initial values', () {
+      expect(paletteModel.isInitialized, false);
+      expect(paletteModel.paletteType, PaletteType.complementary);
+      expect(paletteModel.currentPalette, isEmpty);
+      expect(paletteModel.history, isEmpty);
+    });
+
+    test('PaletteModel init works', () {
+      paletteModel.init();
+      expect(paletteModel.isInitialized, true);
+      expect(paletteModel.currentPalette.isNotEmpty, true);
+    });
+
+    test('PaletteModel setPaletteType works', () {
+      paletteModel.setPaletteType(PaletteType.analogous);
+      expect(paletteModel.paletteType, PaletteType.analogous);
+      expect(paletteModel.currentPalette.length, 3);
+    });
+
+    test('PaletteModel triadic generates 3 colors', () {
+      paletteModel.setPaletteType(PaletteType.triadic);
+      expect(paletteModel.currentPalette.length, 3);
+    });
+
+    test('PaletteModel tetradic generates 4 colors', () {
+      paletteModel.setPaletteType(PaletteType.tetradic);
+      expect(paletteModel.currentPalette.length, 4);
+    });
+
+    test('PaletteModel monochromatic generates 5 colors', () {
+      paletteModel.setPaletteType(PaletteType.monochromatic);
+      expect(paletteModel.currentPalette.length, 5);
+    });
+
+    test('PaletteModel splitComplementary generates 3 colors', () {
+      paletteModel.setPaletteType(PaletteType.splitComplementary);
+      expect(paletteModel.currentPalette.length, 3);
+    });
+
+    test('PaletteModel complementary generates 2 colors', () {
+      paletteModel.setPaletteType(PaletteType.complementary);
+      expect(paletteModel.currentPalette.length, 2);
+    });
+
+    test('PaletteModel setBaseColor works', () {
+      final newColor = Color(0xFFFF5722);
+      paletteModel.setBaseColor(newColor);
+      expect(paletteModel.baseColor, newColor);
+    });
+
+    test('PaletteModel generateRandomPalette works', () {
+      paletteModel.generateRandomPalette();
+      expect(paletteModel.currentPalette.isNotEmpty, true);
+      expect(paletteModel.history.isNotEmpty, true);
+    });
+
+    test('PaletteModel colorToHex works', () {
+      final color = Color(0xFF2196F3);
+      final hex = paletteModel.colorToHex(color);
+      expect(hex, '#2196F3');
+    });
+
+    test('PaletteModel history limits to 10 entries', () {
+      paletteModel.clearHistory();
+      for (int i = 0; i < 15; i++) {
+        paletteModel.generateRandomPalette();
+      }
+      expect(paletteModel.history.length, 10);
+    });
+
+    test('PaletteModel useHistoryEntry works', () {
+      if (paletteModel.history.isNotEmpty) {
+        final entry = paletteModel.history.first;
+        paletteModel.useHistoryEntry(entry);
+        expect(paletteModel.paletteType, entry.paletteType);
+        expect(paletteModel.baseColor, entry.baseColor);
+      }
+    });
+
+    test('PaletteModel clearHistory works', () {
+      paletteModel.generateRandomPalette();
+      paletteModel.clearHistory();
+      expect(paletteModel.history, isEmpty);
+    });
+
+    test('PaletteModel getPaletteTypeName works', () {
+      expect(PaletteModel.getPaletteTypeName(PaletteType.complementary), 'Complementary');
+      expect(PaletteModel.getPaletteTypeName(PaletteType.analogous), 'Analogous');
+      expect(PaletteModel.getPaletteTypeName(PaletteType.triadic), 'Triadic');
+      expect(PaletteModel.getPaletteTypeName(PaletteType.splitComplementary), 'Split Complementary');
+      expect(PaletteModel.getPaletteTypeName(PaletteType.tetradic), 'Tetradic');
+      expect(PaletteModel.getPaletteTypeName(PaletteType.monochromatic), 'Monochromatic');
+    });
+
+    test('PaletteModel getPaletteDescription works', () {
+      expect(PaletteModel.getPaletteDescription(PaletteType.complementary), contains('opposite'));
+      expect(PaletteModel.getPaletteDescription(PaletteType.analogous), contains('adjacent'));
+      expect(PaletteModel.getPaletteDescription(PaletteType.triadic), contains('120'));
+    });
+
+    test('PaletteHistoryEntry getFormattedTime works', () {
+      final entry = PaletteHistoryEntry(
+        paletteType: PaletteType.complementary,
+        colors: [Colors.blue, Colors.orange],
+        baseColor: Colors.blue,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.getFormattedTime(), 'just now');
+    });
+
+    test('PaletteHistoryEntry stores correct data', () {
+      final entry = PaletteHistoryEntry(
+        paletteType: PaletteType.triadic,
+        colors: [Colors.red, Colors.green, Colors.blue],
+        baseColor: Colors.red,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.paletteType, PaletteType.triadic);
+      expect(entry.colors.length, 3);
+      expect(entry.baseColor, Colors.red);
+    });
+
+    testWidgets('PaletteCard renders loading state', (WidgetTester tester) async {
+      final model = PaletteModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PaletteCard(),
+          ),
+        ),
+      ));
+
+      expect(find.textContaining('Loading'), findsOneWidget);
+    });
+
+    testWidgets('PaletteCard renders initialized state', (WidgetTester tester) async {
+      final model = PaletteModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: PaletteCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Color Palette Generator'), findsOneWidget);
+    });
+
+    testWidgets('PaletteCard widget exists', (WidgetTester tester) async {
+      expect(PaletteCard, isNotNull);
+    });
+
+    test('Global.providerList includes Palette', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Palette'), true);
+    });
+
+    test('provider count test', () {
+      expect(Global.providerList.length, 110);
+    });
+
+    tearDownAll(() {
+      paletteModel.clearHistory();
     });
   });
 }

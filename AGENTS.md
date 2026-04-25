@@ -1327,6 +1327,23 @@ Settings auto-saved via `SharedPreferences`:
     - Tap history entries to reload previous coordinates
     - Uses `Card.filled`, `TextField`, `IconButton` for Material 3 style
     - Keywords: coordinates, convert, decimal, dms, degree, latitude, longitude, gps, location
+- **Palette**: Color palette generator for cohesive color combinations
+    - 6 palette types based on color theory: Complementary, Analogous, Triadic, Split Complementary, Tetradic, Monochromatic
+    - Complementary: Two colors opposite on the color wheel (180° apart)
+    - Analogous: Colors adjacent on the color wheel (±30°)
+    - Triadic: Three colors evenly spaced (120° apart)
+    - Split Complementary: Base color + two colors adjacent to its complement
+    - Tetradic: Four colors forming a rectangle on the color wheel (90° apart)
+    - Monochromatic: Variations of a single color (shades/tints)
+    - Base color selection with custom color setting
+    - Random palette generation
+    - Copy individual colors or entire palette as HEX values
+    - Tap color swatches to copy HEX value
+    - Palette history tracking (up to 10 entries)
+    - Clear history with confirmation dialog
+    - Uses HSV color space for palette generation
+    - Uses `Card.filled`, `SegmentedButton`, `ElevatedButton` for Material 3 style
+    - Keywords: palette, color, scheme, harmony, complementary, analogous, triadic, monochromatic, tetradic, split, design
 
 ## Material 3 Design System
 
@@ -1497,8 +1514,9 @@ Test coverage includes:
 - BloodPressure provider tests (provider existence, keywords, model state, CRUD operations, category classification, statistics calculations, widget rendering)
 - BandwidthCalculator provider tests (provider existence, keywords, model state, calculation modes, unit operations, history, widget rendering)
 - CoordinatesConverter provider tests (provider existence, keywords, model state, latitude/longitude setting, coordinate clamping, DMS conversion, swap coordinates, history, widget rendering)
+- Palette provider tests (provider existence, keywords, model state, palette type generation, color count validation, base color setting, history management, color to HEX conversion, palette type names and descriptions, history entry formatting, widget rendering)
 
-Total tests: 2669 tests
+Total tests: 2693 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
