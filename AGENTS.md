@@ -1067,6 +1067,16 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `DropdownButton`, `TextField` for Material 3 style
     - Keywords: frequency, hz, khz, mhz, ghz, thz, convert, audio, radio, wave, signal
+- **FuelConsumption**: Fuel efficiency/consumption converter for vehicles
+    - Convert between 5 fuel units: mpg (US), mpg (UK), L/100km, km/L, mi/L
+    - Real-time conversion as values are entered
+    - Swap input/output units with one tap
+    - Same unit prevention (automatically selects different unit when input equals output)
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `DropdownButton`, `TextField` for Material 3 style
+    - Keywords: fuel, consumption, mpg, l100km, kmL, miles, gallon, liter, converter, efficiency
 - **PeriodicTable**: Chemical elements reference for chemistry education
     - All 118 chemical elements with complete data
     - Element details: symbol, name, atomic number, atomic mass, category, electron configuration
@@ -1228,8 +1238,9 @@ Test coverage includes:
 - PeriodicTable provider tests (provider existence, keywords, model state, search/filter operations, element data, category handling, widget rendering)
 - PressureConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - FrequencyConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
+- FuelConsumption provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 
-Total tests: 2502 tests
+Total tests: 2536 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1324,6 +1335,7 @@ Technical documentation is available in `docs/`:
 - `power_converter_provider.md` - Power Converter provider implementation for power unit conversions
 - `pressure_converter_provider.md` - Pressure Converter provider implementation for pressure unit conversions
 - `frequency_converter_provider.md` - Frequency Converter provider implementation for frequency unit conversions
+- `fuel_consumption_provider.md` - Fuel Consumption Converter provider implementation for fuel efficiency conversions
 
 ## Notice
 DO NOT EDIT task*.md

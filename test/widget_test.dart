@@ -89,6 +89,7 @@ import 'package:new_launcher/providers/provider_power.dart';
 import 'package:new_launcher/providers/provider_periodic.dart';
 import 'package:new_launcher/providers/provider_pressure.dart';
 import 'package:new_launcher/providers/provider_frequency.dart';
+import 'package:new_launcher/providers/provider_fuel.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2529,7 +2530,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 89);
+      expect(Global.providerList.length, 91);
     });
 
     test('Global.providerList names are correct', () {
@@ -3696,7 +3697,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 89);
+      expect(initCount, 91);
     });
   });
 
@@ -4014,7 +4015,7 @@ void main() {
 });
 
 test('Global.providerList contains all providers (88 total)', () {
-      expect(Global.providerList.length, 89);
+      expect(Global.providerList.length, 91);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5358,7 +5359,7 @@ test('Global.providerList includes Flashlight', () {
 });
 
 test('Global.providerList contains all providers (88 total)', () {
-      expect(Global.providerList.length, 89);
+      expect(Global.providerList.length, 91);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -24997,6 +24998,236 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       frequencyConverterModel.clearHistory();
+    });
+  });
+
+  group('FuelConsumption Provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+      await Global.init();
+    });
+
+    test('providerFuel exists in Global.providerList', () {
+      final fuelProvider = Global.providerList.where((p) => p.name == 'FuelConsumption').first;
+      expect(fuelProvider.name, 'FuelConsumption');
+    });
+
+    test('FuelConsumption provider keywords include fuel', () {
+      final keywords = 'fuel consumption mpg l100km kmL miles gallon liter converter';
+      expect(keywords.contains('fuel'), true);
+      expect(keywords.contains('consumption'), true);
+      expect(keywords.contains('mpg'), true);
+      expect(keywords.contains('converter'), true);
+    });
+
+    test('FuelConsumptionModel starts uninitialized', () {
+      final model = FuelConsumptionModel();
+      expect(model.initialized, false);
+    });
+
+    test('FuelConsumptionModel is ChangeNotifier', () {
+      final model = FuelConsumptionModel();
+      expect(model is ChangeNotifier, true);
+    });
+
+    test('FuelConsumptionModel init works', () {
+      final model = FuelConsumptionModel();
+      model.init();
+      expect(model.initialized, true);
+    });
+
+    test('FuelConsumptionModel setInputValue works', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.setInputValue('25');
+      expect(fuelConsumptionModel.inputValue, '25');
+    });
+
+    test('FuelConsumptionModel setInputUnit works', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.setInputUnit('km/L');
+      expect(fuelConsumptionModel.inputUnit, 'km/L');
+    });
+
+    test('FuelConsumptionModel setOutputUnit works', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.setOutputUnit('mpg');
+      expect(fuelConsumptionModel.outputUnit, 'mpg');
+    });
+
+    test('FuelConsumptionModel swapUnits works', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.setInputUnit('mpg');
+      fuelConsumptionModel.setOutputUnit('L/100km');
+      fuelConsumptionModel.swapUnits();
+      expect(fuelConsumptionModel.inputUnit, 'L/100km');
+      expect(fuelConsumptionModel.outputUnit, 'mpg');
+    });
+
+    test('FuelConsumptionModel mpg to L/100km conversion', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.setInputUnit('mpg');
+      fuelConsumptionModel.setOutputUnit('L/100km');
+      fuelConsumptionModel.setInputValue('25');
+      expect(double.parse(fuelConsumptionModel.outputValue), closeTo(9.4086, 0.01));
+    });
+
+    test('FuelConsumptionModel L/100km to km/L conversion', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.setInputUnit('L/100km');
+      fuelConsumptionModel.setOutputUnit('km/L');
+      fuelConsumptionModel.setInputValue('10');
+      expect(double.parse(fuelConsumptionModel.outputValue), closeTo(10.0, 0.01));
+    });
+
+    test('FuelConsumptionModel km/L to mpg conversion', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.setInputUnit('km/L');
+      fuelConsumptionModel.setOutputUnit('mpg');
+      fuelConsumptionModel.setInputValue('15');
+      expect(double.parse(fuelConsumptionModel.outputValue), closeTo(35.28, 0.01));
+    });
+
+    test('FuelConsumptionModel handles empty input', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.setInputValue('');
+      expect(fuelConsumptionModel.outputValue, '0');
+    });
+
+    test('FuelConsumptionModel handles zero', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.setInputValue('0');
+      expect(fuelConsumptionModel.outputValue, '0');
+    });
+
+    test('FuelConsumptionModel handles negative', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.setInputValue('-10');
+      expect(fuelConsumptionModel.outputValue, '0');
+    });
+
+    test('FuelConsumptionModel availableUnits contains expected units', () {
+      expect(FuelConsumptionModel.availableUnits.contains('mpg'), true);
+      expect(FuelConsumptionModel.availableUnits.contains('L/100km'), true);
+      expect(FuelConsumptionModel.availableUnits.contains('km/L'), true);
+      expect(FuelConsumptionModel.availableUnits.contains('mpguk'), true);
+      expect(FuelConsumptionModel.availableUnits.contains('mi/L'), true);
+    });
+
+    test('FuelConsumptionModel fuelUnits map correct', () {
+      expect(FuelConsumptionModel.fuelUnits['mpg'], 'Miles per Gallon (US)');
+      expect(FuelConsumptionModel.fuelUnits['L/100km'], 'Liters per 100 km');
+      expect(FuelConsumptionModel.fuelUnits['km/L'], 'Kilometers per Liter');
+    });
+
+    test('FuelConsumptionModel history starts empty', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.clearHistory();
+      expect(fuelConsumptionModel.history.length, 0);
+    });
+
+    test('FuelConsumptionModel addToHistory works', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.clearHistory();
+      fuelConsumptionModel.setInputValue('25');
+      fuelConsumptionModel.setInputUnit('mpg');
+      fuelConsumptionModel.setOutputUnit('L/100km');
+      fuelConsumptionModel.addToHistory();
+      expect(fuelConsumptionModel.history.length, 1);
+      expect(fuelConsumptionModel.history[0].inputValue, '25');
+      expect(fuelConsumptionModel.history[0].inputUnit, 'mpg');
+    });
+
+    test('FuelConsumptionModel history max limit', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.clearHistory();
+      for (int i = 0; i < 15; i++) {
+        fuelConsumptionModel.setInputValue('$i');
+        fuelConsumptionModel.addToHistory();
+      }
+      expect(fuelConsumptionModel.history.length, 10);
+    });
+
+    test('FuelConsumptionModel clearHistory works', () async {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.setInputValue('25');
+      fuelConsumptionModel.addToHistory();
+      await fuelConsumptionModel.clearHistory();
+      expect(fuelConsumptionModel.history.length, 0);
+    });
+
+    test('FuelConsumptionModel useHistoryEntry works', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.clearHistory();
+      fuelConsumptionModel.setInputValue('25');
+      fuelConsumptionModel.setInputUnit('mpg');
+      fuelConsumptionModel.setOutputUnit('L/100km');
+      fuelConsumptionModel.addToHistory();
+      final entry = fuelConsumptionModel.history[0];
+      fuelConsumptionModel.useHistoryEntry(entry);
+      expect(fuelConsumptionModel.inputValue, '25');
+      expect(fuelConsumptionModel.inputUnit, 'mpg');
+    });
+
+    test('FuelConsumptionModel refresh calls notifyListeners', () {
+      fuelConsumptionModel.init();
+      var notified = false;
+      fuelConsumptionModel.addListener(() => notified = true);
+      fuelConsumptionModel.refresh();
+      expect(notified, true);
+    });
+
+    test('FuelConsumptionModel prevents same input and output unit', () {
+      fuelConsumptionModel.init();
+      fuelConsumptionModel.setInputUnit('mpg');
+      fuelConsumptionModel.setOutputUnit('L/100km');
+      fuelConsumptionModel.setInputUnit('L/100km');
+      expect(fuelConsumptionModel.outputUnit, 'mpg');
+    });
+
+    test('FuelConsumptionCard renders loading state', () {
+      final card = FuelConsumptionCard();
+      expect(card, isNotNull);
+    });
+
+    test('FuelConsumptionCard renders initialized state', () {
+      fuelConsumptionModel.init();
+      final card = FuelConsumptionCard();
+      expect(card, isNotNull);
+    });
+
+    testWidgets('FuelConsumptionCard shows input field', (WidgetTester tester) async {
+      final model = FuelConsumptionModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: FuelConsumptionCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsWidgets);
+    });
+
+    test('FuelConsumptionCard widget exists', () {
+      expect(FuelConsumptionCard, isNotNull);
+    });
+
+    test('Global.providerList includes FuelConsumption', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('FuelConsumption'), true);
+    });
+
+    test('availableUnits count is 5', () {
+      expect(FuelConsumptionModel.availableUnits.length, 5);
+    });
+
+    tearDownAll(() {
+      fuelConsumptionModel.clearHistory();
     });
   });
 }
