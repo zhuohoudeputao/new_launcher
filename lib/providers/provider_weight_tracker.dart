@@ -80,7 +80,7 @@ extension WeightUnitExtension on WeightUnit {
       case WeightUnit.kg:
         return value;
       case WeightUnit.lb:
-        return value * 0.453592;
+        return value * 0.45359237;
     }
   }
 
@@ -89,7 +89,7 @@ extension WeightUnitExtension on WeightUnit {
       case WeightUnit.kg:
         return value;
       case WeightUnit.lb:
-        return value * 2.20462;
+        return value * 2.2046226218;
     }
   }
 }

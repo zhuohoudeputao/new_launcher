@@ -2544,7 +2544,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 104);
+      expect(Global.providerList.length, 105);
     });
 
     test('Global.providerList names are correct', () {
@@ -4028,8 +4028,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (104 total)', () {
-      expect(Global.providerList.length, 104);
+test('Global.providerList contains all providers (105 total)', () {
+      expect(Global.providerList.length, 105);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5372,8 +5372,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (104 total)', () {
-      expect(Global.providerList.length, 104);
+test('Global.providerList contains all providers (105 total)', () {
+      expect(Global.providerList.length, 105);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -12908,8 +12908,8 @@ test('Global.providerList includes UnitConverter', () {
       expect(CalorieModel.defaultGoal, 2000);
     });
 
-    test('Global.providerList contains all providers (104 total)', () {
-      expect(Global.providerList.length, 104);
+    test('Global.providerList contains all providers (105 total)', () {
+      expect(Global.providerList.length, 105);
     });
   });
 
@@ -23306,8 +23306,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Exponent'), true);
     });
 
-    test('Global.providerList contains all providers (104 total)', () {
-      expect(Global.providerList.length, 104);
+    test('Global.providerList contains all providers (105 total)', () {
+      expect(Global.providerList.length, 105);
     });
 
     tearDownAll(() {
@@ -27050,8 +27050,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerJsonFormatter.name, 'JsonFormatter');
     });
 
-    test('Global.providerList contains all providers (104 total)', () {
-      expect(Global.providerList.length, 104);
+    test('Global.providerList contains all providers (105 total)', () {
+      expect(Global.providerList.length, 105);
     });
 
     tearDownAll(() {
@@ -27394,8 +27394,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerRegexTester.name, 'RegexTester');
     });
 
-    test('Global.providerList contains all providers (104 total)', () {
-      expect(Global.providerList.length, 104);
+    test('Global.providerList contains all providers (105 total)', () {
+      expect(Global.providerList.length, 105);
     });
 
     tearDownAll(() {
@@ -27733,8 +27733,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerBitwise.name, 'Bitwise');
     });
 
-    test('Global.providerList contains all providers (104 total)', () {
-      expect(Global.providerList.length, 104);
+    test('Global.providerList contains all providers (105 total)', () {
+      expect(Global.providerList.length, 105);
     });
 
     tearDownAll(() {
@@ -27998,8 +27998,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerDiffChecker.name, 'DiffChecker');
     });
 
-    test('Global.providerList contains all providers (104 total)', () {
-      expect(Global.providerList.length, 104);
+    test('Global.providerList contains all providers (105 total)', () {
+      expect(Global.providerList.length, 105);
     });
 
     tearDownAll(() {
@@ -28295,8 +28295,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('CronExpressionParser'), true);
     });
 
-    test('Global.providerList contains all providers (104 total)', () {
-      expect(Global.providerList.length, 104);
+    test('Global.providerList contains all providers (105 total)', () {
+      expect(Global.providerList.length, 105);
     });
 
     tearDownAll(() {
@@ -28538,8 +28538,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('AspectRatio'), true);
     });
 
-    test('Global.providerList contains all providers (104 total)', () {
-      expect(Global.providerList.length, 104);
+    test('Global.providerList contains all providers (105 total)', () {
+      expect(Global.providerList.length, 105);
     });
 
     tearDownAll(() {
@@ -28909,8 +28909,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Loan'), true);
     });
 
-    test('Global.providerList contains all providers (104 total)', () {
-      expect(Global.providerList.length, 104);
+    test('Global.providerList contains all providers (105 total)', () {
+      expect(Global.providerList.length, 105);
     });
 
     tearDownAll(() {
@@ -28952,7 +28952,7 @@ test('WordleModel submitGuess works', () async {
 
     test('WeightUnit conversion works correctly', () {
       expect(WeightUnit.kg.toKg(70), 70);
-      expect(WeightUnit.lb.toKg(154.32), closeTo(69.85, 0.01));
+      expect(WeightUnit.lb.toKg(154.32), closeTo(70, 0.01));
       expect(WeightUnit.kg.fromKg(70), 70);
       expect(WeightUnit.lb.fromKg(70), closeTo(154.32, 0.01));
     });

@@ -25,7 +25,7 @@ MyProvider providerWeightTracker = MyProvider(
 - Kilograms (kg) - default unit
 - Pounds (lb) - optional unit with automatic conversion
 - Unit toggle with ActionChip buttons
-- Conversion formula: 1 kg = 2.20462 lb, 1 lb = 0.453592 kg
+- Conversion formula: 1 kg = 2.2046226218 lb, 1 lb = 0.45359237 kg (precise international conversion)
 
 ### Weight Logging
 - Log weight with decimal precision
