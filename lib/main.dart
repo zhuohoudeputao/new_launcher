@@ -117,7 +117,6 @@ import 'package:new_launcher/providers/provider_mathquiz.dart';
 import 'package:new_launcher/providers/provider_sliding_puzzle.dart';
 import 'package:new_launcher/providers/provider_httpstatus.dart';
 import 'package:new_launcher/providers/provider_keyboard_shortcuts.dart';
-import 'package:new_launcher/providers/provider_gitignore.dart';
 import 'package:new_launcher/providers/provider_area.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
