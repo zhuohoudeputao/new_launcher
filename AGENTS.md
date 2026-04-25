@@ -1788,6 +1788,8 @@ Technical documentation is available in `docs/`:
 - `weight_tracker_provider.md` - Weight Tracker provider implementation for body weight tracking
 - `whosturn_provider.md` - Whos Turn provider implementation for multiplayer game turn tracking
 - `wordle_provider.md` - Wordle provider implementation for the word guessing game
+- `reminder_provider.md` - Reminder provider implementation for simple timed reminders with notifications
+- `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 
 ## Notice
 DO NOT EDIT task*.md
