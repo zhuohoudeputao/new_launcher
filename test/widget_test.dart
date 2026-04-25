@@ -87,6 +87,7 @@ import 'package:new_launcher/providers/provider_area.dart';
 import 'package:new_launcher/providers/provider_datarate.dart';
 import 'package:new_launcher/providers/provider_power.dart';
 import 'package:new_launcher/providers/provider_periodic.dart';
+import 'package:new_launcher/providers/provider_pressure.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2527,7 +2528,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 88);
+      expect(Global.providerList.length, 89);
     });
 
     test('Global.providerList names are correct', () {
@@ -3694,7 +3695,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 88);
+      expect(initCount, 89);
     });
   });
 
@@ -4011,8 +4012,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (87 total)', () {
-      expect(Global.providerList.length, 88);
+test('Global.providerList contains all providers (88 total)', () {
+      expect(Global.providerList.length, 89);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5355,8 +5356,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (87 total)', () {
-      expect(Global.providerList.length, 88);
+test('Global.providerList contains all providers (88 total)', () {
+      expect(Global.providerList.length, 89);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -24297,6 +24298,389 @@ test('WordleModel submitGuess works', () async {
       periodicTableModel.setSearchQuery('');
       periodicTableModel.setSelectedCategory(null);
       periodicTableModel.clearSelection();
+    });
+  });
+
+  group('PressureConverter Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('providerPressureConverter exists in Global.providerList', () {
+      final pressureProvider = Global.providerList.where((p) => p.name == 'PressureConverter').first;
+      expect(pressureProvider.name, 'PressureConverter');
+    });
+
+    test('PressureConverter keywords include pressure', () {
+      final pressureProvider = Global.providerList.where((p) => p.name == 'PressureConverter').first;
+      expect(pressureProvider.name, 'PressureConverter');
+    });
+
+    test('PressureConverter keywords include pascal', () {
+      final keywords = 'pressure convert pascal bar psi atmosphere atm kpa mpa torr';
+      expect(keywords.contains('pascal'), true);
+    });
+
+    test('PressureConverter keywords include bar', () {
+      final keywords = 'pressure convert pascal bar psi atmosphere atm kpa mpa torr';
+      expect(keywords.contains('bar'), true);
+    });
+
+    test('PressureConverter keywords include psi', () {
+      final keywords = 'pressure convert pascal bar psi atmosphere atm kpa mpa torr';
+      expect(keywords.contains('psi'), true);
+    });
+
+    test('PressureConverter keywords include atmosphere', () {
+      final keywords = 'pressure convert pascal bar psi atmosphere atm kpa mpa torr';
+      expect(keywords.contains('atmosphere'), true);
+    });
+
+    test('PressureConverterModel starts uninitialized', () {
+      final model = PressureConverterModel();
+      expect(model.initialized, false);
+    });
+
+    test('PressureConverterModel is ChangeNotifier', () {
+      final model = PressureConverterModel();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.init();
+      expect(notified, false);
+      model.setInputValue('100');
+      expect(notified, true);
+    });
+
+    test('PressureConverterModel init sets initialized', () {
+      final model = PressureConverterModel();
+      model.init();
+      expect(model.initialized, true);
+    });
+
+    test('PressureConverterModel default units', () {
+      final model = PressureConverterModel();
+      expect(model.inputUnit.symbol, 'Pa');
+      expect(model.outputUnit.symbol, 'bar');
+    });
+
+    test('PressureConverterModel setInputUnit works', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputUnit(pressureUnits[2]);
+      expect(model.inputUnit.symbol, 'MPa');
+    });
+
+    test('PressureConverterModel setOutputUnit works', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setOutputUnit(pressureUnits[5]);
+      expect(model.outputUnit.symbol, 'psi');
+    });
+
+    test('PressureConverterModel setInputValue works', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputValue('100');
+      expect(model.inputValue, '100');
+    });
+
+    test('PressureConverterModel swapUnits works', () {
+      final model = PressureConverterModel();
+      model.init();
+      final originalInput = model.inputUnit;
+      final originalOutput = model.outputUnit;
+      model.swapUnits();
+      expect(model.inputUnit, originalOutput);
+      expect(model.outputUnit, originalInput);
+    });
+
+    test('PressureConverterModel clear works', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.clear();
+      expect(model.inputValue, '');
+      expect(model.outputValue, '');
+    });
+
+    test('PressureConverterModel conversion kPa to Pa', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputUnit(pressureUnits[1]);
+      model.setOutputUnit(pressureUnits[0]);
+      model.setInputValue('1');
+      expect(model.outputValue, '1000');
+    });
+
+    test('PressureConverterModel conversion Pa to kPa', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputUnit(pressureUnits[0]);
+      model.setOutputUnit(pressureUnits[1]);
+      model.setInputValue('1000');
+      expect(model.outputValue, '1');
+    });
+
+    test('PressureConverterModel conversion bar to Pa', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputUnit(pressureUnits[3]);
+      model.setOutputUnit(pressureUnits[0]);
+      model.setInputValue('1');
+      expect(model.outputValue, '100000');
+    });
+
+    test('PressureConverterModel conversion Pa to bar', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputUnit(pressureUnits[0]);
+      model.setOutputUnit(pressureUnits[3]);
+      model.setInputValue('100000');
+      expect(model.outputValue, '1');
+    });
+
+    test('PressureConverterModel conversion MPa to kPa', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputUnit(pressureUnits[2]);
+      model.setOutputUnit(pressureUnits[1]);
+      model.setInputValue('1');
+      expect(model.outputValue, '1000');
+    });
+
+    test('PressureConverterModel conversion atm to Pa', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputUnit(pressureUnits[6]);
+      model.setOutputUnit(pressureUnits[0]);
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(101325, 100));
+    });
+
+    test('PressureConverterModel conversion psi to Pa', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputUnit(pressureUnits[5]);
+      model.setOutputUnit(pressureUnits[0]);
+      model.setInputValue('1');
+      expect(double.parse(model.outputValue), closeTo(6894.76, 10));
+    });
+
+    test('PressureConverterModel handles invalid input', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputValue('abc');
+      expect(model.outputValue, '');
+    });
+
+    test('PressureConverterModel handles negative values', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputUnit(pressureUnits[0]);
+      model.setOutputUnit(pressureUnits[1]);
+      model.setInputValue('-1000');
+      expect(double.parse(model.outputValue), closeTo(-1, 0.1));
+    });
+
+    test('PressureConverterModel handles decimal values', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputUnit(pressureUnits[0]);
+      model.setOutputUnit(pressureUnits[1]);
+      model.setInputValue('500');
+      expect(double.parse(model.outputValue), closeTo(0.5, 0.05));
+    });
+
+    test('PressureConverterModel handles zero', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputValue('0');
+      expect(model.outputValue, '0');
+    });
+
+    test('PressureConverterModel availableUnits contains expected units', () {
+      final model = PressureConverterModel();
+      final symbols = model.availableUnits.map((u) => u.symbol).toList();
+      expect(symbols.contains('Pa'), true);
+      expect(symbols.contains('kPa'), true);
+      expect(symbols.contains('MPa'), true);
+      expect(symbols.contains('bar'), true);
+      expect(symbols.contains('psi'), true);
+      expect(symbols.contains('atm'), true);
+      expect(symbols.contains('Torr'), true);
+      expect(symbols.contains('mbar'), true);
+    });
+
+    test('PressureConverterModel history starts empty', () {
+      final model = PressureConverterModel();
+      model.init();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('PressureConverterModel addToHistory works', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      expect(model.history.length, 1);
+    });
+
+    test('PressureConverterModel addToHistory ignores zero', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputValue('0');
+      model.addToHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('PressureConverterModel addToHistory ignores invalid', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputValue('abc');
+      model.addToHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('PressureConverterModel history max limit', () {
+      final model = PressureConverterModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputValue('$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('PressureConverterModel clearHistory works', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('PressureConverterModel useHistoryEntry works', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputUnit(pressureUnits[2]);
+      model.setOutputUnit(pressureUnits[5]);
+      model.setInputValue('5');
+      model.addToHistory();
+      model.clear();
+      expect(model.inputValue, '');
+      model.useHistoryEntry(model.history[0]);
+      expect(model.inputUnit.symbol, 'MPa');
+      expect(model.outputUnit.symbol, 'psi');
+    });
+
+    test('PressureConverterModel refresh calls notifyListeners', () {
+      final model = PressureConverterModel();
+      model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('PressureConverterModel prevents same input and output unit', () {
+      final model = PressureConverterModel();
+      model.init();
+      model.setInputUnit(pressureUnits[1]);
+      expect(model.outputUnit != pressureUnits[1], true);
+      model.setOutputUnit(pressureUnits[2]);
+      expect(model.inputUnit != pressureUnits[2], true);
+    });
+
+    testWidgets('PressureConverterCard renders loading state', (WidgetTester tester) async {
+      final model = PressureConverterModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PressureConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('PressureConverterCard renders initialized state', (WidgetTester tester) async {
+      final model = PressureConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PressureConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Pressure Converter'), findsOneWidget);
+      expect(find.byType(DropdownButtonFormField<PressureUnit>, skipOffstage: false), findsWidgets);
+    });
+
+    testWidgets('PressureConverterCard shows input field', (WidgetTester tester) async {
+      final model = PressureConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PressureConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsWidgets);
+    });
+
+    test('PressureConverterCard widget exists', () {
+      expect(PressureConverterCard, isNotNull);
+    });
+
+    test('Global.providerList includes PressureConverter', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('PressureConverter'), true);
+    });
+
+    test('PressureUnit data correct for Pascal', () {
+      expect(pressureUnits[0].name, 'Pascal');
+      expect(pressureUnits[0].symbol, 'Pa');
+      expect(pressureUnits[0].toPascalFactor, 1.0);
+    });
+
+    test('PressureUnit data correct for Bar', () {
+      expect(pressureUnits[3].name, 'Bar');
+      expect(pressureUnits[3].symbol, 'bar');
+      expect(pressureUnits[3].toPascalFactor, 100000.0);
+    });
+
+    test('PressureUnit data correct for PSI', () {
+      expect(pressureUnits[5].name, 'PSI');
+      expect(pressureUnits[5].symbol, 'psi');
+      expect(pressureUnits[5].toPascalFactor, closeTo(6894.76, 0.1));
+    });
+
+    test('PressureUnit data correct for Atmosphere', () {
+      expect(pressureUnits[6].name, 'Atmosphere');
+      expect(pressureUnits[6].symbol, 'atm');
+      expect(pressureUnits[6].toPascalFactor, 101325.0);
+    });
+
+    test('PressureUnit count is 8', () {
+      expect(pressureUnits.length, 8);
+    });
+
+    tearDownAll(() {
+      pressureConverterModel.clearHistory();
     });
   });
 }
