@@ -1524,6 +1524,16 @@ Settings auto-saved via `SharedPreferences`:
     - Copy all statistics to clipboard
     - Uses `Card.filled`, `TextField`, `Wrap` for Material 3 style
     - Keywords: statistics, mean, median, mode, stddev, variance, average, calculator, math
+- **MarkdownPreview**: Markdown preview for text rendering
+    - Preview markdown text with real-time rendering
+    - Uses flutter_markdown package for proper markdown rendering
+    - Support for headers (h1, h2, h3), bold, italic, code blocks, lists
+    - Save markdown documents to history (up to 10 entries)
+    - Tap history entries to reload previous markdown
+    - Clear history with confirmation dialog
+    - Selectable preview text for easy copying
+    - Uses `Card.filled`, `TextField`, `Markdown` widget for Material 3 style
+    - Keywords: markdown, preview, md, text, format, render, document
 
 ## Material 3 Design System
 
@@ -1709,8 +1719,9 @@ Test coverage includes:
 - IPCalculator provider tests (provider existence, model state, IP address validation, CIDR validation, subnet mask calculation, network/broadcast address calculation, usable hosts calculation, IP class/type determination, history management, widget rendering)
 - Fraction Calculator provider tests (provider existence, model state, Fraction class simplify/add/subtract/multiply/divide operations, divide by zero handling, toStringDisplay, fraction validity, swap fractions, history management, widget rendering)
 - Statistics provider tests (provider existence, model state, mean/median/mode/stddev/variance calculations, min/max/range/sum/count calculations, input handling, history management, widget rendering)
+- Markdown Preview provider tests (provider existence, model state, input text operations, history management, time formatting, widget rendering)
 
-Total tests: 3407 tests
+Total tests: 3425 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1870,6 +1881,7 @@ Technical documentation is available in `docs/`:
 - `ip_calculator_provider.md` - IPCalculator provider implementation for IP address and subnet calculations
 - `fraction_calculator_provider.md` - Fraction Calculator provider implementation for fraction arithmetic operations
 - `statistics_provider.md` - Statistics provider implementation for numerical data analysis
+- `markdown_provider.md` - Markdown Preview provider implementation for markdown text rendering
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 - `critical_bug_fixes_iteration89.md` - Critical bug fix for missing lotteryModel and gitIgnoreModel in MultiProvider
 

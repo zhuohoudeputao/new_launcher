@@ -123,6 +123,7 @@ import 'package:new_launcher/providers/provider_lottery.dart';
 import 'package:new_launcher/providers/provider_ipcalculator.dart';
 import 'package:new_launcher/providers/provider_fraction.dart';
 import 'package:new_launcher/providers/provider_statistics.dart';
+import 'package:new_launcher/providers/provider_markdown.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -33618,6 +33619,167 @@ test('Global.providerList contains all providers (120 total)', () {
 
     tearDownAll(() {
       statisticsModel.clearHistory();
+    });
+  });
+
+  group('Markdown Preview provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('MarkdownPreviewModel initializes correctly', () {
+      final model = MarkdownPreviewModel();
+      expect(model.isInitialized, false);
+      expect(model.inputText, '');
+      expect(model.history, []);
+    });
+
+    test('MarkdownPreviewModel init works', () {
+      final model = MarkdownPreviewModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('MarkdownPreviewModel setInputText works', () {
+      final model = MarkdownPreviewModel();
+      model.init();
+      model.setInputText('# Hello World');
+      expect(model.inputText, '# Hello World');
+    });
+
+    test('MarkdownPreviewModel clearInput works', () {
+      final model = MarkdownPreviewModel();
+      model.init();
+      model.setInputText('# Test');
+      model.clearInput();
+      expect(model.inputText, '');
+    });
+
+    test('MarkdownPreviewModel addToHistory works', () {
+      final model = MarkdownPreviewModel();
+      model.init();
+      model.setInputText('# Test Document');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].text, '# Test Document');
+    });
+
+    test('MarkdownPreviewModel addToHistory ignores empty input', () {
+      final model = MarkdownPreviewModel();
+      model.init();
+      model.setInputText('');
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('MarkdownPreviewModel history max limit', () {
+      final model = MarkdownPreviewModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputText('Document $i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('MarkdownPreviewModel loadFromHistory works', () {
+      final model = MarkdownPreviewModel();
+      model.init();
+      model.setInputText('# Original');
+      model.addToHistory();
+      model.clearInput();
+      expect(model.inputText, '');
+      model.loadFromHistory(model.history[0]);
+      expect(model.inputText, '# Original');
+    });
+
+    test('MarkdownPreviewModel clearHistory works', () {
+      final model = MarkdownPreviewModel();
+      model.init();
+      model.setInputText('# Doc 1');
+      model.addToHistory();
+      model.setInputText('# Doc 2');
+      model.addToHistory();
+      expect(model.history.length, 2);
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('MarkdownPreviewModel refresh calls notifyListeners', () {
+      final model = MarkdownPreviewModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('MarkdownHistoryEntry formattedTime just now', () {
+      final entry = MarkdownHistoryEntry(
+        text: 'test',
+        timestamp: DateTime.now(),
+      );
+      expect(entry.formattedTime, 'just now');
+    });
+
+    test('MarkdownHistoryEntry formattedTime minutes ago', () {
+      final entry = MarkdownHistoryEntry(
+        text: 'test',
+        timestamp: DateTime.now().subtract(Duration(minutes: 5)),
+      );
+      expect(entry.formattedTime, '5m ago');
+    });
+
+    test('MarkdownHistoryEntry formattedTime hours ago', () {
+      final entry = MarkdownHistoryEntry(
+        text: 'test',
+        timestamp: DateTime.now().subtract(Duration(hours: 2)),
+      );
+      expect(entry.formattedTime, '2h ago');
+    });
+
+    test('MarkdownHistoryEntry formattedTime days ago', () {
+      final entry = MarkdownHistoryEntry(
+        text: 'test',
+        timestamp: DateTime.now().subtract(Duration(days: 3)),
+      );
+      expect(entry.formattedTime, '3d ago');
+    });
+
+    testWidgets('MarkdownPreviewCard renders', (WidgetTester tester) async {
+      markdownPreviewModel.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: markdownPreviewModel,
+              child: MarkdownPreviewCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Markdown Preview'), findsOneWidget);
+    });
+
+    testWidgets('MarkdownPreviewCard widget exists', (WidgetTester tester) async {
+      expect(MarkdownPreviewCard, isNotNull);
+    });
+
+    test('Global.providerList includes MarkdownPreview', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('MarkdownPreview'), true);
+    });
+
+    test('Provider has correct keywords', () {
+      final actionKeywords = 'markdown, preview, md, text, format, render, document';
+      expect(actionKeywords.contains('markdown'), true);
+      expect(actionKeywords.contains('preview'), true);
+      expect(actionKeywords.contains('md'), true);
+    });
+
+    tearDownAll(() {
+      markdownPreviewModel.clearHistory();
     });
   });
 }

@@ -135,6 +135,7 @@ import 'package:new_launcher/providers/provider_lottery.dart';
 import 'package:new_launcher/providers/provider_ipcalculator.dart';
 import 'package:new_launcher/providers/provider_fraction.dart';
 import 'package:new_launcher/providers/provider_statistics.dart';
+import 'package:new_launcher/providers/provider_markdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -383,6 +384,7 @@ class Global {
     providerIPCalculator,
     providerFractionCalculator,
     providerStatisticsCalculator,
+    providerMarkdownPreview,
   ];
 
   //_______________________________________________________________________
