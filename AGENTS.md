@@ -1396,6 +1396,16 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `ActionChip`, `TextField` for Material 3 style
     - Keywords: math, quiz, arithmetic, mental, calculate, addition, subtraction, multiplication, division, practice
+- **HTTPStatus**: HTTP status code reference for developers
+    - Comprehensive reference of HTTP status codes (1xx-5xx)
+    - 63 status codes covering informational, success, redirect, client error, server error categories
+    - Search by code number, name, or description
+    - Category filtering (1xx, 2xx, 3xx, 4xx, 5xx) with ActionChips
+    - Detailed view with code, name, category, and full description
+    - Color-coded categories for easy identification
+    - Copy status code info to clipboard
+    - Uses `Card.filled`, `TextField`, `ActionChip`, `ListTile` for Material 3 style
+    - Keywords: http, status, code, response, error, web, server, api, rest, 404, 500, 200
 
 ## Material 3 Design System
 
@@ -1571,8 +1581,9 @@ Test coverage includes:
 - ReadingTime provider tests (provider existence, keywords, model state, text operations, word count, character count, sentence/paragraph count, reading time calculation, speaking time calculation, WPM settings, history management, widget rendering)
 - SlidingPuzzle provider tests (provider existence, keywords, model state, tile operations, difficulty settings, move counting, give up functionality, statistics tracking, history, widget rendering)
 - MathQuiz provider tests (provider existence, keywords, model state, problem generation, difficulty settings, answer submission, streak tracking, accuracy calculation, history, widget rendering)
+- HTTPStatus provider tests (provider existence, keywords, model state, search/filter operations, category handling, code selection, category name/color validation, widget rendering)
 
-Total tests: 2790 tests
+Total tests: 2811 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

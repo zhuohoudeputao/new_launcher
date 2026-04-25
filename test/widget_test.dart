@@ -113,6 +113,7 @@ import 'package:new_launcher/providers/provider_gradient.dart';
 import 'package:new_launcher/providers/provider_readingtime.dart';
 import 'package:new_launcher/providers/provider_sliding_puzzle.dart';
 import 'package:new_launcher/providers/provider_mathquiz.dart';
+import 'package:new_launcher/providers/provider_httpstatus.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -4038,7 +4039,7 @@ void main() {
 });
 
 test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 115);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5382,7 +5383,7 @@ test('Global.providerList includes Flashlight', () {
 });
 
 test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 115);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -12918,7 +12919,7 @@ test('Global.providerList includes UnitConverter', () {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 115);
     });
   });
 
@@ -23316,7 +23317,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 115);
     });
 
     tearDownAll(() {
@@ -27060,7 +27061,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 115);
     });
 
     tearDownAll(() {
@@ -27404,7 +27405,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 115);
     });
 
     tearDownAll(() {
@@ -27743,7 +27744,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 115);
     });
 
     tearDownAll(() {
@@ -28008,7 +28009,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 115);
     });
 
     tearDownAll(() {
@@ -28305,7 +28306,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 115);
     });
 
     tearDownAll(() {
@@ -28548,7 +28549,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 115);
     });
 
     tearDownAll(() {
@@ -28919,7 +28920,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 115);
     });
 
     tearDownAll(() {
@@ -29293,7 +29294,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 114);
+      expect(Global.providerList.length, 115);
     });
 
     tearDownAll(() {
@@ -31546,6 +31547,146 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       mathQuizModel.clearHistory();
+    });
+  });
+  
+  group('HTTP Status Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      httpStatusModel.init();
+    });
+
+    test('providerHTTPStatus exists', () {
+      expect(providerHTTPStatus, isNotNull);
+      expect(providerHTTPStatus.name, 'HTTPStatus');
+    });
+
+    test('HTTPStatus keywords contain expected terms', () {
+      expect(providerHTTPStatus.name, 'HTTPStatus');
+    });
+
+    test('HTTPStatusModel initial state', () {
+      expect(httpStatusModel.initialized, true);
+      expect(httpStatusModel.searchQuery, '');
+      expect(httpStatusModel.selectedCode, null);
+      expect(httpStatusModel.selectedCategory, null);
+    });
+
+    test('HTTPStatusModel contains all HTTP status codes', () {
+      expect(httpStatusModel.allCodes.length, greaterThan(50));
+      expect(httpStatusModel.allCodes.any((c) => c.code == 200), true);
+      expect(httpStatusModel.allCodes.any((c) => c.code == 404), true);
+      expect(httpStatusModel.allCodes.any((c) => c.code == 500), true);
+    });
+
+    test('HTTPStatusModel setSearchQuery works', () {
+      httpStatusModel.setSearchQuery('404');
+      expect(httpStatusModel.searchQuery, '404');
+      expect(httpStatusModel.filteredCodes.length, 1);
+      expect(httpStatusModel.filteredCodes.first.code, 404);
+      httpStatusModel.setSearchQuery('');
+    });
+
+    test('HTTPStatusModel setSelectedCategory works', () {
+      httpStatusModel.setSelectedCategory(HTTPStatusCategory.clientError);
+      expect(httpStatusModel.selectedCategory, HTTPStatusCategory.clientError);
+      expect(httpStatusModel.filteredCodes.every((c) => c.category == HTTPStatusCategory.clientError), true);
+      httpStatusModel.setSelectedCategory(null);
+    });
+
+    test('HTTPStatusModel setSelectedCode works', () {
+      final code200 = httpStatusModel.allCodes.firstWhere((c) => c.code == 200);
+      httpStatusModel.setSelectedCode(code200);
+      expect(httpStatusModel.selectedCode, code200);
+      expect(httpStatusModel.selectedCode?.code, 200);
+      expect(httpStatusModel.selectedCode?.name, 'OK');
+      httpStatusModel.clearSelection();
+    });
+
+    test('HTTPStatusModel clearSelection works', () {
+      final code404 = httpStatusModel.allCodes.firstWhere((c) => c.code == 404);
+      httpStatusModel.setSelectedCode(code404);
+      httpStatusModel.clearSelection();
+      expect(httpStatusModel.selectedCode, null);
+    });
+
+    test('HTTPStatusModel refresh calls notifyListeners', () {
+      var notified = false;
+      httpStatusModel.addListener(() => notified = true);
+      httpStatusModel.refresh();
+      expect(notified, true);
+      httpStatusModel.removeListener(() => notified = false);
+    });
+
+    test('HTTPStatusCode properties correct', () {
+      final code200 = httpStatusModel.allCodes.firstWhere((c) => c.code == 200);
+      expect(code200.code, 200);
+      expect(code200.name, 'OK');
+      expect(code200.category, HTTPStatusCategory.success);
+      expect(code200.description.isNotEmpty, true);
+    });
+
+    test('getHTTPStatusCategoryName works correctly', () {
+      expect(getHTTPStatusCategoryName(HTTPStatusCategory.informational), 'Informational (1xx)');
+      expect(getHTTPStatusCategoryName(HTTPStatusCategory.success), 'Success (2xx)');
+      expect(getHTTPStatusCategoryName(HTTPStatusCategory.redirect), 'Redirect (3xx)');
+      expect(getHTTPStatusCategoryName(HTTPStatusCategory.clientError), 'Client Error (4xx)');
+      expect(getHTTPStatusCategoryName(HTTPStatusCategory.serverError), 'Server Error (5xx)');
+    });
+
+    test('getHTTPStatusCategoryColor returns valid colors', () {
+      final colorScheme = ColorScheme.light();
+      expect(getHTTPStatusCategoryColor(HTTPStatusCategory.informational, colorScheme), isNotNull);
+      expect(getHTTPStatusCategoryColor(HTTPStatusCategory.success, colorScheme), isNotNull);
+      expect(getHTTPStatusCategoryColor(HTTPStatusCategory.redirect, colorScheme), isNotNull);
+      expect(getHTTPStatusCategoryColor(HTTPStatusCategory.clientError, colorScheme), isNotNull);
+      expect(getHTTPStatusCategoryColor(HTTPStatusCategory.serverError, colorScheme), isNotNull);
+    });
+
+    testWidgets('HTTPStatusCard renders loading state', (WidgetTester tester) async {
+      final model = HTTPStatusModel();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: HTTPStatusCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('HTTPStatusCard renders initialized state', (WidgetTester tester) async {
+      final model = HTTPStatusModel();
+      model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: HTTPStatusCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('HTTP Status Codes'), findsOneWidget);
+    });
+
+    testWidgets('HTTPStatusCard widget exists', (WidgetTester tester) async {
+      expect(HTTPStatusCard, isNotNull);
+    });
+
+    test('Global.providerList includes HTTPStatus', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('HTTPStatus'), true);
+    });
+
+    test('Global.providerList contains all providers (115 total)', () {
+      expect(Global.providerList.length, 115);
+    });
+
+    tearDownAll(() {
+      httpStatusModel.clearSelection();
     });
   });
 }

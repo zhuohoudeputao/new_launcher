@@ -115,6 +115,7 @@ import 'package:new_launcher/providers/provider_gradient.dart';
 import 'package:new_launcher/providers/provider_readingtime.dart';
 import 'package:new_launcher/providers/provider_mathquiz.dart';
 import 'package:new_launcher/providers/provider_sliding_puzzle.dart';
+import 'package:new_launcher/providers/provider_httpstatus.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -304,7 +305,8 @@ ChangeNotifierProvider.value(value: gradientModel),
 ChangeNotifierProvider.value(value: readingTimeModel),
 ChangeNotifierProvider.value(value: mathQuizModel),
 ChangeNotifierProvider.value(value: slidingPuzzleModel),
-                                 ],
+ChangeNotifierProvider.value(value: httpStatusModel),
+                                  ],
           child: MyApp(),
             )));
 }

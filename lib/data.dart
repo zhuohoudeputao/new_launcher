@@ -125,6 +125,7 @@ import 'package:new_launcher/providers/provider_coordinates.dart';
 import 'package:new_launcher/providers/provider_palette.dart';
 import 'package:new_launcher/providers/provider_gradient.dart';
 import 'package:new_launcher/providers/provider_sliding_puzzle.dart';
+import 'package:new_launcher/providers/provider_httpstatus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -363,6 +364,7 @@ class Global {
     providerReadingTime,
     providerMathQuiz,
     providerSlidingPuzzle,
+    providerHTTPStatus,
   ];
 
   //_______________________________________________________________________
