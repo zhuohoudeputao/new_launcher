@@ -1466,6 +1466,22 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
     - Keywords: shape, geometry, circle, rectangle, triangle, sphere, cylinder, cone, area, perimeter, volume, surface, diagonal, radius, diameter
+- **Lottery**: Lottery number generator for random number picking
+    - Six lottery formats: 6/49, 5/50, 4/35, 3/27, 5/90, 7/47
+    - 6/49: Classic lottery format (6 numbers from 1-49)
+    - 5/50: European lottery (5 numbers from 1-50)
+    - 4/35: Mini lottery (4 numbers from 1-35)
+    - 3/27: Quick pick (3 numbers from 1-27)
+    - 5/90: Large pool (5 numbers from 1-90)
+    - 7/47: Super draw (7 numbers from 1-47)
+    - Generate unique random numbers with one tap
+    - Numbers are automatically sorted in ascending order
+    - Circular number display with Material 3 styling
+    - History tracking (up to 10 entries)
+    - Load previous lottery draws from history
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `Wrap` for Material 3 style
+    - Keywords: lottery, numbers, lucky, random, pick, draw, win, game, lotto, jackpot, powerball, mega millions
 
 ## Material 3 Design System
 
@@ -1647,8 +1663,9 @@ Test coverage includes:
 - MotivationalQuote provider tests (provider existence, model state, quote operations, favorites management, navigation, widget rendering)
 - Reminder provider tests (provider existence, model state, CRUD operations, time formatting, JSON encoding/decoding, widget rendering)
 - Shape provider tests (provider existence, model state, shape type selection, calculations for circle/rectangle/triangle/sphere/cylinder/cone, history management, JSON encoding/decoding, widget rendering)
+- Lottery provider tests (provider existence, model state, lottery type selection, number generation, unique/sorted numbers, history management, JSON encoding/decoding, widget rendering)
 
-Total tests: 3309 tests
+Total tests: 3334 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1804,6 +1821,7 @@ Technical documentation is available in `docs/`:
 - `wordle_provider.md` - Wordle provider implementation for the word guessing game
 - `reminder_provider.md` - Reminder provider implementation for simple timed reminders with notifications
 - `shape_provider.md` - Shape provider implementation for geometry calculations
+- `lottery_provider.md` - Lottery provider implementation for lottery number generation
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 
 ## Notice

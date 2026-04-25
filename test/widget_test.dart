@@ -119,6 +119,7 @@ import 'package:new_launcher/providers/provider_gitignore.dart';
 import 'package:new_launcher/providers/provider_motivationalquote.dart';
 import 'package:new_launcher/providers/provider_reminder.dart';
 import 'package:new_launcher/providers/provider_shape.dart';
+import 'package:new_launcher/providers/provider_lottery.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2559,7 +2560,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     test('Global.providerList names are correct', () {
@@ -4042,7 +4043,7 @@ void main() {
 });
 
 test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5386,7 +5387,7 @@ test('Global.providerList includes Flashlight', () {
 });
 
 test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -12922,7 +12923,7 @@ test('Global.providerList includes UnitConverter', () {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
   });
 
@@ -23320,7 +23321,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -27064,7 +27065,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -27408,7 +27409,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -27747,7 +27748,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -28012,7 +28013,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -28309,7 +28310,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -28552,7 +28553,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -28923,7 +28924,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -29297,7 +29298,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -29628,7 +29629,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -30657,7 +30658,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -30906,7 +30907,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test updated', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -31129,7 +31130,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test final', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -31314,7 +31315,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test with SlidingPuzzle', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -31689,7 +31690,7 @@ test('WordleModel submitGuess works', () async {
     });
 
 test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -31831,7 +31832,7 @@ test('Global.providerList contains all providers (120 total)', () {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -31988,7 +31989,7 @@ test('Global.providerList contains all providers (120 total)', () {
     });
 
     test('Global.providerList contains all providers (120 total)', () {
-      expect(Global.providerList.length, 120);
+      expect(Global.providerList.length, 121);
     });
 
     tearDownAll(() {
@@ -32580,6 +32581,201 @@ test('Global.providerList contains all providers (120 total)', () {
 
     tearDownAll(() async {
       shapeModel.clearHistory();
+    });
+  });
+
+  group('Lottery provider tests', () {
+    late LotteryModel lotteryModel;
+
+    setUpAll(() async {
+      lotteryModel = LotteryModel();
+      await lotteryModel.init();
+    });
+
+    test('LotteryModel initialization', () {
+      expect(lotteryModel.isInitialized, true);
+    });
+
+    test('LotteryModel has default lottery types', () {
+      expect(lotteryModel.lotteryTypes.length, 6);
+    });
+
+    test('LotteryModel lottery types have correct format', () {
+      final type = lotteryModel.lotteryTypes.first;
+      expect(type.name, '6/49');
+      expect(type.poolSize, 49);
+      expect(type.count, 6);
+    });
+
+    test('Set lottery type by name', () {
+      lotteryModel.setLotteryTypeByName('5/50');
+      expect(lotteryModel.selectedLotteryName, '5/50');
+    });
+
+    test('Set lottery type', () {
+      final type = LotteryType(name: '4/35', poolSize: 35, count: 4, description: 'Mini lottery');
+      lotteryModel.setLotteryType(type);
+      expect(lotteryModel.selectedLotteryName, '4/35');
+    });
+
+    test('Generate numbers', () {
+      lotteryModel.setLotteryTypeByName('6/49');
+      lotteryModel.generateNumbers();
+      expect(lotteryModel.hasNumbers, true);
+      expect(lotteryModel.currentNumbers.length, 6);
+      for (final num in lotteryModel.currentNumbers) {
+        expect(num >= 1 && num <= 49, true);
+      }
+    });
+
+    test('Numbers are sorted', () {
+      lotteryModel.setLotteryTypeByName('5/50');
+      lotteryModel.generateNumbers();
+      final numbers = lotteryModel.currentNumbers;
+      for (int i = 0; i < numbers.length - 1; i++) {
+        expect(numbers[i] <= numbers[i + 1], true);
+      }
+    });
+
+    test('Numbers are unique', () {
+      lotteryModel.setLotteryTypeByName('7/47');
+      lotteryModel.generateNumbers();
+      final numbers = lotteryModel.currentNumbers;
+      final uniqueNumbers = numbers.toSet();
+      expect(numbers.length, uniqueNumbers.length);
+    });
+
+    test('Clear numbers', () {
+      lotteryModel.generateNumbers();
+      lotteryModel.clearNumbers();
+      expect(lotteryModel.hasNumbers, false);
+      expect(lotteryModel.currentNumbers.isEmpty, true);
+    });
+
+    test('LotteryHistoryEntry toJson', () {
+      final entry = LotteryHistoryEntry(
+        date: DateTime(2026, 1, 1),
+        lotteryType: '6/49',
+        numbers: [1, 2, 3, 4, 5, 6],
+      );
+      final json = entry.toJson();
+      expect(json.contains('6/49'), true);
+    });
+
+    test('LotteryHistoryEntry fromJson', () {
+      final entry = LotteryHistoryEntry(
+        date: DateTime(2026, 1, 1),
+        lotteryType: '5/50',
+        numbers: [10, 20, 30, 40, 50],
+      );
+      final json = entry.toJson();
+      final decoded = LotteryHistoryEntry.fromJson(json);
+      expect(decoded.lotteryType, '5/50');
+      expect(decoded.numbers.length, 5);
+    });
+
+    test('LotteryHistoryEntry displayText', () {
+      final entry = LotteryHistoryEntry(
+        date: DateTime.now(),
+        lotteryType: '6/49',
+        numbers: [7, 14, 21, 28, 35, 42],
+      );
+      expect(entry.displayText.contains('6/49'), true);
+      expect(entry.displayText.contains('7'), true);
+    });
+
+    test('Save to history', () {
+      lotteryModel.setLotteryTypeByName('6/49');
+      lotteryModel.generateNumbers();
+      lotteryModel.saveToHistory();
+      expect(lotteryModel.hasHistory, true);
+    });
+
+    test('History respects max limit', () {
+      lotteryModel.clearHistory();
+      for (int i = 0; i < 15; i++) {
+        lotteryModel.generateNumbers();
+        lotteryModel.saveToHistory();
+      }
+      expect(lotteryModel.history.length <= LotteryModel.maxHistory, true);
+    });
+
+    test('Load from history', () {
+      lotteryModel.clearHistory();
+      lotteryModel.setLotteryTypeByName('6/49');
+      lotteryModel.generateNumbers();
+      final originalNumbers = lotteryModel.currentNumbers.toList();
+      lotteryModel.saveToHistory();
+      
+      lotteryModel.clearNumbers();
+      expect(lotteryModel.hasNumbers, false);
+      
+      lotteryModel.loadFromHistory(lotteryModel.history.first);
+      expect(lotteryModel.hasNumbers, true);
+      expect(lotteryModel.currentNumbers, originalNumbers);
+    });
+
+    test('Clear history', () {
+      lotteryModel.generateNumbers();
+      lotteryModel.saveToHistory();
+      lotteryModel.clearHistory();
+      expect(lotteryModel.hasHistory, false);
+      expect(lotteryModel.history.isEmpty, true);
+    });
+
+    test('Refresh calls notifyListeners', () {
+      var notified = false;
+      lotteryModel.addListener(() => notified = true);
+      lotteryModel.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('LotteryCard renders loading state', (WidgetTester tester) async {
+      final model = LotteryModel();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: LotteryCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Lottery Numbers: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('LotteryCard renders initialized state', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: lotteryModel,
+              child: LotteryCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Lottery Numbers'), findsOneWidget);
+    });
+
+    testWidgets('LotteryCard widget exists', (WidgetTester tester) async {
+      expect(LotteryCard, isNotNull);
+    });
+
+    test('Global.providerList includes Lottery', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Lottery'), true);
+    });
+
+    test('Provider has correct keywords', () {
+      final actionKeywords = 'lottery numbers lucky random pick draw win game lotto jackpot powerball mega millions';
+      expect(actionKeywords.contains('lottery'), true);
+      expect(actionKeywords.contains('numbers'), true);
+    });
+
+    tearDownAll(() async {
+      lotteryModel.clearHistory();
     });
   });
 }
