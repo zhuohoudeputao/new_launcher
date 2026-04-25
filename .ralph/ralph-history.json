@@ -2431,14 +2431,51 @@
         "Test failed. See exception logs above.",
         "00:03 +30 -1: (tearDownAll)                                                                                                                                                                            \r"
       ]
+    },
+    {
+      "iteration": 93,
+      "startedAt": "2026-04-25T14:40:17.251Z",
+      "endedAt": "2026-04-25T15:12:55.719Z",
+      "durationMs": 1950509,
+      "agent": "opencode",
+      "model": "",
+      "toolsUsed": {},
+      "filesModified": [
+        "AGENTS.md",
+        "docs/markdown_provider.md",
+        "lib/data.dart",
+        "lib/main.dart",
+        "lib/providers/provider_markdown.dart",
+        "pubspec.lock",
+        "pubspec.yaml",
+        "test/widget_test.dart"
+      ],
+      "exitCode": 0,
+      "completionDetected": true,
+      "errors": [
+        "test/widget_test.dart:33750:7: Error: Undefined name 'markdownPreviewModel'.",
+        "test/widget_test.dart:33755:22: Error: Undefined name 'markdownPreviewModel'.",
+        "test/widget_test.dart:33756:22: Error: Method not found: 'MarkdownPreviewCard'.",
+        "test/widget_test.dart:33765:14: Error: Undefined name 'MarkdownPreviewCard'.",
+        "test/widget_test.dart:33781:7: Error: Undefined name 'markdownPreviewModel'.",
+        "Failed to load \"/home/linzuxuan/Documents/new_launcher/test/widget_test.dart\": Compilation failed for testPath=/home/linzuxuan/Documents/new_launcher/test/widget_test.dart",
+        "00:02 +0 -1: Some tests failed."
+      ]
     }
   ],
-  "totalDurationMs": 78518288,
+  "totalDurationMs": 80468797,
   "struggleIndicators": {
     "repeatedErrors": {
       "The following TestFailure was thrown running a test:": 1,
       "Test failed. See exception logs above.": 1,
-      "00:03 +30 -1: (tearDownAll)                                                                         ": 1
+      "00:03 +30 -1: (tearDownAll)                                                                         ": 1,
+      "test/widget_test.dart:33750:7: Error: Undefined name 'markdownPreviewModel'.": 1,
+      "test/widget_test.dart:33755:22: Error: Undefined name 'markdownPreviewModel'.": 1,
+      "test/widget_test.dart:33756:22: Error: Method not found: 'MarkdownPreviewCard'.": 1,
+      "test/widget_test.dart:33765:14: Error: Undefined name 'MarkdownPreviewCard'.": 1,
+      "test/widget_test.dart:33781:7: Error: Undefined name 'markdownPreviewModel'.": 1,
+      "Failed to load \"/home/linzuxuan/Documents/new_launcher/test/widget_test.dart\": Compilation failed fo": 1,
+      "00:02 +0 -1: Some tests failed.": 1
     },
     "noProgressIterations": 0,
     "shortIterations": 0
