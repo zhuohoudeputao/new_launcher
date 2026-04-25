@@ -2555,7 +2555,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 105);
+      expect(Global.providerList.length, 116);
     });
 
     test('Global.providerList names are correct', () {
@@ -29625,8 +29625,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Pace'), true);
     });
 
-    test('Global.providerList contains all providers (107 total)', () {
-      expect(Global.providerList.length, 107);
+    test('Global.providerList contains all providers (116 total)', () {
+      expect(Global.providerList.length, 116);
     });
 
     tearDownAll(() {

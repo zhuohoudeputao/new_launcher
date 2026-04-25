@@ -1696,6 +1696,55 @@ Technical documentation is available in `docs/`:
 - `bitwise_provider.md` - Bitwise Calculator provider implementation for bitwise operations
 - `bloodpressure_provider.md` - Blood Pressure Tracker provider implementation for health monitoring
 - `bandwidth_provider.md` - Bandwidth Calculator provider implementation for network transfer planning
+- `angle_converter_provider.md` - Angle Converter provider implementation for angle unit conversions
+- `area_converter_provider.md` - Area Converter provider implementation for area unit conversions
+- `ascii_provider.md` - ASCII Code Converter provider implementation for ASCII encoding/decoding
+- `aspectratio_provider.md` - Aspect Ratio Calculator provider implementation for aspect ratio calculations
+- `caesar_cipher_provider.md` - Caesar Cipher provider implementation for classic encryption
+- `caffeine_provider.md` - Caffeine Tracker provider implementation for daily caffeine intake tracking
+- `calendar_provider.md` - Calendar provider implementation for monthly calendar widget
+- `calorie_provider.md` - Calorie Tracker provider implementation for daily calorie intake tracking
+- `compass_provider.md` - Compass provider implementation for compass direction display
+- `coordinates_provider.md` - Coordinates Converter provider implementation for geographical coordinate format conversion
+- `cron_provider.md` - Cron Expression Parser provider implementation for cron expression parsing
+- `datarate_provider.md` - Data Rate Converter provider implementation for data rate/bandwidth conversions
+- `dayscalculator_provider.md` - Days Calculator provider implementation for date calculations
+- `debt_provider.md` - Debt Tracker provider implementation for debt/loan tracking
+- `decisionmaker_provider.md` - Decision Maker provider implementation for random decision making
+- `diff_checker_provider.md` - Diff Checker provider implementation for text comparison
+- `exponent_provider.md` - Exponent Calculator provider implementation for exponent calculations
+- `filesize_provider.md` - File Size Converter provider implementation for file size unit conversions
+- `game2048_provider.md` - 2048 Game provider implementation for the classic 2048 puzzle game
+- `gradient_provider.md` - Gradient Generator provider implementation for gradient generation
+- `gratitude_provider.md` - Gratitude Journal provider implementation for daily gratitude tracking
+- `httpstatus_provider.md` - HTTP Status provider implementation for HTTP status code reference
+- `keyboardshortcuts_provider.md` - Keyboard Shortcuts provider implementation for keyboard shortcut reference
+- `loan_provider.md` - Loan Calculator provider implementation for loan/mortgage calculations
+- `loremipsum_provider.md` - Lorem Ipsum provider implementation for placeholder text generation
+- `mathquiz_provider.md` - Math Quiz provider implementation for mental math practice game
+- `minesweeper_provider.md` - Minesweeper provider implementation for the classic mine-finding game
+- `nato_provider.md` - NATO Phonetic provider implementation for NATO phonetic alphabet encoding/decoding
+- `pace_provider.md` - Pace Calculator provider implementation for running pace calculations
+- `palette_provider.md` - Palette Generator provider implementation for color palette generation
+- `parking_provider.md` - Parking Tracker provider implementation for parking location and meter tracking
+- `periodic_provider.md` - Periodic Table provider implementation for chemical elements reference
+- `prime_provider.md` - Prime Number Checker provider implementation for prime number checking
+- `readingtime_provider.md` - Reading Time provider implementation for reading time estimation
+- `rockpaperscissors_provider.md` - Rock Paper Scissors provider implementation for the classic RPS game
+- `romannumerals_provider.md` - Roman Numerals provider implementation for Roman numeral conversions
+- `sequence_provider.md` - Sequence Generator provider implementation for mathematical sequence generation
+- `simon_provider.md` - Simon Game provider implementation for the color sequence memory game
+- `sliding_puzzle_provider.md` - Sliding Puzzle provider implementation for the classic 15-puzzle game
+- `subscription_provider.md` - Subscription Tracker provider implementation for subscription/recurring payment tracking
+- `sunposition_provider.md` - Sun Position provider implementation for sun position and golden hour calculation
+- `tictactoe_provider.md` - Tic Tac Toe provider implementation for the classic Tic Tac Toe game
+- `typingtest_provider.md` - Typing Test provider implementation for typing speed testing
+- `uuid_provider.md` - UUID Generator provider implementation for UUID/GUID generation
+- `vigenere_provider.md` - Vigenere Cipher provider implementation for polyalphabetic encryption
+- `volume_converter_provider.md` - Volume Converter provider implementation for volume unit conversions
+- `weight_tracker_provider.md` - Weight Tracker provider implementation for body weight tracking
+- `whosturn_provider.md` - Whos Turn provider implementation for multiplayer game turn tracking
+- `wordle_provider.md` - Wordle provider implementation for the word guessing game
 
 ## Notice
 DO NOT EDIT task*.md
