@@ -111,6 +111,7 @@ import 'package:new_launcher/providers/provider_coordinates.dart';
 import 'package:new_launcher/providers/provider_palette.dart';
 import 'package:new_launcher/providers/provider_gradient.dart';
 import 'package:new_launcher/providers/provider_readingtime.dart';
+import 'package:new_launcher/providers/provider_sliding_puzzle.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -30643,7 +30644,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test', () {
-      expect(Global.providerList.length, 112);
+      expect(Global.providerList.length, 113);
     });
 
     tearDownAll(() {
@@ -30892,7 +30893,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test updated', () {
-      expect(Global.providerList.length, 112);
+      expect(Global.providerList.length, 113);
     });
 
     tearDownAll(() {
@@ -31115,11 +31116,196 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test final', () {
-      expect(Global.providerList.length, 112);
+      expect(Global.providerList.length, 113);
     });
 
     tearDownAll(() {
       readingTimeModel.clearHistory();
+    });
+  });
+
+  group('SlidingPuzzle provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      await Global.settingsModel.init();
+    });
+
+    test('SlidingPuzzleModel initializes correctly', () {
+      final model = SlidingPuzzleModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.tiles.length, 16);
+      expect(model.moves, 0);
+      expect(model.isSolved, false);
+    });
+
+    test('SlidingPuzzleModel newGame resets state', () {
+      final model = SlidingPuzzleModel();
+      model.init();
+      model.newGame();
+      expect(model.moves, 0);
+      expect(model.isSolved, false);
+    });
+
+    test('SlidingPuzzleModel setDifficulty works', () {
+      final model = SlidingPuzzleModel();
+      model.init();
+      model.setDifficulty(2);
+      expect(model.difficulty, 2);
+      model.setDifficulty(3);
+      expect(model.difficulty, 3);
+    });
+
+    test('SlidingPuzzleModel canMove identifies valid moves', () {
+      final model = SlidingPuzzleModel();
+      model.init();
+      final emptyRow = model.emptyIndex ~/ 4;
+      final emptyCol = model.emptyIndex % 4;
+      
+      List<int> adjacentIndices = [];
+      if (emptyRow > 0) adjacentIndices.add(model.emptyIndex - 4);
+      if (emptyRow < 3) adjacentIndices.add(model.emptyIndex + 4);
+      if (emptyCol > 0) adjacentIndices.add(model.emptyIndex - 1);
+      if (emptyCol < 3) adjacentIndices.add(model.emptyIndex + 1);
+
+      for (int index in adjacentIndices) {
+        expect(model.canMove(index), true);
+      }
+    });
+
+    test('SlidingPuzzleModel moveTile increments moves', () {
+      final model = SlidingPuzzleModel();
+      model.init();
+      int initialMoves = model.moves;
+      
+      List<int> possibleMoves = [];
+      for (int i = 0; i < 16; i++) {
+        if (model.canMove(i)) possibleMoves.add(i);
+      }
+      
+      if (possibleMoves.isNotEmpty) {
+        model.moveTile(possibleMoves[0]);
+        expect(model.moves, initialMoves + 1);
+      }
+    });
+
+    test('SlidingPuzzleModel giveUp works', () {
+      final model = SlidingPuzzleModel();
+      model.init();
+      model.giveUp();
+      expect(model.gamesPlayed, 1);
+    });
+
+    test('SlidingPuzzleModel getDifficultyName works', () {
+      final model = SlidingPuzzleModel();
+      model.setDifficulty(1);
+      expect(model.getDifficultyName(), 'Easy');
+      model.setDifficulty(2);
+      expect(model.getDifficultyName(), 'Medium');
+      model.setDifficulty(3);
+      expect(model.getDifficultyName(), 'Hard');
+    });
+
+    test('SlidingPuzzleModel formatTimeAgo works', () {
+      final model = SlidingPuzzleModel();
+      expect(model.formatTimeAgo(DateTime.now()), 'just now');
+      expect(model.formatTimeAgo(DateTime.now().subtract(Duration(minutes: 5))), '5m ago');
+      expect(model.formatTimeAgo(DateTime.now().subtract(Duration(hours: 2))), '2h ago');
+      expect(model.formatTimeAgo(DateTime.now().subtract(Duration(days: 3))), '3d ago');
+    });
+
+    test('SlidingPuzzleModel history limits to 10 entries', () {
+      final model = SlidingPuzzleModel();
+      model.init();
+      model.clearHistory();
+      for (int i = 0; i < 15; i++) {
+        model.giveUp();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('SlidingPuzzleModel clearHistory works', () {
+      final model = SlidingPuzzleModel();
+      model.init();
+      model.giveUp();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('SlidingPuzzleModel resetStats works', () {
+      final model = SlidingPuzzleModel();
+      model.init();
+      model.giveUp();
+      model.giveUp();
+      model.resetStats();
+      expect(model.gamesPlayed, 0);
+      expect(model.gamesWon, 0);
+      expect(model.bestMoves, 0);
+    });
+
+    test('SlidingPuzzleModel winRate calculation works', () {
+      final model = SlidingPuzzleModel();
+      expect(model.winRate, 0);
+    });
+
+    test('SlidingPuzzleEntry stores correct data', () {
+      final now = DateTime.now();
+      final entry = SlidingPuzzleEntry(
+        moves: 50,
+        completed: true,
+        difficulty: 2,
+        timestamp: now,
+      );
+      expect(entry.moves, 50);
+      expect(entry.completed, true);
+      expect(entry.difficulty, 2);
+      expect(entry.timestamp, now);
+    });
+
+    testWidgets('SlidingPuzzleCard renders loading state', (WidgetTester tester) async {
+      final model = SlidingPuzzleModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: SlidingPuzzleCard(),
+          ),
+        ),
+      ));
+
+      expect(find.textContaining('Loading'), findsOneWidget);
+    });
+
+    testWidgets('SlidingPuzzleCard renders initialized state', (WidgetTester tester) async {
+      slidingPuzzleModel.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: slidingPuzzleModel,
+            child: SlidingPuzzleCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Sliding Puzzle'), findsOneWidget);
+    });
+
+    testWidgets('SlidingPuzzleCard widget exists', (WidgetTester tester) async {
+      expect(SlidingPuzzleCard, isNotNull);
+    });
+
+    test('Global.providerList includes SlidingPuzzle', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('SlidingPuzzle'), true);
+    });
+
+    test('provider count test with SlidingPuzzle', () {
+      expect(Global.providerList.length, 113);
+    });
+
+    tearDownAll(() {
+      slidingPuzzleModel.clearHistory();
     });
   });
 }

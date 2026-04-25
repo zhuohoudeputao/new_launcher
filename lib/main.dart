@@ -113,6 +113,7 @@ import 'package:new_launcher/providers/provider_coordinates.dart';
 import 'package:new_launcher/providers/provider_palette.dart';
 import 'package:new_launcher/providers/provider_gradient.dart';
 import 'package:new_launcher/providers/provider_readingtime.dart';
+import 'package:new_launcher/providers/provider_sliding_puzzle.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -299,8 +300,9 @@ ChangeNotifierProvider.value(value: bloodPressureModel),
 ChangeNotifierProvider.value(value: coordinatesConverterModel),
                              ChangeNotifierProvider.value(value: paletteModel),
 ChangeNotifierProvider.value(value: gradientModel),
-                              ChangeNotifierProvider.value(value: readingTimeModel),
-                                ],
+ChangeNotifierProvider.value(value: readingTimeModel),
+ChangeNotifierProvider.value(value: slidingPuzzleModel),
+                                 ],
           child: MyApp(),
             )));
 }

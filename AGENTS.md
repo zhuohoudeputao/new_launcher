@@ -1370,6 +1370,20 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `TextField`, `Slider`, `Chip` for Material 3 style
     - Keywords: reading, time, read, words, estimate, wpm, minutes, count, text, article, blog, content
+- **SlidingPuzzle**: Classic 15-puzzle sliding tile game
+    - 4x4 grid with tiles numbered 1-15 and one empty space
+    - Goal: arrange tiles in order by sliding them into empty space
+    - Three difficulty levels: Easy (50 shuffle moves), Medium (100 shuffle moves), Hard (150 shuffle moves)
+    - Tap adjacent tiles to slide them into empty space
+    - Movable tiles highlighted with color indication
+    - Automatic solvability check ensures puzzle is always solvable
+    - Statistics tracking: games played, games won, best moves, win rate
+    - History tracking (up to 10 entries) with completion status and moves
+    - SegmentedButton for difficulty selection
+    - Give up option with confirmation dialog
+    - Reset stats with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `GridView` for Material 3 style
+    - Keywords: sliding, puzzle, 15, slide, tile, game, arrange
 
 ## Material 3 Design System
 
@@ -1543,8 +1557,9 @@ Test coverage includes:
 - Palette provider tests (provider existence, keywords, model state, palette type generation, color count validation, base color setting, history management, color to HEX conversion, palette type names and descriptions, history entry formatting, widget rendering)
 - Gradient provider tests (provider existence, keywords, model state, gradient type/direction operations, color management, CSS/Flutter output generation, history management, widget rendering)
 - ReadingTime provider tests (provider existence, keywords, model state, text operations, word count, character count, sentence/paragraph count, reading time calculation, speaking time calculation, WPM settings, history management, widget rendering)
+- SlidingPuzzle provider tests (provider existence, keywords, model state, tile operations, difficulty settings, move counting, give up functionality, statistics tracking, history, widget rendering)
 
-Total tests: 2749 tests
+Total tests: 2767 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
