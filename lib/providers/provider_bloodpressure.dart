@@ -426,7 +426,7 @@ class BloodPressureCard extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: bp.latestEntry!.category.color.withOpacity(0.2),
+                        color: bp.latestEntry!.category.color.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -458,7 +458,7 @@ class BloodPressureCard extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: bp.latestEntry!.category.color.withOpacity(0.1),
+                        color: bp.latestEntry!.category.color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -528,7 +528,7 @@ class BloodPressureCard extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: bp.averageCategory.color.withOpacity(0.1),
+                        color: bp.averageCategory.color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -812,7 +812,7 @@ class _BloodPressureLogDialogState extends State<BloodPressureLogDialog> {
             Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: category.color.withOpacity(0.1),
+                color: category.color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
