@@ -88,6 +88,7 @@ import 'package:new_launcher/providers/provider_datarate.dart';
 import 'package:new_launcher/providers/provider_power.dart';
 import 'package:new_launcher/providers/provider_periodic.dart';
 import 'package:new_launcher/providers/provider_pressure.dart';
+import 'package:new_launcher/providers/provider_frequency.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -24681,6 +24682,321 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       pressureConverterModel.clearHistory();
+    });
+  });
+
+  group('FrequencyConverter Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('providerFrequencyConverter exists', () {
+      expect(providerFrequencyConverter, isNotNull);
+    });
+
+    test('providerFrequencyConverter has correct name', () {
+      expect(providerFrequencyConverter.name, 'FrequencyConverter');
+    });
+
+    test('FrequencyConverterModel can be created', () {
+      final model = FrequencyConverterModel();
+      expect(model, isNotNull);
+    });
+
+    test('FrequencyConverterModel init works', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('FrequencyConverterModel default units', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      expect(model.inputUnit, 'MHz');
+      expect(model.outputUnit, 'kHz');
+    });
+
+    test('FrequencyConverterModel setInputUnit works', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputUnit('GHz');
+      expect(model.inputUnit, 'GHz');
+    });
+
+    test('FrequencyConverterModel setOutputUnit works', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setOutputUnit('Hz');
+      expect(model.outputUnit, 'Hz');
+    });
+
+    test('FrequencyConverterModel setInputValue works', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputValue('1000');
+      expect(model.inputValue, '1000');
+    });
+
+    test('FrequencyConverterModel converts correctly MHz to kHz', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputUnit('MHz');
+      model.setOutputUnit('kHz');
+      model.setInputValue('1');
+      expect(model.outputValue, '1000');
+    });
+
+    test('FrequencyConverterModel converts correctly GHz to MHz', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputUnit('GHz');
+      model.setOutputUnit('MHz');
+      model.setInputValue('2.5');
+      expect(double.parse(model.outputValue), closeTo(2500, 0.1));
+    });
+
+    test('FrequencyConverterModel converts correctly kHz to Hz', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputUnit('kHz');
+      model.setOutputUnit('Hz');
+      model.setInputValue('5');
+      expect(model.outputValue, '5000');
+    });
+
+    test('FrequencyConverterModel converts correctly THz to GHz', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputUnit('THz');
+      model.setOutputUnit('GHz');
+      model.setInputValue('1');
+      expect(model.outputValue, '1000');
+    });
+
+    test('FrequencyConverterModel converts correctly Hz to kHz', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputUnit('Hz');
+      model.setOutputUnit('kHz');
+      model.setInputValue('1000');
+      expect(model.outputValue, '1');
+    });
+
+    test('FrequencyConverterModel static convert method works', () {
+      expect(FrequencyConverterModel.convert(1000, 'Hz', 'kHz'), closeTo(1, 0.001));
+      expect(FrequencyConverterModel.convert(1, 'MHz', 'kHz'), closeTo(1000, 0.1));
+      expect(FrequencyConverterModel.convert(1, 'GHz', 'MHz'), closeTo(1000, 0.1));
+      expect(FrequencyConverterModel.convert(1, 'THz', 'GHz'), closeTo(1000, 0.1));
+    });
+
+    test('FrequencyConverterModel swapUnits works', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputUnit('MHz');
+      model.setOutputUnit('Hz');
+      model.setInputValue('1');
+      model.swapUnits();
+      expect(model.inputUnit, 'Hz');
+      expect(model.outputUnit, 'MHz');
+    });
+
+    test('FrequencyConverterModel clear works', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputValue('1000');
+      model.clear();
+      expect(model.inputValue, '0');
+    });
+
+    test('FrequencyConverterModel handles negative values', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputUnit('MHz');
+      model.setOutputUnit('kHz');
+      model.setInputValue('-10');
+      expect(double.parse(model.outputValue), closeTo(-10000, 0.1));
+    });
+
+    test('FrequencyConverterModel handles decimal values', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputUnit('MHz');
+      model.setOutputUnit('kHz');
+      model.setInputValue('1.5');
+      expect(double.parse(model.outputValue), closeTo(1500, 0.1));
+    });
+
+    test('FrequencyConverterModel handles zero', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputValue('0');
+      expect(model.outputValue, '0');
+    });
+
+    test('FrequencyConverterModel availableUnits contains expected units', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      expect(model.availableUnits.contains('Hz'), true);
+      expect(model.availableUnits.contains('kHz'), true);
+      expect(model.availableUnits.contains('MHz'), true);
+      expect(model.availableUnits.contains('GHz'), true);
+      expect(model.availableUnits.contains('THz'), true);
+    });
+
+    test('FrequencyConverterModel frequencyUnits map correct', () {
+      expect(frequencyUnits['Hz'], 'Hz');
+      expect(frequencyUnits['kHz'], 'kHz');
+      expect(frequencyUnits['MHz'], 'MHz');
+      expect(frequencyUnits['GHz'], 'GHz');
+      expect(frequencyUnits['THz'], 'THz');
+    });
+
+    test('FrequencyConverterModel history starts empty', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('FrequencyConverterModel addToHistory works', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      expect(model.history.length, 1);
+    });
+
+    test('FrequencyConverterModel addToHistory ignores zero', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputValue('0');
+      model.addToHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('FrequencyConverterModel addToHistory ignores invalid', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputValue('abc');
+      model.addToHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('FrequencyConverterModel history max limit', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInputValue('$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('FrequencyConverterModel clearHistory works', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputValue('100');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.isEmpty, true);
+    });
+
+    test('FrequencyConverterModel useHistoryEntry works', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputUnit('GHz');
+      model.setOutputUnit('MHz');
+      model.setInputValue('2.5');
+      model.addToHistory();
+      model.clear();
+      expect(model.inputValue, '0');
+      model.useHistoryEntry(model.history[0]);
+      expect(model.inputUnit, 'GHz');
+      expect(model.outputUnit, 'MHz');
+    });
+
+    test('FrequencyConverterModel refresh calls notifyListeners', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('FrequencyConverterModel prevents same input and output unit', () {
+      final model = FrequencyConverterModel();
+      model.init();
+      model.setInputUnit('kHz');
+      expect(model.outputUnit != 'kHz', true);
+      model.setOutputUnit('GHz');
+      expect(model.inputUnit != 'GHz', true);
+    });
+
+    testWidgets('FrequencyConverterCard renders loading state', (WidgetTester tester) async {
+      final model = FrequencyConverterModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: FrequencyConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Frequency Converter: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('FrequencyConverterCard renders initialized state', (WidgetTester tester) async {
+      final model = FrequencyConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: FrequencyConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Frequency Converter'), findsOneWidget);
+      expect(find.byType(DropdownButton<String>, skipOffstage: false), findsWidgets);
+    });
+
+    testWidgets('FrequencyConverterCard shows input field', (WidgetTester tester) async {
+      final model = FrequencyConverterModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: FrequencyConverterCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsWidgets);
+    });
+
+    test('FrequencyConverterCard widget exists', () {
+      expect(FrequencyConverterCard, isNotNull);
+    });
+
+    test('Global.providerList includes FrequencyConverter', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('FrequencyConverter'), true);
+    });
+
+    test('frequencyUnits count is 5', () {
+      expect(frequencyUnits.length, 5);
+    });
+
+    tearDownAll(() {
+      frequencyConverterModel.clearHistory();
     });
   });
 }
