@@ -1482,6 +1482,21 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `Wrap` for Material 3 style
     - Keywords: lottery, numbers, lucky, random, pick, draw, win, game, lotto, jackpot, powerball, mega millions
+- **IPCalculator**: IP address and subnet calculator for network administrators
+    - IPv4 address input with validation
+    - CIDR notation input (0-32)
+    - Subnet mask calculation (decimal and binary format)
+    - Network address calculation
+    - Broadcast address calculation
+    - First and last usable host addresses
+    - Number of usable hosts calculation
+    - IP address class determination (A, B, C, D, E)
+    - IP address type detection (Private, Public, Loopback, Reserved)
+    - Calculation history (up to 10 entries)
+    - Tap history entries to reload previous calculations
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `TextField`, `ActionChip` for Material 3 style
+    - Keywords: ip, calculator, subnet, network, cidr, mask, broadcast, host, address, ipv4
 
 ## Material 3 Design System
 
@@ -1664,8 +1679,9 @@ Test coverage includes:
 - Reminder provider tests (provider existence, model state, CRUD operations, time formatting, JSON encoding/decoding, widget rendering)
 - Shape provider tests (provider existence, model state, shape type selection, calculations for circle/rectangle/triangle/sphere/cylinder/cone, history management, JSON encoding/decoding, widget rendering)
 - Lottery provider tests (provider existence, model state, lottery type selection, number generation, unique/sorted numbers, history management, JSON encoding/decoding, widget rendering)
+- IPCalculator provider tests (provider existence, model state, IP address validation, CIDR validation, subnet mask calculation, network/broadcast address calculation, usable hosts calculation, IP class/type determination, history management, widget rendering)
 
-Total tests: 3334 tests
+Total tests: 3352 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1822,6 +1838,7 @@ Technical documentation is available in `docs/`:
 - `reminder_provider.md` - Reminder provider implementation for simple timed reminders with notifications
 - `shape_provider.md` - Shape provider implementation for geometry calculations
 - `lottery_provider.md` - Lottery provider implementation for lottery number generation
+- `ip_calculator_provider.md` - IPCalculator provider implementation for IP address and subnet calculations
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 - `critical_bug_fixes_iteration89.md` - Critical bug fix for missing lotteryModel and gitIgnoreModel in MultiProvider
 

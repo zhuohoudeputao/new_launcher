@@ -120,6 +120,7 @@ import 'package:new_launcher/providers/provider_motivationalquote.dart';
 import 'package:new_launcher/providers/provider_reminder.dart';
 import 'package:new_launcher/providers/provider_shape.dart';
 import 'package:new_launcher/providers/provider_lottery.dart';
+import 'package:new_launcher/providers/provider_ipcalculator.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -31315,7 +31316,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test with SlidingPuzzle', () {
-      expect(Global.providerList.length, 121);
+      expect(Global.providerList.length, 122);
     });
 
     tearDownAll(() {
@@ -32776,6 +32777,259 @@ test('Global.providerList contains all providers (120 total)', () {
 
     tearDownAll(() async {
       lotteryModel.clearHistory();
+    });
+  });
+
+  group('IPCalculator provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('IPCalculatorModel initializes correctly', () {
+      final model = IPCalculatorModel();
+      expect(model.isInitialized, false);
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.ipAddress, '192.168.1.100');
+      expect(model.cidr, 24);
+    });
+
+    test('IPCalculatorModel setIPAddress works', () {
+      final model = IPCalculatorModel();
+      model.init();
+      model.setIPAddress('10.0.0.1');
+      expect(model.ipAddress, '10.0.0.1');
+      expect(model.isValidIP, true);
+    });
+
+    test('IPCalculatorModel setCIDR works', () {
+      final model = IPCalculatorModel();
+      model.init();
+      model.setCIDR(16);
+      expect(model.cidr, 16);
+      model.setCIDR(33);
+      expect(model.cidr, 32);
+      model.setCIDR(-1);
+      expect(model.cidr, 0);
+    });
+
+    test('IPCalculatorModel validates IP addresses', () {
+      final model = IPCalculatorModel();
+      model.init();
+      
+      model.setIPAddress('192.168.1.100');
+      expect(model.isValidIP, true);
+      
+      model.setIPAddress('10.0.0.1');
+      expect(model.isValidIP, true);
+      
+      model.setIPAddress('invalid');
+      expect(model.isValidIP, false);
+      
+      model.setIPAddress('256.1.1.1');
+      expect(model.isValidIP, false);
+      
+      model.setIPAddress('1.2.3');
+      expect(model.isValidIP, false);
+    });
+
+    test('IPCalculatorModel calculates subnet mask', () {
+      final model = IPCalculatorModel();
+      model.init();
+      
+      model.setCIDR(24);
+      expect(model.subnetMaskDecimal, '255.255.255.0');
+      
+      model.setCIDR(16);
+      expect(model.subnetMaskDecimal, '255.255.0.0');
+      
+      model.setCIDR(8);
+      expect(model.subnetMaskDecimal, '255.0.0.0');
+      
+      model.setCIDR(32);
+      expect(model.subnetMaskDecimal, '255.255.255.255');
+      
+      model.setCIDR(0);
+      expect(model.subnetMaskDecimal, '0.0.0.0');
+    });
+
+    test('IPCalculatorModel calculates network address', () {
+      final model = IPCalculatorModel();
+      model.init();
+      
+      model.setIPAddress('192.168.1.100');
+      model.setCIDR(24);
+      expect(model.networkAddressDecimal, '192.168.1.0');
+      
+      model.setIPAddress('10.10.10.10');
+      model.setCIDR(8);
+      expect(model.networkAddressDecimal, '10.0.0.0');
+      
+      model.setIPAddress('172.16.5.10');
+      model.setCIDR(16);
+      expect(model.networkAddressDecimal, '172.16.0.0');
+    });
+
+    test('IPCalculatorModel calculates broadcast address', () {
+      final model = IPCalculatorModel();
+      model.init();
+      
+      model.setIPAddress('192.168.1.100');
+      model.setCIDR(24);
+      expect(model.broadcastAddressDecimal, '192.168.1.255');
+      
+      model.setIPAddress('10.10.10.10');
+      model.setCIDR(8);
+      expect(model.broadcastAddressDecimal, '10.255.255.255');
+    });
+
+    test('IPCalculatorModel calculates usable hosts', () {
+      final model = IPCalculatorModel();
+      model.init();
+      
+      model.setIPAddress('192.168.1.100');
+      model.setCIDR(24);
+      expect(model.numberOfHosts, 254);
+      expect(model.firstUsableHostDecimal, '192.168.1.1');
+      expect(model.lastUsableHostDecimal, '192.168.1.254');
+      
+      model.setCIDR(16);
+      expect(model.numberOfHosts, 65534);
+      
+      model.setCIDR(32);
+      expect(model.numberOfHosts, 0);
+    });
+
+    test('IPCalculatorModel determines IP class', () {
+      final model = IPCalculatorModel();
+      model.init();
+      
+      model.setIPAddress('10.0.0.1');
+      expect(model.ipClass, 'A');
+      
+      model.setIPAddress('172.16.0.1');
+      expect(model.ipClass, 'B');
+      
+      model.setIPAddress('192.168.1.1');
+      expect(model.ipClass, 'C');
+      
+      model.setIPAddress('224.0.0.1');
+      expect(model.ipClass, 'D (Multicast)');
+      
+      model.setIPAddress('240.0.0.1');
+      expect(model.ipClass, 'E (Reserved)');
+    });
+
+    test('IPCalculatorModel determines IP type', () {
+      final model = IPCalculatorModel();
+      model.init();
+      
+      model.setIPAddress('10.0.0.1');
+      expect(model.ipType, 'Private');
+      
+      model.setIPAddress('172.16.0.1');
+      expect(model.ipType, 'Private');
+      
+      model.setIPAddress('192.168.1.1');
+      expect(model.ipType, 'Private');
+      
+      model.setIPAddress('127.0.0.1');
+      expect(model.ipType, 'Loopback');
+      
+      model.setIPAddress('8.8.8.8');
+      expect(model.ipType, 'Public');
+    });
+
+    test('IPCalculatorModel history operations', () {
+      final model = IPCalculatorModel();
+      model.init();
+      
+      model.setIPAddress('192.168.1.100');
+      model.setCIDR(24);
+      model.addToHistory();
+      expect(model.hasHistory, true);
+      expect(model.history.length, 1);
+      
+      model.setIPAddress('10.0.0.1');
+      model.setCIDR(8);
+      model.addToHistory();
+      expect(model.history.length, 2);
+      expect(model.history.first.display, '10.0.0.1/8');
+      
+      model.clearHistory();
+      expect(model.hasHistory, false);
+    });
+
+    test('IPCalculatorModel max history limit', () {
+      final model = IPCalculatorModel();
+      model.init();
+      
+      for (int i = 0; i < 15; i++) {
+        model.setIPAddress('192.168.${i}.1');
+        model.setCIDR(24);
+        model.addToHistory();
+      }
+      expect(model.history.length <= IPCalculatorModel.maxHistoryLength, true);
+    });
+
+    test('IPCalculatorModel applyFromHistory', () {
+      final model = IPCalculatorModel();
+      model.init();
+      
+      model.setIPAddress('192.168.1.100');
+      model.setCIDR(24);
+      model.addToHistory();
+      
+      model.setIPAddress('10.0.0.1');
+      model.setCIDR(8);
+      
+      model.applyFromHistory(model.history.first);
+      expect(model.ipAddress, '192.168.1.100');
+      expect(model.cidr, 24);
+    });
+
+    test('IPCalculatorModel refresh calls notifyListeners', () {
+      final model = IPCalculatorModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('IPCalculatorCard renders', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: ipCalculatorModel,
+              child: IPCalculatorCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('IP Calculator'), findsOneWidget);
+    });
+
+    testWidgets('IPCalculatorCard widget exists', (WidgetTester tester) async {
+      expect(IPCalculatorCard, isNotNull);
+    });
+
+    test('Global.providerList includes IPCalculator', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('IPCalculator'), true);
+    });
+
+    test('Provider has correct keywords', () {
+      final actionKeywords = 'ip calculator subnet network cidr mask broadcast host address ipv4';
+      expect(actionKeywords.contains('ip'), true);
+      expect(actionKeywords.contains('subnet'), true);
+      expect(actionKeywords.contains('cidr'), true);
+    });
+
+    tearDownAll(() {
+      ipCalculatorModel.clearHistory();
     });
   });
 }
