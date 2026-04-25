@@ -96,6 +96,7 @@ import 'package:new_launcher/providers/provider_compass.dart';
 import 'package:new_launcher/providers/provider_caesar.dart';
 import 'package:new_launcher/providers/provider_vigenere.dart';
 import 'package:new_launcher/providers/provider_hash.dart';
+import 'package:new_launcher/providers/provider_json.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -264,9 +265,10 @@ ChangeNotifierProvider.value(value: frequencyConverterModel),
                  ChangeNotifierProvider.value(value: fuelConsumptionModel),
 ChangeNotifierProvider.value(value: compassModel),
                    ChangeNotifierProvider.value(value: caesarCipherModel),
-                   ChangeNotifierProvider.value(value: vigenereCipherModel),
-                   ChangeNotifierProvider.value(value: hashGeneratorModel),
-                    ],
+ChangeNotifierProvider.value(value: vigenereCipherModel),
+                    ChangeNotifierProvider.value(value: hashGeneratorModel),
+                    ChangeNotifierProvider.value(value: jsonModel),
+                     ],
           child: MyApp(),
             )));
 }

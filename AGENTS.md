@@ -1141,6 +1141,18 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton` for Material 3 style
     - Keywords: hash, md5, sha1, sha256, sha512, generate, digest, checksum, security
+- **JsonFormatter**: JSON validator and formatter for developers
+    - Validate JSON input with real-time error detection
+    - Format JSON with configurable indentation (2, 4, or 8 spaces)
+    - Minify JSON output option
+    - Selectable formatted output for easy copying
+    - Clear input button
+    - Save formatted JSON to history (up to 10 entries)
+    - Load previous JSON inputs from history
+    - Clear history with confirmation dialog
+    - Error message display for invalid JSON
+    - Uses `Card.filled`, `SegmentedButton`, `Switch`, `TextField` for Material 3 style
+    - Keywords: json, format, validate, pretty, minify, indent, parse
 
 ## Material 3 Design System
 
@@ -1297,8 +1309,9 @@ Test coverage includes:
 - CaesarCipher provider tests (provider existence, keywords, model state, encryption/decryption operations, shift handling, history, widget rendering)
 - VigenereCipher provider tests (provider existence, keywords, model state, encryption/decryption operations, keyword handling, history, widget rendering)
 - HashGenerator provider tests (provider existence, keywords, model state, hash generation, MD5/SHA1/SHA256/SHA512 operations, history, widget rendering)
+- JsonFormatter provider tests (provider existence, keywords, model state, JSON validation, formatting, indentation, minification, history, widget rendering)
 
-Total tests: 2658 tests
+Total tests: 2683 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1395,6 +1408,7 @@ Technical documentation is available in `docs/`:
 - `frequency_converter_provider.md` - Frequency Converter provider implementation for frequency unit conversions
 - `fuel_consumption_provider.md` - Fuel Consumption Converter provider implementation for fuel efficiency conversions
 - `hash_generator_provider.md` - Hash Generator provider implementation for cryptographic hash generation
+- `json_formatter_provider.md` - JSON Formatter provider implementation for JSON validation and formatting
 
 ## Notice
 DO NOT EDIT task*.md

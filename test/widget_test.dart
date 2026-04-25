@@ -94,6 +94,7 @@ import 'package:new_launcher/providers/provider_compass.dart';
 import 'package:new_launcher/providers/provider_caesar.dart';
 import 'package:new_launcher/providers/provider_vigenere.dart';
 import 'package:new_launcher/providers/provider_hash.dart';
+import 'package:new_launcher/providers/provider_json.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2534,7 +2535,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 95);
+      expect(Global.providerList.length, 96);
     });
 
     test('Global.providerList names are correct', () {
@@ -3701,7 +3702,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 95);
+      expect(initCount, 96);
     });
   });
 
@@ -4018,8 +4019,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (95 total)', () {
-      expect(Global.providerList.length, 95);
+test('Global.providerList contains all providers (96 total)', () {
+      expect(Global.providerList.length, 96);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5362,8 +5363,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (95 total)', () {
-      expect(Global.providerList.length, 95);
+test('Global.providerList contains all providers (96 total)', () {
+      expect(Global.providerList.length, 96);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -26285,6 +26286,271 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       hashGeneratorModel.clearHistory();
+    });
+  });
+
+  group('JSON Formatter Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('providerJsonFormatter exists in Global.providerList', () {
+      final jsonProvider = Global.providerList.where((p) => p.name == 'JsonFormatter').first;
+      expect(jsonProvider.name, 'JsonFormatter');
+    });
+
+    test('JSON Formatter provider keywords include json', () {
+      final keywords = 'json format validate pretty minify indent parse';
+      expect(keywords.contains('json'), true);
+      expect(keywords.contains('format'), true);
+      expect(keywords.contains('validate'), true);
+    });
+
+    test('JsonModel starts uninitialized', () {
+      final model = JsonModel();
+      expect(model.isInitialized, false);
+      expect(model.input, '');
+      expect(model.output, '');
+    });
+
+    test('JsonModel init works', () {
+      final model = JsonModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('JsonModel is ChangeNotifier', () {
+      final model = JsonModel();
+      expect(model, isA<ChangeNotifier>());
+    });
+
+    test('JsonModel setInput validates valid JSON', () {
+      final model = JsonModel();
+      model.init();
+      model.setInput('{"name": "test", "value": 123}');
+      expect(model.isValid, true);
+      expect(model.errorMessage, '');
+      expect(model.output.isNotEmpty, true);
+    });
+
+    test('JsonModel setInput detects invalid JSON', () {
+      final model = JsonModel();
+      model.init();
+      model.setInput('{invalid json}');
+      expect(model.isValid, false);
+      expect(model.errorMessage.isNotEmpty, true);
+    });
+
+    test('JsonModel format with indent 2', () {
+      final model = JsonModel();
+      model.init();
+      model.setIndentSpaces(2);
+      model.setInput('{"a":1}');
+      expect(model.output.contains('  '), true);
+    });
+
+    test('JsonModel format with indent 4', () {
+      final model = JsonModel();
+      model.init();
+      model.setIndentSpaces(4);
+      model.setInput('{"a":1}');
+      expect(model.output.contains('    '), true);
+    });
+
+    test('JsonModel minified output', () {
+      final model = JsonModel();
+      model.init();
+      model.setIndentSpaces(2);
+      model.setInput('{"a": 1, "b": 2}');
+      final formattedOutput = model.output;
+      model.toggleMinified();
+      expect(model.output.length < formattedOutput.length, true);
+    });
+
+    test('JsonModel empty input clears state', () {
+      final model = JsonModel();
+      model.init();
+      model.setInput('{"test": 1}');
+      expect(model.isValid, true);
+      model.setInput('');
+      expect(model.isValid, false);
+      expect(model.output, '');
+    });
+
+    test('JsonModel addToHistory works', () {
+      final model = JsonModel();
+      model.init();
+      model.setInput('{"test": "value"}');
+      expect(model.isValid, true);
+      model.addToHistory();
+      expect(model.history.length, 1);
+    });
+
+    test('JsonModel addToHistory ignores invalid', () {
+      final model = JsonModel();
+      model.init();
+      model.setInput('invalid');
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('JsonModel addToHistory ignores empty', () {
+      final model = JsonModel();
+      model.init();
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('JsonModel history max 10 entries', () {
+      final model = JsonModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setInput('{"index": $i}');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('JsonModel loadFromHistory works', () {
+      final model = JsonModel();
+      model.init();
+      model.setInput('{"original": true}');
+      model.addToHistory();
+      model.setInput('{"different": false}');
+      model.loadFromHistory(0);
+      expect(model.input.contains('original'), true);
+    });
+
+    test('JsonModel clearHistory works', () {
+      final model = JsonModel();
+      model.init();
+      model.setInput('{"test": 1}');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('JsonModel clear works', () {
+      final model = JsonModel();
+      model.init();
+      model.setInput('{"test": 1}');
+      model.clear();
+      expect(model.input, '');
+      expect(model.output, '');
+      expect(model.isValid, false);
+    });
+
+    test('JsonModel refresh calls notifyListeners', () {
+      final model = JsonModel();
+      model.init();
+      int notifyCount = 0;
+      model.addListener(() => notifyCount++);
+      model.refresh();
+      expect(notifyCount, 1);
+    });
+
+    testWidgets('JsonFormatterCard renders loading state', (WidgetTester tester) async {
+      final model = JsonModel();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: JsonFormatterCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('JSON Formatter'), findsOneWidget);
+    });
+
+    testWidgets('JsonFormatterCard renders initialized state', (WidgetTester tester) async {
+      final model = JsonModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: JsonFormatterCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('JSON Formatter'), findsOneWidget);
+    });
+
+    testWidgets('JsonFormatterCard shows header', (WidgetTester tester) async {
+      final model = JsonModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: JsonFormatterCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('JSON Formatter'), findsOneWidget);
+    });
+
+    testWidgets('JsonFormatterCard shows indent selector', (WidgetTester tester) async {
+      final model = JsonModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: JsonFormatterCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('2'), findsOneWidget);
+      expect(find.text('4'), findsOneWidget);
+      expect(find.text('8'), findsOneWidget);
+    });
+
+    testWidgets('JsonFormatterCard shows input field', (WidgetTester tester) async {
+      final model = JsonModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: JsonFormatterCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Input JSON'), findsOneWidget);
+    });
+
+    test('JsonFormatterCard widget exists', () {
+      expect(JsonFormatterCard, isNotNull);
+    });
+
+    test('Global.providerList includes JsonFormatter', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('JsonFormatter'), true);
+    });
+
+    test('providerJsonFormatter exists', () {
+      expect(providerJsonFormatter, isNotNull);
+      expect(providerJsonFormatter.name, 'JsonFormatter');
+    });
+
+    test('Global.providerList contains all providers (96 total)', () {
+      expect(Global.providerList.length, 96);
+    });
+
+    tearDownAll(() {
+      jsonModel.clearHistory();
     });
   });
 }
