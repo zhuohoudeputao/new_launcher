@@ -32,6 +32,7 @@ import 'package:new_launcher/providers/provider_clipboard.dart';
 import 'package:new_launcher/providers/provider_todo.dart';
 import 'package:new_launcher/providers/provider_qrcode.dart';
 import 'package:new_launcher/providers/provider_random.dart';
+import 'package:new_launcher/providers/provider_readingtime.dart';
 import 'package:new_launcher/providers/provider_color.dart';
 import 'package:new_launcher/providers/provider_currency.dart';
 import 'package:new_launcher/providers/provider_bookmarks.dart';
@@ -357,6 +358,7 @@ class Global {
     providerCoordinatesConverter,
     providerPalette,
     providerGradient,
+    providerReadingTime,
   ];
 
   //_______________________________________________________________________

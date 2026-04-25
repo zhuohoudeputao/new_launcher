@@ -1359,6 +1359,17 @@ Settings auto-saved via `SharedPreferences`:
     - Code view toggle for CSS/Flutter export
     - Uses `Card.filled`, `SegmentedButton`, `ActionChip` for Material 3 style
     - Keywords: gradient, linear, radial, colors, css, flutter, design, background
+- **ReadingTime**: Reading time estimator for text analysis
+    - Real-time reading time calculation based on words per minute (default 250 WPM)
+    - Adjustable WPM setting with slider (50-500 range)
+    - Speaking time estimate (150 WPM for speech)
+    - Word count, character count (with and without spaces)
+    - Sentence and paragraph count
+    - Formatted reading time display (e.g., "1m 30s", "45s")
+    - History tracking for text analyses (up to 10 entries)
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `TextField`, `Slider`, `Chip` for Material 3 style
+    - Keywords: reading, time, read, words, estimate, wpm, minutes, count, text, article, blog, content
 
 ## Material 3 Design System
 
@@ -1531,8 +1542,9 @@ Test coverage includes:
 - CoordinatesConverter provider tests (provider existence, keywords, model state, latitude/longitude setting, coordinate clamping, DMS conversion, swap coordinates, history, widget rendering)
 - Palette provider tests (provider existence, keywords, model state, palette type generation, color count validation, base color setting, history management, color to HEX conversion, palette type names and descriptions, history entry formatting, widget rendering)
 - Gradient provider tests (provider existence, keywords, model state, gradient type/direction operations, color management, CSS/Flutter output generation, history management, widget rendering)
+- ReadingTime provider tests (provider existence, keywords, model state, text operations, word count, character count, sentence/paragraph count, reading time calculation, speaking time calculation, WPM settings, history management, widget rendering)
 
-Total tests: 2721 tests
+Total tests: 2749 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

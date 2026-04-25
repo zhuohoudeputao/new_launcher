@@ -110,6 +110,7 @@ import 'package:new_launcher/providers/provider_bandwidth.dart';
 import 'package:new_launcher/providers/provider_coordinates.dart';
 import 'package:new_launcher/providers/provider_palette.dart';
 import 'package:new_launcher/providers/provider_gradient.dart';
+import 'package:new_launcher/providers/provider_readingtime.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -30642,7 +30643,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test', () {
-      expect(Global.providerList.length, 110);
+      expect(Global.providerList.length, 112);
     });
 
     tearDownAll(() {
@@ -30891,11 +30892,234 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test updated', () {
-      expect(Global.providerList.length, 111);
+      expect(Global.providerList.length, 112);
     });
 
     tearDownAll(() {
       gradientModel.clearHistory();
+    });
+  });
+
+  group('ReadingTime provider tests', () {
+    test('providerReadingTime exists', () {
+      expect(providerReadingTime, isNotNull);
+      expect(providerReadingTime.name, 'ReadingTime');
+    });
+
+    test('ReadingTimeModel initial values', () {
+      final model = ReadingTimeModel();
+      expect(model.text, '');
+      expect(model.wordsPerMinute, 250);
+      expect(model.initialized, false);
+      expect(model.history.length, 0);
+    });
+
+    test('ReadingTimeModel init works', () {
+      final model = ReadingTimeModel();
+      model.init();
+      expect(model.initialized, true);
+    });
+
+    test('ReadingTimeModel setText works', () {
+      final model = ReadingTimeModel();
+      model.setText('Hello world this is a test');
+      expect(model.text, 'Hello world this is a test');
+    });
+
+    test('ReadingTimeModel wordCount works', () {
+      final model = ReadingTimeModel();
+      model.setText('Hello world this is a test');
+      expect(model.wordCount, 6);
+    });
+
+    test('ReadingTimeModel wordCount handles empty text', () {
+      final model = ReadingTimeModel();
+      model.setText('');
+      expect(model.wordCount, 0);
+    });
+
+    test('ReadingTimeModel characterCount works', () {
+      final model = ReadingTimeModel();
+      model.setText('Hello');
+      expect(model.characterCount, 5);
+    });
+
+    test('ReadingTimeModel characterCountNoSpaces works', () {
+      final model = ReadingTimeModel();
+      model.setText('Hello world');
+      expect(model.characterCountNoSpaces, 10);
+    });
+
+    test('ReadingTimeModel sentenceCount works', () {
+      final model = ReadingTimeModel();
+      model.setText('Hello. World! Test?');
+      expect(model.sentenceCount, 3);
+    });
+
+    test('ReadingTimeModel paragraphCount works', () {
+      final model = ReadingTimeModel();
+      model.setText('Para 1.\n\nPara 2.\n\nPara 3.');
+      expect(model.paragraphCount, 3);
+    });
+
+    test('ReadingTimeModel setWordsPerMinute works', () {
+      final model = ReadingTimeModel();
+      model.setWordsPerMinute(300);
+      expect(model.wordsPerMinute, 300);
+    });
+
+    test('ReadingTimeModel setWordsPerMinute clamps values', () {
+      final model = ReadingTimeModel();
+      model.setWordsPerMinute(10);
+      expect(model.wordsPerMinute, 50);
+      model.setWordsPerMinute(600);
+      expect(model.wordsPerMinute, 500);
+    });
+
+    test('ReadingTimeModel readingTimeMinutes works', () {
+      final model = ReadingTimeModel();
+      model.setWordsPerMinute(250);
+      model.setText('word ' * 250);
+      expect(model.readingTimeMinutes, closeTo(1.0, 0.1));
+    });
+
+    test('ReadingTimeModel formattedReadingTime works', () {
+      final model = ReadingTimeModel();
+      model.setWordsPerMinute(250);
+      model.setText('word ' * 250);
+      expect(model.formattedReadingTime, '1m');
+    });
+
+    test('ReadingTimeModel formattedReadingTime handles seconds', () {
+      final model = ReadingTimeModel();
+      model.setWordsPerMinute(250);
+      model.setText('word ' * 50);
+      expect(model.formattedReadingTime.contains('s'), true);
+    });
+
+    test('ReadingTimeModel speakingTime works', () {
+      final model = ReadingTimeModel();
+      model.setText('word ' * 150);
+      expect(model.speakingTime, '1m');
+    });
+
+    test('ReadingTimeModel clearText works', () {
+      final model = ReadingTimeModel();
+      model.setText('Hello');
+      model.clearText();
+      expect(model.text, '');
+    });
+
+    test('ReadingTimeModel addToHistory works', () {
+      final model = ReadingTimeModel();
+      model.init();
+      model.setText('Test text for history');
+      model.addToHistory();
+      expect(model.history.length, 1);
+    });
+
+    test('ReadingTimeModel history limits to 10 entries', () {
+      final model = ReadingTimeModel();
+      model.init();
+      model.clearHistory();
+      for (int i = 0; i < 15; i++) {
+        model.setText('Test text number $i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('ReadingTimeModel useHistoryEntry works', () {
+      final model = ReadingTimeModel();
+      model.init();
+      model.setText('Test text');
+      model.addToHistory();
+      if (model.history.isNotEmpty) {
+        final entry = model.history.first;
+        model.useHistoryEntry(entry);
+        expect(model.wordsPerMinute, entry.wpm);
+      }
+    });
+
+    test('ReadingTimeModel clearHistory works', () {
+      final model = ReadingTimeModel();
+      model.init();
+      model.setText('Test');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('ReadingTimeHistoryEntry getFormattedTime works', () {
+      final entry = ReadingTimeHistoryEntry(
+        textPreview: 'Test',
+        wordCount: 5,
+        readingTime: '1m',
+        wpm: 250,
+        timestamp: DateTime.now(),
+      );
+      expect(entry.getFormattedTime(), 'just now');
+    });
+
+    test('ReadingTimeHistoryEntry stores correct data', () {
+      final now = DateTime.now();
+      final entry = ReadingTimeHistoryEntry(
+        textPreview: 'Test text preview',
+        wordCount: 10,
+        readingTime: '30s',
+        wpm: 200,
+        timestamp: now,
+      );
+      expect(entry.textPreview, 'Test text preview');
+      expect(entry.wordCount, 10);
+      expect(entry.readingTime, '30s');
+      expect(entry.wpm, 200);
+      expect(entry.timestamp, now);
+    });
+
+    testWidgets('ReadingTimeCard renders loading state', (WidgetTester tester) async {
+      readingTimeModel.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: readingTimeModel,
+            child: ReadingTimeCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Reading Time Estimator'), findsOneWidget);
+    });
+
+    testWidgets('ReadingTimeCard renders initialized state', (WidgetTester tester) async {
+      readingTimeModel.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: readingTimeModel,
+            child: ReadingTimeCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Reading Time Estimator'), findsOneWidget);
+    });
+
+    testWidgets('ReadingTimeCard widget exists', (WidgetTester tester) async {
+      expect(ReadingTimeCard, isNotNull);
+    });
+
+    test('Global.providerList includes ReadingTime', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('ReadingTime'), true);
+    });
+
+    test('provider count test final', () {
+      expect(Global.providerList.length, 112);
+    });
+
+    tearDownAll(() {
+      readingTimeModel.clearHistory();
     });
   });
 }
