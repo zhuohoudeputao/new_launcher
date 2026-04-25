@@ -1823,6 +1823,7 @@ Technical documentation is available in `docs/`:
 - `shape_provider.md` - Shape provider implementation for geometry calculations
 - `lottery_provider.md` - Lottery provider implementation for lottery number generation
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
+- `critical_bug_fixes_iteration89.md` - Critical bug fix for missing lotteryModel and gitIgnoreModel in MultiProvider
 
 ## Notice
 DO NOT EDIT task*.md
