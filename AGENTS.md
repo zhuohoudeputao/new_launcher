@@ -1098,6 +1098,21 @@ Settings auto-saved via `SharedPreferences`:
     - Custom painted compass dial with tick marks
     - Uses `Card.filled`, `CustomPaint`, `ActionChip`, `IconButton` for Material 3 style
     - Keywords: compass, direction, north, south, east, west, heading, orientation, navigate
+- **CaesarCipher**: Caesar cipher encoder/decoder for classic encryption
+    - Encrypt text by shifting letters forward
+    - Decrypt text by shifting letters backward
+    - Configurable shift value (0-25) with slider
+    - Preserves case (uppercase/lowercase)
+    - Non-letter characters unchanged
+    - Wrap-around handling (XYZ+3 = ABC)
+    - ROT13 support (shift 13)
+    - Swap encrypt/decrypt operation with one tap
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions with shift values
+    - Clear history with confirmation dialog
+    - Copy output to clipboard
+    - Uses `Card.filled`, `SegmentedButton`, `Slider` for Material 3 style
+    - Keywords: caesar, cipher, encrypt, decrypt, shift, rotate, classic
 
 ## Material 3 Design System
 
@@ -1249,8 +1264,10 @@ Test coverage includes:
 - PressureConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - FrequencyConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - FuelConsumption provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
+- Compass provider tests (provider existence, keywords, model state, heading operations, direction calculations, widget rendering)
+- CaesarCipher provider tests (provider existence, keywords, model state, encryption/decryption operations, shift handling, history, widget rendering)
 
-Total tests: 2571 tests
+Total tests: 2601 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

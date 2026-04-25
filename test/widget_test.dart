@@ -91,6 +91,7 @@ import 'package:new_launcher/providers/provider_pressure.dart';
 import 'package:new_launcher/providers/provider_frequency.dart';
 import 'package:new_launcher/providers/provider_fuel.dart';
 import 'package:new_launcher/providers/provider_compass.dart';
+import 'package:new_launcher/providers/provider_caesar.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2531,7 +2532,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 92);
+      expect(Global.providerList.length, 93);
     });
 
     test('Global.providerList names are correct', () {
@@ -3698,7 +3699,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 92);
+      expect(initCount, 93);
     });
   });
 
@@ -4015,8 +4016,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (92 total)', () {
-      expect(Global.providerList.length, 92);
+test('Global.providerList contains all providers (93 total)', () {
+      expect(Global.providerList.length, 93);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5359,8 +5360,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (92 total)', () {
-      expect(Global.providerList.length, 92);
+test('Global.providerList contains all providers (93 total)', () {
+      expect(Global.providerList.length, 93);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -25229,6 +25230,287 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       fuelConsumptionModel.clearHistory();
+    });
+  });
+
+  group('Caesar Cipher Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('Caesar Cipher provider exists', () {
+      final caesarProvider = Global.providerList.where((p) => p.name == 'CaesarCipher').first;
+      expect(caesarProvider.name, 'CaesarCipher');
+    });
+
+    test('Caesar Cipher provider keywords include caesar', () {
+      final keywords = 'caesar cipher encrypt decrypt shift rotate classic';
+      expect(keywords.contains('caesar'), true);
+      expect(keywords.contains('cipher'), true);
+      expect(keywords.contains('encrypt'), true);
+      expect(keywords.contains('decrypt'), true);
+    });
+
+    test('CaesarCipherModel initializes correctly', () {
+      final model = CaesarCipherModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.inputText, '');
+      expect(model.outputText, '');
+      expect(model.operation, 'encrypt');
+      expect(model.shift, 3);
+    });
+
+    test('CaesarCipherModel encrypt with shift 3', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setShift(3);
+      model.setInputText('HELLO');
+      expect(model.outputText, 'KHOOR');
+    });
+
+    test('CaesarCipherModel decrypt with shift 3', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setOperation('decrypt');
+      model.setShift(3);
+      model.setInputText('KHOOR');
+      expect(model.outputText, 'HELLO');
+    });
+
+    test('CaesarCipherModel encrypt lowercase', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setShift(3);
+      model.setInputText('hello');
+      expect(model.outputText, 'khoor');
+    });
+
+    test('CaesarCipherModel encrypt mixed case', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setShift(3);
+      model.setInputText('HeLLo');
+      expect(model.outputText, 'KhOOr');
+    });
+
+    test('CaesarCipherModel encrypt with non-letters', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setShift(3);
+      model.setInputText('Hello, World!');
+      expect(model.outputText, 'Khoor, Zruog!');
+    });
+
+    test('CaesarCipherModel shift wraps around', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setShift(3);
+      model.setInputText('XYZ');
+      expect(model.outputText, 'ABC');
+    });
+
+    test('CaesarCipherModel shift 0 produces same text', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setShift(0);
+      model.setInputText('HELLO');
+      expect(model.outputText, 'HELLO');
+    });
+
+    test('CaesarCipherModel shift 13 (ROT13)', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setShift(13);
+      model.setInputText('HELLO');
+      expect(model.outputText, 'URYYB');
+    });
+
+    test('CaesarCipherModel decrypt is inverse of encrypt', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setShift(5);
+      model.setInputText('TEST');
+      final encrypted = model.outputText;
+      model.setOperation('decrypt');
+      model.setInputText(encrypted);
+      expect(model.outputText, 'TEST');
+    });
+
+    test('CaesarCipherModel setOperation works', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setOperation('decrypt');
+      expect(model.operation, 'decrypt');
+    });
+
+    test('CaesarCipherModel setShift works', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setShift(10);
+      expect(model.shift, 10);
+    });
+
+    test('CaesarCipherModel setShift wraps around 26', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setShift(30);
+      expect(model.shift, 4);
+    });
+
+    test('CaesarCipherModel swapOperation works', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.swapOperation();
+      expect(model.operation, 'decrypt');
+      model.swapOperation();
+      expect(model.operation, 'encrypt');
+    });
+
+    test('CaesarCipherModel clearInput works', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setInputText('HELLO');
+      model.clearInput();
+      expect(model.inputText, '');
+      expect(model.outputText, '');
+      expect(model.error, null);
+    });
+
+    test('CaesarCipherModel addToHistory works', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setShift(3);
+      model.setInputText('HELLO');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].input, 'HELLO');
+      expect(model.history[0].output, 'KHOOR');
+      expect(model.history[0].operation, 'encrypt');
+      expect(model.history[0].shift, 3);
+    });
+
+    test('CaesarCipherModel history limited to 10 entries', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setShift(3);
+      for (int i = 0; i < 15; i++) {
+        model.setInputText('TEST$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('CaesarCipherModel loadFromHistory works', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setShift(3);
+      model.setInputText('HELLO');
+      model.addToHistory();
+      model.setShift(5);
+      model.setInputText('WORLD');
+      model.loadFromHistory(0);
+      expect(model.inputText, 'HELLO');
+      expect(model.shift, 3);
+    });
+
+    test('CaesarCipherModel clearHistory works', () {
+      final model = CaesarCipherModel();
+      model.init();
+      model.setShift(3);
+      model.setInputText('HELLO');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('CaesarCipherModel getOperationLabel works', () {
+      final model = CaesarCipherModel();
+      expect(model.getOperationLabel('encrypt'), 'Encrypt');
+      expect(model.getOperationLabel('decrypt'), 'Decrypt');
+    });
+
+    test('CaesarCipherModel refresh calls notifyListeners', () {
+      final model = CaesarCipherModel();
+      model.init();
+      var notified = false;
+      model.addListener(() {
+        notified = true;
+      });
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('CaesarCipherCard renders loading state', () {
+      final card = CaesarCipherCard();
+      expect(card, isNotNull);
+    });
+
+    test('CaesarCipherCard renders initialized state', () {
+      caesarCipherModel.init();
+      final card = CaesarCipherCard();
+      expect(card, isNotNull);
+    });
+
+    testWidgets('CaesarCipherCard shows header', (WidgetTester tester) async {
+      final model = CaesarCipherModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: CaesarCipherCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Caesar Cipher'), findsOneWidget);
+    });
+
+    testWidgets('CaesarCipherCard shows operation selector', (WidgetTester tester) async {
+      final model = CaesarCipherModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: CaesarCipherCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Encrypt'), findsOneWidget);
+      expect(find.text('Decrypt'), findsOneWidget);
+    });
+
+    test('CaesarCipherCard widget exists', () {
+      expect(CaesarCipherCard, isNotNull);
+    });
+
+    test('Global.providerList includes CaesarCipher', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('CaesarCipher'), true);
+    });
+
+    test('providerCaesarCipher exists', () {
+      expect(providerCaesarCipher, isNotNull);
+      expect(providerCaesarCipher.name, 'CaesarCipher');
+    });
+
+    tearDownAll(() {
+      caesarCipherModel.clearHistory();
     });
   });
 
