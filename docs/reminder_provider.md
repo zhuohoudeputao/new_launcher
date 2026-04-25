@@ -76,9 +76,12 @@ Tests include:
 - Reminder CRUD operations
 - Expired reminder detection
 - ReminderEntry toJson/fromJson
+- JSON encode/decode roundtrip
 - Model refresh
 - Widget rendering (loading and initialized states)
 - Global.providerList inclusion
+
+Total tests: 21 Reminder-specific tests
 
 ## Integration
 

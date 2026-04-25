@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
@@ -135,13 +136,9 @@ class ReminderModel extends ChangeNotifier {
   Future<void> _loadReminders() async {
     final saved = _prefs?.getStringList('reminders') ?? [];
     _reminders.clear();
-    for (final json in saved) {
+    for (final jsonStr in saved) {
       try {
-        final entry = ReminderEntry.fromJson(
-          Map<String, dynamic>.from(
-            Map<String, String>.from(await _decodeJson(json))
-          )
-        );
+        final entry = ReminderEntry.fromJson(_decodeJson(jsonStr));
         _reminders.add(entry);
       } catch (e) {
         Global.loggerModel.warning("Failed to load reminder: $e", source: "Reminder");
@@ -150,18 +147,12 @@ class ReminderModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map<String, String>> _decodeJson(String json) async {
-    return Map<String, String>.from(
-      Map<String, dynamic>.from(
-        Map<String, dynamic>.from(
-          {}
-        )
-      )
-    );
+  Map<String, dynamic> _decodeJson(String jsonStr) {
+    return json.decode(jsonStr) as Map<String, dynamic>;
   }
 
   Future<void> _saveReminders() async {
-    final jsonList = _reminders.map((r) => r.toJson().toString()).toList();
+    final jsonList = _reminders.map((r) => json.encode(r.toJson())).toList();
     await _prefs?.setStringList('reminders', jsonList);
   }
 

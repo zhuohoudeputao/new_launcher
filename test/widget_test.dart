@@ -32248,6 +32248,23 @@ test('Global.providerList contains all providers (117 total)', () {
       expect(entry.message, 'Test from json');
     });
 
+    test('JSON encode/decode roundtrip', () {
+      final entry = ReminderEntry(
+        id: 'roundtrip-id',
+        targetTime: DateTime(2026, 1, 15, 10, 30),
+        message: 'Roundtrip test',
+        notified: true,
+        dismissed: false,
+      );
+      final json = entry.toJson();
+      final decoded = ReminderEntry.fromJson(json);
+      expect(decoded.id, entry.id);
+      expect(decoded.message, entry.message);
+      expect(decoded.targetTime, entry.targetTime);
+      expect(decoded.notified, entry.notified);
+      expect(decoded.dismissed, entry.dismissed);
+    });
+
     test('Refresh calls notifyListeners', () {
       var notified = false;
       reminderModel.addListener(() => notified = true);
