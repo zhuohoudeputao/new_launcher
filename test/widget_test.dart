@@ -115,6 +115,7 @@ import 'package:new_launcher/providers/provider_sliding_puzzle.dart';
 import 'package:new_launcher/providers/provider_mathquiz.dart';
 import 'package:new_launcher/providers/provider_httpstatus.dart';
 import 'package:new_launcher/providers/provider_keyboard_shortcuts.dart';
+import 'package:new_launcher/providers/provider_gitignore.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2555,7 +2556,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 116);
+      expect(Global.providerList.length, 117);
     });
 
     test('Global.providerList names are correct', () {
@@ -3720,7 +3721,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 116);
+      expect(initCount, 117);
     });
   });
 
@@ -4037,8 +4038,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 116);
+test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5381,8 +5382,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 116);
+test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -12917,8 +12918,8 @@ test('Global.providerList includes UnitConverter', () {
       expect(CalorieModel.defaultGoal, 2000);
     });
 
-    test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 116);
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
   });
 
@@ -23315,8 +23316,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Exponent'), true);
     });
 
-    test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 116);
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -27059,8 +27060,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerJsonFormatter.name, 'JsonFormatter');
     });
 
-    test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 116);
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -27403,8 +27404,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerRegexTester.name, 'RegexTester');
     });
 
-    test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 116);
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -27742,8 +27743,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerBitwise.name, 'Bitwise');
     });
 
-    test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 116);
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -28007,8 +28008,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerDiffChecker.name, 'DiffChecker');
     });
 
-    test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 116);
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -28304,8 +28305,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('CronExpressionParser'), true);
     });
 
-    test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 116);
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -28547,8 +28548,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('AspectRatio'), true);
     });
 
-    test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 116);
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -28918,8 +28919,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Loan'), true);
     });
 
-    test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 116);
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -29292,8 +29293,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('WeightTracker'), true);
     });
 
-    test('Global.providerList contains all providers (114 total)', () {
-      expect(Global.providerList.length, 116);
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -29623,8 +29624,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Pace'), true);
     });
 
-    test('Global.providerList contains all providers (116 total)', () {
-      expect(Global.providerList.length, 116);
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -30653,7 +30654,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test', () {
-      expect(Global.providerList.length, 116);
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -30902,7 +30903,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test updated', () {
-      expect(Global.providerList.length, 116);
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -31125,7 +31126,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test final', () {
-      expect(Global.providerList.length, 116);
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -31310,7 +31311,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test with SlidingPuzzle', () {
-      expect(Global.providerList.length, 116);
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -31684,8 +31685,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('HTTPStatus'), true);
     });
 
-    test('Global.providerList contains all providers (115 total)', () {
-      expect(Global.providerList.length, 116);
+test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
@@ -31826,12 +31827,169 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('KeyboardShortcuts'), true);
     });
 
-    test('Global.providerList contains all providers (116 total)', () {
-      expect(Global.providerList.length, 116);
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
     });
 
     tearDownAll(() {
       keyboardShortcutsModel.clearSelection();
+    });
+  });
+
+  group('GitIgnore Generator Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      gitIgnoreModel.init();
+    });
+
+    test('providerGitIgnoreGenerator exists', () {
+      expect(providerGitIgnoreGenerator, isNotNull);
+      expect(providerGitIgnoreGenerator.name, 'GitIgnore');
+    });
+
+    test('GitIgnore keywords contain expected terms', () {
+      expect(providerGitIgnoreGenerator.name, 'GitIgnore');
+    });
+
+    test('GitIgnoreModel initial state', () {
+      expect(gitIgnoreModel.initialized, true);
+      expect(gitIgnoreModel.searchQuery, '');
+      expect(gitIgnoreModel.selectedTemplates.isEmpty, true);
+      expect(gitIgnoreModel.selectedCategory, null);
+    });
+
+    test('GitIgnoreModel contains all templates', () {
+      expect(gitIgnoreModel.allTemplates.length, greaterThan(30));
+      expect(gitIgnoreModel.allTemplates.any((t) => t.name == 'Flutter'), true);
+      expect(gitIgnoreModel.allTemplates.any((t) => t.name == 'Python'), true);
+      expect(gitIgnoreModel.allTemplates.any((t) => t.name == 'Node'), true);
+      expect(gitIgnoreModel.allTemplates.any((t) => t.name == 'Java'), true);
+      expect(gitIgnoreModel.allTemplates.any((t) => t.name == 'VSCode'), true);
+    });
+
+    test('GitIgnoreModel setSearchQuery works', () {
+      gitIgnoreModel.setSearchQuery('Flutter');
+      expect(gitIgnoreModel.searchQuery, 'Flutter');
+      expect(gitIgnoreModel.filteredTemplates.any((t) => t.name == 'Flutter'), true);
+      gitIgnoreModel.setSearchQuery('');
+    });
+
+    test('GitIgnoreModel setSelectedCategory works', () {
+      gitIgnoreModel.setSelectedCategory(GitIgnoreCategory.languages);
+      expect(gitIgnoreModel.selectedCategory, GitIgnoreCategory.languages);
+      expect(gitIgnoreModel.filteredTemplates.every((t) => t.category == GitIgnoreCategory.languages), true);
+      gitIgnoreModel.setSelectedCategory(null);
+    });
+
+    test('GitIgnoreModel toggleTemplate works', () {
+      gitIgnoreModel.toggleTemplate('Flutter');
+      expect(gitIgnoreModel.selectedTemplates.contains('Flutter'), true);
+      gitIgnoreModel.toggleTemplate('Flutter');
+      expect(gitIgnoreModel.selectedTemplates.contains('Flutter'), false);
+    });
+
+    test('GitIgnoreModel clearAllTemplates works', () {
+      gitIgnoreModel.toggleTemplate('Flutter');
+      gitIgnoreModel.toggleTemplate('Python');
+      expect(gitIgnoreModel.selectedTemplates.length, 2);
+      gitIgnoreModel.clearAllTemplates();
+      expect(gitIgnoreModel.selectedTemplates.isEmpty, true);
+    });
+
+    test('GitIgnoreModel generatedGitIgnore works', () {
+      gitIgnoreModel.toggleTemplate('Flutter');
+      final output = gitIgnoreModel.generatedGitIgnore;
+      expect(output.contains('# .gitignore generated by Flutter Launcher'), true);
+      expect(output.contains('# ===== Flutter ====='), true);
+      expect(output.contains('.dart_tool'), true);
+      gitIgnoreModel.clearAllTemplates();
+    });
+
+    test('GitIgnoreModel generatedGitIgnore empty when no selection', () {
+      gitIgnoreModel.clearAllTemplates();
+      final output = gitIgnoreModel.generatedGitIgnore;
+      expect(output.contains('# Select templates to generate'), true);
+    });
+
+    test('GitIgnoreModel refresh calls notifyListeners', () {
+      var notified = false;
+      gitIgnoreModel.addListener(() => notified = true);
+      gitIgnoreModel.refresh();
+      expect(notified, true);
+      gitIgnoreModel.removeListener(() => notified = false);
+    });
+
+    test('GitIgnoreTemplate properties correct', () {
+      final flutterTemplate = gitIgnoreModel.allTemplates.firstWhere((t) => t.name == 'Flutter');
+      expect(flutterTemplate.name, 'Flutter');
+      expect(flutterTemplate.category, GitIgnoreCategory.frameworks);
+      expect(flutterTemplate.content.contains('.dart_tool'), true);
+      expect(flutterTemplate.content.contains('build/'), true);
+    });
+
+    test('getGitIgnoreCategoryName works correctly', () {
+      expect(getGitIgnoreCategoryName(GitIgnoreCategory.languages), 'Languages');
+      expect(getGitIgnoreCategoryName(GitIgnoreCategory.frameworks), 'Frameworks');
+      expect(getGitIgnoreCategoryName(GitIgnoreCategory.editors), 'Editors/IDEs');
+      expect(getGitIgnoreCategoryName(GitIgnoreCategory.operatingSystems), 'Operating Systems');
+      expect(getGitIgnoreCategoryName(GitIgnoreCategory.other), 'Other');
+    });
+
+    test('getGitIgnoreCategoryColor returns valid colors', () {
+      final colorScheme = ColorScheme.light();
+      expect(getGitIgnoreCategoryColor(GitIgnoreCategory.languages, colorScheme), isNotNull);
+      expect(getGitIgnoreCategoryColor(GitIgnoreCategory.frameworks, colorScheme), isNotNull);
+      expect(getGitIgnoreCategoryColor(GitIgnoreCategory.editors, colorScheme), isNotNull);
+      expect(getGitIgnoreCategoryColor(GitIgnoreCategory.operatingSystems, colorScheme), isNotNull);
+      expect(getGitIgnoreCategoryColor(GitIgnoreCategory.other, colorScheme), isNotNull);
+    });
+
+    testWidgets('GitIgnoreCard renders loading state', (WidgetTester tester) async {
+      final model = GitIgnoreModel();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: GitIgnoreCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('GitIgnoreCard renders initialized state', (WidgetTester tester) async {
+      final model = GitIgnoreModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: GitIgnoreCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('GitIgnore Generator'), findsOneWidget);
+    });
+
+    testWidgets('GitIgnoreCard widget exists', (WidgetTester tester) async {
+      expect(GitIgnoreCard, isNotNull);
+    });
+
+    test('Global.providerList includes GitIgnore', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('GitIgnore'), true);
+    });
+
+    test('Global.providerList contains all providers (117 total)', () {
+      expect(Global.providerList.length, 117);
+    });
+
+    tearDownAll(() {
+      gitIgnoreModel.clearAllTemplates();
     });
   });
 }

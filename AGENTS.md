@@ -1416,6 +1416,21 @@ Settings auto-saved via `SharedPreferences`:
     - Copy shortcut info to clipboard
     - Uses `Card.filled`, `TextField`, `ActionChip`, `ListTile` for Material 3 style
     - Keywords: keyboard, shortcut, hotkey, key, combo, reference, windows, mac, linux
+- **GitIgnore**: GitIgnore template generator for developers
+    - Generate .gitignore files from pre-built templates
+    - 37+ templates covering Languages, Frameworks, Editors/IDEs, Operating Systems, and Other file types
+    - Languages: Dart, Python, Java, C++, Rust, Go, Swift, Kotlin, Ruby, PHP, CSharp
+    - Frameworks: Flutter, Node, React, Vue, Angular, NextJS, Svelte, Laravel, Django, Spring, Rails
+    - Editors: VisualStudio, VSCode, IntelliJ, SublimeText, Vim, Emacs
+    - OS: macOS, Windows, Linux
+    - Other: Archive, Backup, Database, Image, Video, Audio, Font
+    - Multi-template selection with FilterChips
+    - Combine multiple templates into one .gitignore file
+    - Search templates by name or content
+    - Category filtering with ActionChips
+    - Copy generated content to clipboard
+    - Uses `Card.filled`, `TextField`, `ActionChip`, `FilterChip` for Material 3 style
+    - Keywords: gitignore, git, ignore, template, generate, language, framework
 
 ## Material 3 Design System
 
@@ -1593,8 +1608,9 @@ Test coverage includes:
 - MathQuiz provider tests (provider existence, keywords, model state, problem generation, difficulty settings, answer submission, streak tracking, accuracy calculation, history, widget rendering)
 - HTTPStatus provider tests (provider existence, keywords, model state, search/filter operations, category handling, code selection, category name/color validation, widget rendering)
 - KeyboardShortcuts provider tests (provider existence, keywords, model state, search/filter operations, category handling, shortcut selection, category name/color validation, widget rendering)
+- GitIgnore provider tests (provider existence, keywords, model state, search/filter operations, category handling, template selection, generated output, category name/color validation, widget rendering)
 
-Total tests: 3209 tests
+Total tests: 3228 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1720,6 +1736,7 @@ Technical documentation is available in `docs/`:
 - `gratitude_provider.md` - Gratitude Journal provider implementation for daily gratitude tracking
 - `httpstatus_provider.md` - HTTP Status provider implementation for HTTP status code reference
 - `keyboardshortcuts_provider.md` - Keyboard Shortcuts provider implementation for keyboard shortcut reference
+- `gitignore_provider.md` - GitIgnore Generator provider implementation for .gitignore template generation
 - `loan_provider.md` - Loan Calculator provider implementation for loan/mortgage calculations
 - `loremipsum_provider.md` - Lorem Ipsum provider implementation for placeholder text generation
 - `mathquiz_provider.md` - Math Quiz provider implementation for mental math practice game
