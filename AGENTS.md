@@ -1455,7 +1455,7 @@ Test coverage includes:
 - Weight Tracker provider tests (provider existence, keywords, model state, weight logging, unit conversion, goal setting, statistics calculations, widget rendering)
 - Pace provider tests (provider existence, keywords, model state, pace calculations, time/distance calculations, predicted race times, history, widget rendering)
 
-Total tests: 2978 tests
+Total tests: 2563 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
