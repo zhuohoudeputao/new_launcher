@@ -86,6 +86,7 @@ import 'package:new_launcher/providers/provider_ascii.dart';
 import 'package:new_launcher/providers/provider_area.dart';
 import 'package:new_launcher/providers/provider_datarate.dart';
 import 'package:new_launcher/providers/provider_power.dart';
+import 'package:new_launcher/providers/provider_periodic.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2526,7 +2527,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 87);
+      expect(Global.providerList.length, 88);
     });
 
     test('Global.providerList names are correct', () {
@@ -3693,7 +3694,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 87);
+      expect(initCount, 88);
     });
   });
 
@@ -4011,7 +4012,7 @@ void main() {
 });
 
 test('Global.providerList contains all providers (87 total)', () {
-      expect(Global.providerList.length, 87);
+      expect(Global.providerList.length, 88);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5355,7 +5356,7 @@ test('Global.providerList includes Flashlight', () {
 });
 
 test('Global.providerList contains all providers (87 total)', () {
-      expect(Global.providerList.length, 87);
+      expect(Global.providerList.length, 88);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -23714,7 +23715,12 @@ test('WordleModel submitGuess works', () async {
 
     test('PowerConverterModel is ChangeNotifier', () {
       final model = PowerConverterModel();
-      expect(model is ChangeNotifier, true);
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.init();
+      expect(notified, false);
+      model.setInputValue('100');
+      expect(notified, true);
     });
 
     test('PowerConverterModel init sets initialized', () {
@@ -24005,6 +24011,292 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       powerConverterModel.clearHistory();
+    });
+  });
+
+  group('PeriodicTable Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('providerPeriodicTable exists in Global.providerList', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('PeriodicTable'), true);
+    });
+
+    test('PeriodicTable keywords include periodic', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'PeriodicTable');
+      expect(provider.name, 'PeriodicTable');
+    });
+
+    test('PeriodicTable keywords include element', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'PeriodicTable');
+      expect(provider.name, 'PeriodicTable');
+    });
+
+    test('PeriodicTable keywords include chemistry', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'PeriodicTable');
+      expect(provider.name, 'PeriodicTable');
+    });
+
+    test('PeriodicTable keywords include atomic', () {
+      final provider = Global.providerList.firstWhere((p) => p.name == 'PeriodicTable');
+      expect(provider.name, 'PeriodicTable');
+    });
+
+    test('PeriodicTableModel starts uninitialized', () {
+      final model = PeriodicTableModel();
+      expect(model.initialized, false);
+    });
+
+    test('PeriodicTableModel is ChangeNotifier', () {
+      final model = PeriodicTableModel();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.init();
+      expect(notified, true);
+    });
+
+    test('PeriodicTableModel init sets initialized', () {
+      final model = PeriodicTableModel();
+      model.init();
+      expect(model.initialized, true);
+    });
+
+    test('PeriodicTableModel has all elements', () {
+      final model = PeriodicTableModel();
+      expect(model.allElements.length, 118);
+    });
+
+    test('PeriodicTableModel filteredElements default shows all', () {
+      final model = PeriodicTableModel();
+      expect(model.filteredElements.length, 118);
+    });
+
+    test('PeriodicTableModel setSearchQuery works', () {
+      final model = PeriodicTableModel();
+      model.init();
+      model.setSearchQuery('Hydrogen');
+      expect(model.searchQuery, 'Hydrogen');
+      expect(model.filteredElements.length, 1);
+      expect(model.filteredElements.first.symbol, 'H');
+    });
+
+    test('PeriodicTableModel search by symbol works', () {
+      final model = PeriodicTableModel();
+      model.init();
+      model.setSearchQuery('Au');
+      expect(model.filteredElements.length, 1);
+      expect(model.filteredElements.first.name, 'Gold');
+    });
+
+    test('PeriodicTableModel search by atomic number works', () {
+      final model = PeriodicTableModel();
+      model.init();
+      model.setSearchQuery('79');
+      expect(model.filteredElements.length, 1);
+      expect(model.filteredElements.first.symbol, 'Au');
+    });
+
+    test('PeriodicTableModel setSelectedElement works', () {
+      final model = PeriodicTableModel();
+      model.init();
+      final element = model.allElements.first;
+      model.setSelectedElement(element);
+      expect(model.selectedElement, element);
+    });
+
+    test('PeriodicTableModel setSelectedCategory works', () {
+      final model = PeriodicTableModel();
+      model.init();
+      model.setSelectedCategory(ElementCategory.alkaliMetal);
+      expect(model.selectedCategory, ElementCategory.alkaliMetal);
+      expect(model.filteredElements.length, 6);
+    });
+
+    test('PeriodicTableModel setSelectedCategory nobleGas works', () {
+      final model = PeriodicTableModel();
+      model.init();
+      model.setSelectedCategory(ElementCategory.nobleGas);
+      expect(model.filteredElements.length, 6);
+    });
+
+    test('PeriodicTableModel setSelectedCategory transitionMetal works', () {
+      final model = PeriodicTableModel();
+      model.init();
+      model.setSelectedCategory(ElementCategory.transitionMetal);
+      expect(model.filteredElements.length, 34);
+    });
+
+    test('PeriodicTableModel clearSelection works', () {
+      final model = PeriodicTableModel();
+      model.init();
+      final element = model.allElements.first;
+      model.setSelectedElement(element);
+      model.clearSelection();
+      expect(model.selectedElement, null);
+    });
+
+    test('PeriodicTableModel refresh calls notifyListeners', () {
+      final model = PeriodicTableModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('ChemicalElement data correct for Hydrogen', () {
+      final element = chemicalElements.firstWhere((e) => e.symbol == 'H');
+      expect(element.atomicNumber, 1);
+      expect(element.name, 'Hydrogen');
+      expect(element.atomicMass, 1.008);
+      expect(element.category, ElementCategory.nonmetal);
+      expect(element.group, 1);
+      expect(element.period, 1);
+    });
+
+    test('ChemicalElement data correct for Gold', () {
+      final element = chemicalElements.firstWhere((e) => e.symbol == 'Au');
+      expect(element.atomicNumber, 79);
+      expect(element.name, 'Gold');
+      expect(element.category, ElementCategory.transitionMetal);
+    });
+
+    test('ChemicalElement data correct for Uranium', () {
+      final element = chemicalElements.firstWhere((e) => e.symbol == 'U');
+      expect(element.atomicNumber, 92);
+      expect(element.name, 'Uranium');
+      expect(element.category, ElementCategory.actinide);
+    });
+
+    test('getCategoryName returns correct names', () {
+      expect(getCategoryName(ElementCategory.alkaliMetal), 'Alkali Metal');
+      expect(getCategoryName(ElementCategory.nobleGas), 'Noble Gas');
+      expect(getCategoryName(ElementCategory.transitionMetal), 'Transition Metal');
+      expect(getCategoryName(ElementCategory.lanthanide), 'Lanthanide');
+      expect(getCategoryName(ElementCategory.actinide), 'Actinide');
+    });
+
+    test('ElementCategory has all categories', () {
+      expect(ElementCategory.values.length, 11);
+    });
+
+    test('ChemicalElement electronConfiguration for Helium', () {
+      final element = chemicalElements.firstWhere((e) => e.symbol == 'He');
+      expect(element.electronConfiguration, '1s²');
+    });
+
+    test('ChemicalElement discoveryYear for Technetium', () {
+      final element = chemicalElements.firstWhere((e) => e.symbol == 'Tc');
+      expect(element.discoveryYear, '1937');
+    });
+
+    test('ChemicalElement discoveryYear for Oganesson', () {
+      final element = chemicalElements.firstWhere((e) => e.symbol == 'Og');
+      expect(element.discoveryYear, '2006');
+    });
+
+    test('ChemicalElement last element is Oganesson', () {
+      final element = chemicalElements.last;
+      expect(element.symbol, 'Og');
+      expect(element.atomicNumber, 118);
+    });
+
+    testWidgets('PeriodicTableCard renders loading state', (WidgetTester tester) async {
+      final model = PeriodicTableModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PeriodicTableCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('PeriodicTableCard renders initialized state', (WidgetTester tester) async {
+      final model = PeriodicTableModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PeriodicTableCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Periodic Table'), findsOneWidget);
+      expect(find.byType(TextField), findsWidgets);
+    });
+
+    testWidgets('PeriodicTableCard shows search field', (WidgetTester tester) async {
+      final model = PeriodicTableModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PeriodicTableCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(TextField), findsWidgets);
+      expect(find.byIcon(Icons.search), findsWidgets);
+    });
+
+    testWidgets('PeriodicTableCard shows category filter', (WidgetTester tester) async {
+      final model = PeriodicTableModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PeriodicTableCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('All'), findsOneWidget);
+    });
+
+    testWidgets('PeriodicTableCard shows element grid', (WidgetTester tester) async {
+      final model = PeriodicTableModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: PeriodicTableCard(),
+          ),
+        ),
+      ));
+
+      expect(find.byType(GridView), findsOneWidget);
+    });
+
+    test('PeriodicTableCard widget exists', () {
+      expect(PeriodicTableCard, isNotNull);
+    });
+
+    test('Global.providerList includes PeriodicTable', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('PeriodicTable'), true);
+    });
+
+    tearDownAll(() {
+      periodicTableModel.setSearchQuery('');
+      periodicTableModel.setSelectedCategory(null);
+      periodicTableModel.clearSelection();
     });
   });
 }

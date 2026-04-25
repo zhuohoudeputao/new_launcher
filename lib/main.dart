@@ -88,6 +88,7 @@ import 'package:new_launcher/providers/provider_prime.dart';
 import 'package:new_launcher/providers/provider_ascii.dart';
 import 'package:new_launcher/providers/provider_datarate.dart';
 import 'package:new_launcher/providers/provider_power.dart';
+import 'package:new_launcher/providers/provider_periodic.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -249,8 +250,9 @@ ChangeNotifierProvider.value(value: sunPositionModel),
               ChangeNotifierProvider.value(value: primeModel),
               ChangeNotifierProvider.value(value: asciiModel),
               ChangeNotifierProvider.value(value: dataRateConverterModel),
-              ChangeNotifierProvider.value(value: powerConverterModel),
-              ],
+ChangeNotifierProvider.value(value: powerConverterModel),
+               ChangeNotifierProvider.value(value: periodicTableModel),
+               ],
           child: MyApp(),
             )));
 }

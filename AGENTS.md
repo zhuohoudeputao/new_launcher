@@ -1047,6 +1047,17 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `DropdownButtonFormField`, `TextField` for Material 3 style
     - Keywords: power, convert, watt, kilowatt, horsepower, hp, mw, btu, energy, wattage
+- **PeriodicTable**: Chemical elements reference for chemistry education
+    - All 118 chemical elements with complete data
+    - Element details: symbol, name, atomic number, atomic mass, category, electron configuration
+    - Search by name, symbol, or atomic number
+    - Filter by element category (Alkali Metal, Noble Gas, Transition Metal, etc.)
+    - Color-coded element tiles by category
+    - Detailed view with element information
+    - Copy element info to clipboard
+    - Discovery year for synthetic elements
+    - Uses `Card.filled`, `GridView`, `ActionChip`, `TextField` for Material 3 style
+    - Keywords: periodic, table, element, chemistry, atomic, science
 
 ## Material 3 Design System
 
@@ -1194,8 +1205,9 @@ Test coverage includes:
 - AreaConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - DataRateConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - PowerConverter provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
+- PeriodicTable provider tests (provider existence, keywords, model state, search/filter operations, element data, category handling, widget rendering)
 
-Total tests: 2389 tests
+Total tests: 2424 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
