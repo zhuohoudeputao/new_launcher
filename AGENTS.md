@@ -1113,6 +1113,21 @@ Settings auto-saved via `SharedPreferences`:
     - Copy output to clipboard
     - Uses `Card.filled`, `SegmentedButton`, `Slider` for Material 3 style
     - Keywords: caesar, cipher, encrypt, decrypt, shift, rotate, classic
+- **VigenereCipher**: Vigenere cipher encoder/decoder for polyalphabetic encryption
+    - Encrypt text using a keyword-based polyalphabetic cipher
+    - Decrypt text using the same keyword
+    - Keyword input (letters only, uppercase)
+    - Preserves case (uppercase/lowercase)
+    - Non-letter characters unchanged
+    - Keyword wraps around to match plaintext length
+    - More secure than Caesar cipher (uses multiple shift values)
+    - Swap encrypt/decrypt operation with one tap
+    - Conversion history (up to 10 entries)
+    - Tap history entries to reuse conversions with keyword
+    - Clear history with confirmation dialog
+    - Copy output to clipboard
+    - Uses `Card.filled`, `SegmentedButton` for Material 3 style
+    - Keywords: vigenere, cipher, encrypt, decrypt, keyword, polyalphabetic, classic
 
 ## Material 3 Design System
 
@@ -1266,8 +1281,9 @@ Test coverage includes:
 - FuelConsumption provider tests (provider existence, keywords, model state, conversion operations, history, widget rendering)
 - Compass provider tests (provider existence, keywords, model state, heading operations, direction calculations, widget rendering)
 - CaesarCipher provider tests (provider existence, keywords, model state, encryption/decryption operations, shift handling, history, widget rendering)
+- VigenereCipher provider tests (provider existence, keywords, model state, encryption/decryption operations, keyword handling, history, widget rendering)
 
-Total tests: 2601 tests
+Total tests: 2634 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

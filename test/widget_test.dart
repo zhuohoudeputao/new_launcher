@@ -92,6 +92,7 @@ import 'package:new_launcher/providers/provider_frequency.dart';
 import 'package:new_launcher/providers/provider_fuel.dart';
 import 'package:new_launcher/providers/provider_compass.dart';
 import 'package:new_launcher/providers/provider_caesar.dart';
+import 'package:new_launcher/providers/provider_vigenere.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2532,7 +2533,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 93);
+      expect(Global.providerList.length, 94);
     });
 
     test('Global.providerList names are correct', () {
@@ -3699,7 +3700,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 93);
+      expect(initCount, 94);
     });
   });
 
@@ -4016,8 +4017,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (93 total)', () {
-      expect(Global.providerList.length, 93);
+test('Global.providerList contains all providers (94 total)', () {
+      expect(Global.providerList.length, 94);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5360,8 +5361,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (93 total)', () {
-      expect(Global.providerList.length, 93);
+test('Global.providerList contains all providers (94 total)', () {
+      expect(Global.providerList.length, 94);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -25743,6 +25744,323 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       compassModel.refresh();
+    });
+  });
+
+  group('Vigenere Cipher Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('Vigenere Cipher provider exists', () {
+      final vigenereProvider = Global.providerList.where((p) => p.name == 'VigenereCipher').first;
+      expect(vigenereProvider.name, 'VigenereCipher');
+    });
+
+    test('Vigenere Cipher provider keywords include vigenere', () {
+      final keywords = 'vigenere cipher encrypt decrypt keyword polyalphabetic classic';
+      expect(keywords.contains('vigenere'), true);
+      expect(keywords.contains('cipher'), true);
+      expect(keywords.contains('encrypt'), true);
+      expect(keywords.contains('decrypt'), true);
+      expect(keywords.contains('keyword'), true);
+    });
+
+    test('VigenereCipherModel initializes correctly', () {
+      final model = VigenereCipherModel();
+      model.init();
+      expect(model.isInitialized, true);
+      expect(model.inputText, '');
+      expect(model.outputText, '');
+      expect(model.keyword, '');
+      expect(model.operation, 'encrypt');
+    });
+
+    test('VigenereCipherModel encrypt with keyword KEY', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setKeyword('KEY');
+      model.setInputText('HELLO');
+      expect(model.outputText, 'RIJVS');
+    });
+
+    test('VigenereCipherModel decrypt with keyword KEY', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setOperation('decrypt');
+      model.setKeyword('KEY');
+      model.setInputText('RIJVS');
+      expect(model.outputText, 'HELLO');
+    });
+
+    test('VigenereCipherModel encrypt lowercase', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setKeyword('KEY');
+      model.setInputText('hello');
+      expect(model.outputText, 'rijvs');
+    });
+
+    test('VigenereCipherModel encrypt mixed case', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setKeyword('KEY');
+      model.setInputText('HeLLo');
+      expect(model.outputText, 'RiJVs');
+    });
+
+    test('VigenereCipherModel encrypt with non-letters', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setKeyword('KEY');
+      model.setInputText('Hello, World!');
+      expect(model.outputText, 'Rijvs, Uyvjn!');
+    });
+
+    test('VigenereCipherModel keyword wraps around', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setKeyword('KEY');
+      model.setInputText('ABCDEFGHIJKLM');
+      expect(model.outputText, 'KFANIDQLGTOJW');
+    });
+
+    test('VigenereCipherModel keyword A produces same text', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.setKeyword('AAAA');
+      model.setInputText('HELLO');
+      expect(model.outputText, 'HELLO');
+    });
+
+    test('VigenereCipherModel decrypt is inverse of encrypt', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setKeyword('SECRET');
+      model.setOperation('encrypt');
+      model.setInputText('MESSAGE');
+      final encrypted = model.outputText;
+      model.setOperation('decrypt');
+      model.setInputText(encrypted);
+      expect(model.outputText, 'MESSAGE');
+    });
+
+    test('VigenereCipherModel setOperation works', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setOperation('decrypt');
+      expect(model.operation, 'decrypt');
+    });
+
+    test('VigenereCipherModel setKeyword works', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setKeyword('test');
+      expect(model.keyword, 'TEST');
+    });
+
+    test('VigenereCipherModel keyword validation rejects non-letters', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setKeyword('KEY123');
+      expect(model.keywordError, 'Keyword must contain only letters');
+    });
+
+    test('VigenereCipherModel keyword validation rejects special chars', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setKeyword('KEY-WORD');
+      expect(model.keywordError, 'Keyword must contain only letters');
+    });
+
+    test('VigenereCipherModel empty keyword shows error when processing', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setInputText('HELLO');
+      expect(model.keywordError, 'Keyword required');
+    });
+
+    test('VigenereCipherModel swapOperation works', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setOperation('encrypt');
+      model.swapOperation();
+      expect(model.operation, 'decrypt');
+      model.swapOperation();
+      expect(model.operation, 'encrypt');
+    });
+
+    test('VigenereCipherModel clearInput works', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setKeyword('KEY');
+      model.setInputText('HELLO');
+      model.clearInput();
+      expect(model.inputText, '');
+      expect(model.outputText, '');
+      expect(model.inputError, null);
+    });
+
+    test('VigenereCipherModel clearAll works', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setKeyword('KEY');
+      model.setInputText('HELLO');
+      model.clearAll();
+      expect(model.inputText, '');
+      expect(model.keyword, '');
+      expect(model.outputText, '');
+      expect(model.keywordError, null);
+      expect(model.inputError, null);
+    });
+
+    test('VigenereCipherModel addToHistory works', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setKeyword('KEY');
+      model.setInputText('HELLO');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].input, 'HELLO');
+      expect(model.history[0].output, 'RIJVS');
+      expect(model.history[0].operation, 'encrypt');
+      expect(model.history[0].keyword, 'KEY');
+    });
+
+    test('VigenereCipherModel history limited to 10 entries', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setKeyword('KEY');
+      for (int i = 0; i < 15; i++) {
+        model.setInputText('TEST$i');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('VigenereCipherModel loadFromHistory works', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setKeyword('KEY');
+      model.setInputText('HELLO');
+      model.addToHistory();
+      model.setKeyword('SECRET');
+      model.setInputText('WORLD');
+      model.loadFromHistory(0);
+      expect(model.inputText, 'HELLO');
+      expect(model.keyword, 'KEY');
+    });
+
+    test('VigenereCipherModel clearHistory works', () {
+      final model = VigenereCipherModel();
+      model.init();
+      model.setKeyword('KEY');
+      model.setInputText('HELLO');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('VigenereCipherModel getOperationLabel works', () {
+      final model = VigenereCipherModel();
+      expect(model.getOperationLabel('encrypt'), 'Encrypt');
+      expect(model.getOperationLabel('decrypt'), 'Decrypt');
+    });
+
+    test('VigenereCipherModel refresh calls notifyListeners', () {
+      final model = VigenereCipherModel();
+      model.init();
+      var notified = false;
+      model.addListener(() {
+        notified = true;
+      });
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('VigenereCipherCard renders loading state', () {
+      final card = VigenereCipherCard();
+      expect(card, isNotNull);
+    });
+
+    test('VigenereCipherCard renders initialized state', () {
+      vigenereCipherModel.init();
+      final card = VigenereCipherCard();
+      expect(card, isNotNull);
+    });
+
+    testWidgets('VigenereCipherCard shows header', (WidgetTester tester) async {
+      final model = VigenereCipherModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: VigenereCipherCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Vigenere Cipher'), findsOneWidget);
+    });
+
+    testWidgets('VigenereCipherCard shows operation selector', (WidgetTester tester) async {
+      final model = VigenereCipherModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: VigenereCipherCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Encrypt'), findsOneWidget);
+      expect(find.text('Decrypt'), findsOneWidget);
+    });
+
+    testWidgets('VigenereCipherCard shows keyword field', (WidgetTester tester) async {
+      final model = VigenereCipherModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: VigenereCipherCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Keyword:'), findsOneWidget);
+    });
+
+    test('VigenereCipherCard widget exists', () {
+      expect(VigenereCipherCard, isNotNull);
+    });
+
+    test('Global.providerList includes VigenereCipher', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('VigenereCipher'), true);
+    });
+
+    test('providerVigenereCipher exists', () {
+      expect(providerVigenereCipher, isNotNull);
+      expect(providerVigenereCipher.name, 'VigenereCipher');
+    });
+
+    tearDownAll(() {
+      vigenereCipherModel.clearHistory();
     });
   });
 }
