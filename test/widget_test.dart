@@ -121,6 +121,7 @@ import 'package:new_launcher/providers/provider_reminder.dart';
 import 'package:new_launcher/providers/provider_shape.dart';
 import 'package:new_launcher/providers/provider_lottery.dart';
 import 'package:new_launcher/providers/provider_ipcalculator.dart';
+import 'package:new_launcher/providers/provider_fraction.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -33030,6 +33031,292 @@ test('Global.providerList contains all providers (120 total)', () {
 
     tearDownAll(() {
       ipCalculatorModel.clearHistory();
+    });
+  });
+
+  group('Fraction Calculator provider tests', () {
+    setUpAll(() {
+      fractionCalculatorModel = FractionCalculatorModel();
+    });
+
+    test('FractionCalculatorModel initializes correctly', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('Fraction class simplify works', () {
+      Fraction f1 = Fraction(4, 8);
+      Fraction simplified = f1.simplify();
+      expect(simplified.numerator, 1);
+      expect(simplified.denominator, 2);
+
+      Fraction f2 = Fraction(6, 9);
+      simplified = f2.simplify();
+      expect(simplified.numerator, 2);
+      expect(simplified.denominator, 3);
+
+      Fraction f3 = Fraction(0, 5);
+      simplified = f3.simplify();
+      expect(simplified.numerator, 0);
+      expect(simplified.denominator, 1);
+    });
+
+    test('Fraction class add works', () {
+      Fraction f1 = Fraction(1, 2);
+      Fraction f2 = Fraction(1, 4);
+      Fraction result = f1.add(f2);
+      expect(result.numerator, 3);
+      expect(result.denominator, 4);
+
+      Fraction f3 = Fraction(2, 3);
+      Fraction f4 = Fraction(1, 6);
+      result = f3.add(f4);
+      expect(result.numerator, 5);
+      expect(result.denominator, 6);
+    });
+
+    test('Fraction class subtract works', () {
+      Fraction f1 = Fraction(1, 2);
+      Fraction f2 = Fraction(1, 4);
+      Fraction result = f1.subtract(f2);
+      expect(result.numerator, 1);
+      expect(result.denominator, 4);
+
+      Fraction f3 = Fraction(3, 4);
+      Fraction f4 = Fraction(1, 2);
+      result = f3.subtract(f4);
+      expect(result.numerator, 1);
+      expect(result.denominator, 4);
+    });
+
+    test('Fraction class multiply works', () {
+      Fraction f1 = Fraction(1, 2);
+      Fraction f2 = Fraction(2, 3);
+      Fraction result = f1.multiply(f2);
+      expect(result.numerator, 1);
+      expect(result.denominator, 3);
+
+      Fraction f3 = Fraction(3, 4);
+      Fraction f4 = Fraction(4, 5);
+      result = f3.multiply(f4);
+      expect(result.numerator, 3);
+      expect(result.denominator, 5);
+    });
+
+    test('Fraction class divide works', () {
+      Fraction f1 = Fraction(1, 2);
+      Fraction f2 = Fraction(1, 4);
+      Fraction result = f1.divide(f2);
+      expect(result.numerator, 2);
+      expect(result.denominator, 1);
+
+      Fraction f3 = Fraction(3, 4);
+      Fraction f4 = Fraction(1, 2);
+      result = f3.divide(f4);
+      expect(result.numerator, 3);
+      expect(result.denominator, 2);
+    });
+
+    test('Fraction class divide by zero returns invalid', () {
+      Fraction f1 = Fraction(1, 2);
+      Fraction f2 = Fraction(0, 4);
+      Fraction result = f1.divide(f2);
+      expect(result.isValid, false);
+    });
+
+    test('Fraction toStringDisplay works', () {
+      Fraction f1 = Fraction(1, 2);
+      expect(f1.toStringDisplay(), '1/2');
+
+      Fraction f2 = Fraction(4, 2);
+      expect(f2.toStringDisplay(), '2');
+
+      Fraction f3 = Fraction(7, 4);
+      expect(f3.toStringDisplay(), '1 3/4');
+
+      Fraction f4 = Fraction(-3, 4);
+      expect(f4.toStringDisplay(), '-3/4');
+
+      Fraction f5 = Fraction(-7, 4);
+      expect(f5.toStringDisplay(), '-1 3/4');
+    });
+
+    test('FractionCalculatorModel setFirstNumerator works', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      model.setFirstNumerator(5);
+      expect(model.firstNumerator, 5);
+    });
+
+    test('FractionCalculatorModel setFirstDenominator works', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      model.setFirstDenominator(10);
+      expect(model.firstDenominator, 10);
+    });
+
+    test('FractionCalculatorModel setSecondNumerator works', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      model.setSecondNumerator(3);
+      expect(model.secondNumerator, 3);
+    });
+
+    test('FractionCalculatorModel setSecondDenominator works', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      model.setSecondDenominator(6);
+      expect(model.secondDenominator, 6);
+    });
+
+    test('FractionCalculatorModel setOperation works', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      model.setOperation('-');
+      expect(model.operation, '-');
+      model.setOperation('×');
+      expect(model.operation, '×');
+    });
+
+    test('FractionCalculatorModel result calculation', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      model.setFirstNumerator(1);
+      model.setFirstDenominator(2);
+      model.setSecondNumerator(1);
+      model.setSecondDenominator(4);
+      model.setOperation('+');
+      
+      expect(model.result!.numerator, 3);
+      expect(model.result!.denominator, 4);
+      expect(model.resultFractionDisplay, '3/4');
+      expect(model.resultDecimal, 0.75);
+    });
+
+    test('FractionCalculatorModel fraction validity', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      model.setFirstDenominator(0);
+      expect(model.firstFractionValid, false);
+      
+      model.setFirstDenominator(1);
+      expect(model.firstFractionValid, true);
+    });
+
+    test('FractionCalculatorModel swap fractions', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      model.setFirstNumerator(1);
+      model.setFirstDenominator(2);
+      model.setSecondNumerator(3);
+      model.setSecondDenominator(4);
+      
+      model.swapFractions();
+      expect(model.firstNumerator, 3);
+      expect(model.firstDenominator, 4);
+      expect(model.secondNumerator, 1);
+      expect(model.secondDenominator, 2);
+    });
+
+    test('FractionCalculatorModel history operations', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      model.setFirstNumerator(1);
+      model.setFirstDenominator(2);
+      model.setSecondNumerator(1);
+      model.setSecondDenominator(4);
+      model.setOperation('+');
+      
+      model.addToHistory();
+      expect(model.hasHistory, true);
+      expect(model.history.length, 1);
+      expect(model.history.first.display, '1/2 + 1/4 = 3/4');
+      
+      model.clearHistory();
+      expect(model.hasHistory, false);
+    });
+
+    test('FractionCalculatorModel max history limit', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      model.setFirstNumerator(1);
+      model.setFirstDenominator(2);
+      model.setSecondNumerator(1);
+      model.setSecondDenominator(4);
+      model.setOperation('+');
+      
+      for (int i = 0; i < 15; i++) {
+        model.addToHistory();
+      }
+      expect(model.history.length <= FractionCalculatorModel.maxHistoryLength, true);
+    });
+
+    test('FractionCalculatorModel applyFromHistory', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      model.setFirstNumerator(1);
+      model.setFirstDenominator(2);
+      model.setSecondNumerator(1);
+      model.setSecondDenominator(4);
+      model.setOperation('+');
+      model.addToHistory();
+      
+      model.setFirstNumerator(3);
+      model.setFirstDenominator(4);
+      model.setSecondNumerator(2);
+      model.setSecondDenominator(5);
+      model.setOperation('-');
+      
+      model.applyFromHistory(model.history.first);
+      expect(model.firstNumerator, 1);
+      expect(model.firstDenominator, 2);
+      expect(model.secondNumerator, 1);
+      expect(model.secondDenominator, 4);
+      expect(model.operation, '+');
+    });
+
+    test('FractionCalculatorModel refresh calls notifyListeners', () {
+      final model = FractionCalculatorModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('FractionCalculatorCard renders', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: fractionCalculatorModel,
+              child: FractionCalculatorCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Fraction Calculator'), findsOneWidget);
+    });
+
+    testWidgets('FractionCalculatorCard widget exists', (WidgetTester tester) async {
+      expect(FractionCalculatorCard, isNotNull);
+    });
+
+    test('Global.providerList includes FractionCalculator', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('FractionCalculator'), true);
+    });
+
+    test('Provider has correct keywords', () {
+      final actionKeywords = 'fraction calculator math add subtract multiply divide numerator denominator simplify reduce';
+      expect(actionKeywords.contains('fraction'), true);
+      expect(actionKeywords.contains('calculator'), true);
+      expect(actionKeywords.contains('simplify'), true);
+    });
+
+    tearDownAll(() {
+      fractionCalculatorModel.clearHistory();
     });
   });
 }

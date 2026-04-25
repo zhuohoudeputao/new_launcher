@@ -1497,6 +1497,20 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `TextField`, `ActionChip` for Material 3 style
     - Keywords: ip, calculator, subnet, network, cidr, mask, broadcast, host, address, ipv4
+- **FractionCalculator**: Fraction calculator for fraction operations
+    - Perform arithmetic operations on fractions (add, subtract, multiply, divide)
+    - First and second fraction inputs (numerator/denominator)
+    - Automatic simplification to lowest terms
+    - Mixed number display (whole number + fraction)
+    - Decimal conversion display
+    - Swap fractions button
+    - Operation selector with SegmentedButton (+, -, ×, ÷)
+    - Division by zero detection
+    - Operation history tracking (up to 10 entries)
+    - Tap history entries to reload previous calculations
+    - Clear history option
+    - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
+    - Keywords: fraction, calculator, math, add, subtract, multiply, divide, numerator, denominator, simplify, reduce
 
 ## Material 3 Design System
 
@@ -1680,8 +1694,9 @@ Test coverage includes:
 - Shape provider tests (provider existence, model state, shape type selection, calculations for circle/rectangle/triangle/sphere/cylinder/cone, history management, JSON encoding/decoding, widget rendering)
 - Lottery provider tests (provider existence, model state, lottery type selection, number generation, unique/sorted numbers, history management, JSON encoding/decoding, widget rendering)
 - IPCalculator provider tests (provider existence, model state, IP address validation, CIDR validation, subnet mask calculation, network/broadcast address calculation, usable hosts calculation, IP class/type determination, history management, widget rendering)
+- Fraction Calculator provider tests (provider existence, model state, Fraction class simplify/add/subtract/multiply/divide operations, divide by zero handling, toStringDisplay, fraction validity, swap fractions, history management, widget rendering)
 
-Total tests: 3352 tests
+Total tests: 3376 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1839,6 +1854,7 @@ Technical documentation is available in `docs/`:
 - `shape_provider.md` - Shape provider implementation for geometry calculations
 - `lottery_provider.md` - Lottery provider implementation for lottery number generation
 - `ip_calculator_provider.md` - IPCalculator provider implementation for IP address and subnet calculations
+- `fraction_calculator_provider.md` - Fraction Calculator provider implementation for fraction arithmetic operations
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 - `critical_bug_fixes_iteration89.md` - Critical bug fix for missing lotteryModel and gitIgnoreModel in MultiProvider
 

@@ -124,6 +124,7 @@ import 'package:new_launcher/providers/provider_shape.dart';
 import 'package:new_launcher/providers/provider_lottery.dart';
 import 'package:new_launcher/providers/provider_gitignore.dart';
 import 'package:new_launcher/providers/provider_ipcalculator.dart';
+import 'package:new_launcher/providers/provider_fraction.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -322,6 +323,7 @@ ChangeNotifierProvider.value(value: shapeModel),
 ChangeNotifierProvider.value(value: lotteryModel),
 ChangeNotifierProvider.value(value: gitIgnoreModel),
 ChangeNotifierProvider.value(value: ipCalculatorModel),
+ChangeNotifierProvider.value(value: fractionCalculatorModel),
 ],
           child: MyApp(),
             )));
