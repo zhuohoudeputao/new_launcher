@@ -82,6 +82,7 @@ import 'package:new_launcher/providers/provider_speed.dart';
 import 'package:new_launcher/providers/provider_volume.dart';
 import 'package:new_launcher/providers/provider_angle.dart';
 import 'package:new_launcher/providers/provider_prime.dart';
+import 'package:new_launcher/providers/provider_exponent.dart';
 import 'package:new_launcher/providers/provider_ascii.dart';
 import 'package:new_launcher/providers/provider_area.dart';
 import 'package:new_launcher/providers/provider_datarate.dart';
@@ -2541,7 +2542,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 102);
+      expect(Global.providerList.length, 103);
     });
 
     test('Global.providerList names are correct', () {
@@ -3708,7 +3709,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 102);
+      expect(initCount, 103);
     });
   });
 
@@ -4025,8 +4026,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (102 total)', () {
-      expect(Global.providerList.length, 102);
+test('Global.providerList contains all providers (103 total)', () {
+      expect(Global.providerList.length, 103);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5369,8 +5370,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (102 total)', () {
-      expect(Global.providerList.length, 102);
+test('Global.providerList contains all providers (103 total)', () {
+      expect(Global.providerList.length, 103);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -22816,6 +22817,283 @@ test('WordleModel submitGuess works', () async {
     });
   });
 
+  group('Exponent Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('providerExponent exists in Global.providerList', () {
+      final exponentProvider = Global.providerList.where((p) => p.name == 'Exponent').first;
+      expect(exponentProvider, isNotNull);
+      expect(exponentProvider.name, 'Exponent');
+    });
+
+    test('ExponentModel initializes correctly', () async {
+      final model = ExponentModel();
+      await model.init();
+      expect(model.isInitialized, true);
+      expect(model.base, 0);
+      expect(model.exponent, 0);
+      expect(model.operation, 'power');
+      expect(model.history, []);
+    });
+
+    test('ExponentModel power calculation works', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setOperation('power');
+      model.setBase(2);
+      model.setExponent(3);
+      expect(model.result, 8);
+    });
+
+    test('ExponentModel sqrt calculation works', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setOperation('sqrt');
+      model.setBase(16);
+      expect(model.result, 4);
+    });
+
+    test('ExponentModel sqrt negative returns NaN', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setOperation('sqrt');
+      model.setBase(-4);
+      expect(model.result.isNaN, true);
+    });
+
+    test('ExponentModel cbrt calculation works', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setOperation('cbrt');
+      model.setBase(27);
+      expect(model.result, 3);
+    });
+
+    test('ExponentModel cbrt negative works', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setOperation('cbrt');
+      model.setBase(-27);
+      expect(model.result, -3);
+    });
+
+    test('ExponentModel nthroot calculation works', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setOperation('nthroot');
+      model.setBase(16);
+      model.setExponent(4);
+      expect(model.result, 2);
+    });
+
+    test('ExponentModel log calculation works', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setOperation('log');
+      model.setBase(100);
+      model.setExponent(10);
+      expect(model.result, 2);
+    });
+
+    test('ExponentModel ln calculation works', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setOperation('ln');
+      model.setBase(2.718281828);
+      expect(model.result, closeTo(1, 0.001));
+    });
+
+    test('ExponentModel ln negative returns NaN', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setOperation('ln');
+      model.setBase(-1);
+      expect(model.result.isNaN, true);
+    });
+
+    test('ExponentModel setOperation works', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setOperation('sqrt');
+      expect(model.operation, 'sqrt');
+    });
+
+    test('ExponentModel clear works', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setBase(10);
+      model.setExponent(2);
+      model.setOperation('sqrt');
+      model.clear();
+      expect(model.base, 0);
+      expect(model.exponent, 0);
+      expect(model.operation, 'power');
+    });
+
+    test('ExponentModel saveToHistory works', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setBase(2);
+      model.setExponent(3);
+      model.setOperation('power');
+      model.saveToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].base, 2);
+      expect(model.history[0].exponent, 3);
+      expect(model.history[0].operation, 'power');
+      expect(model.history[0].result, 8);
+    });
+
+    test('ExponentModel saveToHistory max limit', () async {
+      final model = ExponentModel();
+      await model.init();
+      for (int i = 1; i < 15; i++) {
+        model.setBase(i.toDouble());
+        model.setExponent(2);
+        model.saveToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('ExponentModel loadFromHistory works', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setBase(5);
+      model.setExponent(3);
+      model.setOperation('power');
+      model.saveToHistory();
+      model.clear();
+      model.loadFromHistory(model.history[0]);
+      expect(model.base, 5);
+      expect(model.exponent, 3);
+      expect(model.operation, 'power');
+    });
+
+    test('ExponentModel clearHistory works', () async {
+      final model = ExponentModel();
+      await model.init();
+      model.setBase(2);
+      model.setExponent(3);
+      model.saveToHistory();
+      model.clearHistory();
+      expect(model.history, []);
+    });
+
+    test('ExponentModel refresh calls notifyListeners', () async {
+      final model = ExponentModel();
+      await model.init();
+      bool notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('ExponentHistoryEntry toJson and fromJson work', () {
+      final entry = ExponentHistoryEntry(
+        date: DateTime(2026, 1, 1),
+        operation: 'power',
+        base: 2,
+        exponent: 3,
+        result: 8,
+      );
+      final json = entry.toJson();
+      final restored = ExponentHistoryEntry.fromJson(json);
+      expect(restored.operation, 'power');
+      expect(restored.base, 2);
+      expect(restored.exponent, 3);
+      expect(restored.result, 8);
+    });
+
+    test('ExponentHistoryEntry properties correct', () {
+      final entry = ExponentHistoryEntry(
+        date: DateTime(2026, 1, 1),
+        operation: 'sqrt',
+        base: 16,
+        exponent: 0,
+        result: 4,
+      );
+      expect(entry.operation, 'sqrt');
+      expect(entry.base, 16);
+      expect(entry.exponent, 0);
+      expect(entry.result, 4);
+    });
+
+    testWidgets('ExponentCard renders loading state', (WidgetTester tester) async {
+      final model = ExponentModel();
+      
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: ExponentCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Exponent Calculator: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('ExponentCard renders initialized state', (WidgetTester tester) async {
+      final model = ExponentModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: ExponentCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+
+      expect(find.text('Exponent Calculator'), findsOneWidget);
+      expect(find.byType(TextField), findsWidgets);
+    });
+
+    testWidgets('ExponentCard shows result with base', (WidgetTester tester) async {
+      final model = ExponentModel();
+      await model.init();
+      model.setBase(16);
+      model.setOperation('sqrt');
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: ExponentCard(),
+          ),
+        ),
+      ));
+
+      await tester.pump();
+
+      expect(find.textContaining('4'), findsWidgets);
+    });
+
+    test('ExponentCard widget exists', () {
+      expect(ExponentCard, isNotNull);
+    });
+
+    test('Global.providerList includes Exponent', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Exponent'), true);
+    });
+
+    test('Global.providerList contains all providers (103 total)', () {
+      expect(Global.providerList.length, 103);
+    });
+
+    tearDownAll(() {
+      exponentModel.clearHistory();
+    });
+  });
+
   group('Ascii Provider tests', () {
     setUpAll(() {
       SharedPreferences.setMockInitialValues({});
@@ -26551,8 +26829,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerJsonFormatter.name, 'JsonFormatter');
     });
 
-    test('Global.providerList contains all providers (102 total)', () {
-      expect(Global.providerList.length, 102);
+    test('Global.providerList contains all providers (103 total)', () {
+      expect(Global.providerList.length, 103);
     });
 
     tearDownAll(() {
@@ -26892,8 +27170,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerRegexTester.name, 'RegexTester');
     });
 
-    test('Global.providerList contains all providers (102 total)', () {
-      expect(Global.providerList.length, 102);
+    test('Global.providerList contains all providers (103 total)', () {
+      expect(Global.providerList.length, 103);
     });
 
     tearDownAll(() {
@@ -27231,8 +27509,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerBitwise.name, 'Bitwise');
     });
 
-    test('Global.providerList contains all providers (102 total)', () {
-      expect(Global.providerList.length, 102);
+    test('Global.providerList contains all providers (103 total)', () {
+      expect(Global.providerList.length, 103);
     });
 
     tearDownAll(() {
@@ -27496,8 +27774,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerDiffChecker.name, 'DiffChecker');
     });
 
-    test('Global.providerList contains all providers (102 total)', () {
-      expect(Global.providerList.length, 102);
+    test('Global.providerList contains all providers (103 total)', () {
+      expect(Global.providerList.length, 103);
     });
 
     tearDownAll(() {
@@ -27793,8 +28071,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('CronExpressionParser'), true);
     });
 
-    test('Global.providerList contains all providers (102 total)', () {
-      expect(Global.providerList.length, 102);
+    test('Global.providerList contains all providers (103 total)', () {
+      expect(Global.providerList.length, 103);
     });
 
     tearDownAll(() {
@@ -28036,8 +28314,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('AspectRatio'), true);
     });
 
-    test('Global.providerList contains all providers (102 total)', () {
-      expect(Global.providerList.length, 102);
+    test('Global.providerList contains all providers (103 total)', () {
+      expect(Global.providerList.length, 103);
     });
 
     tearDownAll(() {
@@ -28407,8 +28685,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Loan'), true);
     });
 
-    test('Global.providerList contains all providers (102 total)', () {
-      expect(Global.providerList.length, 102);
+    test('Global.providerList contains all providers (103 total)', () {
+      expect(Global.providerList.length, 103);
     });
 
     tearDownAll(() {

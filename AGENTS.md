@@ -1231,6 +1231,20 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `TextField` for Material 3 style
     - Keywords: loan, calculator, mortgage, payment, interest, amortization, finance
+- **Exponent**: Exponent calculator for math operations
+    - Power calculation (x^y)
+    - Square root calculation (sqrt)
+    - Cube root calculation (cbrt)
+    - Nth root calculation
+    - Logarithm calculation (log base y)
+    - Natural logarithm calculation (ln)
+    - SegmentedButton for operation selection
+    - Real-time calculation as values are entered
+    - Calculation history (up to 10 entries)
+    - Load previous calculations from history
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `TextField` for Material 3 style
+    - Keywords: exponent, power, root, square, cube, log, logarithm, math, calculate
 
 ## Material 3 Design System
 
@@ -1393,8 +1407,10 @@ Test coverage includes:
 - DiffChecker provider tests (provider existence, keywords, model state, diff operations, additions/deletions detection, word diff, history, widget rendering)
 - CronExpressionParser provider tests (provider existence, keywords, model state, expression parsing, description generation, next runs calculation, history, widget rendering)
 - AspectRatio provider tests (provider existence, keywords, model state, gcd calculation, ratio calculation, decimal ratio, preset selection, target dimension calculation, history, widget rendering)
+- Loan provider tests (provider existence, keywords, model state, payment calculations, total payment/interest, interest percentage, amortization schedule, history, widget rendering)
+- Exponent provider tests (provider existence, keywords, model state, power calculation, sqrt/cbrt/nthroot calculations, log/ln calculations, history, widget rendering)
 
-Total tests: 2873 tests
+Total tests: 2899 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:

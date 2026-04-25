@@ -102,6 +102,8 @@ import 'package:new_launcher/providers/provider_bitwise.dart';
 import 'package:new_launcher/providers/provider_diff.dart';
 import 'package:new_launcher/providers/provider_cron.dart';
 import 'package:new_launcher/providers/provider_aspectratio.dart';
+import 'package:new_launcher/providers/provider_exponent.dart';
+import 'package:new_launcher/providers/provider_loan.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -277,8 +279,10 @@ ChangeNotifierProvider.value(value: regexModel),
                        ChangeNotifierProvider.value(value: bitwiseModel),
 ChangeNotifierProvider.value(value: diffCheckerModel),
                          ChangeNotifierProvider.value(value: cronModel),
-                         ChangeNotifierProvider.value(value: aspectRatioModel),
-                         ],
+ChangeNotifierProvider.value(value: aspectRatioModel),
+                      ChangeNotifierProvider.value(value: loanModel),
+                      ChangeNotifierProvider.value(value: exponentModel),
+                          ],
           child: MyApp(),
             )));
 }
