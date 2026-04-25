@@ -98,6 +98,7 @@ import 'package:new_launcher/providers/provider_json.dart';
 import 'package:new_launcher/providers/provider_regex.dart';
 import 'package:new_launcher/providers/provider_bitwise.dart';
 import 'package:new_launcher/providers/provider_diff.dart';
+import 'package:new_launcher/providers/provider_cron.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2538,7 +2539,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 99);
+      expect(Global.providerList.length, 100);
     });
 
     test('Global.providerList names are correct', () {
@@ -3705,7 +3706,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 99);
+      expect(initCount, 100);
     });
   });
 
@@ -4022,8 +4023,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (99 total)', () {
-      expect(Global.providerList.length, 99);
+test('Global.providerList contains all providers (100 total)', () {
+      expect(Global.providerList.length, 100);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5366,8 +5367,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (99 total)', () {
-      expect(Global.providerList.length, 99);
+test('Global.providerList contains all providers (100 total)', () {
+      expect(Global.providerList.length, 100);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -26548,8 +26549,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerJsonFormatter.name, 'JsonFormatter');
     });
 
-    test('Global.providerList contains all providers (99 total)', () {
-      expect(Global.providerList.length, 99);
+    test('Global.providerList contains all providers (100 total)', () {
+      expect(Global.providerList.length, 100);
     });
 
     tearDownAll(() {
@@ -26889,8 +26890,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerRegexTester.name, 'RegexTester');
     });
 
-    test('Global.providerList contains all providers (99 total)', () {
-      expect(Global.providerList.length, 99);
+    test('Global.providerList contains all providers (100 total)', () {
+      expect(Global.providerList.length, 100);
     });
 
     tearDownAll(() {
@@ -27228,8 +27229,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerBitwise.name, 'Bitwise');
     });
 
-    test('Global.providerList contains all providers (99 total)', () {
-      expect(Global.providerList.length, 99);
+    test('Global.providerList contains all providers (100 total)', () {
+      expect(Global.providerList.length, 100);
     });
 
     tearDownAll(() {
@@ -27493,12 +27494,309 @@ test('WordleModel submitGuess works', () async {
       expect(providerDiffChecker.name, 'DiffChecker');
     });
 
-    test('Global.providerList contains all providers (99 total)', () {
-      expect(Global.providerList.length, 99);
+    test('Global.providerList contains all providers (100 total)', () {
+      expect(Global.providerList.length, 100);
     });
 
     tearDownAll(() {
       diffCheckerModel.clearHistory();
+    });
+  });
+
+  group('Cron Expression Parser Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      Global.backgroundImageModel.backgroundImage = AssetImage('test_assets/transparent.png');
+    });
+
+    test('providerCronExpressionParser exists', () {
+      expect(providerCronExpressionParser, isNotNull);
+      expect(providerCronExpressionParser.name, 'CronExpressionParser');
+    });
+
+    test('CronModel initializes correctly', () {
+      final model = CronModel();
+      expect(model.expression, '');
+      expect(model.description, '');
+      expect(model.isValid, true);
+      expect(model.errorMessage, '');
+      expect(model.nextRuns, []);
+      expect(model.history, []);
+      expect(model.isInitialized, false);
+    });
+
+    test('CronModel init works', () {
+      final model = CronModel();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('CronModel init only once', () {
+      final model = CronModel();
+      model.init();
+      model.init();
+      expect(model.isInitialized, true);
+    });
+
+    test('CronModel setExpression works', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('* * * * *');
+      expect(model.expression, '* * * * *');
+      expect(model.isValid, true);
+    });
+
+    test('CronModel validates invalid expression - wrong number of fields', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('* * * *');
+      expect(model.isValid, false);
+      expect(model.errorMessage.contains('5 fields'), true);
+    });
+
+    test('CronModel validates invalid expression - invalid minute', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('60 * * * *');
+      expect(model.isValid, false);
+    });
+
+    test('CronModel validates invalid expression - invalid hour', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('* 25 * * *');
+      expect(model.isValid, false);
+    });
+
+    test('CronModel parses * * * * * correctly', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('* * * * *');
+      expect(model.isValid, true);
+      expect(model.description.toLowerCase().contains('every minute'), true);
+      expect(model.nextRuns.length, 5);
+    });
+
+    test('CronModel parses 0 0 * * * correctly', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('0 0 * * *');
+      expect(model.isValid, true);
+      expect(model.nextRuns.length, 5);
+    });
+
+    test('CronModel parses 0 */2 * * * correctly', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('0 */2 * * *');
+      expect(model.isValid, true);
+      expect(model.nextRuns.length, 5);
+    });
+
+    test('CronModel parses 0 9-17 * * * correctly', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('0 9-17 * * *');
+      expect(model.isValid, true);
+      expect(model.nextRuns.length, 5);
+    });
+
+    test('CronModel parses 0 0 1 * * correctly', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('0 0 1 * *');
+      expect(model.isValid, true);
+      expect(model.nextRuns.length, 5);
+    });
+
+    test('CronModel parses 0 0 * * 0 correctly', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('0 0 * * 0');
+      expect(model.isValid, true);
+      expect(model.nextRuns.length, 5);
+    });
+
+    test('CronModel parses range correctly', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('1-5 * * * *');
+      expect(model.isValid, true);
+      expect(model.nextRuns.length, 5);
+    });
+
+    test('CronModel parses comma-separated values correctly', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('0,15,30,45 * * * *');
+      expect(model.isValid, true);
+      expect(model.nextRuns.length, 5);
+    });
+
+    test('CronModel parses step correctly', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('*/15 * * * *');
+      expect(model.isValid, true);
+      expect(model.nextRuns.length, 5);
+    });
+
+    test('CronModel parses range with step correctly', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('0-30/10 * * * *');
+      expect(model.isValid, true);
+      expect(model.nextRuns.length, 5);
+    });
+
+    test('CronModel addToHistory works', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('* * * * *');
+      model.addToHistory();
+      expect(model.history.length, 1);
+      expect(model.history[0].expression, '* * * * *');
+    });
+
+    test('CronModel addToHistory does not add invalid expressions', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('invalid');
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('CronModel addToHistory does not add empty expressions', () {
+      final model = CronModel();
+      model.init();
+      model.addToHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('CronModel history max length', () {
+      final model = CronModel();
+      model.init();
+      for (int i = 0; i < 15; i++) {
+        model.setExpression('* * * * *');
+        model.addToHistory();
+      }
+      expect(model.history.length, 10);
+    });
+
+    test('CronModel loadFromHistory works', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('0 0 * * *');
+      model.addToHistory();
+      model.setExpression('*/15 * * * *');
+      model.addToHistory();
+      model.loadFromHistory(0);
+      expect(model.expression, '0 0 * * *');
+    });
+
+    test('CronModel clearHistory works', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('* * * * *');
+      model.addToHistory();
+      model.clearHistory();
+      expect(model.history.length, 0);
+    });
+
+    test('CronModel clearExpression works', () {
+      final model = CronModel();
+      model.init();
+      model.setExpression('* * * * *');
+      model.clearExpression();
+      expect(model.expression, '');
+      expect(model.description, '');
+      expect(model.nextRuns.length, 0);
+    });
+
+    test('CronModel refresh calls notifyListeners', () {
+      final model = CronModel();
+      model.init();
+      var notified = false;
+      model.addListener(() => notified = true);
+      model.refresh();
+      expect(notified, true);
+    });
+
+    test('CronHistoryEntry properties correct', () {
+      final entry = CronHistoryEntry(
+        expression: '* * * * *',
+        description: 'Every minute',
+        timestamp: DateTime.now(),
+      );
+      expect(entry.expression, '* * * * *');
+      expect(entry.description, 'Every minute');
+    });
+
+    testWidgets('CronExpressionParserCard renders correctly', (WidgetTester tester) async {
+      final model = CronModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: CronExpressionParserCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Cron Expression Parser'), findsOneWidget);
+    });
+
+    testWidgets('CronExpressionParserCard shows input field', (WidgetTester tester) async {
+      final model = CronModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: CronExpressionParserCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Cron Expression'), findsOneWidget);
+    });
+
+    testWidgets('CronExpressionParserCard shows buttons', (WidgetTester tester) async {
+      final model = CronModel();
+      model.init();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: model,
+              child: CronExpressionParserCard(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Save'), findsOneWidget);
+      expect(find.text('Clear'), findsOneWidget);
+    });
+
+    test('CronExpressionParserCard widget exists', () {
+      expect(CronExpressionParserCard, isNotNull);
+    });
+
+    test('Global.providerList includes CronExpressionParser', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('CronExpressionParser'), true);
+    });
+
+    test('Global.providerList contains all providers (100 total)', () {
+      expect(Global.providerList.length, 100);
+    });
+
+    tearDownAll(() {
+      cronModel.clearHistory();
     });
   });
 }

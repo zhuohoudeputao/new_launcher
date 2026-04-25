@@ -1193,6 +1193,17 @@ Settings auto-saved via `SharedPreferences`:
     - Clear text inputs button
     - Uses `Card.filled`, `FilterChip`, `TextField` for Material 3 style
     - Keywords: diff, compare, text, difference, checker, compare, lines
+- **CronExpressionParser**: Cron expression parser for developers
+    - Parse and validate standard 5-field cron expressions
+    - Human-readable description of schedule
+    - Calculate next 5 scheduled execution times
+    - Support wildcards, ranges, steps, and comma-separated values
+    - Relative time display (e.g., "in 2 hours", "in 3 days")
+    - Expression history tracking (up to 10 entries)
+    - Load previous expressions from history
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `TextField`, `ActionChip` for Material 3 style
+    - Keywords: cron, expression, schedule, parser, time, crontab, job
 
 ## Material 3 Design System
 
@@ -1353,8 +1364,9 @@ Test coverage includes:
 - RegexTester provider tests (provider existence, keywords, model state, pattern matching, case sensitivity, multiline, dotAll, capture groups, history, widget rendering)
 - Bitwise provider tests (provider existence, keywords, model state, bitwise operations, AND, OR, XOR, NOT, shift operations, binary/hex conversion, history, widget rendering)
 - DiffChecker provider tests (provider existence, keywords, model state, diff operations, additions/deletions detection, word diff, history, widget rendering)
+- CronExpressionParser provider tests (provider existence, keywords, model state, expression parsing, description generation, next runs calculation, history, widget rendering)
 
-Total tests: 2778 tests
+Total tests: 2811 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
