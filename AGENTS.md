@@ -1287,6 +1287,22 @@ Settings auto-saved via `SharedPreferences`:
     - Clear history with confirmation dialog
     - Uses `Card.filled`, `SegmentedButton`, `TextField`, `FilterChip` for Material 3 style
     - Keywords: pace, run, running, calculator, time, distance, speed, marathon, race
+- **BloodPressure**: Blood pressure tracker for health monitoring
+    - Track blood pressure readings with systolic/diastolic values
+    - Optional pulse/heart rate recording
+    - Category classification: Normal, Elevated, High Stage 1, High Stage 2, Crisis
+    - Color-coded category indicators (green, orange, deep orange, red, dark red)
+    - Average, min, max statistics
+    - Percentage of normal readings
+    - Target BP setting with preset options (120/80, 110/70, 130/85)
+    - Change/trend indicator between readings
+    - Log readings for custom dates (within 30 days)
+    - History view showing past entries with delete option
+    - Clear all history with confirmation dialog
+    - Maximum 30 entries stored (oldest removed when limit exceeded)
+    - Blood pressure entries persisted via SharedPreferences
+    - Uses `Card.filled`, `ActionChip`, `LinearProgressIndicator` for Material 3 style
+    - Keywords: blood, pressure, bp, systolic, diastolic, heart, pulse, log, track, health, monitor
 
 ## Material 3 Design System
 
@@ -1454,8 +1470,9 @@ Test coverage includes:
 - Exponent provider tests (provider existence, keywords, model state, power calculation, sqrt/cbrt/nthroot calculations, log/ln calculations, history, widget rendering)
 - Weight Tracker provider tests (provider existence, keywords, model state, weight logging, unit conversion, goal setting, statistics calculations, widget rendering)
 - Pace provider tests (provider existence, keywords, model state, pace calculations, time/distance calculations, predicted race times, history, widget rendering)
+- BloodPressure provider tests (provider existence, keywords, model state, CRUD operations, category classification, statistics calculations, widget rendering)
 
-Total tests: 2563 tests
+Total tests: 2587 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1555,6 +1572,7 @@ Technical documentation is available in `docs/`:
 - `json_formatter_provider.md` - JSON Formatter provider implementation for JSON validation and formatting
 - `regex_tester_provider.md` - Regex Tester provider implementation for regular expression testing
 - `bitwise_provider.md` - Bitwise Calculator provider implementation for bitwise operations
+- `bloodpressure_provider.md` - Blood Pressure Tracker provider implementation for health monitoring
 
 ## Notice
 DO NOT EDIT task*.md

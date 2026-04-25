@@ -117,6 +117,7 @@ import 'package:new_launcher/providers/provider_aspectratio.dart';
 import 'package:new_launcher/providers/provider_loan.dart';
 import 'package:new_launcher/providers/provider_weight_tracker.dart';
 import 'package:new_launcher/providers/provider_pace.dart';
+import 'package:new_launcher/providers/provider_bloodpressure.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -347,6 +348,7 @@ class Global {
     providerExponent,
     providerWeightTracker,
     providerPace,
+    providerBloodPressure,
   ];
 
   //_______________________________________________________________________

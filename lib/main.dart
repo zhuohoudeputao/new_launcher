@@ -106,6 +106,7 @@ import 'package:new_launcher/providers/provider_aspectratio.dart';
 import 'package:new_launcher/providers/provider_exponent.dart';
 import 'package:new_launcher/providers/provider_weight_tracker.dart';
 import 'package:new_launcher/providers/provider_pace.dart';
+import 'package:new_launcher/providers/provider_bloodpressure.dart';
 import 'package:new_launcher/providers/provider_loan.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
@@ -286,9 +287,10 @@ ChangeNotifierProvider.value(value: diffCheckerModel),
 ChangeNotifierProvider.value(value: aspectRatioModel),
                       ChangeNotifierProvider.value(value: loanModel),
                       ChangeNotifierProvider.value(value: exponentModel),
-                        ChangeNotifierProvider.value(value: weightTrackerModel),
-                        ChangeNotifierProvider.value(value: paceModel),
-                          ],
+ChangeNotifierProvider.value(value: weightTrackerModel),
+                         ChangeNotifierProvider.value(value: paceModel),
+                         ChangeNotifierProvider.value(value: bloodPressureModel),
+                           ],
           child: MyApp(),
             )));
 }

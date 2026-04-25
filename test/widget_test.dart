@@ -105,6 +105,7 @@ import 'package:new_launcher/providers/provider_aspectratio.dart';
 import 'package:new_launcher/providers/provider_loan.dart';
 import 'package:new_launcher/providers/provider_weight_tracker.dart';
 import 'package:new_launcher/providers/provider_pace.dart';
+import 'package:new_launcher/providers/provider_bloodpressure.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -29615,12 +29616,434 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Pace'), true);
     });
 
-    test('Global.providerList contains all providers (106 total)', () {
-      expect(Global.providerList.length, 106);
+    test('Global.providerList contains all providers (107 total)', () {
+      expect(Global.providerList.length, 107);
     });
 
     tearDownAll(() {
       paceModel.clearHistory();
+    });
+  });
+
+  group('BloodPressure Provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      await bloodPressureModel.init();
+    });
+
+    test('providerBloodPressure exists', () {
+      expect(providerBloodPressure, isNotNull);
+      expect(providerBloodPressure.name, 'BloodPressure');
+    });
+
+    test('BloodPressure keywords contain expected terms', () {
+      final keywords = 'blood pressure bp systolic diastolic heart pulse log track health monitor';
+      expect(keywords.contains('blood'), true);
+      expect(keywords.contains('pressure'), true);
+      expect(keywords.contains('bp'), true);
+      expect(keywords.contains('systolic'), true);
+      expect(keywords.contains('diastolic'), true);
+    });
+
+    test('BloodPressureModel initial state', () {
+      expect(bloodPressureModel.isInitialized, true);
+      expect(bloodPressureModel.history.isEmpty, true);
+      expect(bloodPressureModel.targetSystolic, 120);
+      expect(bloodPressureModel.targetDiastolic, 80);
+    });
+
+    test('BPCategory extension works correctly', () {
+      expect(BPCategory.normal.label, 'Normal');
+      expect(BPCategory.elevated.label, 'Elevated');
+      expect(BPCategory.highStage1.label, 'High Stage 1');
+      expect(BPCategory.highStage2.label, 'High Stage 2');
+      expect(BPCategory.crisis.label, 'Crisis');
+    });
+
+    test('getBPCategoryFromValues works correctly', () {
+      expect(getBPCategoryFromValues(110, 70), BPCategory.normal);
+      expect(getBPCategoryFromValues(125, 75), BPCategory.elevated);
+      expect(getBPCategoryFromValues(135, 85), BPCategory.highStage1);
+      expect(getBPCategoryFromValues(150, 95), BPCategory.highStage2);
+      expect(getBPCategoryFromValues(190, 130), BPCategory.crisis);
+    });
+
+    test('BloodPressureEntry toJson and fromJson work', () {
+      final entry = BloodPressureEntry(
+        date: DateTime(2025, 1, 15),
+        systolic: 120,
+        diastolic: 80,
+        pulse: 72,
+        notes: 'Morning reading',
+      );
+      String json = entry.toJson();
+      final parsed = BloodPressureEntry.fromJson(json);
+      expect(parsed.date.year, 2025);
+      expect(parsed.date.month, 1);
+      expect(parsed.date.day, 15);
+      expect(parsed.systolic, 120);
+      expect(parsed.diastolic, 80);
+      expect(parsed.pulse, 72);
+      expect(parsed.notes, 'Morning reading');
+    });
+
+    test('BloodPressureEntry formatReading works', () {
+      final entry = BloodPressureEntry(
+        date: DateTime.now(),
+        systolic: 120,
+        diastolic: 80,
+      );
+      expect(entry.formatReading(), '120/80 mmHg');
+    });
+
+    test('BloodPressureEntry formatWithPulse works', () {
+      final entry1 = BloodPressureEntry(
+        date: DateTime.now(),
+        systolic: 120,
+        diastolic: 80,
+        pulse: 72,
+      );
+      expect(entry1.formatWithPulse(), '120/80 mmHg, 72 bpm');
+
+      final entry2 = BloodPressureEntry(
+        date: DateTime.now(),
+        systolic: 120,
+        diastolic: 80,
+      );
+      expect(entry2.formatWithPulse(), '120/80 mmHg');
+    });
+
+    test('BloodPressureEntry getDayKey works', () {
+      final date = DateTime(2025, 1, 15);
+      final key = BloodPressureEntry.getDayKey(date);
+      expect(key, '2025-1-15');
+    });
+
+    test('BloodPressureModel logReading adds entry', () async {
+      await bloodPressureModel.init();
+      bloodPressureModel.logReading(120, 80);
+      expect(bloodPressureModel.history.length, 1);
+      expect(bloodPressureModel.latestEntry?.systolic, 120);
+      expect(bloodPressureModel.latestEntry?.diastolic, 80);
+      bloodPressureModel.clearHistory();
+    });
+
+    test('BloodPressureModel logReading with pulse', () async {
+      await bloodPressureModel.init();
+      bloodPressureModel.logReading(120, 80, pulse: 72);
+      expect(bloodPressureModel.history.length, 1);
+      expect(bloodPressureModel.latestEntry?.pulse, 72);
+      bloodPressureModel.clearHistory();
+    });
+
+    test('BloodPressureModel logReading with custom date', () async {
+      await bloodPressureModel.init();
+      final customDate = DateTime(2025, 1, 10);
+      bloodPressureModel.logReading(120, 80, customDate: customDate);
+      expect(bloodPressureModel.history.length, 1);
+      expect(bloodPressureModel.history.first.date.year, 2025);
+      bloodPressureModel.clearHistory();
+    });
+
+    test('BloodPressureModel logReading updates existing entry', () async {
+      await bloodPressureModel.init();
+      bloodPressureModel.logReading(120, 80);
+      expect(bloodPressureModel.history.length, 1);
+      bloodPressureModel.logReading(125, 82);
+      expect(bloodPressureModel.history.length, 1);
+      expect(bloodPressureModel.latestEntry?.systolic, 125);
+      bloodPressureModel.clearHistory();
+    });
+
+    test('BloodPressureModel setTarget works', () async {
+      await bloodPressureModel.init();
+      bloodPressureModel.setTarget(115, 75);
+      expect(bloodPressureModel.targetSystolic, 115);
+      expect(bloodPressureModel.targetDiastolic, 75);
+      bloodPressureModel.setTarget(120, 80);
+      expect(bloodPressureModel.targetSystolic, 120);
+      expect(bloodPressureModel.targetDiastolic, 80);
+    });
+
+    test('BloodPressureModel statistics work correctly', () async {
+      await bloodPressureModel.init();
+      bloodPressureModel.logReading(120, 80);
+      await Future.delayed(Duration(milliseconds: 10));
+      bloodPressureModel.logReading(125, 85, customDate: DateTime.now().subtract(Duration(days: 1)));
+      await Future.delayed(Duration(milliseconds: 10));
+      bloodPressureModel.logReading(130, 90, customDate: DateTime.now().subtract(Duration(days: 2)));
+
+      expect(bloodPressureModel.hasHistory, true);
+      expect(bloodPressureModel.averageSystolic, 125);
+      expect(bloodPressureModel.averageDiastolic, 85);
+      expect(bloodPressureModel.minSystolic, 120);
+      expect(bloodPressureModel.maxSystolic, 130);
+      expect(bloodPressureModel.minDiastolic, 80);
+      expect(bloodPressureModel.maxDiastolic, 90);
+      expect(bloodPressureModel.entryCount, 3);
+      bloodPressureModel.clearHistory();
+    });
+
+    test('BloodPressureModel systolicChange works', () async {
+      await bloodPressureModel.init();
+      bloodPressureModel.logReading(120, 80, customDate: DateTime.now().subtract(Duration(days: 2)));
+      await Future.delayed(Duration(milliseconds: 10));
+      bloodPressureModel.logReading(125, 85, customDate: DateTime.now().subtract(Duration(days: 1)));
+      await Future.delayed(Duration(milliseconds: 10));
+      bloodPressureModel.logReading(130, 90);
+
+      expect(bloodPressureModel.systolicChange(), 10);
+      expect(bloodPressureModel.diastolicChange(), 10);
+      expect(bloodPressureModel.systolicChangeLabel, '+10');
+      expect(bloodPressureModel.diastolicChangeLabel, '+10');
+      bloodPressureModel.clearHistory();
+    });
+
+    test('BloodPressureModel averagePulse works', () async {
+      await bloodPressureModel.init();
+      bloodPressureModel.logReading(120, 80, pulse: 70, customDate: DateTime.now().subtract(Duration(days: 2)));
+      await Future.delayed(Duration(milliseconds: 10));
+      bloodPressureModel.logReading(125, 85, pulse: 75, customDate: DateTime.now().subtract(Duration(days: 1)));
+      await Future.delayed(Duration(milliseconds: 10));
+      bloodPressureModel.logReading(130, 90, pulse: 80);
+
+      expect(bloodPressureModel.averagePulse, 75);
+      bloodPressureModel.clearHistory();
+    });
+
+    test('BloodPressureModel normalReadings works', () async {
+      await bloodPressureModel.init();
+      bloodPressureModel.logReading(110, 70, customDate: DateTime.now().subtract(Duration(days: 2)));
+      await Future.delayed(Duration(milliseconds: 10));
+      bloodPressureModel.logReading(125, 75, customDate: DateTime.now().subtract(Duration(days: 1)));
+      await Future.delayed(Duration(milliseconds: 10));
+      bloodPressureModel.logReading(130, 85);
+
+      expect(bloodPressureModel.normalReadings, 1);
+      expect(bloodPressureModel.highReadings, 1);
+      expect(bloodPressureModel.normalPercentage, closeTo(33.33, 0.1));
+      bloodPressureModel.clearHistory();
+    });
+
+    test('BloodPressureModel averageCategory works', () async {
+      await bloodPressureModel.init();
+      bloodPressureModel.logReading(110, 70, customDate: DateTime.now().subtract(Duration(days: 2)));
+      await Future.delayed(Duration(milliseconds: 10));
+      bloodPressureModel.logReading(120, 80, customDate: DateTime.now().subtract(Duration(days: 1)));
+      await Future.delayed(Duration(milliseconds: 10));
+      bloodPressureModel.logReading(130, 85);
+
+      expect(bloodPressureModel.averageCategory, BPCategory.highStage1);
+      bloodPressureModel.clearHistory();
+    });
+
+    test('BloodPressureModel deleteEntry works', () async {
+      await bloodPressureModel.init();
+      bloodPressureModel.logReading(120, 80);
+      bloodPressureModel.logReading(125, 85, customDate: DateTime.now().subtract(Duration(days: 1)));
+      expect(bloodPressureModel.history.length, 2);
+      bloodPressureModel.deleteEntry(0);
+      expect(bloodPressureModel.history.length, 1);
+      bloodPressureModel.clearHistory();
+    });
+
+    test('BloodPressureModel clearHistory works', () async {
+      await bloodPressureModel.init();
+      bloodPressureModel.logReading(120, 80);
+      bloodPressureModel.logReading(125, 85, customDate: DateTime.now().subtract(Duration(days: 1)));
+      expect(bloodPressureModel.hasHistory, true);
+      await bloodPressureModel.clearHistory();
+      expect(bloodPressureModel.history.isEmpty, true);
+      expect(bloodPressureModel.hasHistory, false);
+    });
+
+    test('BloodPressureModel refresh calls notifyListeners', () async {
+      await bloodPressureModel.init();
+      bloodPressureModel.logReading(120, 80);
+      await bloodPressureModel.refresh();
+      expect(bloodPressureModel.isInitialized, true);
+      bloodPressureModel.clearHistory();
+    });
+
+    test('BloodPressureModel maxHistoryEntries limit works', () async {
+      await bloodPressureModel.init();
+      for (int i = 0; i < 35; i++) {
+        bloodPressureModel.logReading(
+          120 + i,
+          80 + i,
+          customDate: DateTime.now().subtract(Duration(days: i)),
+        );
+        await Future.delayed(Duration(milliseconds: 5));
+      }
+      expect(bloodPressureModel.history.length, lessThanOrEqualTo(BloodPressureModel.maxHistoryEntries));
+      bloodPressureModel.clearHistory();
+    });
+
+    testWidgets('BloodPressureCard renders loading state', (WidgetTester tester) async {
+      final model = BloodPressureModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: BloodPressureCard(),
+          ),
+        ),
+      ));
+
+      expect(find.text('Blood Pressure: Loading...'), findsOneWidget);
+    });
+
+    testWidgets('BloodPressureCard renders initialized state', (WidgetTester tester) async {
+      final model = BloodPressureModel();
+      await model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: BloodPressureCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Blood Pressure'), findsOneWidget);
+      expect(find.text('No readings logged yet'), findsOneWidget);
+    });
+
+    testWidgets('BloodPressureCard shows reading entry', (WidgetTester tester) async {
+      final model = BloodPressureModel();
+      await model.init();
+      model.logReading(120, 80);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: BloodPressureCard(),
+            ),
+          ),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.text('Blood Pressure'), findsOneWidget);
+      expect(find.textContaining('120/80'), findsOneWidget);
+      model.clearHistory();
+    });
+
+    testWidgets('BloodPressureCard shows statistics', (WidgetTester tester) async {
+      final model = BloodPressureModel();
+      await model.init();
+      model.logReading(120, 80, customDate: DateTime.now().subtract(Duration(days: 2)));
+      await Future.delayed(Duration(milliseconds: 10));
+      model.logReading(125, 85, customDate: DateTime.now().subtract(Duration(days: 1)));
+      await Future.delayed(Duration(milliseconds: 10));
+      model.logReading(130, 90);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: BloodPressureCard(),
+            ),
+          ),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.text('Blood Pressure'), findsOneWidget);
+      expect(find.textContaining('Avg'), findsOneWidget);
+      model.clearHistory();
+    });
+
+    testWidgets('BloodPressureCard shows pulse reading', (WidgetTester tester) async {
+      final model = BloodPressureModel();
+      await model.init();
+      model.logReading(120, 80, pulse: 72);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: BloodPressureCard(),
+            ),
+          ),
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.text('Blood Pressure'), findsOneWidget);
+      expect(find.textContaining('Pulse'), findsOneWidget);
+      model.clearHistory();
+    });
+
+    testWidgets('BloodPressureCard widget exists', (WidgetTester tester) async {
+      expect(BloodPressureCard, isNotNull);
+    });
+
+    testWidgets('BloodPressureLogDialog renders correctly', (WidgetTester tester) async {
+      await bloodPressureModel.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => BloodPressureLogDialog(),
+              ),
+              child: Text('Show Dialog'),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text('Show Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Log Blood Pressure'), findsOneWidget);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('BloodPressureTargetDialog renders correctly', (WidgetTester tester) async {
+      await bloodPressureModel.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => BloodPressureTargetDialog(),
+              ),
+              child: Text('Show Dialog'),
+            ),
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text('Show Dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Set Target BP'), findsOneWidget);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+    });
+
+    test('Global.providerList includes BloodPressure', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('BloodPressure'), true);
+    });
+
+    tearDownAll(() {
+      bloodPressureModel.clearHistory();
     });
   });
 }
