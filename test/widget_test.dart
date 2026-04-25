@@ -127,6 +127,7 @@ import 'package:new_launcher/providers/provider_markdown.dart';
 import 'package:new_launcher/providers/provider_stretch_reminder.dart';
 import 'package:new_launcher/providers/provider_dog_age.dart';
 import 'package:new_launcher/providers/provider_cat_age.dart';
+import 'package:new_launcher/providers/provider_biorhythm.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2567,7 +2568,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     test('Global.providerList names are correct', () {
@@ -4050,7 +4051,7 @@ void main() {
 });
 
 test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5394,7 +5395,7 @@ test('Global.providerList includes Flashlight', () {
 });
 
 test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -12930,7 +12931,7 @@ test('Global.providerList includes UnitConverter', () {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
   });
 
@@ -23328,7 +23329,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -27072,7 +27073,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -27416,7 +27417,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -27755,7 +27756,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -28020,7 +28021,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -28317,7 +28318,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -28560,7 +28561,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -28931,7 +28932,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -29305,7 +29306,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -29636,7 +29637,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -30665,7 +30666,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -30914,7 +30915,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test updated', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -31137,7 +31138,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test final', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -31322,7 +31323,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test with SlidingPuzzle', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -31697,7 +31698,7 @@ test('WordleModel submitGuess works', () async {
     });
 
 test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -31839,7 +31840,7 @@ test('Global.providerList contains all providers (128 total)', () {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -31996,7 +31997,7 @@ test('Global.providerList contains all providers (128 total)', () {
     });
 
     test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 128);
+      expect(Global.providerList.length, 129);
     });
 
     tearDownAll(() {
@@ -34186,6 +34187,202 @@ test('Global.providerList contains all providers (128 total)', () {
       expect(actionKeywords.contains('age'), true);
       expect(actionKeywords.contains('pet'), true);
       expect(actionKeywords.contains('kitten'), true);
+    });
+  });
+
+  group('Biorhythm Provider Tests', () {
+    setUpAll(() {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('BiorhythmModel exists', () {
+      expect(biorhythmModel, isNotNull);
+    });
+
+    test('BiorhythmModel has correct cycle constants', () {
+      expect(BiorhythmModel.physicalCycle, 23);
+      expect(BiorhythmModel.emotionalCycle, 28);
+      expect(BiorhythmModel.intellectualCycle, 33);
+    });
+
+    test('BiorhythmModel initial state', () {
+      expect(biorhythmModel.isInitialized, false);
+      expect(biorhythmModel.hasBirthdate, false);
+    });
+
+    test('BiorhythmModel calculateCycleValue returns sine value', () {
+      final birthdate = DateTime(1990, 1, 1);
+      final targetDate = DateTime(1990, 1, 1);
+      final value = biorhythmModel.calculateCycleValue(birthdate, targetDate, 23);
+      expect(value, closeTo(0.0, 0.001));
+    });
+
+    test('BiorhythmModel getPhysicalValue at quarter cycle', () {
+      final birthdate = DateTime(1990, 1, 1);
+      final targetDate = DateTime(1990, 1, 1).add(Duration(days: 6));
+      final value = biorhythmModel.getPhysicalValue(birthdate, targetDate);
+      expect(value, closeTo(1.0, 0.1));
+    });
+
+    test('BiorhythmModel getEmotionalValue at quarter cycle', () {
+      final birthdate = DateTime(1990, 1, 1);
+      final targetDate = DateTime(1990, 1, 1).add(Duration(days: 7));
+      final value = biorhythmModel.getEmotionalValue(birthdate, targetDate);
+      expect(value, closeTo(1.0, 0.01));
+    });
+
+    test('BiorhythmModel getIntellectualValue at quarter cycle', () {
+      final birthdate = DateTime(1990, 1, 1);
+      final targetDate = DateTime(1990, 1, 1).add(Duration(days: 8));
+      final value = biorhythmModel.getIntellectualValue(birthdate, targetDate);
+      expect(value, closeTo(1.0, 0.1));
+    });
+
+    test('BiorhythmModel getCycleStatus returns correct values', () {
+      expect(biorhythmModel.getCycleStatus(0.6), 'High');
+      expect(biorhythmModel.getCycleStatus(0.3), 'Rising');
+      expect(biorhythmModel.getCycleStatus(-0.6), 'Low');
+      expect(biorhythmModel.getCycleStatus(-0.3), 'Falling');
+      expect(biorhythmModel.getCycleStatus(0.0), 'Critical');
+    });
+
+    test('BiorhythmModel getCycleEmoji returns correct emojis', () {
+      expect(biorhythmModel.getCycleEmoji(0.6), '📈');
+      expect(biorhythmModel.getCycleEmoji(0.3), '⬆️');
+      expect(biorhythmModel.getCycleEmoji(-0.6), '📉');
+      expect(biorhythmModel.getCycleEmoji(-0.3), '⬇️');
+      expect(biorhythmModel.getCycleEmoji(0.0), '⚠️');
+    });
+
+    test('BiorhythmModel getDaysInCycle returns correct value', () {
+      final birthdate = DateTime(1990, 1, 1);
+      final targetDate = DateTime(1990, 1, 10);
+      final days = biorhythmModel.getDaysInCycle(birthdate, targetDate, 23);
+      expect(days, 9);
+    });
+
+    test('BiorhythmModel getDaysInCycle wraps around', () {
+      final birthdate = DateTime(1990, 1, 1);
+      final targetDate = DateTime(1990, 1, 25);
+      final days = biorhythmModel.getDaysInCycle(birthdate, targetDate, 23);
+      expect(days, 1);
+    });
+
+    test('BiorhythmModel setBirthdate', () async {
+      SharedPreferences.setMockInitialValues({});
+      await biorhythmModel.init();
+      biorhythmModel.setBirthdate(DateTime(1990, 5, 15));
+      expect(biorhythmModel.hasBirthdate, true);
+      expect(biorhythmModel.birthdate!.year, 1990);
+      biorhythmModel.clear();
+    });
+
+    test('BiorhythmModel setSelectedDate', () async {
+      SharedPreferences.setMockInitialValues({});
+      await biorhythmModel.init();
+      biorhythmModel.setSelectedDate(DateTime(2025, 6, 1));
+      expect(biorhythmModel.selectedDate!.year, 2025);
+      biorhythmModel.clear();
+    });
+
+    test('BiorhythmModel clear', () async {
+      SharedPreferences.setMockInitialValues({});
+      await biorhythmModel.init();
+      biorhythmModel.setBirthdate(DateTime(1990, 1, 1));
+      expect(biorhythmModel.hasBirthdate, true);
+      biorhythmModel.clear();
+      expect(biorhythmModel.hasBirthdate, false);
+    });
+
+    test('BiorhythmModel resetSelectedDate', () async {
+      SharedPreferences.setMockInitialValues({});
+      await biorhythmModel.init();
+      biorhythmModel.setSelectedDate(DateTime(2025, 1, 1));
+      biorhythmModel.resetSelectedDate();
+      expect(biorhythmModel.selectedDate!.day, DateTime.now().day);
+      biorhythmModel.clear();
+    });
+
+    test('BiorhythmModel requestFocus sets flag', () async {
+      biorhythmModel.requestFocus();
+      expect(biorhythmModel.shouldFocus, true);
+      await Future.delayed(Duration(milliseconds: 150));
+      expect(biorhythmModel.shouldFocus, false);
+    });
+
+    test('BiorhythmModel init sets isInitialized', () async {
+      SharedPreferences.setMockInitialValues({});
+      await biorhythmModel.init();
+      expect(biorhythmModel.isInitialized, true);
+    });
+
+    test('BiorhythmModel notifyListeners on setBirthdate', () async {
+      SharedPreferences.setMockInitialValues({});
+      await biorhythmModel.init();
+      var notified = false;
+      biorhythmModel.addListener(() => notified = true);
+      biorhythmModel.setBirthdate(DateTime(1990, 1, 1));
+      expect(notified, true);
+      biorhythmModel.clear();
+    });
+
+    testWidgets('BiorhythmCard renders', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      await biorhythmModel.init();
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: biorhythmModel,
+              builder: (context, child) => BiorhythmCard(),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Biorhythm Calculator'), findsOneWidget);
+    });
+
+    testWidgets('BiorhythmCard widget exists', (WidgetTester tester) async {
+      expect(BiorhythmCard, isNotNull);
+    });
+
+    testWidgets('BiorhythmCard shows empty state', (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      await biorhythmModel.init();
+      biorhythmModel.clear();
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: biorhythmModel,
+              builder: (context, child) => BiorhythmCard(),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(find.text('Select a birthdate to calculate biorhythms'), findsOneWidget);
+      biorhythmModel.clear();
+    });
+
+    test('Global.providerList includes Biorhythm', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('Biorhythm'), true);
+    });
+
+    test('Provider has correct keywords', () {
+      final actionKeywords = 'biorhythm cycle physical emotional intellectual rhythm birthdate';
+      expect(actionKeywords.contains('biorhythm'), true);
+      expect(actionKeywords.contains('cycle'), true);
+      expect(actionKeywords.contains('physical'), true);
+      expect(actionKeywords.contains('emotional'), true);
+      expect(actionKeywords.contains('intellectual'), true);
+      expect(actionKeywords.contains('rhythm'), true);
+      expect(actionKeywords.contains('birthdate'), true);
     });
   });
 }

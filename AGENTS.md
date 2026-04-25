@@ -1568,6 +1568,21 @@ Settings auto-saved via `SharedPreferences`:
     - Conversion formula explanation display
     - Uses `Card.filled`, `TextField`, `Icon(Icons.pets)` for Material 3 style
     - Keywords: cat, age, pet, kitten, feline, human, years, convert
+- **Biorhythm**: Biorhythm cycle calculator for biological rhythm analysis
+    - Calculate physical, emotional, and intellectual cycles based on birthdate
+    - Physical cycle: 23 days - affects physical strength and coordination
+    - Emotional cycle: 28 days - affects mood and creativity
+    - Intellectual cycle: 33 days - affects memory and alertness
+    - Cycle status indicators (High, Rising, Low, Falling, Critical)
+    - Emoji indicators for cycle phases (📈, ⬆️, 📉, ⬇️, ⚠️)
+    - Day position in each cycle display
+    - Target date selector for future/past biorhythm analysis
+    - Overall energy summary based on average of all cycles
+    - Linear progress indicators for each cycle
+    - Color-coded cycle bars (primary for high, error for low)
+    - Birthdate persistence via SharedPreferences
+    - Uses `Card.filled`, `LinearProgressIndicator`, `showDatePicker` for Material 3 style
+    - Keywords: biorhythm, cycle, physical, emotional, intellectual, rhythm, birthdate
 
 ## Material 3 Design System
 
@@ -1756,7 +1771,7 @@ Test coverage includes:
 - Markdown Preview provider tests (provider existence, model state, input text operations, history management, time formatting, widget rendering)
 - Stretch Reminder provider tests (provider existence, model state, start/stop timer, reset operations, interval setting, skipStretch, clearStats, formatted elapsed time, progress percentage, needsStretch detection, widget rendering)
 
-Total tests: 3480 tests
+Total tests: 3504 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1920,6 +1935,7 @@ Technical documentation is available in `docs/`:
 - `stretch_reminder_provider.md` - Stretch Reminder provider implementation for health and posture reminders
 - `dog_age_provider.md` - DogAge provider implementation for dog age to human years conversion
 - `cat_age_provider.md` - CatAge provider implementation for cat age to human years conversion
+- `biorhythm_provider.md` - Biorhythm provider implementation for biological rhythm analysis
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 - `critical_bug_fixes_iteration89.md` - Critical bug fix for missing lotteryModel and gitIgnoreModel in MultiProvider
 

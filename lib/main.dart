@@ -130,6 +130,7 @@ import 'package:new_launcher/providers/provider_markdown.dart';
 import 'package:new_launcher/providers/provider_stretch_reminder.dart';
 import 'package:new_launcher/providers/provider_dog_age.dart';
 import 'package:new_launcher/providers/provider_cat_age.dart';
+import 'package:new_launcher/providers/provider_biorhythm.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -334,6 +335,7 @@ ChangeNotifierProvider.value(value: fractionCalculatorModel),
 ChangeNotifierProvider.value(value: stretchReminderModel),
             ChangeNotifierProvider.value(value: dogAgeModel),
             ChangeNotifierProvider.value(value: catAgeModel),
+            ChangeNotifierProvider.value(value: biorhythmModel),
             ],
           child: MyApp(),
             )));

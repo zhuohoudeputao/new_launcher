@@ -139,6 +139,7 @@ import 'package:new_launcher/providers/provider_markdown.dart';
 import 'package:new_launcher/providers/provider_stretch_reminder.dart';
 import 'package:new_launcher/providers/provider_dog_age.dart';
 import 'package:new_launcher/providers/provider_cat_age.dart';
+import 'package:new_launcher/providers/provider_biorhythm.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -391,6 +392,7 @@ class Global {
     providerStretchReminder,
     providerDogAge,
     providerCatAge,
+    providerBiorhythm,
   ];
 
   //_______________________________________________________________________
