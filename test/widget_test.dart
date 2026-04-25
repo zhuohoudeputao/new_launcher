@@ -106,6 +106,7 @@ import 'package:new_launcher/providers/provider_loan.dart';
 import 'package:new_launcher/providers/provider_weight_tracker.dart';
 import 'package:new_launcher/providers/provider_pace.dart';
 import 'package:new_launcher/providers/provider_bloodpressure.dart';
+import 'package:new_launcher/providers/provider_bandwidth.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -30044,6 +30045,209 @@ test('WordleModel submitGuess works', () async {
 
     tearDownAll(() {
       bloodPressureModel.clearHistory();
+    });
+  });
+
+  group('BandwidthCalculator Provider tests', () {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      bandwidthCalculatorModel.init();
+    });
+
+    test('providerBandwidthCalculator exists', () {
+      expect(providerBandwidthCalculator, isNotNull);
+      expect(providerBandwidthCalculator.name, 'BandwidthCalculator');
+    });
+
+    test('BandwidthCalculator keywords contain expected terms', () {
+      final keywords = 'bandwidth download upload speed time calculate network transfer';
+      expect(keywords.contains('bandwidth'), true);
+      expect(keywords.contains('download'), true);
+      expect(keywords.contains('upload'), true);
+      expect(keywords.contains('speed'), true);
+      expect(keywords.contains('time'), true);
+      expect(keywords.contains('network'), true);
+    });
+
+    test('BandwidthCalculatorModel initial state', () {
+      expect(bandwidthCalculatorModel.isInitialized, true);
+      expect(bandwidthCalculatorModel.mode, CalculationMode.timeFromSizeSpeed);
+      expect(bandwidthCalculatorModel.sizeUnit, BandwidthSizeUnit.megabyte);
+      expect(bandwidthCalculatorModel.speedUnit, BandwidthSpeedUnit.Mbps);
+    });
+
+    test('BandwidthCalculatorModel setMode works', () {
+      bandwidthCalculatorModel.setMode(CalculationMode.speedFromSizeTime);
+      expect(bandwidthCalculatorModel.mode, CalculationMode.speedFromSizeTime);
+
+      bandwidthCalculatorModel.setMode(CalculationMode.sizeFromSpeedTime);
+      expect(bandwidthCalculatorModel.mode, CalculationMode.sizeFromSpeedTime);
+
+      bandwidthCalculatorModel.setMode(CalculationMode.timeFromSizeSpeed);
+      expect(bandwidthCalculatorModel.mode, CalculationMode.timeFromSizeSpeed);
+    });
+
+    test('BandwidthCalculatorModel setSizeUnit works', () {
+      bandwidthCalculatorModel.setSizeUnit(BandwidthSizeUnit.gigabyte);
+      expect(bandwidthCalculatorModel.sizeUnit, BandwidthSizeUnit.gigabyte);
+
+      bandwidthCalculatorModel.setSizeUnit(BandwidthSizeUnit.megabyte);
+      expect(bandwidthCalculatorModel.sizeUnit, BandwidthSizeUnit.megabyte);
+    });
+
+    test('BandwidthCalculatorModel setSpeedUnit works', () {
+      bandwidthCalculatorModel.setSpeedUnit(BandwidthSpeedUnit.Kbps);
+      expect(bandwidthCalculatorModel.speedUnit, BandwidthSpeedUnit.Kbps);
+
+      bandwidthCalculatorModel.setSpeedUnit(BandwidthSpeedUnit.Mbps);
+      expect(bandwidthCalculatorModel.speedUnit, BandwidthSpeedUnit.Mbps);
+    });
+
+    test('BandwidthCalculatorModel timeFromSizeSpeed calculation', () {
+      bandwidthCalculatorModel.setMode(CalculationMode.timeFromSizeSpeed);
+      bandwidthCalculatorModel.setSizeUnit(BandwidthSizeUnit.megabyte);
+      bandwidthCalculatorModel.setSpeedUnit(BandwidthSpeedUnit.Mbps);
+      bandwidthCalculatorModel.setFileSize('100');
+      bandwidthCalculatorModel.setSpeed('100');
+
+      expect(bandwidthCalculatorModel.result.contains('seconds'), true);
+    });
+
+    test('BandwidthCalculatorModel speedFromSizeTime calculation', () {
+      bandwidthCalculatorModel.setMode(CalculationMode.speedFromSizeTime);
+      bandwidthCalculatorModel.setSizeUnit(BandwidthSizeUnit.megabyte);
+      bandwidthCalculatorModel.setFileSize('100');
+      bandwidthCalculatorModel.setTimeMinutes('1');
+
+      expect(bandwidthCalculatorModel.result.contains('Mbps'), true);
+    });
+
+    test('BandwidthCalculatorModel sizeFromSpeedTime calculation', () {
+      bandwidthCalculatorModel.setMode(CalculationMode.sizeFromSpeedTime);
+      bandwidthCalculatorModel.setSpeedUnit(BandwidthSpeedUnit.Mbps);
+      bandwidthCalculatorModel.setSpeed('100');
+      bandwidthCalculatorModel.setTimeMinutes('1');
+
+      expect(bandwidthCalculatorModel.result.contains('MB'), true);
+    });
+
+    test('BandwidthCalculatorModel invalid input handling', () {
+      bandwidthCalculatorModel.setMode(CalculationMode.timeFromSizeSpeed);
+      bandwidthCalculatorModel.setFileSize('abc');
+      bandwidthCalculatorModel.setSpeed('100');
+
+      expect(bandwidthCalculatorModel.result, 'Invalid input');
+    });
+
+    test('BandwidthCalculatorModel zero speed handling', () {
+      bandwidthCalculatorModel.setMode(CalculationMode.timeFromSizeSpeed);
+      bandwidthCalculatorModel.setFileSize('100');
+      bandwidthCalculatorModel.setSpeed('0');
+
+      expect(bandwidthCalculatorModel.result, 'Invalid input');
+    });
+
+    test('BandwidthCalculatorModel addToHistory works', () {
+      bandwidthCalculatorModel.setMode(CalculationMode.timeFromSizeSpeed);
+      bandwidthCalculatorModel.setFileSize('100');
+      bandwidthCalculatorModel.setSpeed('100');
+      bandwidthCalculatorModel.addToHistory();
+
+      expect(bandwidthCalculatorModel.hasHistory, true);
+      expect(bandwidthCalculatorModel.history.length, 1);
+      bandwidthCalculatorModel.clearHistory();
+    });
+
+    test('BandwidthCalculatorModel clearHistory works', () {
+      bandwidthCalculatorModel.setFileSize('100');
+      bandwidthCalculatorModel.setSpeed('100');
+      bandwidthCalculatorModel.addToHistory();
+      bandwidthCalculatorModel.clearHistory();
+
+      expect(bandwidthCalculatorModel.hasHistory, false);
+      expect(bandwidthCalculatorModel.history.length, 0);
+    });
+
+    test('BandwidthCalculatorModel useHistoryEntry works', () {
+      bandwidthCalculatorModel.setMode(CalculationMode.timeFromSizeSpeed);
+      bandwidthCalculatorModel.setSizeUnit(BandwidthSizeUnit.gigabyte);
+      bandwidthCalculatorModel.setFileSize('1');
+      bandwidthCalculatorModel.setSpeed('1000');
+      bandwidthCalculatorModel.addToHistory();
+
+      final entry = bandwidthCalculatorModel.history.first;
+      bandwidthCalculatorModel.useHistoryEntry(entry);
+
+      expect(bandwidthCalculatorModel.mode, CalculationMode.timeFromSizeSpeed);
+      expect(bandwidthCalculatorModel.sizeUnit, BandwidthSizeUnit.gigabyte);
+      bandwidthCalculatorModel.clearHistory();
+    });
+
+    test('BandwidthCalculatorModel max history limit works', () {
+      for (int i = 0; i < 15; i++) {
+        bandwidthCalculatorModel.setFileSize((i + 1).toString());
+        bandwidthCalculatorModel.setSpeed('100');
+        bandwidthCalculatorModel.addToHistory();
+      }
+
+      expect(bandwidthCalculatorModel.history.length, lessThanOrEqualTo(BandwidthCalculatorModel.maxHistory));
+      bandwidthCalculatorModel.clearHistory();
+    });
+
+    test('BandwidthCalculatorModel refresh calls notifyListeners', () async {
+      bool notified = false;
+      bandwidthCalculatorModel.addListener(() => notified = true);
+      bandwidthCalculatorModel.refresh();
+      await Future.delayed(Duration(milliseconds: 10));
+      expect(notified, true);
+      bandwidthCalculatorModel.removeListener(() => notified = false);
+    });
+
+    testWidgets('BandwidthCalculatorCard renders loading state', (WidgetTester tester) async {
+      final model = BandwidthCalculatorModel();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            child: BandwidthCalculatorCard(),
+          ),
+        ),
+      ));
+
+      expect(find.textContaining('Loading'), findsOneWidget);
+    });
+
+    testWidgets('BandwidthCalculatorCard renders initialized state', (WidgetTester tester) async {
+      final model = BandwidthCalculatorModel();
+      model.init();
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: BandwidthCalculatorCard(),
+            ),
+          ),
+        ),
+      ));
+
+      expect(find.text('Bandwidth Calculator'), findsOneWidget);
+    });
+
+    testWidgets('BandwidthCalculatorCard widget exists', (WidgetTester tester) async {
+      expect(BandwidthCalculatorCard, isNotNull);
+    });
+
+    test('Global.providerList includes BandwidthCalculator', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('BandwidthCalculator'), true);
+    });
+
+    tearDownAll(() {
+      bandwidthCalculatorModel.clearHistory();
     });
   });
 }

@@ -1303,6 +1303,19 @@ Settings auto-saved via `SharedPreferences`:
     - Blood pressure entries persisted via SharedPreferences
     - Uses `Card.filled`, `ActionChip`, `LinearProgressIndicator` for Material 3 style
     - Keywords: blood, pressure, bp, systolic, diastolic, heart, pulse, log, track, health, monitor
+- **BandwidthCalculator**: Bandwidth calculator for network transfer planning
+    - Three calculation modes: Time from Size & Speed, Speed from Size & Time, Size from Speed & Time
+    - File size units: Bytes, KB, MB, GB, TB (binary: 1024-based)
+    - Speed units: bps, Kbps, Mbps, Gbps (decimal: 1000-based)
+    - Automatic time formatting: ms, seconds, minutes, hours, days
+    - Automatic size formatting: B, KB, MB, GB, TB
+    - SegmentedButton for mode selection
+    - DropdownButton for unit selection
+    - Calculation history (up to 10 entries)
+    - Tap history entries to reuse previous calculations
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `SegmentedButton`, `DropdownButton`, `TextField` for Material 3 style
+    - Keywords: bandwidth, download, upload, speed, time, calculate, network, transfer
 
 ## Material 3 Design System
 
@@ -1471,8 +1484,9 @@ Test coverage includes:
 - Weight Tracker provider tests (provider existence, keywords, model state, weight logging, unit conversion, goal setting, statistics calculations, widget rendering)
 - Pace provider tests (provider existence, keywords, model state, pace calculations, time/distance calculations, predicted race times, history, widget rendering)
 - BloodPressure provider tests (provider existence, keywords, model state, CRUD operations, category classification, statistics calculations, widget rendering)
+- BandwidthCalculator provider tests (provider existence, keywords, model state, calculation modes, unit operations, history, widget rendering)
 
-Total tests: 2587 tests
+Total tests: 2607 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1573,6 +1587,7 @@ Technical documentation is available in `docs/`:
 - `regex_tester_provider.md` - Regex Tester provider implementation for regular expression testing
 - `bitwise_provider.md` - Bitwise Calculator provider implementation for bitwise operations
 - `bloodpressure_provider.md` - Blood Pressure Tracker provider implementation for health monitoring
+- `bandwidth_provider.md` - Bandwidth Calculator provider implementation for network transfer planning
 
 ## Notice
 DO NOT EDIT task*.md
