@@ -279,7 +279,7 @@ class GratitudeCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.favorite, size: 20, color: Colors.pink),
+                  Icon(Icons.favorite, size: 20, color: Theme.of(context).colorScheme.tertiary),
                   SizedBox(width: 8),
                   Text(
                     "Gratitude Journal",
@@ -289,14 +289,14 @@ class GratitudeCard extends StatelessWidget {
                   Icon(
                     Icons.local_fire_department,
                     size: 16,
-                    color: gratitude.streak > 0 ? Colors.orange : Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: gratitude.streak > 0 ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   SizedBox(width: 4),
                   Text(
                     "${gratitude.streak}",
                     style: TextStyle(
                       fontSize: 12,
-                      color: gratitude.streak > 0 ? Colors.orange : Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: gratitude.streak > 0 ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -308,7 +308,7 @@ class GratitudeCard extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.favorite_border, size: 16, color: Colors.pink.shade300),
+Icon(Icons.favorite_border, size: 16, color: Theme.of(context).colorScheme.tertiaryContainer),
                       SizedBox(width: 8),
                       Expanded(
                         child: Text(

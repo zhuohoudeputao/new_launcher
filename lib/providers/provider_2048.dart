@@ -519,7 +519,7 @@ class _Game2048CardState extends State<Game2048Card> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: game.hasWon ? Colors.green : Colors.red,
+              color: game.hasWon ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.error,
             ),
           ),
         ],
@@ -696,7 +696,7 @@ class _Game2048CardState extends State<Game2048Card> {
           Icon(
             entry.completed ? Icons.check_circle : Icons.cancel,
             size: 16,
-            color: entry.completed ? Colors.green : Colors.red,
+            color: entry.completed ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.error,
           ),
           SizedBox(width: 8),
           Text(
@@ -706,15 +706,15 @@ class _Game2048CardState extends State<Game2048Card> {
           SizedBox(width: 8),
           Text(
             "Tile: ${entry.highestTile}",
-            style: TextStyle(fontSize: 12, color: Colors.orange),
+            style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.tertiary),
           ),
           SizedBox(width: 8),
           Text(
             "${entry.moves} moves",
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           SizedBox(width: 8),
-          Text(timeAgo, style: TextStyle(fontSize: 10, color: Colors.grey)),
+          Text(timeAgo, style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
     );

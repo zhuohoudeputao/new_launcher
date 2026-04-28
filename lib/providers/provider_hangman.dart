@@ -401,7 +401,7 @@ class _HangmanCardState extends State<HangmanCard> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: hangman.gameWon ? Colors.green : Colors.red,
+              color: hangman.gameWon ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.error,
             ),
           ),
         ],
@@ -501,8 +501,8 @@ class _HangmanCardState extends State<HangmanCard> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildStatItem(context, "Wins", hangman.wins, Colors.green),
-        _buildStatItem(context, "Losses", hangman.losses, Colors.red),
+        _buildStatItem(context, "Wins", hangman.wins, Theme.of(context).colorScheme.primary),
+        _buildStatItem(context, "Losses", hangman.losses, Theme.of(context).colorScheme.error),
         _buildStatItem(context, "Rate", "${(hangman.getWinRate() * 100).toInt()}%", Theme.of(context).colorScheme.primary),
       ],
     );
@@ -551,7 +551,7 @@ class _HangmanCardState extends State<HangmanCard> {
           Icon(
             entry.won ? Icons.emoji_events : Icons.sentiment_dissatisfied,
             size: 16,
-            color: entry.won ? Colors.green : Colors.red,
+            color: entry.won ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.error,
           ),
           SizedBox(width: 8),
           Text(
@@ -570,7 +570,7 @@ class _HangmanCardState extends State<HangmanCard> {
             ),
           ),
           SizedBox(width: 8),
-          Text(timeAgo, style: TextStyle(fontSize: 10, color: Colors.grey)),
+          Text(timeAgo, style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
     );

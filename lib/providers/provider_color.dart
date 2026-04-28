@@ -31,7 +31,7 @@ Future<void> _provideActions() async {
               decoration: BoxDecoration(
                 color: colorModel.currentColor,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey),
+                border: Border.all(color: Theme.of(navigatorKey.currentContext!).colorScheme.outline),
               ),
             ),
             onTap: () => colorModel.generateRandomColor());
@@ -53,7 +53,7 @@ Future<void> _provideActions() async {
               decoration: BoxDecoration(
                 color: colorModel.currentColor,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey),
+                border: Border.all(color: Theme.of(navigatorKey.currentContext!).colorScheme.outline),
               ),
             ),
             onTap: () {

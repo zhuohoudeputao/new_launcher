@@ -610,7 +610,7 @@ class _MinesweeperCardState extends State<MinesweeperCard> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: game.isWin ? Colors.green : Colors.red,
+              color: game.isWin ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.error,
             ),
           ),
         ],
@@ -804,7 +804,7 @@ class _MinesweeperCardState extends State<MinesweeperCard> {
           Icon(
             entry.completed ? Icons.check_circle : Icons.cancel,
             size: 16,
-            color: entry.completed ? Colors.green : Colors.red,
+            color: entry.completed ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.error,
           ),
           SizedBox(width: 8),
           Text(
@@ -823,10 +823,10 @@ class _MinesweeperCardState extends State<MinesweeperCard> {
           SizedBox(width: 8),
           Text(
             "${entry.revealedCount} cells",
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           SizedBox(width: 8),
-          Text(timeAgo, style: TextStyle(fontSize: 10, color: Colors.grey)),
+          Text(timeAgo, style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
     );

@@ -92,17 +92,18 @@ extension BPCategoryExtension on BPCategory {
   }
 
   Color get color {
+    // Use semantic colors derived from typical Material 3 palette
     switch (this) {
       case BPCategory.normal:
-        return Colors.green;
+        return Color(0xFF4CAF50); // Green - healthy
       case BPCategory.elevated:
-        return Colors.orange;
+        return Color(0xFFFF9800); // Orange - caution
       case BPCategory.highStage1:
-        return Colors.deepOrange;
+        return Color(0xFFFF5722); // Deep Orange - warning
       case BPCategory.highStage2:
-        return Colors.red;
+        return Color(0xFFF44336); // Red - danger
       case BPCategory.crisis:
-        return Colors.red.shade900;
+        return Color(0xFFB71C1C); // Dark Red - critical
     }
   }
 

@@ -1799,6 +1799,7 @@ Technical documentation is available in `docs/`:
 - `app_card_feature.md` - App display cards
 - `app_statistics_feature.md` - App usage statistics tracking and display
 - `material3_upgrade.md` - Material 3 implementation guide
+- `material3_color_migration.md` - Material 3 ColorScheme migration for hardcoded colors
 - `skipped_tests_fix.md` - Fix for SharedPreferences-dependent tests
 - `grid_overflow_fix.md` - Fix for AllAppsCard GridView overflow
 - `test_coverage_update.md` - Additional tests for improved coverage

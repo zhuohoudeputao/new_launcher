@@ -341,7 +341,7 @@ class CompassPainter extends CustomPainter {
     canvas.drawCircle(center, 8, centerDotPaint);
 
     final centerDotInnerPaint = Paint();
-    centerDotInnerPaint.color = Colors.white;
+    centerDotInnerPaint.color = Theme.of(navigatorKey.currentContext!).colorScheme.surface;
     centerDotInnerPaint.style = PaintingStyle.fill;
     canvas.drawCircle(center, 4, centerDotInnerPaint);
   }

@@ -595,7 +595,7 @@ class _MemoryGameCardState extends State<MemoryGameCard> {
             style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.secondary),
           ),
           SizedBox(width: 8),
-          Text(timeAgo, style: TextStyle(fontSize: 10, color: Colors.grey)),
+          Text(timeAgo, style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
     );
