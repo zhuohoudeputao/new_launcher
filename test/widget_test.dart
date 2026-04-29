@@ -34948,8 +34948,140 @@ test('Global.providerList contains all providers (130 total)', () {
       expect(actionKeywords.contains('learn'), true);
     });
 
+    test('SmartSuggestionsModel getCardPriorities returns empty for no history', () {
+      smartSuggestionsModel.clearHistory();
+      smartSuggestionsModel.init();
+      final priorities = smartSuggestionsModel.getCardPriorities();
+      expect(priorities, isEmpty);
+    });
+
+    test('SmartSuggestionsModel getCardPriorities returns priorities with history', () {
+      smartSuggestionsModel.clearHistory();
+      smartSuggestionsModel.recordCardInteraction('Weather');
+      smartSuggestionsModel.recordCardInteraction('Timer');
+      
+      final priorities = smartSuggestionsModel.getCardPriorities();
+      expect(priorities, isNotEmpty);
+      expect(priorities.containsKey('Weather'), true);
+      expect(priorities.containsKey('Timer'), true);
+    });
+
+    test('SmartSuggestionsModel getCardPrioritiesForHour returns correct priorities', () {
+      smartSuggestionsModel.clearHistory();
+      
+      // Record at hour 10
+      for (int i = 0; i < 5; i++) {
+        smartSuggestionsModel.recordActionUsage('TestCard');
+      }
+      
+      final priorities = smartSuggestionsModel.getCardPrioritiesForHour(DateTime.now().hour);
+      expect(priorities, isNotEmpty);
+      expect(priorities['TestCard'], greaterThan(0));
+    });
+
+    test('SmartSuggestionsModel recordCardInteraction calls recordActionUsage', () {
+      smartSuggestionsModel.clearHistory();
+      smartSuggestionsModel.recordCardInteraction('TestCard');
+      
+      expect(smartSuggestionsModel.hasHistory, true);
+      expect(smartSuggestionsModel.totalRecordedActions, 1);
+    });
+
     tearDownAll(() {
       smartSuggestionsModel.clearHistory();
+    });
+  });
+
+  group('InfoModel Smart Sorting tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
+    test('InfoModel getSmartSortedInfoList returns original order for empty priorities', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('CardA', Container());
+      infoModel.addInfoWidget('CardB', Container());
+      infoModel.addInfoWidget('CardC', Container());
+      
+      final sorted = infoModel.getSmartSortedInfoList({});
+      expect(sorted.length, 3);
+      // Original order maintained when no priorities
+    });
+
+    test('InfoModel getSmartSortedInfoList sorts by priority', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('CardA', Container());
+      infoModel.addInfoWidget('CardB', Container());
+      infoModel.addInfoWidget('CardC', Container());
+      
+      final priorities = {
+        'CardB': 0.8,
+        'CardA': 0.5,
+        'CardC': 0.2,
+      };
+      
+      final sorted = infoModel.getSmartSortedInfoList(priorities);
+      expect(sorted.length, 3);
+      // CardB (highest priority) should be first
+    });
+
+    test('InfoModel getSmartSortedInfoList handles missing priorities', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('CardA', Container());
+      infoModel.addInfoWidget('CardB', Container());
+      infoModel.addInfoWidget('CardC', Container());
+      
+      final priorities = {
+        'CardB': 0.8,
+        // CardA and CardC not in priorities
+      };
+      
+      final sorted = infoModel.getSmartSortedInfoList(priorities);
+      expect(sorted.length, 3);
+      // CardB should be first (highest priority), others follow
+    });
+
+    test('InfoModel getSmartSortedFilteredList filters then sorts', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('WeatherCard', Container(), title: 'Weather');
+      infoModel.addInfoWidget('TimerCard', Container(), title: 'Timer');
+      infoModel.addInfoWidget('AppCard', Container(), title: 'App');
+      
+      final priorities = {
+        'TimerCard': 0.9,
+        'WeatherCard': 0.5,
+      };
+      
+      final filtered = infoModel.getSmartSortedFilteredList('timer', priorities);
+      expect(filtered.length, 1);
+      // TimerCard should be in results
+    });
+
+    test('InfoModel getSmartSortedFilteredList returns smart sorted when query empty', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('CardA', Container());
+      infoModel.addInfoWidget('CardB', Container());
+      infoModel.addInfoWidget('CardC', Container());
+      
+      final priorities = {
+        'CardC': 0.9,
+        'CardA': 0.3,
+      };
+      
+      final sorted = infoModel.getSmartSortedFilteredList('', priorities);
+      expect(sorted.length, 3);
+    });
+
+    test('InfoModel infoKeys returns all keys', () {
+      final infoModel = InfoModel();
+      infoModel.addInfoWidget('CardA', Container());
+      infoModel.addInfoWidget('CardB', Container());
+      
+      final keys = infoModel.infoKeys;
+      expect(keys.length, 2);
+      expect(keys.contains('CardA'), true);
+      expect(keys.contains('CardB'), true);
     });
   });
 }

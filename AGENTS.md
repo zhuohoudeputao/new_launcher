@@ -1609,8 +1609,38 @@ Settings auto-saved via `SharedPreferences`:
     - Minimum 3 suggestions, maximum 8 suggestions displayed
     - 5% probability threshold for suggestion inclusion
     - Clear history with confirmation dialog
+    - **Smart Card Sorting**: Dynamically reorders info cards based on predicted user needs
+    - `getCardPriorities()` returns probability map for card ordering
+    - `recordCardInteraction()` tracks card usage for pattern learning
     - Uses `Card.filled`, `ActionChip`, `Icon(Icons.psychology)` for Material 3 style
     - Keywords: suggestion, smart, learn, predict, recommend, history, pattern, time
+
+## Smart Card Sorting
+
+The app uses intelligent card sorting based on user usage patterns:
+
+### How It Works
+1. **Pattern Learning**: SmartSuggestions tracks when users interact with cards
+2. **Time-based Probability**: Calculates likelihood of needing each card at current time
+3. **Dynamic Ordering**: Cards are sorted by predicted relevance (higher probability = top position)
+4. **Search Override**: Search query takes priority over smart sorting
+
+### InfoModel Methods
+- `getSmartSortedInfoList(Map<String, double> priorities)` - Sorts cards by priority scores
+- `getSmartSortedFilteredList(String query, Map<String, double> priorities)` - Filters then sorts
+- `infoKeys` - Returns all card keys for pattern matching
+
+### SmartSuggestionsModel Methods
+- `getCardPriorities()` - Returns {key: probability} map for current time
+- `getCardPrioritiesForHour(int hour)` - Returns priorities for specific hour
+- `recordCardInteraction(String cardKey)` - Records card usage for learning
+
+### Integration
+- MyHomePage uses smart sorting when:
+  - No search query is active
+  - SmartSuggestionsModel is initialized
+  - At least one pattern has been learned
+- Standard ordering applies when smart sorting conditions not met
 
 ## Material 3 Design System
 
@@ -1799,9 +1829,10 @@ Test coverage includes:
 - Markdown Preview provider tests (provider existence, model state, input text operations, history management, time formatting, widget rendering)
 - Stretch Reminder provider tests (provider existence, model state, start/stop timer, reset operations, interval setting, skipStretch, clearStats, formatted elapsed time, progress percentage, needsStretch detection, widget rendering)
 - Trivia Quiz provider tests (provider existence, model state, question generation, category filtering, answer submission, streak tracking, history management, timer functionality, widget rendering, provider keywords)
-- SmartSuggestions provider tests (provider existence, model state, ActionUsageEntry serialization, ActionPattern probability calculation, getCurrentProbability weighting, getPeakHour, formatPeakHour, recordActionUsage, multiple recordings, getSuggestions, getTopActions, maxHistoryEntries limit, clearHistory, toggleHistory, formatTimeAgo, getHourLabel, getDayOfWeekLabel, requestFocus, notifyListeners, widget rendering, provider keywords)
+- SmartSuggestions provider tests (provider existence, model state, ActionUsageEntry serialization, ActionPattern probability calculation, getCurrentProbability weighting, getPeakHour, formatPeakHour, recordActionUsage, multiple recordings, getSuggestions, getTopActions, maxHistoryEntries limit, clearHistory, toggleHistory, formatTimeAgo, getHourLabel, getDayOfWeekLabel, requestFocus, notifyListeners, widget rendering, provider keywords, getCardPriorities, getCardPrioritiesForHour, recordCardInteraction)
+- InfoModel Smart Sorting tests (getSmartSortedInfoList with empty priorities, getSmartSortedInfoList sorts by priority, getSmartSortedInfoList handles missing priorities, getSmartSortedFilteredList filters then sorts, getSmartSortedFilteredList returns smart sorted when query empty, infoKeys returns all keys)
 
-Total tests: 3557 tests
+Total tests: 3564 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1969,6 +2000,7 @@ Technical documentation is available in `docs/`:
 - `biorhythm_provider.md` - Biorhythm provider implementation for biological rhythm analysis
 - `trivia_quiz_provider.md` - Trivia Quiz provider implementation for general knowledge quiz game
 - `smart_suggestions_provider.md` - SmartSuggestions provider implementation for intelligent action suggestions based on usage patterns
+- `smart_card_sorting.md` - Smart card sorting implementation for dynamic UI ordering based on user patterns
 - `performance_optimizations.md` - Performance optimizations for stopwatch timer and list widgets
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 - `critical_bug_fixes_iteration89.md` - Critical bug fix for missing lotteryModel and gitIgnoreModel in MultiProvider

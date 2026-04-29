@@ -278,6 +278,40 @@ class SmartSuggestionsModel extends ChangeNotifier {
   int get totalRecordedActions => _usageHistory.length;
   int get uniqueActions => _patterns.length;
   int get totalPatterns => _patterns.length;
+  
+  /// Get card priorities based on current time patterns
+  /// Returns a map of {key: probability} for smart sorting
+  Map<String, double> getCardPriorities() {
+    final priorities = <String, double>{};
+    
+    for (final pattern in _patterns.values) {
+      final prob = pattern.getCurrentProbability();
+      if (prob > 0) {
+        priorities[pattern.actionName] = prob;
+      }
+    }
+    
+    return priorities;
+  }
+  
+  /// Get card priorities for a specific hour
+  Map<String, double> getCardPrioritiesForHour(int hour) {
+    final priorities = <String, double>{};
+    
+    for (final pattern in _patterns.values) {
+      final prob = pattern.getProbabilityForHour(hour);
+      if (prob > 0) {
+        priorities[pattern.actionName] = prob;
+      }
+    }
+    
+    return priorities;
+  }
+  
+  /// Record card/provider interaction (for UI card sorting)
+  void recordCardInteraction(String cardKey) {
+    recordActionUsage(cardKey);
+  }
 
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();

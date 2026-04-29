@@ -399,8 +399,20 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final actionModel = context.watch<ActionModel>();
+    final infoModel = context.watch<InfoModel>();
+    final smartModel = context.watch<SmartSuggestionsModel>();
     String query = actionModel.searchQuery;
-    List<Widget> infoList = context.watch<InfoModel>().getFilteredList(query);
+    
+    // Use smart sorting when no search query, otherwise use search filtering
+    List<Widget> infoList;
+    if (query.isEmpty && smartModel.isInitialized && smartModel.uniqueActions > 0) {
+      // Smart sorting based on usage patterns
+      final priorities = smartModel.getCardPriorities();
+      infoList = infoModel.getSmartSortedInfoList(priorities);
+    } else {
+      // Standard search filtering
+      infoList = infoModel.getFilteredList(query);
+    }
     
     return PopScope(
       canPop: false,

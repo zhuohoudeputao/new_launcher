@@ -453,6 +453,9 @@ class InfoModel with ChangeNotifier {
   final Map<String, Widget> _infoList = <String, Widget>{};
   final Map<String, String> _titleMap = <String, String>{};
   List<Widget> get infoList => _infoList.values.toList();
+  
+  /// Get list of all info keys (for smart sorting)
+  List<String> get infoKeys => _infoList.keys.toList();
 
   List<Widget> getFilteredList(String query) {
     if (query.isEmpty) return infoList;
@@ -464,6 +467,55 @@ class InfoModel with ChangeNotifier {
             (_titleMap[e.key]?.toLowerCase().contains(lowerQuery) ?? false))
         .map((e) => e.value)
         .toList();
+  }
+  
+  /// Get smart-sorted list based on priority map (key -> priority score)
+  /// Higher priority items appear first
+  List<Widget> getSmartSortedInfoList(Map<String, double> priorities) {
+    if (priorities.isEmpty) return infoList;
+    
+    // Create sorted entries based on priorities
+    final sortedEntries = _infoList.entries.toList();
+    
+    // Sort by priority (higher first), then by original order for items without priority
+    sortedEntries.sort((a, b) {
+      final priorityA = priorities[a.key] ?? 0.0;
+      final priorityB = priorities[b.key] ?? 0.0;
+      
+      // Higher priority comes first
+      if (priorityA != priorityB) {
+        return priorityB.compareTo(priorityA);
+      }
+      
+      // Same priority: maintain original order (by insertion sequence)
+      return 0;
+    });
+    
+    return sortedEntries.map((e) => e.value).toList();
+  }
+  
+  /// Get smart-sorted list with search query
+  List<Widget> getSmartSortedFilteredList(String query, Map<String, double> priorities) {
+    if (query.isEmpty) return getSmartSortedInfoList(priorities);
+    
+    final lowerQuery = query.toLowerCase().trim();
+    if (lowerQuery.isEmpty) return getSmartSortedInfoList(priorities);
+    
+    // Filter first, then sort
+    final filteredEntries = _infoList.entries
+        .where((e) =>
+            e.key.toLowerCase().contains(lowerQuery) ||
+            (_titleMap[e.key]?.toLowerCase().contains(lowerQuery) ?? false))
+        .toList();
+    
+    // Sort filtered results by priority
+    filteredEntries.sort((a, b) {
+      final priorityA = priorities[a.key] ?? 0.0;
+      final priorityB = priorities[b.key] ?? 0.0;
+      return priorityB.compareTo(priorityA);
+    });
+    
+    return filteredEntries.map((e) => e.value).toList();
   }
 
   int get length => _infoList.length;
