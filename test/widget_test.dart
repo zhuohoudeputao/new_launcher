@@ -3734,7 +3734,7 @@ void main() {
       for (final _ in Global.providerList) {
         initCount++;
       }
-      expect(initCount, 128);
+      expect(initCount, 130);
     });
   });
 
