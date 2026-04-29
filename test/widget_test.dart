@@ -129,6 +129,7 @@ import 'package:new_launcher/providers/provider_dog_age.dart';
 import 'package:new_launcher/providers/provider_cat_age.dart';
 import 'package:new_launcher/providers/provider_biorhythm.dart';
 import 'package:new_launcher/providers/provider_triviaquiz.dart';
+import 'package:new_launcher/providers/provider_smart_suggestions.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -2569,7 +2570,7 @@ void main() {
 
   group('Global methods tests', () {
     test('Global.providerList contains all providers', () {
-      expect(Global.providerList.length, 129);
+      expect(Global.providerList.length, 131);
     });
 
     test('Global.providerList names are correct', () {
@@ -4051,8 +4052,8 @@ void main() {
       expect(keywords.contains('lamp'), true);
 });
 
-test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
 test('Global.providerList includes Flashlight', () {
@@ -5395,8 +5396,8 @@ test('Global.providerList includes Flashlight', () {
       expect(UnitConverterCard, isNotNull);
 });
 
-test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
 test('Global.providerList includes UnitConverter', () {
@@ -12931,8 +12932,8 @@ test('Global.providerList includes UnitConverter', () {
       expect(CalorieModel.defaultGoal, 2000);
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
   });
 
@@ -23329,8 +23330,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Exponent'), true);
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -27073,8 +27074,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerJsonFormatter.name, 'JsonFormatter');
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -27417,8 +27418,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerRegexTester.name, 'RegexTester');
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -27756,8 +27757,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerBitwise.name, 'Bitwise');
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -28021,8 +28022,8 @@ test('WordleModel submitGuess works', () async {
       expect(providerDiffChecker.name, 'DiffChecker');
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -28318,8 +28319,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('CronExpressionParser'), true);
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -28561,8 +28562,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('AspectRatio'), true);
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -28932,8 +28933,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Loan'), true);
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -29306,8 +29307,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('WeightTracker'), true);
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -29637,8 +29638,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('Pace'), true);
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -30667,7 +30668,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test', () {
-      expect(Global.providerList.length, 129);
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -30916,7 +30917,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test updated', () {
-      expect(Global.providerList.length, 129);
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -31139,7 +31140,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test final', () {
-      expect(Global.providerList.length, 129);
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -31324,7 +31325,7 @@ test('WordleModel submitGuess works', () async {
     });
 
     test('provider count test with SlidingPuzzle', () {
-      expect(Global.providerList.length, 129);
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -31698,8 +31699,8 @@ test('WordleModel submitGuess works', () async {
       expect(names.contains('HTTPStatus'), true);
     });
 
-test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -31840,8 +31841,8 @@ test('Global.providerList contains all providers (128 total)', () {
       expect(names.contains('KeyboardShortcuts'), true);
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -31997,8 +31998,8 @@ test('Global.providerList contains all providers (128 total)', () {
       expect(names.contains('GitIgnore'), true);
     });
 
-    test('Global.providerList contains all providers (128 total)', () {
-      expect(Global.providerList.length, 129);
+    test('Global.providerList contains all providers (130 total)', () {
+      expect(Global.providerList.length, 131);
     });
 
     tearDownAll(() {
@@ -34650,6 +34651,305 @@ test('Global.providerList contains all providers (128 total)', () {
       expect(actionKeywords.contains('knowledge'), true);
       expect(actionKeywords.contains('question'), true);
       expect(actionKeywords.contains('game'), true);
+    });
+  });
+
+  group('SmartSuggestions Provider tests', () {
+    setUpAll(() {
+      SharedPreferences.setMockInitialValues({});
+      TestWidgetsFlutterBinding.ensureInitialized();
+      smartSuggestionsModel.init();
+    });
+
+    test('providerSmartSuggestions exists', () {
+      expect(providerSmartSuggestions, isNotNull);
+      expect(providerSmartSuggestions.name, 'SmartSuggestions');
+    });
+
+    test('SmartSuggestions keywords contain expected terms', () {
+      expect(providerSmartSuggestions.name, 'SmartSuggestions');
+    });
+
+    test('SmartSuggestionsModel initial state', () {
+      expect(smartSuggestionsModel.isInitialized, true);
+      expect(smartSuggestionsModel.hasHistory, false);
+      expect(smartSuggestionsModel.uniqueActions, 0);
+      expect(smartSuggestionsModel.totalRecordedActions, 0);
+    });
+
+    test('ActionUsageEntry toStorageString and fromStorageString work', () {
+      final entry = ActionUsageEntry(
+        actionName: 'TestAction',
+        providerName: 'TestProvider',
+        timestamp: DateTime(2025, 1, 15, 10, 30),
+        hour: 10,
+        dayOfWeek: 3,
+      );
+      
+      final storageString = entry.toStorageString();
+      expect(storageString, contains('TestAction'));
+      expect(storageString, contains('TestProvider'));
+      expect(storageString, contains('10'));
+      expect(storageString, contains('3'));
+      
+      final restored = ActionUsageEntry.fromStorageString(storageString);
+      expect(restored, isNotNull);
+      expect(restored!.actionName, 'TestAction');
+      expect(restored.providerName, 'TestProvider');
+      expect(restored.hour, 10);
+      expect(restored.dayOfWeek, 3);
+    });
+
+    test('ActionUsageEntry fromStorageString handles invalid input', () {
+      expect(ActionUsageEntry.fromStorageString('invalid'), isNull);
+      expect(ActionUsageEntry.fromStorageString('a|b'), isNull);
+    });
+
+    test('ActionPattern probability calculation', () {
+      final hourlyMap = {10: 5, 11: 3};
+      final dayOfWeekMap = {1: 4, 2: 2};
+      final pattern = ActionPattern(
+        actionName: 'TestAction',
+        hourlyUsage: hourlyMap,
+        dayOfWeekUsage: dayOfWeekMap,
+        totalUsage: 8,
+      );
+      
+      expect(pattern.getProbabilityForHour(10), 5/8);
+      expect(pattern.getProbabilityForHour(11), 3/8);
+      expect(pattern.getProbabilityForHour(12), 0.0);
+      expect(pattern.getProbabilityForDayOfWeek(1), 4/8);
+      expect(pattern.getProbabilityForDayOfWeek(2), 2/8);
+      expect(pattern.getProbabilityForDayOfWeek(3), 0.0);
+    });
+
+    test('ActionPattern getCurrentProbability weights correctly', () {
+      final now = DateTime.now();
+      final hourlyMap = {now.hour: 5};
+      final dayOfWeekMap = {now.weekday: 4};
+      final pattern = ActionPattern(
+        actionName: 'TestAction',
+        hourlyUsage: hourlyMap,
+        dayOfWeekUsage: dayOfWeekMap,
+        totalUsage: 8,
+      );
+      
+      final prob = pattern.getCurrentProbability();
+      expect(prob, greaterThan(0));
+      expect(prob, lessThan(1));
+    });
+
+    test('ActionPattern getPeakHour', () {
+      final pattern1 = ActionPattern(actionName: 'TestAction');
+      expect(pattern1.getPeakHour(), isNull);
+      
+      final pattern2 = ActionPattern(
+        actionName: 'TestAction',
+        hourlyUsage: {10: 5, 14: 8},
+        totalUsage: 13,
+      );
+      expect(pattern2.getPeakHour(), 14);
+    });
+
+    test('ActionPattern formatPeakHour', () {
+      final pattern1 = ActionPattern(actionName: 'TestAction');
+      expect(pattern1.formatPeakHour(), 'No data');
+      
+      final pattern2 = ActionPattern(
+        actionName: 'TestAction',
+        hourlyUsage: {8: 5},
+        totalUsage: 5,
+      );
+      expect(pattern2.formatPeakHour(), '8am');
+      
+      final pattern3 = ActionPattern(
+        actionName: 'TestAction',
+        hourlyUsage: {12: 10},
+        totalUsage: 15,
+      );
+      expect(pattern3.formatPeakHour(), '12pm');
+      
+      final pattern4 = ActionPattern(
+        actionName: 'TestAction',
+        hourlyUsage: {15: 20},
+        totalUsage: 35,
+      );
+      expect(pattern4.formatPeakHour(), '3pm');
+    });
+
+    test('SmartSuggestionsModel recordActionUsage', () {
+      smartSuggestionsModel.clearHistory();
+      smartSuggestionsModel.recordActionUsage('TestAction', providerName: 'TestProvider');
+      
+      expect(smartSuggestionsModel.hasHistory, true);
+      expect(smartSuggestionsModel.totalRecordedActions, 1);
+      expect(smartSuggestionsModel.uniqueActions, 1);
+      
+      final pattern = smartSuggestionsModel.getPatternForAction('TestAction');
+      expect(pattern, isNotNull);
+      expect(pattern!.totalUsage, 1);
+    });
+
+    test('SmartSuggestionsModel multiple recordings update pattern', () {
+      smartSuggestionsModel.clearHistory();
+      
+      for (int i = 0; i < 5; i++) {
+        smartSuggestionsModel.recordActionUsage('TestAction');
+      }
+      
+      final pattern = smartSuggestionsModel.getPatternForAction('TestAction');
+      expect(pattern!.totalUsage, 5);
+    });
+
+    test('SmartSuggestionsModel getSuggestions returns empty for no history', () {
+      smartSuggestionsModel.clearHistory();
+      expect(smartSuggestionsModel.getSuggestions(), isEmpty);
+    });
+
+    test('SmartSuggestionsModel getSuggestions returns suggestions with history', () {
+      smartSuggestionsModel.clearHistory();
+      
+      for (int i = 0; i < 10; i++) {
+        smartSuggestionsModel.recordActionUsage('PopularAction');
+      }
+      smartSuggestionsModel.recordActionUsage('RareAction');
+      
+      final suggestions = smartSuggestionsModel.getSuggestions();
+      expect(suggestions, isNotEmpty);
+      expect(suggestions.first, 'PopularAction');
+    });
+
+    test('SmartSuggestionsModel getTopActions', () {
+      smartSuggestionsModel.clearHistory();
+      
+      for (int i = 0; i < 10; i++) {
+        smartSuggestionsModel.recordActionUsage('TopAction');
+      }
+      for (int i = 0; i < 5; i++) {
+        smartSuggestionsModel.recordActionUsage('MidAction');
+      }
+      smartSuggestionsModel.recordActionUsage('LowAction');
+      
+      final top = smartSuggestionsModel.getTopActions(3);
+      expect(top.length, 3);
+      expect(top.first, 'TopAction');
+      expect(top[1], 'MidAction');
+      expect(top[2], 'LowAction');
+    });
+
+    test('SmartSuggestionsModel maxHistoryEntries limit', () {
+      smartSuggestionsModel.clearHistory();
+      
+      for (int i = 0; i < 600; i++) {
+        smartSuggestionsModel.recordActionUsage('Action$i');
+      }
+      
+      expect(smartSuggestionsModel.totalRecordedActions, lessThanOrEqualTo(500));
+    });
+
+    test('SmartSuggestionsModel clearHistory', () {
+      smartSuggestionsModel.recordActionUsage('TestAction');
+      expect(smartSuggestionsModel.hasHistory, true);
+      
+      smartSuggestionsModel.clearHistory();
+      expect(smartSuggestionsModel.hasHistory, false);
+      expect(smartSuggestionsModel.uniqueActions, 0);
+      expect(smartSuggestionsModel.totalRecordedActions, 0);
+    });
+
+    test('SmartSuggestionsModel toggleHistory', () {
+      smartSuggestionsModel.init();
+      expect(smartSuggestionsModel.showHistory, false);
+      
+      smartSuggestionsModel.toggleHistory();
+      expect(smartSuggestionsModel.showHistory, true);
+      
+      smartSuggestionsModel.toggleHistory();
+      expect(smartSuggestionsModel.showHistory, false);
+    });
+
+    test('SmartSuggestionsModel formatTimeAgo', () {
+      smartSuggestionsModel.init();
+      expect(smartSuggestionsModel.formatTimeAgo(DateTime.now()), 'just now');
+      expect(smartSuggestionsModel.formatTimeAgo(DateTime.now().subtract(Duration(minutes: 5))), contains('m ago'));
+      expect(smartSuggestionsModel.formatTimeAgo(DateTime.now().subtract(Duration(hours: 2))), contains('h ago'));
+      expect(smartSuggestionsModel.formatTimeAgo(DateTime.now().subtract(Duration(days: 2))), contains('d ago'));
+    });
+
+    test('SmartSuggestionsModel getHourLabel', () {
+      smartSuggestionsModel.init();
+      expect(smartSuggestionsModel.getHourLabel(0), '12am');
+      expect(smartSuggestionsModel.getHourLabel(6), '6am');
+      expect(smartSuggestionsModel.getHourLabel(12), '12pm');
+      expect(smartSuggestionsModel.getHourLabel(18), '6pm');
+    });
+
+    test('SmartSuggestionsModel getDayOfWeekLabel', () {
+      smartSuggestionsModel.init();
+      expect(smartSuggestionsModel.getDayOfWeekLabel(1), 'Mon');
+      expect(smartSuggestionsModel.getDayOfWeekLabel(7), 'Sun');
+    });
+
+    test('SmartSuggestionsModel requestFocus sets flag', () {
+      smartSuggestionsModel.requestFocus();
+      expect(smartSuggestionsModel.shouldFocus, true);
+    });
+
+    test('SmartSuggestionsModel refresh calls notifyListeners', () {
+      smartSuggestionsModel.init();
+      var notified = false;
+      smartSuggestionsModel.addListener(() => notified = true);
+      smartSuggestionsModel.refresh();
+      expect(notified, true);
+    });
+
+    testWidgets('SmartSuggestionsCard renders loading state', (WidgetTester tester) async {
+      final model = SmartSuggestionsModel();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SmartSuggestionsCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Smart Suggestions: Learning...'), findsOneWidget);
+    });
+
+    testWidgets('SmartSuggestionsCard renders initialized state', (WidgetTester tester) async {
+      final model = SmartSuggestionsModel();
+      await model.init();
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ChangeNotifierProvider.value(
+            value: model,
+            builder: (context, child) => SmartSuggestionsCard(),
+          ),
+        ),
+      ));
+      await tester.pump();
+      expect(find.text('Smart Suggestions'), findsOneWidget);
+    });
+
+    testWidgets('SmartSuggestionsCard widget exists', (WidgetTester tester) async {
+      expect(SmartSuggestionsCard, isNotNull);
+    });
+
+    test('Global.providerList includes SmartSuggestions', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('SmartSuggestions'), true);
+    });
+
+    test('Provider has correct keywords', () {
+      final actionKeywords = 'suggestion smart learn predict recommend history pattern time';
+      expect(actionKeywords.contains('suggestion'), true);
+      expect(actionKeywords.contains('smart'), true);
+      expect(actionKeywords.contains('learn'), true);
+    });
+
+    tearDownAll(() {
+      smartSuggestionsModel.clearHistory();
     });
   });
 }

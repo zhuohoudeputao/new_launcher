@@ -131,6 +131,8 @@ import 'package:new_launcher/providers/provider_stretch_reminder.dart';
 import 'package:new_launcher/providers/provider_dog_age.dart';
 import 'package:new_launcher/providers/provider_cat_age.dart';
 import 'package:new_launcher/providers/provider_biorhythm.dart';
+import 'package:new_launcher/providers/provider_triviaquiz.dart';
+import 'package:new_launcher/providers/provider_smart_suggestions.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -336,6 +338,8 @@ ChangeNotifierProvider.value(value: stretchReminderModel),
             ChangeNotifierProvider.value(value: dogAgeModel),
             ChangeNotifierProvider.value(value: catAgeModel),
             ChangeNotifierProvider.value(value: biorhythmModel),
+            ChangeNotifierProvider.value(value: triviaQuizModel),
+            ChangeNotifierProvider.value(value: smartSuggestionsModel),
             ],
           child: MyApp(),
             )));

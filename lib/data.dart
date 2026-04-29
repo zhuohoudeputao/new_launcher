@@ -141,6 +141,7 @@ import 'package:new_launcher/providers/provider_dog_age.dart';
 import 'package:new_launcher/providers/provider_cat_age.dart';
 import 'package:new_launcher/providers/provider_biorhythm.dart';
 import 'package:new_launcher/providers/provider_triviaquiz.dart';
+import 'package:new_launcher/providers/provider_smart_suggestions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -395,6 +396,7 @@ class Global {
     providerCatAge,
     providerBiorhythm,
     providerTriviaQuiz,
+    providerSmartSuggestions,
   ];
 
   //_______________________________________________________________________
@@ -407,6 +409,7 @@ class ActionModel with ChangeNotifier {
   Timer? _debounceTimer;
 
   String get searchQuery => _searchQuery;
+  Map<String, MyAction> get actionMap => Map.unmodifiable(_actionMap);
 
   Future<void> addActions(List<MyAction> actions) async {
     for (MyAction action in actions) {

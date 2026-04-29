@@ -1597,6 +1597,20 @@ Settings auto-saved via `SharedPreferences`:
     - Auto-submit on timer timeout
     - Uses `Card.filled`, `ActionChip`, `InkWell`, `ElevatedButton.icon` for Material 3 style
     - Keywords: trivia, quiz, knowledge, question, answer, game, science, history, geography, sports, entertainment, fun, facts, learn
+- **SmartSuggestions**: Smart action suggestions based on usage patterns
+    - Learns from user action history to provide intelligent suggestions
+    - Tracks time-of-day and day-of-week usage patterns
+    - Calculates probability scores (70% hour weight + 30% day weight)
+    - Displays top suggested actions based on current time context
+    - Peak usage hour display for each action
+    - History view showing recent action usage
+    - Statistics: learned actions count, total records, top hour
+    - Maximum 500 history entries stored
+    - Minimum 3 suggestions, maximum 8 suggestions displayed
+    - 5% probability threshold for suggestion inclusion
+    - Clear history with confirmation dialog
+    - Uses `Card.filled`, `ActionChip`, `Icon(Icons.psychology)` for Material 3 style
+    - Keywords: suggestion, smart, learn, predict, recommend, history, pattern, time
 
 ## Material 3 Design System
 
@@ -1785,8 +1799,9 @@ Test coverage includes:
 - Markdown Preview provider tests (provider existence, model state, input text operations, history management, time formatting, widget rendering)
 - Stretch Reminder provider tests (provider existence, model state, start/stop timer, reset operations, interval setting, skipStretch, clearStats, formatted elapsed time, progress percentage, needsStretch detection, widget rendering)
 - Trivia Quiz provider tests (provider existence, model state, question generation, category filtering, answer submission, streak tracking, history management, timer functionality, widget rendering, provider keywords)
+- SmartSuggestions provider tests (provider existence, model state, ActionUsageEntry serialization, ActionPattern probability calculation, getCurrentProbability weighting, getPeakHour, formatPeakHour, recordActionUsage, multiple recordings, getSuggestions, getTopActions, maxHistoryEntries limit, clearHistory, toggleHistory, formatTimeAgo, getHourLabel, getDayOfWeekLabel, requestFocus, notifyListeners, widget rendering, provider keywords)
 
-Total tests: 3530 tests
+Total tests: 3557 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1953,6 +1968,7 @@ Technical documentation is available in `docs/`:
 - `cat_age_provider.md` - CatAge provider implementation for cat age to human years conversion
 - `biorhythm_provider.md` - Biorhythm provider implementation for biological rhythm analysis
 - `trivia_quiz_provider.md` - Trivia Quiz provider implementation for general knowledge quiz game
+- `smart_suggestions_provider.md` - SmartSuggestions provider implementation for intelligent action suggestions based on usage patterns
 - `performance_optimizations.md` - Performance optimizations for stopwatch timer and list widgets
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 - `critical_bug_fixes_iteration89.md` - Critical bug fix for missing lotteryModel and gitIgnoreModel in MultiProvider
