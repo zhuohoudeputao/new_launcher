@@ -1953,6 +1953,7 @@ Technical documentation is available in `docs/`:
 - `cat_age_provider.md` - CatAge provider implementation for cat age to human years conversion
 - `biorhythm_provider.md` - Biorhythm provider implementation for biological rhythm analysis
 - `trivia_quiz_provider.md` - Trivia Quiz provider implementation for general knowledge quiz game
+- `performance_optimizations.md` - Performance optimizations for stopwatch timer and list widgets
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 - `critical_bug_fixes_iteration89.md` - Critical bug fix for missing lotteryModel and gitIgnoreModel in MultiProvider
 
