@@ -1583,6 +1583,20 @@ Settings auto-saved via `SharedPreferences`:
     - Birthdate persistence via SharedPreferences
     - Uses `Card.filled`, `LinearProgressIndicator`, `showDatePicker` for Material 3 style
     - Keywords: biorhythm, cycle, physical, emotional, intellectual, rhythm, birthdate
+- **TriviaQuiz**: Trivia quiz game for general knowledge and entertainment
+    - Five trivia categories: Science 🔬, History 📜, Geography 🌍, Sports ⚽, Entertainment 🎬
+    - 35 trivia questions covering various topics
+    - Multiple-choice answers (4 options per question)
+    - Optional explanations/fun facts after answering
+    - Timer support (No Timer, 15s, 30s, 60s)
+    - Category filtering with ActionChips
+    - Statistics tracking: correct count, accuracy percentage, streak, best streak
+    - History tracking for up to 20 quiz entries
+    - Clear history with confirmation dialog
+    - Visual feedback for correct/wrong answers
+    - Auto-submit on timer timeout
+    - Uses `Card.filled`, `ActionChip`, `InkWell`, `ElevatedButton.icon` for Material 3 style
+    - Keywords: trivia, quiz, knowledge, question, answer, game, science, history, geography, sports, entertainment, fun, facts, learn
 
 ## Material 3 Design System
 
@@ -1770,8 +1784,9 @@ Test coverage includes:
 - Statistics provider tests (provider existence, model state, mean/median/mode/stddev/variance calculations, min/max/range/sum/count calculations, input handling, history management, widget rendering)
 - Markdown Preview provider tests (provider existence, model state, input text operations, history management, time formatting, widget rendering)
 - Stretch Reminder provider tests (provider existence, model state, start/stop timer, reset operations, interval setting, skipStretch, clearStats, formatted elapsed time, progress percentage, needsStretch detection, widget rendering)
+- Trivia Quiz provider tests (provider existence, model state, question generation, category filtering, answer submission, streak tracking, history management, timer functionality, widget rendering, provider keywords)
 
-Total tests: 3504 tests
+Total tests: 3530 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1937,6 +1952,7 @@ Technical documentation is available in `docs/`:
 - `dog_age_provider.md` - DogAge provider implementation for dog age to human years conversion
 - `cat_age_provider.md` - CatAge provider implementation for cat age to human years conversion
 - `biorhythm_provider.md` - Biorhythm provider implementation for biological rhythm analysis
+- `trivia_quiz_provider.md` - Trivia Quiz provider implementation for general knowledge quiz game
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
 - `critical_bug_fixes_iteration89.md` - Critical bug fix for missing lotteryModel and gitIgnoreModel in MultiProvider
 

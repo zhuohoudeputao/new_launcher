@@ -128,6 +128,7 @@ import 'package:new_launcher/providers/provider_stretch_reminder.dart';
 import 'package:new_launcher/providers/provider_dog_age.dart';
 import 'package:new_launcher/providers/provider_cat_age.dart';
 import 'package:new_launcher/providers/provider_biorhythm.dart';
+import 'package:new_launcher/providers/provider_triviaquiz.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/logger.dart';
@@ -34383,6 +34384,272 @@ test('Global.providerList contains all providers (128 total)', () {
       expect(actionKeywords.contains('intellectual'), true);
       expect(actionKeywords.contains('rhythm'), true);
       expect(actionKeywords.contains('birthdate'), true);
+    });
+  });
+
+  group('Trivia Quiz Provider Tests', () {
+    setUpAll(() {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('TriviaQuizModel exists', () {
+      expect(triviaQuizModel, isNotNull);
+    });
+
+    test('TriviaQuizModel initial state', () {
+      triviaQuizModel.reset();
+      expect(triviaQuizModel.correctCount, 0);
+      expect(triviaQuizModel.totalAttempts, 0);
+      expect(triviaQuizModel.currentStreak, 0);
+      expect(triviaQuizModel.bestStreak, 0);
+    });
+
+    test('TriviaQuizModel init sets isInitialized', () async {
+      triviaQuizModel.init();
+      expect(triviaQuizModel.isInitialized, true);
+    });
+
+    test('TriviaQuizModel generateNewQuestion creates a question', () {
+      triviaQuizModel.init();
+      triviaQuizModel.generateNewQuestion();
+      expect(triviaQuizModel.currentQuestion, isNotNull);
+      expect(triviaQuizModel.currentQuestion!.question, isNotEmpty);
+      expect(triviaQuizModel.currentQuestion!.options.length, 4);
+    });
+
+    test('TriviaQuizModel setCategory filters questions', () {
+      triviaQuizModel.init();
+      triviaQuizModel.setCategory(TriviaCategory.science);
+      expect(triviaQuizModel.selectedCategory, TriviaCategory.science);
+      triviaQuizModel.generateNewQuestion();
+      expect(triviaQuizModel.currentQuestion!.category, TriviaCategory.science);
+    });
+
+    test('TriviaQuizModel setCategory null shows all questions', () {
+      triviaQuizModel.init();
+      triviaQuizModel.setCategory(null);
+      expect(triviaQuizModel.selectedCategory, null);
+    });
+
+    test('TriviaQuizModel selectAnswer updates selectedAnswer', () {
+      triviaQuizModel.init();
+      triviaQuizModel.generateNewQuestion();
+      triviaQuizModel.selectAnswer(0);
+      expect(triviaQuizModel.selectedAnswer, 0);
+    });
+
+    test('TriviaQuizModel submitAnswer correct answer increments correctCount', () {
+      triviaQuizModel.reset();
+      triviaQuizModel.init();
+      triviaQuizModel.generateNewQuestion();
+      final question = triviaQuizModel.currentQuestion!;
+      triviaQuizModel.selectAnswer(question.correctIndex);
+      triviaQuizModel.submitAnswer();
+      expect(triviaQuizModel.correctCount, 1);
+      expect(triviaQuizModel.totalAttempts, 1);
+      expect(triviaQuizModel.currentStreak, 1);
+      expect(triviaQuizModel.bestStreak, 1);
+    });
+
+    test('TriviaQuizModel submitAnswer wrong answer', () {
+      triviaQuizModel.reset();
+      triviaQuizModel.init();
+      triviaQuizModel.generateNewQuestion();
+      final question = triviaQuizModel.currentQuestion!;
+      final wrongIndex = (question.correctIndex + 1) % 4;
+      triviaQuizModel.selectAnswer(wrongIndex);
+      triviaQuizModel.submitAnswer();
+      expect(triviaQuizModel.correctCount, 0);
+      expect(triviaQuizModel.totalAttempts, 1);
+      expect(triviaQuizModel.currentStreak, 0);
+    });
+
+    test('TriviaQuizModel streak tracking', () {
+      triviaQuizModel.reset();
+      triviaQuizModel.init();
+      
+      // First correct answer
+      triviaQuizModel.generateNewQuestion();
+      triviaQuizModel.selectAnswer(triviaQuizModel.currentQuestion!.correctIndex);
+      triviaQuizModel.submitAnswer();
+      triviaQuizModel.nextQuestion();
+      
+      // Second correct answer
+      triviaQuizModel.selectAnswer(triviaQuizModel.currentQuestion!.correctIndex);
+      triviaQuizModel.submitAnswer();
+      
+      expect(triviaQuizModel.currentStreak, 2);
+      expect(triviaQuizModel.bestStreak, 2);
+    });
+
+    test('TriviaQuizModel streak resets on wrong answer', () {
+      triviaQuizModel.reset();
+      triviaQuizModel.init();
+      
+      // Two correct answers
+      triviaQuizModel.generateNewQuestion();
+      triviaQuizModel.selectAnswer(triviaQuizModel.currentQuestion!.correctIndex);
+      triviaQuizModel.submitAnswer();
+      triviaQuizModel.nextQuestion();
+      triviaQuizModel.selectAnswer(triviaQuizModel.currentQuestion!.correctIndex);
+      triviaQuizModel.submitAnswer();
+      
+      expect(triviaQuizModel.currentStreak, 2);
+      
+      // Wrong answer
+      triviaQuizModel.nextQuestion();
+      final wrongIndex = (triviaQuizModel.currentQuestion!.correctIndex + 1) % 4;
+      triviaQuizModel.selectAnswer(wrongIndex);
+      triviaQuizModel.submitAnswer();
+      
+      expect(triviaQuizModel.currentStreak, 0);
+      expect(triviaQuizModel.bestStreak, 2);
+    });
+
+    test('TriviaQuizModel accuracy calculation', () {
+      triviaQuizModel.reset();
+      triviaQuizModel.init();
+      
+      triviaQuizModel.generateNewQuestion();
+      triviaQuizModel.selectAnswer(triviaQuizModel.currentQuestion!.correctIndex);
+      triviaQuizModel.submitAnswer();
+      triviaQuizModel.nextQuestion();
+      
+      final wrongIndex = (triviaQuizModel.currentQuestion!.correctIndex + 1) % 4;
+      triviaQuizModel.selectAnswer(wrongIndex);
+      triviaQuizModel.submitAnswer();
+      
+      expect(triviaQuizModel.accuracy, closeTo(50.0, 0.1));
+    });
+
+    test('TriviaQuizModel skipQuestion counts as wrong', () {
+      triviaQuizModel.reset();
+      triviaQuizModel.init();
+      triviaQuizModel.generateNewQuestion();
+      triviaQuizModel.skipQuestion();
+      expect(triviaQuizModel.totalAttempts, 1);
+      expect(triviaQuizModel.correctCount, 0);
+    });
+
+    test('TriviaQuizModel history tracking', () {
+      triviaQuizModel.reset();
+      triviaQuizModel.init();
+      triviaQuizModel.generateNewQuestion();
+      triviaQuizModel.selectAnswer(triviaQuizModel.currentQuestion!.correctIndex);
+      triviaQuizModel.submitAnswer();
+      expect(triviaQuizModel.hasHistory, true);
+      expect(triviaQuizModel.history.length, 1);
+    });
+
+    test('TriviaQuizModel history max limit', () {
+      triviaQuizModel.reset();
+      triviaQuizModel.init();
+      
+      for (int i = 0; i < 25; i++) {
+        triviaQuizModel.generateNewQuestion();
+        triviaQuizModel.selectAnswer(triviaQuizModel.currentQuestion!.correctIndex);
+        triviaQuizModel.submitAnswer();
+        triviaQuizModel.nextQuestion();
+      }
+      
+      expect(triviaQuizModel.history.length, lessThanOrEqualTo(20));
+    });
+
+    test('TriviaQuizModel clearHistory', () {
+      triviaQuizModel.reset();
+      triviaQuizModel.init();
+      triviaQuizModel.generateNewQuestion();
+      triviaQuizModel.selectAnswer(triviaQuizModel.currentQuestion!.correctIndex);
+      triviaQuizModel.submitAnswer();
+      expect(triviaQuizModel.hasHistory, true);
+      
+      triviaQuizModel.clearHistory();
+      expect(triviaQuizModel.hasHistory, false);
+      expect(triviaQuizModel.correctCount, 0);
+      expect(triviaQuizModel.totalAttempts, 0);
+    });
+
+    test('TriviaQuizModel toggleHistory', () {
+      triviaQuizModel.init();
+      triviaQuizModel.toggleHistory();
+      expect(triviaQuizModel.showHistory, true);
+      triviaQuizModel.toggleHistory();
+      expect(triviaQuizModel.showHistory, false);
+    });
+
+    test('TriviaQuizModel setTimeLimit', () {
+      triviaQuizModel.init();
+      triviaQuizModel.setTimeLimit(30);
+      expect(triviaQuizModel.timeLimit, 30);
+    });
+
+    test('TriviaQuizModel getCategoryName returns correct names', () {
+      triviaQuizModel.init();
+      expect(triviaQuizModel.getCategoryName(TriviaCategory.science), contains('Science'));
+      expect(triviaQuizModel.getCategoryName(TriviaCategory.history), contains('History'));
+      expect(triviaQuizModel.getCategoryName(TriviaCategory.geography), contains('Geography'));
+      expect(triviaQuizModel.getCategoryName(TriviaCategory.sports), contains('Sports'));
+      expect(triviaQuizModel.getCategoryName(TriviaCategory.entertainment), contains('Entertainment'));
+    });
+
+    test('TriviaQuizModel formatTimeAgo', () {
+      triviaQuizModel.init();
+      expect(triviaQuizModel.formatTimeAgo(DateTime.now()), 'just now');
+      expect(triviaQuizModel.formatTimeAgo(DateTime.now().subtract(Duration(minutes: 5))), contains('m ago'));
+      expect(triviaQuizModel.formatTimeAgo(DateTime.now().subtract(Duration(hours: 2))), contains('h ago'));
+      expect(triviaQuizModel.formatTimeAgo(DateTime.now().subtract(Duration(days: 2))), contains('d ago'));
+    });
+
+    test('TriviaQuizModel requestFocus sets flag', () {
+      triviaQuizModel.requestFocus();
+      expect(triviaQuizModel.shouldFocus, true);
+    });
+
+    test('TriviaQuizModel notifyListeners on selectAnswer', () {
+      triviaQuizModel.init();
+      triviaQuizModel.generateNewQuestion();
+      var notified = false;
+      triviaQuizModel.addListener(() => notified = true);
+      triviaQuizModel.selectAnswer(0);
+      expect(notified, true);
+    });
+
+    testWidgets('TriviaQuizCard renders', (WidgetTester tester) async {
+      triviaQuizModel.reset();
+      triviaQuizModel.init();
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ChangeNotifierProvider.value(
+              value: triviaQuizModel,
+              builder: (context, child) => TriviaQuizCard(),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Trivia Quiz'), findsOneWidget);
+      triviaQuizModel.reset();
+    });
+
+    testWidgets('TriviaQuizCard widget exists', (WidgetTester tester) async {
+      expect(TriviaQuizCard, isNotNull);
+    });
+
+    test('Global.providerList includes TriviaQuiz', () {
+      final names = Global.providerList.map((p) => p.name).toList();
+      expect(names.contains('TriviaQuiz'), true);
+    });
+
+    test('Provider has correct keywords', () {
+      final actionKeywords = 'trivia quiz knowledge question answer game science history geography sports entertainment fun facts learn';
+      expect(actionKeywords.contains('trivia'), true);
+      expect(actionKeywords.contains('quiz'), true);
+      expect(actionKeywords.contains('knowledge'), true);
+      expect(actionKeywords.contains('question'), true);
+      expect(actionKeywords.contains('game'), true);
     });
   });
 }
