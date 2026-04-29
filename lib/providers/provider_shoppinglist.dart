@@ -343,6 +343,7 @@ class _ShoppingListCardState extends State<ShoppingListCard> {
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: shoppingList.length,
+                addRepaintBoundaries: true,
                 itemBuilder: (context, index) {
                   final item = shoppingList.items[index];
                   return _buildShoppingItem(context, index, item);

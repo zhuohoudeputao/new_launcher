@@ -508,6 +508,7 @@ class WorkoutCard extends StatelessWidget {
           height: 300,
           child: ListView.builder(
             itemCount: workout.history.length,
+            addRepaintBoundaries: true,
             itemBuilder: (context, index) {
               final entry = workout.history[workout.history.length - 1 - index];
               return ListTile(

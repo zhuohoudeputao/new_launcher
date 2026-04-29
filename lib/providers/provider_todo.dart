@@ -328,6 +328,7 @@ class _TodoCardState extends State<TodoCard> {
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: todo.length,
+                addRepaintBoundaries: true,
                 itemBuilder: (context, index) {
                   final item = todo.todos[index];
                   return _buildTodoItem(context, index, item);

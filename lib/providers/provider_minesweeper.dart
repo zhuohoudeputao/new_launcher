@@ -694,6 +694,7 @@ class _MinesweeperCardState extends State<MinesweeperCard> {
           crossAxisSpacing: 2,
         ),
         itemCount: game.gridRows * game.gridCols,
+        addRepaintBoundaries: true,
         itemBuilder: (context, index) {
           int row = index ~/ game.gridCols;
           int col = index % game.gridCols;

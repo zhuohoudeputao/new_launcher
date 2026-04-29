@@ -307,6 +307,7 @@ class _TimerCardState extends State<TimerCard> {
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: timer.timers.length,
+                addRepaintBoundaries: true,
                 itemBuilder: (context, index) {
                   final entry = timer.timers[index];
                   return _buildTimerItem(context, timer, entry);

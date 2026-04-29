@@ -239,6 +239,7 @@ class _WorldClockCardState extends State<WorldClockCard> {
           height: 300,
           child: ListView.builder(
             itemCount: available.length,
+            addRepaintBoundaries: true,
             itemBuilder: (context, index) {
               final tz = available[index];
               return ListTile(

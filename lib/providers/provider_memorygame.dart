@@ -498,6 +498,7 @@ class _MemoryGameCardState extends State<MemoryGameCard> {
           crossAxisSpacing: 4,
         ),
         itemCount: game.cards.length,
+        addRepaintBoundaries: true,
         itemBuilder: (context, index) {
           final card = game.cards[index];
           final isHidden = card.state == MemoryCardState.hidden;

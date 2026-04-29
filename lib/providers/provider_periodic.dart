@@ -459,6 +459,7 @@ class _PeriodicTableCardState extends State<PeriodicTableCard> {
         mainAxisSpacing: 4,
       ),
       itemCount: elements.length > 36 ? 36 : elements.length,
+      addRepaintBoundaries: true,
       itemBuilder: (context, index) {
         final element = elements[index];
         return _buildElementTile(context, model, element);

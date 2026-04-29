@@ -293,6 +293,7 @@ class _ClipboardCardState extends State<ClipboardCard> {
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: clipboard.length,
+                addRepaintBoundaries: true,
                 itemBuilder: (context, index) {
                   final entry = clipboard.entries[index];
                   return _buildEntryItem(context, index, entry);

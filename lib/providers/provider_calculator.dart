@@ -533,6 +533,7 @@ class _CalculatorCardState extends State<CalculatorCard> {
       child: ListView.builder(
         shrinkWrap: true,
         itemCount: calc.history.length,
+        addRepaintBoundaries: true,
         itemBuilder: (context, index) {
           final entry = calc.history[index];
           return ListTile(

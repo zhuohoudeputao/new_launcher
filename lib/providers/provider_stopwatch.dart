@@ -117,8 +117,8 @@ class StopwatchModel extends ChangeNotifier {
     if (_isRunning) return;
     
     _isRunning = true;
-    _timer = Timer.periodic(Duration(milliseconds: 10), (timer) {
-      _elapsedMilliseconds += 10;
+    _timer = Timer.periodic(Duration(milliseconds: 50), (timer) {
+      _elapsedMilliseconds += 50;
       notifyListeners();
     });
     
@@ -335,6 +335,7 @@ class _StopwatchCardState extends State<StopwatchCard> {
       child: ListView.builder(
         shrinkWrap: true,
         itemCount: stopwatch.laps.length,
+        addRepaintBoundaries: true,
         itemBuilder: (context, index) {
           final lap = stopwatch.laps[index];
           return ListTile(

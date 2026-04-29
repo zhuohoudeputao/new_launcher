@@ -229,6 +229,7 @@ class _NotesCardState extends State<NotesCard> {
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: notes.length,
+                addRepaintBoundaries: true,
                 itemBuilder: (context, index) {
                   final note = notes.notes[index];
                   return _buildNoteItem(context, index, note);
