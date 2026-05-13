@@ -1,7 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/ui.dart';
+import 'package:new_launcher/card_config.dart';
 import 'package:new_launcher/providers/provider_wallpaper.dart';
+import 'package:new_launcher/ui/settings/api_keys.dart';
+import 'package:new_launcher/settings_page.dart';
 
 MyProvider providerSettings = MyProvider(
     name: "Settings",
@@ -13,40 +17,61 @@ Future<void> _provideActions() async {
 }
 
 Future<void> _initActions() async {
-  final themeMode = await Global.getValue("Theme.Mode", "system");
-  Global.infoModel.addInfoWidget(
-      "ThemeMode",
-      DarkModeOptionSelector(
-        currentMode: themeMode as String,
-        onChanged: (newMode) {
-          Global.settingsModel.saveValue("Theme.Mode", newMode);
-          Global.refreshTheme();
-        },
+  // Settings card entry widget
+  Global.infoModel.addCard(CardConfig(
+      key: "Settings",
+      widget: Builder(
+        builder: (context) => Card.filled(
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.settings, color: Theme.of(context).colorScheme.primary),
+                  const SizedBox(width: 8),
+                  const Text('Settings'),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
-      title: "Theme Mode");
-  
-  final cardOpacity = await Global.getValue("CardOpacity", 0.7);
-  Global.infoModel.addInfoWidget(
-      "CardOpacity",
-      CardOpacitySlider(
-        value: cardOpacity as double,
-        onChanged: (newValue) async {
-          Global.cardOpacityValue = newValue;
-          Global.settingsModel.saveValue("CardOpacity", newValue);
-          await Global.refreshTheme();
-        },
+      type: CardType.SETTINGS,
+      size: CardSize.LARGE,
+      layout: CardLayout.LIST,
+title: "Settings"));
+
+  Global.infoModel.addCard(CardConfig(
+      key: "APIKeys",
+      widget: Builder(
+        builder: (context) => Card(
+          color: Theme.of(context).cardColor,
+          elevation: 0,
+          child: ListTile(
+            leading: Icon(Icons.key, color: Theme.of(context).colorScheme.primary),
+            title: const Text("AI API Keys"),
+            subtitle: const Text("Configure OpenAI, Gemini, Claude"),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const APIKeysSettings()),
+              );
+            },
+          ),
+        ),
       ),
-      title: "Card Opacity");
-  
-  Global.infoModel.addInfoWidget(
-      "WallpaperPicker",
-      WallpaperPickerButton(
-        label: "Change Wallpaper",
-        onTap: () async {
-          await pickWallpaperFromGallery();
-        },
-      ),
-      title: "Wallpaper");
+      type: CardType.SETTINGS,
+      size: CardSize.LARGE,
+      layout: CardLayout.LIST,
+      title: "AI Configuration"));
 }
 
 Future<void> _update() async {

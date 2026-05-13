@@ -6,6 +6,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:new_launcher/ui/animation_helper.dart';
 import 'package:new_launcher/logger.dart';
 import 'package:provider/provider.dart';
 // Contains some custom widgets here
@@ -111,6 +112,7 @@ class CustomBoolSettingWidgetState extends State<CustomBoolSettingWidget> {
   late bool value;
   late void Function(bool) onChanged;
   late String subtitle;
+  double _scale = 1.0;
 
   @override
   void initState() {
@@ -129,6 +131,16 @@ class CustomBoolSettingWidgetState extends State<CustomBoolSettingWidget> {
     });
   }
 
+  void _handleTap() {
+    if (AnimationHelper.shouldAnimate(context)) {
+      setState(() => _scale = 0.95);
+      Future.delayed(AnimationHelper.fastDuration, () {
+        setState(() => _scale = 1.0);
+      });
+    }
+    updateUI(!value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -144,7 +156,14 @@ class CustomBoolSettingWidgetState extends State<CustomBoolSettingWidget> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(subtitle),
-        trailing: Switch(value: value, onChanged: updateUI),
+        trailing: AnimatedScale(
+          scale: _scale,
+          duration: AnimationHelper.fastDuration,
+          child: GestureDetector(
+            onTap: _handleTap,
+            child: Switch(value: value, onChanged: null),
+          ),
+        ),
       ),
     );
   }

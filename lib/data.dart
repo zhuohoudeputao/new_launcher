@@ -7,141 +7,25 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:new_launcher/ai_engine.dart';
 import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/logger.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
+import 'package:new_launcher/card_config.dart';
 import 'package:new_launcher/providers/provider_app.dart';
-import 'package:new_launcher/providers/provider_battery.dart';
-import 'package:new_launcher/providers/provider_calculator.dart';
-import 'package:new_launcher/providers/provider_flashlight.dart';
-import 'package:new_launcher/providers/provider_notes.dart';
-import 'package:new_launcher/providers/provider_stopwatch.dart';
-import 'package:new_launcher/providers/provider_timer.dart';
+import 'package:new_launcher/providers/provider_notifications.dart';
 import 'package:new_launcher/providers/provider_settings.dart';
+import 'package:new_launcher/providers/provider_smart_suggestions.dart';
 import 'package:new_launcher/providers/provider_system.dart';
 import 'package:new_launcher/providers/provider_theme.dart';
 import 'package:new_launcher/providers/provider_time.dart';
 import 'package:new_launcher/providers/provider_wallpaper.dart';
 import 'package:new_launcher/providers/provider_weather.dart';
-import 'package:new_launcher/providers/provider_worldclock.dart';
-import 'package:new_launcher/providers/provider_countdown.dart';
-import 'package:new_launcher/providers/provider_unitconverter.dart';
-import 'package:new_launcher/providers/provider_pomodoro.dart';
-import 'package:new_launcher/providers/provider_clipboard.dart';
-import 'package:new_launcher/providers/provider_todo.dart';
-import 'package:new_launcher/providers/provider_qrcode.dart';
-import 'package:new_launcher/providers/provider_random.dart';
-import 'package:new_launcher/providers/provider_readingtime.dart';
-import 'package:new_launcher/providers/provider_mathquiz.dart';
-import 'package:new_launcher/providers/provider_color.dart';
-import 'package:new_launcher/providers/provider_currency.dart';
-import 'package:new_launcher/providers/provider_bookmarks.dart';
-import 'package:new_launcher/providers/provider_habit.dart';
-import 'package:new_launcher/providers/provider_meditation.dart';
-import 'package:new_launcher/providers/provider_water.dart';
-import 'package:new_launcher/providers/provider_mood.dart';
-import 'package:new_launcher/providers/provider_expense.dart';
-import 'package:new_launcher/providers/provider_numberbase.dart';
-import 'package:new_launcher/providers/provider_calendar.dart';
-import 'package:new_launcher/providers/provider_progress.dart';
-import 'package:new_launcher/providers/provider_anniversary.dart';
-import 'package:new_launcher/providers/provider_sleep.dart';
-import 'package:new_launcher/providers/provider_counter.dart';
-import 'package:new_launcher/providers/provider_tip.dart';
-import 'package:new_launcher/providers/provider_bmi.dart';
-import 'package:new_launcher/providers/provider_metronome.dart';
-import 'package:new_launcher/providers/provider_flashcard.dart';
-import 'package:new_launcher/providers/provider_workout.dart';
-import 'package:new_launcher/providers/provider_age.dart';
-import 'package:new_launcher/providers/provider_percentage.dart';
-import 'package:new_launcher/providers/provider_quickcontacts.dart';
-import 'package:new_launcher/providers/provider_shoppinglist.dart';
-import 'package:new_launcher/providers/provider_caffeine.dart';
-import 'package:new_launcher/providers/provider_calorie.dart';
-import 'package:new_launcher/providers/provider_subscription.dart';
-import 'package:new_launcher/providers/provider_parking.dart';
-import 'package:new_launcher/providers/provider_gratitude.dart';
-import 'package:new_launcher/providers/provider_debt.dart';
-import 'package:new_launcher/providers/provider_interval_timer.dart';
-import 'package:new_launcher/providers/provider_textencoder.dart';
-import 'package:new_launcher/providers/provider_morse.dart';
-import 'package:new_launcher/providers/provider_timestamp.dart';
-import 'package:new_launcher/providers/provider_textcase.dart';
-import 'package:new_launcher/providers/provider_wordcounter.dart';
-import 'package:new_launcher/providers/provider_dayscalculator.dart';
-import 'package:new_launcher/providers/provider_loremipsum.dart';
-import 'package:new_launcher/providers/provider_uuid.dart';
-import 'package:new_launcher/providers/provider_passwordstrength.dart';
-import 'package:new_launcher/providers/provider_moonphase.dart';
-import 'package:new_launcher/providers/provider_reactiontime.dart';
-import 'package:new_launcher/providers/provider_decisionmaker.dart';
-import 'package:new_launcher/providers/provider_rockpaperscissors.dart';
-import 'package:new_launcher/providers/provider_whosturn.dart';
-import 'package:new_launcher/providers/provider_tictactoe.dart';
-import 'package:new_launcher/providers/provider_memorygame.dart';
-import 'package:new_launcher/providers/provider_hangman.dart';
-import 'package:new_launcher/providers/provider_sudoku.dart';
-import 'package:new_launcher/providers/provider_minesweeper.dart';
-import 'package:new_launcher/providers/provider_2048.dart';
-import 'package:new_launcher/providers/provider_wordle.dart';
-import 'package:new_launcher/providers/provider_typingtest.dart';
-import 'package:new_launcher/providers/provider_simon.dart';
-import 'package:new_launcher/providers/provider_sequence.dart';
-import 'package:new_launcher/providers/provider_filesize.dart';
-import 'package:new_launcher/providers/provider_sunposition.dart';
-import 'package:new_launcher/providers/provider_romannumerals.dart';
-import 'package:new_launcher/providers/provider_palindrome.dart';
-import 'package:new_launcher/providers/provider_nato.dart';
-import 'package:new_launcher/providers/provider_speed.dart';
-import 'package:new_launcher/providers/provider_volume.dart';
-import 'package:new_launcher/providers/provider_angle.dart';
-import 'package:new_launcher/providers/provider_prime.dart';
-import 'package:new_launcher/providers/provider_exponent.dart';
-import 'package:new_launcher/providers/provider_ascii.dart';
-import 'package:new_launcher/providers/provider_area.dart';
-import 'package:new_launcher/providers/provider_datarate.dart';
-import 'package:new_launcher/providers/provider_power.dart';
-import 'package:new_launcher/providers/provider_periodic.dart';
-import 'package:new_launcher/providers/provider_pressure.dart';
-import 'package:new_launcher/providers/provider_frequency.dart';
-import 'package:new_launcher/providers/provider_fuel.dart';
-import 'package:new_launcher/providers/provider_compass.dart';
-import 'package:new_launcher/providers/provider_caesar.dart';
-import 'package:new_launcher/providers/provider_vigenere.dart';
-import 'package:new_launcher/providers/provider_hash.dart';
-import 'package:new_launcher/providers/provider_json.dart';
-import 'package:new_launcher/providers/provider_regex.dart';
-import 'package:new_launcher/providers/provider_bitwise.dart';
-import 'package:new_launcher/providers/provider_diff.dart';
-import 'package:new_launcher/providers/provider_cron.dart';
-import 'package:new_launcher/providers/provider_aspectratio.dart';
-import 'package:new_launcher/providers/provider_loan.dart';
-import 'package:new_launcher/providers/provider_weight_tracker.dart';
-import 'package:new_launcher/providers/provider_pace.dart';
-import 'package:new_launcher/providers/provider_bloodpressure.dart';
-import 'package:new_launcher/providers/provider_bandwidth.dart';
-import 'package:new_launcher/providers/provider_coordinates.dart';
-import 'package:new_launcher/providers/provider_palette.dart';
-import 'package:new_launcher/providers/provider_gradient.dart';
-import 'package:new_launcher/providers/provider_sliding_puzzle.dart';
-import 'package:new_launcher/providers/provider_httpstatus.dart';
-import 'package:new_launcher/providers/provider_keyboard_shortcuts.dart';
-import 'package:new_launcher/providers/provider_gitignore.dart';
-import 'package:new_launcher/providers/provider_motivationalquote.dart';
-import 'package:new_launcher/providers/provider_reminder.dart';
-import 'package:new_launcher/providers/provider_shape.dart';
-import 'package:new_launcher/providers/provider_lottery.dart';
-import 'package:new_launcher/providers/provider_ipcalculator.dart';
-import 'package:new_launcher/providers/provider_fraction.dart';
-import 'package:new_launcher/providers/provider_statistics.dart';
-import 'package:new_launcher/providers/provider_markdown.dart';
-import 'package:new_launcher/providers/provider_stretch_reminder.dart';
-import 'package:new_launcher/providers/provider_dog_age.dart';
-import 'package:new_launcher/providers/provider_cat_age.dart';
-import 'package:new_launcher/providers/provider_biorhythm.dart';
-import 'package:new_launcher/providers/provider_triviaquiz.dart';
-import 'package:new_launcher/providers/provider_smart_suggestions.dart';
+import 'package:new_launcher/memory_system.dart';
+import 'package:new_launcher/context_builder.dart';
+import 'package:new_launcher/ui/animation_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeOptionSelector extends StatelessWidget {
@@ -213,15 +97,52 @@ class Global {
   /// Initialize. Call this before run [MyApp].
   static Future init() async {
     await settingsModel.init();
+    // Initialize memory system with SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    await initMemorySystem(prefs);
+    initContextBuilder(memorySystem);
+    await loadAIConfig();
     actionModel.init();
     final opacity = await settingsModel.getValue("CardOpacity", 0.7);
     cardOpacityValue = opacity is double ? opacity : 0.7;
     await settingsModel.getValue("WallpaperPicker", true);
   }
 
-  static Future<void> refreshTheme() async {
-    final provider = Global.providerList.firstWhere((p) => p.name == "Theme");
-    await provider.init();
+  static void refreshTheme() {
+    Global.themeModel.refresh();
+    Global.infoModel.refresh();
+  }
+
+  /// Update theme mode synchronously for instant UI update
+  static void updateThemeMode(String mode) {
+    Brightness brightness = Brightness.light;
+    
+    if (mode == "system") {
+      brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
+    } else if (mode == "dark") {
+      brightness = Brightness.dark;
+    }
+    
+    ColorScheme colorScheme = ColorScheme.fromSeed(
+      seedColor: Colors.indigo,
+      brightness: brightness,
+    );
+    
+    // Use cached opacity value
+    Color cardColor = colorScheme.surface.withValues(alpha: Global.cardOpacity);
+    
+    Global.setTheme(ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      cardColor: cardColor,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      textTheme: TextTheme(
+        bodyMedium: TextStyle(color: colorScheme.onSurface),
+        bodyLarge: TextStyle(color: colorScheme.onSurface),
+        titleMedium: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold),
+      ),
+    ));
+    
     Global.themeModel.refresh();
     Global.infoModel.refresh();
   }
@@ -273,131 +194,38 @@ class Global {
     providerWeather,
     providerApp,
     providerSystem,
-    providerBattery,
-    providerFlashlight,
-    providerNotes,
-    providerTimer,
-    providerStopwatch,
-    providerCalculator,
-    providerWorldClock,
-    providerCountdown,
-    providerUnitConverter,
-    providerPomodoro,
-    providerClipboard,
-    providerTodo,
-    providerQRCode,
-    providerRandom,
-    providerColor,
-    providerCurrency,
-    providerBookmarks,
-    providerHabit,
-    providerMeditation,
-    providerWater,
-    providerMood,
-    providerExpense,
-    providerNumberBase,
-    providerCalendar,
-    providerProgress,
-    providerAnniversary,
-    providerSleep,
-    providerCounter,
-    providerTip,
-    providerBMI,
-    providerMetronome,
-    providerFlashcard,
-    providerWorkout,
-    providerAge,
-    providerPercentage,
-    providerQuickContacts,
-    providerShoppingList,
-    providerCaffeine,
-    providerCalorie,
-    providerSubscription,
-    providerParking,
-    providerGratitude,
-    providerDebt,
-    providerIntervalTimer,
-    providerTextEncoder,
-    providerMorseCode,
-    providerTimestamp,
-    providerTextCase,
-    providerWordCounter,
-    providerDaysCalculator,
-    providerLoremIpsum,
-    providerUUID,
-    providerPasswordStrength,
-    providerMoonPhase,
-    providerReactionTime,
-    providerDecisionMaker,
-    providerRockPaperScissors,
-    providerWhosTurn,
-    providerTicTacToe,
-    providerMemoryGame,
-    providerHangman,
-    providerSudoku,
-    providerMinesweeper,
-    provider2048,
-    providerWordle,
-    providerTypingTest,
-    providerSimon,
-    providerSequence,
-    providerFileSizeConverter,
-    providerSunPosition,
-    providerRomanNumerals,
-    providerPalindrome,
-    providerNatoPhonetic,
-    providerSpeedConverter,
-    providerVolumeConverter,
-    providerAngleConverter,
-    providerPrime,
-    providerAsciiConverter,
-    providerAreaConverter,
-    providerDataRateConverter,
-    providerPowerConverter,
-    providerPeriodicTable,
-    providerPressureConverter,
-    providerFrequencyConverter,
-    providerFuel,
-    providerCompass,
-    providerCaesarCipher,
-    providerVigenereCipher,
-    providerHashGenerator,
-    providerJsonFormatter,
-    providerRegexTester,
-    providerBitwise,
-    providerDiffChecker,
-    providerCronExpressionParser,
-    providerAspectRatio,
-    providerLoan,
-    providerExponent,
-    providerWeightTracker,
-    providerPace,
-    providerBloodPressure,
-    providerBandwidthCalculator,
-    providerCoordinatesConverter,
-    providerPalette,
-    providerGradient,
-    providerReadingTime,
-    providerMathQuiz,
-    providerSlidingPuzzle,
-    providerHTTPStatus,
-    providerKeyboardShortcuts,
-    providerGitIgnoreGenerator,
-    providerMotivationalQuote,
-    providerReminder,
-    providerShape,
-    providerLottery,
-    providerIPCalculator,
-    providerFractionCalculator,
-    providerStatisticsCalculator,
-    providerMarkdownPreview,
-    providerStretchReminder,
-    providerDogAge,
-    providerCatAge,
-    providerBiorhythm,
-    providerTriviaQuiz,
     providerSmartSuggestions,
+    providerNotifications,
   ];
+
+  /// Map of provider names to their card keys
+  /// Used for provider visibility toggles
+  static Map<String, List<String>> providerCardKeys = {
+    "Settings": ["SettingsCard", "ThemeMode", "CardOpacity", "WallpaperPicker", "APIKeys"],
+    "Wallpaper": [], // No cards, only background image
+    "Theme": [], // No cards, only theme data
+    "Time": ["Time"],
+    "Weather": ["Weather"],
+    "App": ["AppStatistics", "RecentApp", "AllApps"], // Dynamic app cards handled separately
+    "System": ["Logs"],
+    "SmartSuggestions": ["SmartSuggestions"],
+    "Notifications": ["Notifications"],
+  };
+
+  /// Get all card keys for a provider (including dynamic cards)
+  static List<String> getProviderCardKeys(String providerName) {
+    final staticKeys = providerCardKeys[providerName] ?? [];
+    
+    // Handle dynamic app cards
+    if (providerName == "App") {
+      final dynamicKeys = infoModel.infoKeys
+          .where((key) => key.startsWith("app_"))
+          .toList();
+      return [...staticKeys, ...dynamicKeys];
+    }
+    
+    return staticKeys;
+  }
 
   //_______________________________________________________________________
 }
@@ -452,10 +280,42 @@ class ActionModel with ChangeNotifier {
 class InfoModel with ChangeNotifier {
   final Map<String, Widget> _infoList = <String, Widget>{};
   final Map<String, String> _titleMap = <String, String>{};
+  final List<CardConfig> _cardConfigs = <CardConfig>[];
+  
+  /// Animation state tracking for card appearance/disappearance
+  final Set<String> _appearingWidgets = <String>{};
+  final Set<String> _removingWidgets = <String>{};
+  
+  /// Animation state caching to avoid redundant notifyListeners during animations
+  /// Tracks whether we're in a batch update mode to prevent multiple notifications
+  bool _isBatchUpdate = false;
+  
+  /// Animation throttling: maximum concurrent animations (prevents >8 simultaneous animations)
+  static const int maxConcurrentAnimations = 8;
+  
+  /// Queue for animations waiting to start (when limit is reached)
+  final List<String> _animationQueue = <String>[];
+  
+  /// Currently active animations count
+  int _activeAnimationsCount = 0;
+  
   List<Widget> get infoList => _infoList.values.toList();
+  List<CardConfig> get cardConfigs => List.unmodifiable(_cardConfigs);
   
   /// Get list of all info keys (for smart sorting)
   List<String> get infoKeys => _infoList.keys.toList();
+  
+  /// Check if a widget is currently appearing (animating in)
+  bool isAppearing(String key) => _appearingWidgets.contains(key);
+  
+  /// Check if a widget is currently removing (animating out)
+  bool isRemoving(String key) => _removingWidgets.contains(key);
+  
+  /// Get current active animations count
+  int get activeAnimationsCount => _activeAnimationsCount;
+  
+  /// Get queued animations count
+  int get queuedAnimationsCount => _animationQueue.length;
 
   List<Widget> getFilteredList(String query) {
     if (query.isEmpty) return infoList;
@@ -531,26 +391,160 @@ class InfoModel with ChangeNotifier {
   }
 
   /// This method is more flexible for providers
+  /// Backward compatible - converts to CardConfig and calls addCard
   void addInfoWidget(String key, Widget infoWidget, {String? title}) {
-    if (title != null) {
-      _titleMap[key] = title;
-    }
-    _infoList.remove(key);
-    _infoList[key] = infoWidget;
-    notifyListeners();
+    final config = CardConfig(
+      key: key,
+      widget: infoWidget,
+      type: CardType.INFO,
+      size: CardSize.MEDIUM,
+      layout: CardLayout.LIST,
+      title: title,
+    );
+    addCard(config);
   }
 
-  void addInfoWidgetsBatch(List<MapEntry<String, Widget>> widgets, {Map<String, String>? titles}) {
-    for (final entry in widgets) {
-      _infoList.remove(entry.key);
-      _infoList[entry.key] = entry.value;
+  /// Add a CardConfig to the model
+  void addCard(CardConfig config) {
+    // Remove existing config with same key
+    _cardConfigs.removeWhere((c) => c.key == config.key);
+    _cardConfigs.add(config);
+    // Also update legacy _infoList for backward compatibility
+    _infoList.remove(config.key);
+    _infoList[config.key] = config.widget;
+    if (config.title != null) {
+      _titleMap[config.key] = config.title!;
     }
-    if (titles != null) {
-      for (final entry in titles.entries) {
-        _titleMap[entry.key] = entry.value;
+    
+    // Animation throttling: check if we can start animation immediately
+    if (_activeAnimationsCount < maxConcurrentAnimations) {
+      // Start animation immediately
+      _startAppearAnimation(config.key);
+    } else {
+      // Queue animation for later
+      _animationQueue.add(config.key);
+      // Still notify listeners to show the card (without animation state)
+      if (!_isBatchUpdate) {
+        notifyListeners();
       }
     }
+  }
+  
+  /// Start appear animation for a card (with throttling)
+  void _startAppearAnimation(String key) {
+    _appearingWidgets.add(key);
+    _activeAnimationsCount++;
+    
+    if (!_isBatchUpdate) {
+      notifyListeners();
+    }
+    
+    // Schedule removal from appearing set after animation duration
+    Future.delayed(AnimationHelper.defaultDuration, () {
+      _appearingWidgets.remove(key);
+      _activeAnimationsCount--;
+      
+      // Process queued animations if any
+      _processQueuedAnimations();
+      
+      if (!_isBatchUpdate) {
+        notifyListeners();
+      }
+    });
+  }
+  
+  /// Process queued animations when slots become available
+  void _processQueuedAnimations() {
+    while (_animationQueue.isNotEmpty && _activeAnimationsCount < maxConcurrentAnimations) {
+      final queuedKey = _animationQueue.removeAt(0);
+      
+      // Check if it's a remove animation (prefix 'remove_')
+      if (queuedKey.startsWith('remove_')) {
+        final key = queuedKey.substring(7); // Remove 'remove_' prefix
+        _startRemoveAnimation(key);
+      } else {
+        // It's an appear animation
+        _startAppearAnimation(queuedKey);
+      }
+    }
+  }
+
+  /// Add multiple CardConfigs to the model with single notifyListeners for performance
+  /// Uses batch update mode to prevent redundant notifications during animations
+  void addCardsBatch(List<CardConfig> configs) {
+    _isBatchUpdate = true;
+    
+    for (final config in configs) {
+      // Remove existing config with same key
+      _cardConfigs.removeWhere((c) => c.key == config.key);
+      _cardConfigs.add(config);
+      // Also update legacy _infoList for backward compatibility
+      _infoList.remove(config.key);
+      _infoList[config.key] = config.widget;
+      if (config.title != null) {
+        _titleMap[config.key] = config.title!;
+      }
+      
+      // Queue animations for throttling (batch mode doesn't start animations immediately)
+      _animationQueue.add(config.key);
+    }
+    
+    _isBatchUpdate = false;
+    
+    // Single notifyListeners after all cards are added
     notifyListeners();
+    
+    // Process queued animations with throttling
+    _processQueuedAnimations();
+  }
+
+  /// Get cards filtered by layout
+  List<CardConfig> getCardsByLayout(CardLayout layout) {
+    return _cardConfigs.where((c) => c.layout == layout).toList();
+  }
+
+  /// Remove a card by key (with animation throttling)
+  void removeCard(String key) {
+    // Animation throttling: check if we can start animation immediately
+    if (_activeAnimationsCount < maxConcurrentAnimations) {
+      // Start remove animation immediately
+      _startRemoveAnimation(key);
+    } else {
+      // Queue animation for later
+      _animationQueue.add('remove_$key');
+      // Still notify listeners to mark as removing (without animation state)
+      _removingWidgets.add(key);
+      if (!_isBatchUpdate) {
+        notifyListeners();
+      }
+    }
+  }
+  
+  /// Start remove animation for a card (with throttling)
+  void _startRemoveAnimation(String key) {
+    // Mark as removing for animation
+    _removingWidgets.add(key);
+    _activeAnimationsCount++;
+    
+    if (!_isBatchUpdate) {
+      notifyListeners();
+    }
+    
+    // Schedule actual removal after animation duration
+    Future.delayed(AnimationHelper.defaultDuration, () {
+      _cardConfigs.removeWhere((c) => c.key == key);
+      _infoList.remove(key);
+      _titleMap.remove(key);
+      _removingWidgets.remove(key);
+      _activeAnimationsCount--;
+      
+      // Process queued animations if any
+      _processQueuedAnimations();
+      
+      if (!_isBatchUpdate) {
+        notifyListeners();
+      }
+    });
   }
 
   void refresh() {
@@ -617,6 +611,56 @@ class SettingsModel with ChangeNotifier {
       return defaultValue;
     }
   }
+
+  /// Set provider visibility (enabled/disabled)
+  void setProviderEnabled(String provider, bool enabled) {
+    saveValue('ProviderVisibility.$provider', enabled);
+    
+    // Handle card removal/re-addition
+    if (!enabled) {
+      // Remove provider cards
+      final cardKeys = Global.getProviderCardKeys(provider);
+      for (final key in cardKeys) {
+        Global.infoModel.removeCard(key);
+      }
+      Global.loggerModel.info("Provider $provider disabled, removed ${cardKeys.length} cards", source: "Settings");
+    } else {
+      // Re-add provider cards by calling initActions
+      final providerObj = Global.providerList.firstWhere(
+        (p) => p.name == provider,
+        orElse: () => throw Exception("Provider $provider not found"),
+      );
+      providerObj.initActions();
+      Global.loggerModel.info("Provider $provider enabled, re-added cards", source: "Settings");
+    }
+  }
+
+  /// Check if provider is enabled (default: true)
+  bool isProviderEnabled(String provider) {
+    final prefs = _prefs;
+    if (prefs == null) return true;
+    final key = 'ProviderVisibility.$provider';
+    if (prefs.containsKey(key)) {
+      return prefs.getBool(key) ?? true;
+    }
+    return true;
+  }
+
+  /// Set smart sorting enabled/disabled
+  void setSmartSortingEnabled(bool enabled) {
+    saveValue('SmartSortingEnabled', enabled);
+  }
+
+  /// Check if smart sorting is enabled (default: true)
+  bool isSmartSortingEnabled() {
+    final prefs = _prefs;
+    if (prefs == null) return true;
+    final key = 'SmartSortingEnabled';
+    if (prefs.containsKey(key)) {
+      return prefs.getBool(key) ?? true;
+    }
+    return true;
+  }
 }
 
 class BackgroundImageModel with ChangeNotifier {
@@ -630,6 +674,10 @@ class BackgroundImageModel with ChangeNotifier {
 
   set backgroundImage(ImageProvider value) {
     _backgroundImage = value;
+    notifyListeners();
+  }
+
+  void refresh() {
     notifyListeners();
   }
 }

@@ -10,9 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:new_launcher/ui.dart';
+import 'package:new_launcher/ui/animation_helper.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/provider.dart';
+import 'package:new_launcher/card_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 MyProvider providerWeather = MyProvider(
@@ -212,15 +214,18 @@ Future<void> _provideActions() async {
 }
 
 Future<void> _initActions() async {
-  Global.infoModel.addInfoWidget(
-    "Weather",
-    customInfoWidget(
+  Global.infoModel.addCard(CardConfig(
+    key: "Weather",
+    widget: customInfoWidget(
       title: "Weather",
       subtitle: "Loading...",
       icon: Icon(Icons.cloud),
     ),
+    type: CardType.INFO,
+    size: CardSize.LARGE,
+    layout: CardLayout.LIST,
     title: "Weather",
-  );
+  ));
   await _provideWeather();
 }
 
@@ -246,27 +251,26 @@ Future<void> _provideWeather() async {
         );
         latitude = position.latitude;
         longitude = position.longitude;
+        Global.loggerModel.info("Weather: Got location ($latitude, $longitude)", source: "Weather");
+      } else {
+        Global.loggerModel.warning("Weather: Location permission denied, using default location", source: "Weather");
       }
+    } else {
+      Global.loggerModel.warning("Weather: Location service disabled, using default location", source: "Weather");
     }
   } catch (e) {
-    Global.loggerModel.warning("Weather geolocation error: $e", source: "Weather");
-    
-    final cached = await _loadCachedWeather();
-    if (cached != null) {
-      Global.infoModel.addInfoWidget(
-          "Weather",
-          WeatherCard(cache: cached, onRefresh: _provideWeather),
-          title: "Weather");
-      Global.loggerModel.info("Weather displayed from cache", source: "Weather");
-      return;
-    }
+    Global.loggerModel.warning("Weather geolocation error: $e, using default location", source: "Weather");
   }
 
+  Global.loggerModel.info("Weather: Fetching from API for ($latitude, $longitude)", source: "Weather");
+  
   try {
     final response = await http.get(
       Uri.parse(
           "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&current_weather=true&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto"),
     ).timeout(const Duration(seconds: 10));
+
+    Global.loggerModel.info("Weather: API response status ${response.statusCode}", source: "Weather");
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -309,44 +313,60 @@ Future<void> _provideWeather() async {
       );
       await _saveWeatherCache(cache);
 
-      Global.infoModel.addInfoWidget(
-          "Weather",
-          WeatherCard(cache: cache, onRefresh: _provideWeather),
-          title: "Weather");
+      Global.infoModel.addCard(CardConfig(
+          key: "Weather",
+          widget: WeatherCard(cache: cache, onRefresh: _provideWeather),
+          type: CardType.INFO,
+          size: CardSize.LARGE,
+          layout: CardLayout.LIST,
+          title: "Weather"));
       Global.loggerModel.info("Weather updated from API with location and forecast", source: "Weather");
     } else {
       final cached = await _loadCachedWeather();
       if (cached != null) {
-        Global.infoModel.addInfoWidget(
-            "Weather",
-            WeatherCard(cache: cached, onRefresh: _provideWeather),
-            title: "Weather");
+        Global.infoModel.addCard(CardConfig(
+            key: "Weather",
+            widget: WeatherCard(cache: cached, onRefresh: _provideWeather),
+            type: CardType.INFO,
+            size: CardSize.LARGE,
+            layout: CardLayout.LIST,
+            title: "Weather"));
       } else {
-        Global.infoModel.addInfoWidget(
-            "Weather",
-            customInfoWidget(
+        Global.infoModel.addCard(CardConfig(
+            key: "Weather",
+            widget: customInfoWidget(
                 title: "Weather error",
                 subtitle: "Status: ${response.statusCode}",
                 icon: Icon(Icons.error)),
-            title: "Weather");
+            type: CardType.INFO,
+            size: CardSize.LARGE,
+            layout: CardLayout.LIST,
+            title: "Weather"));
       }
     }
   } catch (e) {
+    Global.loggerModel.error("Weather API error: $e", source: "Weather");
     final cached = await _loadCachedWeather();
     if (cached != null) {
-      Global.infoModel.addInfoWidget(
-          "Weather",
-          WeatherCard(cache: cached, onRefresh: _provideWeather),
-          title: "Weather");
+      Global.infoModel.addCard(CardConfig(
+          key: "Weather",
+          widget: WeatherCard(cache: cached, onRefresh: _provideWeather),
+          type: CardType.INFO,
+          size: CardSize.LARGE,
+          layout: CardLayout.LIST,
+          title: "Weather"));
       Global.loggerModel.info("Weather displayed from cache due to error", source: "Weather");
     } else {
-      Global.infoModel.addInfoWidget(
-          "Weather",
-          customInfoWidget(
+      Global.infoModel.addCard(CardConfig(
+          key: "Weather",
+          widget: customInfoWidget(
               title: "Weather error",
               subtitle: e.toString(),
               icon: Icon(Icons.error)),
-          title: "Weather");
+          type: CardType.INFO,
+          size: CardSize.LARGE,
+          layout: CardLayout.LIST,
+          title: "Weather"));
     }
   }
 }
@@ -416,16 +436,24 @@ class _WeatherCardState extends State<WeatherCard> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "${cache.temperature.toInt()}°C",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                        AnimatedSwitcher(
+                          duration: AnimationHelper.defaultDuration,
+                          child: Text(
+                            "${cache.temperature.toInt()}°C",
+                            key: ValueKey(cache.temperature.toInt()),
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        Text(
-                          condition,
-                          style: TextStyle(fontSize: 14),
+                        AnimatedSwitcher(
+                          duration: AnimationHelper.defaultDuration,
+                          child: Text(
+                            condition,
+                            key: ValueKey(condition),
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
                       ],
                     ),

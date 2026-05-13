@@ -10,6 +10,8 @@ import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/ui.dart';
+import 'package:new_launcher/ui/animation_helper.dart';
+import 'package:new_launcher/card_config.dart';
 
 /// a provider provides some actions about time
 MyProvider providerTime = MyProvider(
@@ -43,7 +45,13 @@ Future<void> _update() async {
 void _provideTime() async {
   final showGreeting = await _showGreeting();
   final showSeconds = await _showSeconds();
-  Global.infoModel.addInfoWidget("Time", _TimeWidget(showGreeting: showGreeting, showSeconds: showSeconds), title: "Time");
+  Global.infoModel.addCard(CardConfig(
+    key: "Time",
+    widget: TimeWidget(showGreeting: showGreeting, showSeconds: showSeconds),
+    type: CardType.INFO,
+    size: CardSize.MEDIUM,
+    layout: CardLayout.GRID,
+    title: "Time"));
 }
 
 Future<bool> _showGreeting() async {
@@ -58,19 +66,21 @@ Future<bool> _showSeconds() async {
   return showSeconds;
 }
 
-class _TimeWidget extends StatefulWidget {
+/// TimeWidget displays current time with optional greeting and seconds
+/// Made public for testing purposes
+class TimeWidget extends StatefulWidget {
   final bool showGreeting;
   final bool showSeconds;
 
-  const _TimeWidget({Key? key, required this.showGreeting, required this.showSeconds}) : super(key: key);
+  const TimeWidget({Key? key, required this.showGreeting, required this.showSeconds}) : super(key: key);
 
   @override
-  _TimeWidgetState createState() =>
-      _TimeWidgetState(showGreeting: showGreeting, showSeconds: showSeconds);
+  TimeWidgetState createState() =>
+      TimeWidgetState(showGreeting: showGreeting, showSeconds: showSeconds);
 }
 
-class _TimeWidgetState extends State<_TimeWidget> {
-  _TimeWidgetState({required bool showGreeting, required bool showSeconds}) {
+class TimeWidgetState extends State<TimeWidget> {
+  TimeWidgetState({required bool showGreeting, required bool showSeconds}) {
     this.showGreeting = showGreeting;
     this.showSeconds = showSeconds;
   }
@@ -185,8 +195,80 @@ class _TimeWidgetState extends State<_TimeWidget> {
     }
 
     // create widget
-    return customInfoWidget(
-        title: month + " " + dayString + ", " + timeString,
-        subtitle: greeting);
+    return Card(
+      color: Theme.of(context).cardColor,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        title: AnimatedSwitcher(
+          duration: AnimationHelper.defaultDuration,
+          child: Text(
+            month + " " + dayString + ", " + timeString,
+            key: ValueKey(timeString),
+            textAlign: TextAlign.left,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        subtitle: AnimatedSwitcher(
+          duration: AnimationHelper.defaultDuration,
+          child: Text(
+            greeting,
+            key: ValueKey(greeting),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// MinimalTimeWidget displays current time in a minimal format
+/// Used for secondary screen with just time display
+class MinimalTimeWidget extends StatefulWidget {
+  const MinimalTimeWidget({Key? key}) : super(key: key);
+
+  @override
+  MinimalTimeWidgetState createState() => MinimalTimeWidgetState();
+}
+
+class MinimalTimeWidgetState extends State<MinimalTimeWidget> {
+  Timer? _timer;
+  bool _disposed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      if (_disposed) return;
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final hour = now.hour.toString().padLeft(2, '0');
+    final minute = now.minute.toString().padLeft(2, '0');
+    final second = now.second.toString().padLeft(2, '0');
+    final timeString = '$hour:$minute:$second';
+
+    return AnimatedSwitcher(
+      duration: AnimationHelper.defaultDuration,
+      child: Text(
+        timeString,
+        key: ValueKey(timeString),
+        style: Theme.of(context).textTheme.displayLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
   }
 }
