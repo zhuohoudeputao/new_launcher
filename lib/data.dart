@@ -17,6 +17,7 @@ import 'package:new_launcher/card_config.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/providers/provider_notifications.dart';
 import 'package:new_launcher/providers/provider_settings.dart';
+import 'package:new_launcher/providers/provider_app_drawer.dart';
 import 'package:new_launcher/providers/provider_smart_suggestions.dart';
 import 'package:new_launcher/providers/provider_system.dart';
 import 'package:new_launcher/providers/provider_theme.dart';
@@ -179,6 +180,7 @@ class Global {
   /// A model for managing actions
   static ActionModel actionModel = ActionModel();
   static LoggerModel loggerModel = LoggerModel();
+  static AppDrawerModel appDrawerModel = appDrawerModel;
 
   static Future<void> addActions(List<MyAction> actions) async {
     actionModel.addActions(actions);
