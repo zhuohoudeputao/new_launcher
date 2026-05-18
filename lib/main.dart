@@ -128,15 +128,11 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     if (_drawerController == null) return;
     final model = Provider.of<AppDrawerModel>(context, listen: false);
     final size = _drawerController!.size;
-    // Update model state based on drawer size
+    // Update model state based on drawer size threshold
     if (size > 0.1 && !model.isDrawerOpen) {
-      model._isDrawerOpen = true;
-      model._drawerHeight = size;
-      model.notifyListeners();
+      model.openDrawer();
     } else if (size <= 0.1 && model.isDrawerOpen) {
-      model._isDrawerOpen = false;
-      model._drawerHeight = size;
-      model.notifyListeners();
+      model.closeDrawer();
     }
   }
   
@@ -515,6 +511,47 @@ slivers: [
               ),
             ),
           ],
+        ),
+        // App drawer overlay
+        DraggableScrollableSheet(
+          controller: _drawerController,
+          initialChildSize: 0.0,
+          minChildSize: 0.0,
+          maxChildSize: 0.7,
+          expand: true,
+          builder: (context, scrollController) {
+            return Card.filled(
+              color: Theme.of(context).cardColor,
+              child: Column(
+                children: [
+                  // Handle bar for dragging
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  // Placeholder content (will be replaced with app grid in Task 3)
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        'App Drawer',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ]),
     );
