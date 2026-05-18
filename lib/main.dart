@@ -108,6 +108,9 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   /// Current page index (0 = secondary, 1 = main)
   int _currentPage = 1;
   
+  /// DraggableScrollableController for app drawer
+  DraggableScrollableController? _drawerController;
+  
   @override
   void initState() {
     super.initState();
@@ -116,12 +119,33 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       vsync: this,
     );
     _pageController = PageController(initialPage: 0);
+    _drawerController = DraggableScrollableController();
+    _drawerController!.addListener(_onDrawerChanged);
+  }
+  
+  /// Sync drawer state with AppDrawerModel
+  void _onDrawerChanged() {
+    if (_drawerController == null) return;
+    final model = Provider.of<AppDrawerModel>(context, listen: false);
+    final size = _drawerController!.size;
+    // Update model state based on drawer size
+    if (size > 0.1 && !model.isDrawerOpen) {
+      model._isDrawerOpen = true;
+      model._drawerHeight = size;
+      model.notifyListeners();
+    } else if (size <= 0.1 && model.isDrawerOpen) {
+      model._isDrawerOpen = false;
+      model._drawerHeight = size;
+      model.notifyListeners();
+    }
   }
   
   @override
   void dispose() {
     _reorderAnimationController?.dispose();
     _pageController.dispose();
+    _drawerController?.removeListener(_onDrawerChanged);
+    _drawerController?.dispose();
     super.dispose();
   }
   
