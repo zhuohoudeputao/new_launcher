@@ -4,7 +4,6 @@ import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/ui.dart';
 import 'package:new_launcher/card_config.dart';
 import 'package:new_launcher/providers/provider_wallpaper.dart';
-import 'package:new_launcher/ui/settings/api_keys.dart';
 import 'package:new_launcher/settings_page.dart';
 
 MyProvider providerSettings = MyProvider(
@@ -47,31 +46,6 @@ Future<void> _initActions() async {
       size: CardSize.LARGE,
       layout: CardLayout.LIST,
 title: "Settings"));
-
-  Global.infoModel.addCard(CardConfig(
-      key: "APIKeys",
-      widget: Builder(
-        builder: (context) => Card(
-          color: Theme.of(context).cardColor,
-          elevation: 0,
-          child: ListTile(
-            leading: Icon(Icons.key, color: Theme.of(context).colorScheme.primary),
-            title: const Text("AI API Keys"),
-            subtitle: const Text("Configure OpenAI, Gemini, Claude"),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const APIKeysSettings()),
-              );
-            },
-          ),
-        ),
-      ),
-      type: CardType.SETTINGS,
-      size: CardSize.LARGE,
-      layout: CardLayout.LIST,
-      title: "AI Configuration"));
 }
 
 Future<void> _update() async {

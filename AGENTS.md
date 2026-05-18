@@ -12,6 +12,29 @@ Flutter-based Android launcher with a command-based interface. Users type comman
 unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && ~/app/flutter/bin/flutter test  # Run tests (unset proxy first)
 ```
 
+## Development Workflow
+
+### After Completing a Feature
+
+**IMPORTANT**: When a feature implementation is complete, always launch the app to verify:
+
+1. **Run the app**: `~/app/flutter/bin/flutter run -d <device-id>`
+2. **Verify the feature works**: Manually test the new functionality
+3. **Check for runtime errors**: Monitor console output for exceptions
+4. **Confirm UI renders correctly**: Visual inspection of new components
+
+This ensures the feature works in the actual runtime environment, not just in tests.
+
+### Example Verification Checklist
+
+After adding AI API Keys settings to SettingsPage:
+- [ ] Launch app on device
+- [ ] Navigate to Settings page
+- [ ] Verify "AI Settings" section appears at top
+- [ ] Tap "AI API Keys" ListTile
+- [ ] Confirm APIKeysSettings page opens
+- [ ] Test back navigation returns to Settings
+
 ## Build Configuration
 
 ### Required Android Settings
