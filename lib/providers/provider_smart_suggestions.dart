@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
+import 'package:new_launcher/card_config.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,12 +28,15 @@ Future<void> _provideActions() async {
 
 Future<void> _initActions() async {
   await smartSuggestionsModel.init();
-  Global.infoModel.addInfoWidget(
-      "SmartSuggestions",
-      ChangeNotifierProvider.value(
+  Global.infoModel.addCard(CardConfig(
+      key: "SmartSuggestions",
+      widget: ChangeNotifierProvider.value(
           value: smartSuggestionsModel,
           builder: (context, child) => SmartSuggestionsCard()),
-      title: "Smart Suggestions");
+      type: CardType.INFO,
+      size: CardSize.MEDIUM,
+      layout: CardLayout.GRID,
+      title: "Smart Suggestions"));
 }
 
 Future<void> _update() async {

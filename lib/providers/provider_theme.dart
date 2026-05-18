@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
+import 'package:new_launcher/card_config.dart';
 
 MyProvider providerTheme = MyProvider(
     name: "Theme",

@@ -3,6 +3,7 @@ import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
 import 'package:new_launcher/ui.dart';
+import 'package:new_launcher/card_config.dart';
 import 'package:device_apps/device_apps.dart';
 
 MyProvider providerSystem = MyProvider(
@@ -17,7 +18,13 @@ Future<void> _provideActions() async {
       name: 'View logs',
       keywords: 'logs debug error view',
       action: () {
-        Global.infoModel.addInfoWidget("Logs", LogViewerWidget(), title: "Logs");
+        Global.infoModel.addCard(CardConfig(
+          key: "Logs",
+          widget: LogViewerWidget(),
+          type: CardType.ACTION,
+          size: CardSize.MEDIUM,
+          layout: CardLayout.GRID,
+          title: "Logs"));
       },
       times: List.generate(24, (index) => 0),
     ),

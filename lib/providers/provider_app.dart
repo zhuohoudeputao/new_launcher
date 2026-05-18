@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
+import 'package:new_launcher/card_config.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -57,37 +58,24 @@ Future<void> _provideActions() async {
   }
   allAppsModel.setApps(allAppsWithIcons);
 
-  final appWidgets = allAppsWithIcons.map((app) => 
-    MapEntry("app_${app.packageName}", _buildAppCard(app))
+  // Add individual app cards
+  final appConfigs = allAppsWithIcons.map((app) => 
+    CardConfig(
+      key: "app_${app.packageName}",
+      widget: _buildAppCard(app),
+      type: CardType.ACTION,
+      size: CardSize.LARGE,
+      layout: CardLayout.LIST,
+      title: app.appName,
+    )
   ).toList();
-  final appTitles = Map.fromEntries(
-    allAppsWithIcons.map((app) => MapEntry("app_${app.packageName}", app.appName))
-  );
-  Global.infoModel.addInfoWidgetsBatch(appWidgets, titles: appTitles);
+  Global.infoModel.addCardsBatch(appConfigs);
 
   Global.addActions(actions);
 }
 
 Future<void> _initActions() async {
   await appStatisticsModel.init();
-  Global.infoModel.addInfoWidget(
-      "AppStatistics",
-      ChangeNotifierProvider.value(
-          value: appStatisticsModel,
-          builder: (context, child) => AppStatisticsCard()),
-      title: "App Statistics");
-  Global.infoModel.addInfoWidget(
-      "RecentApp",
-      ChangeNotifierProvider.value(
-          value: appModel,
-          builder: (context, child) => RecentlyUsedAppsCard()),
-      title: "Recent Apps");
-  Global.infoModel.addInfoWidget(
-      "AllApps",
-      ChangeNotifierProvider.value(
-          value: allAppsModel,
-          builder: (context, child) => AllAppsCard()),
-      title: "All Apps");
 }
 
 Future<void> _update() async {}

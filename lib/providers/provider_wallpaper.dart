@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:new_launcher/action.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/provider.dart';
+import 'package:new_launcher/card_config.dart';
 import 'package:path_provider/path_provider.dart';
 
 MyProvider providerWallpaper = MyProvider(
@@ -105,6 +106,7 @@ Future<void> pickWallpaperFromGallery() async {
     await File(image.path).copy(wallpaperPath);
     
     Global.backgroundImageModel.backgroundImage = FileImage(File(wallpaperPath));
+    Global.backgroundImageModel.refresh(); // Explicit refresh for instant feedback
     Global.settingsModel.saveValue("WallpaperFile", wallpaperPath);
     Global.settingsModel.saveValue("WallpaperType", "file");
     
