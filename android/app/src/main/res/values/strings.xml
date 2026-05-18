@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_description">AI Launcher Accessibility Service enables the app to perform actions like launching apps, toggling settings, and navigating the device based on AI commands. This service requires your permission to function.</string>
+</resources>
