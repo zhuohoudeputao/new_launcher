@@ -105,6 +105,8 @@ Settings auto-saved via `SharedPreferences`:
 ## Known Issues
 
 - System proxy configuration may cause Flutter test failures - unset proxy env vars before running tests
+- **Android SDK Permission Issue**: `/opt/android-sdk` is owned by root and not writable. Plugins require `build-tools;33.0.1` but SDK only has 34.0.0 and 36.0.0. Workaround: Request admin to install missing components or make SDK writable.
+- **Weather Loading Fix**: If geolocation fails and no cache exists, weather API is still called with default coordinates (NYC). See `docs/weather_loading_fix.md`.
 
 ### Build Troubleshooting
 
@@ -1614,6 +1616,24 @@ Settings auto-saved via `SharedPreferences`:
     - `recordCardInteraction()` tracks card usage for pattern learning
     - Uses `Card.filled`, `ActionChip`, `Icon(Icons.psychology)` for Material 3 style
     - Keywords: suggestion, smart, learn, predict, recommend, history, pattern, time
+- **Notifications**: System notification display with smart priority sorting
+    - Captures all system notifications from Android apps via notification_listener_service
+    - Displays notifications as info cards with intelligent priority sorting
+    - Shows app icon, title, content, and timestamp
+    - Priority formula: appPriority * 0.5 + timePattern * 0.3 + typePriority * 0.2
+    - Tap to open source app
+    - Dismiss button to remove notification
+    - Interaction tracking: tap boosts priority, dismiss lowers priority
+    - Time pattern learning: same hour (70%), same day (30%) weighting
+    - Type-based priority: messaging apps (WhatsApp, Telegram) = 0.9, email = 0.7, social = 0.5, default = 0.4
+    - Maximum 20 notifications displayed
+    - Maximum 100 interaction records per app
+    - `hasRemoved` event handling removes notifications from system
+    - SmartSuggestions integration via `recordCardInteraction("Notification_{packageName}")`
+    - Notification priorities merged with card priorities for smart sorting
+    - Uses `Card.filled`, `Image.memory` for app icons, Material 3 style
+    - Keywords: notification, notifications, system, alert, message, priority, smart, sort
+    - Requires Android notification listener permission (BIND_NOTIFICATION_LISTENER_SERVICE)
 
 ## Smart Card Sorting
 
@@ -1830,9 +1850,10 @@ Test coverage includes:
 - Stretch Reminder provider tests (provider existence, model state, start/stop timer, reset operations, interval setting, skipStretch, clearStats, formatted elapsed time, progress percentage, needsStretch detection, widget rendering)
 - Trivia Quiz provider tests (provider existence, model state, question generation, category filtering, answer submission, streak tracking, history management, timer functionality, widget rendering, provider keywords)
 - SmartSuggestions provider tests (provider existence, model state, ActionUsageEntry serialization, ActionPattern probability calculation, getCurrentProbability weighting, getPeakHour, formatPeakHour, recordActionUsage, multiple recordings, getSuggestions, getTopActions, maxHistoryEntries limit, clearHistory, toggleHistory, formatTimeAgo, getHourLabel, getDayOfWeekLabel, requestFocus, notifyListeners, widget rendering, provider keywords, getCardPriorities, getCardPrioritiesForHour, recordCardInteraction)
+- Notifications provider tests (provider existence, model state, NotificationEntry creation, formatTimeAgo, addNotification, removeNotification, clearAll, max 20 limit, recordInteraction tap/dismiss, getNotificationPriority for messaging/email/social/unknown apps, getSortedNotifications, getNotificationPriorities, getNotification, duplicate handling, most recent first order)
 - InfoModel Smart Sorting tests (getSmartSortedInfoList with empty priorities, getSmartSortedInfoList sorts by priority, getSmartSortedInfoList handles missing priorities, getSmartSortedFilteredList filters then sorts, getSmartSortedFilteredList returns smart sorted when query empty, infoKeys returns all keys)
 
-Total tests: 3564 tests
+Total tests: 3588 tests
 
 ### Test Configuration
 Tests use the following setup in `setUpAll()`:
@@ -1855,6 +1876,7 @@ Technical documentation is available in `docs/`:
 - `theme_feature.md` - Theme management
 - `wallpaper_feature.md` - Wallpaper handling
 - `weather_service.md` - Weather API integration
+- `weather_loading_fix.md` - Fix for weather stuck on "Loading..." when geolocation fails
 - `logging_system.md` - Logging model usage
 - `card_list_feature.md` - Circular list implementation
 - `app_card_feature.md` - App display cards
@@ -2000,6 +2022,7 @@ Technical documentation is available in `docs/`:
 - `biorhythm_provider.md` - Biorhythm provider implementation for biological rhythm analysis
 - `trivia_quiz_provider.md` - Trivia Quiz provider implementation for general knowledge quiz game
 - `smart_suggestions_provider.md` - SmartSuggestions provider implementation for intelligent action suggestions based on usage patterns
+- `notifications_provider.md` - Notifications provider implementation for system notification display with smart priority sorting
 - `smart_card_sorting.md` - Smart card sorting implementation for dynamic UI ordering based on user patterns
 - `performance_optimizations.md` - Performance optimizations for stopwatch timer and list widgets
 - `critical_bug_fixes_iteration85.md` - Critical bug fix for JSON encoding/decoding in Reminder provider persistence
