@@ -18,6 +18,15 @@ allprojects {
     }
 }
 
+// Configure all subprojects to use available build tools
+gradle.projectsEvaluated {
+    subprojects.each { sub ->
+        if (sub.hasProperty('android')) {
+            sub.android.buildToolsVersion = "36.0.0"
+        }
+    }
+}
+
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
