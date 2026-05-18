@@ -4543,76 +4543,7 @@ testWidgets('AnimatedCrossFade shows first child when query is empty', (WidgetTe
 
       // Find PageView and check it has 2 pages
       final pageView = tester.widget<PageView>(find.byType(PageView));
-      expect(pageView.controller?.initialPage ?? 0, 0); // Secondary screen is default (page 0)
-    });
-
-    testWidgets('Secondary screen (page 0) contains Time widget', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider.value(value: Global.actionModel),
-              ChangeNotifierProvider.value(value: Global.infoModel),
-              ChangeNotifierProvider.value(value: Global.settingsModel),
-              ChangeNotifierProvider.value(value: Global.backgroundImageModel),
-              ChangeNotifierProvider.value(value: Global.themeModel),
-              ChangeNotifierProvider.value(value: Global.loggerModel),
-              ChangeNotifierProvider.value(value: appModel),
-              ChangeNotifierProvider.value(value: allAppsModel),
-              ChangeNotifierProvider.value(value: appStatisticsModel),
-              ChangeNotifierProvider.value(value: smartSuggestionsModel),
-              ChangeNotifierProvider.value(value: notificationsModel),
-            ],
-            child: const MyHomePage(),
-          ),
-        ),
-      );
-
-      // Navigate to secondary screen (page 0)
-      final pageView = tester.widget<PageView>(find.byType(PageView));
-      pageView.controller?.jumpToPage(0);
-      await tester.pumpAndSettle();
-
-      // Time widget should be present on secondary screen
-      expect(find.textContaining(RegExp(r'\d{2}:\d{2}')), findsWidgets);
-    });
-
-    testWidgets('Secondary screen Time widget is minimal (no Card wrapper)', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider.value(value: Global.actionModel),
-              ChangeNotifierProvider.value(value: Global.infoModel),
-              ChangeNotifierProvider.value(value: Global.settingsModel),
-              ChangeNotifierProvider.value(value: Global.backgroundImageModel),
-              ChangeNotifierProvider.value(value: Global.themeModel),
-              ChangeNotifierProvider.value(value: Global.loggerModel),
-              ChangeNotifierProvider.value(value: appModel),
-              ChangeNotifierProvider.value(value: allAppsModel),
-              ChangeNotifierProvider.value(value: appStatisticsModel),
-              ChangeNotifierProvider.value(value: smartSuggestionsModel),
-              ChangeNotifierProvider.value(value: notificationsModel),
-            ],
-            child: const MyHomePage(),
-          ),
-        ),
-      );
-
-      // Navigate to secondary screen (page 0)
-      final pageView = tester.widget<PageView>(find.byType(PageView));
-      pageView.controller?.jumpToPage(0);
-      await tester.pumpAndSettle();
-
-      // Time widget should NOT be wrapped in Card (minimal display)
-      // Find the time text and verify it's not inside a Card
-      final timeText = find.textContaining(RegExp(r'\d{2}:\d{2}'));
-      expect(timeText, findsWidgets);
-
-      // Check that the time text is not inside a Card widget
-      // This is a minimal display, just time text on wallpaper
-      final cardFinder = find.byType(Card);
-      expect(cardFinder, findsNothing); // No Card on secondary screen
+expect(pageView.controller?.initialPage ?? 0, 0); // Secondary screen is default (page 0)
     });
 
     testWidgets('Secondary screen has wallpaper background', (WidgetTester tester) async {
@@ -4651,7 +4582,7 @@ testWidgets('AnimatedCrossFade shows first child when query is empty', (WidgetTe
       expect(imageFinder, findsWidgets);
     });
 
-    testWidgets('Secondary screen has NO other widgets beyond Time', (WidgetTester tester) async {
+    testWidgets('Secondary screen has NO widgets (wallpaper only)', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: MultiProvider(
@@ -4678,51 +4609,17 @@ testWidgets('AnimatedCrossFade shows first child when query is empty', (WidgetTe
       pageView.controller?.jumpToPage(0);
       await tester.pumpAndSettle();
 
-      // Secondary screen should only have Time widget
+      // Secondary screen should only have wallpaper (no widgets)
       // No search TextField, no other info cards
       final textFieldFinder = find.byType(TextField);
       expect(textFieldFinder, findsNothing); // No search on secondary screen
 
-      // No ListView with info cards (only Time widget)
+      // No ListView with info cards
       final listViewFinder = find.byType(ListView);
       expect(listViewFinder, findsNothing); // No ListView on secondary screen
     });
 
-    testWidgets('Time widget displays current time format', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider.value(value: Global.actionModel),
-              ChangeNotifierProvider.value(value: Global.infoModel),
-              ChangeNotifierProvider.value(value: Global.settingsModel),
-              ChangeNotifierProvider.value(value: Global.backgroundImageModel),
-              ChangeNotifierProvider.value(value: Global.themeModel),
-              ChangeNotifierProvider.value(value: Global.loggerModel),
-              ChangeNotifierProvider.value(value: appModel),
-              ChangeNotifierProvider.value(value: allAppsModel),
-              ChangeNotifierProvider.value(value: appStatisticsModel),
-              ChangeNotifierProvider.value(value: smartSuggestionsModel),
-              ChangeNotifierProvider.value(value: notificationsModel),
-            ],
-            child: const MyHomePage(),
-          ),
-        ),
-      );
-
-      // Navigate to secondary screen (page 0)
-      final pageView = tester.widget<PageView>(find.byType(PageView));
-      pageView.controller?.jumpToPage(0);
-      await tester.pumpAndSettle();
-
-      // Time should be displayed in HH:MM format
-      final now = DateTime.now();
-      final expectedHour = now.hour.toString().padLeft(2, '0');
-      final expectedMinute = now.minute.toString().padLeft(2, '0');
-      final expectedTimePattern = RegExp('${expectedHour}:${expectedMinute}');
-
-      expect(find.textContaining(expectedTimePattern), findsWidgets);
-    });
+    
   });
 
   group('AnimatedInfoWidget', () {
