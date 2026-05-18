@@ -9,10 +9,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:new_launcher/data.dart';
 import 'package:new_launcher/card_config.dart';
+import 'package:new_launcher/providers/provider_app_drawer.dart';
 import 'package:new_launcher/providers/provider_app.dart';
 import 'package:new_launcher/providers/provider_notifications.dart';
 import 'package:new_launcher/providers/provider_smart_suggestions.dart';
-import 'package:new_launcher/providers/provider_time.dart';
+
 import 'package:new_launcher/ai_engine.dart';
 import 'package:new_launcher/action_executor.dart';
 import 'package:new_launcher/memory_system.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: appStatisticsModel),
         ChangeNotifierProvider.value(value: smartSuggestionsModel),
         ChangeNotifierProvider.value(value: notificationsModel),
+        ChangeNotifierProvider.value(value: appDrawerModel),
       ],
       child: Consumer<ThemeModel>(
         builder: (context, themeModel, child) {
@@ -315,12 +317,17 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             });
           },
           children: [
-            // Page 0: Secondary screen with minimal Time widget
+            // Page 0: Secondary screen with wallpaper and AISearchField
             Scaffold(
               backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0),
-              body: Container(
-                alignment: Alignment.center,
-                child: MinimalTimeWidget(),
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Card.filled(
+                    color: Theme.of(context).cardColor,
+                    child: AISearchField(),
+                  ),
+                ],
               ),
             ),
             // Page 1: Main screen with AISearchField and cards
