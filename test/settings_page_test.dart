@@ -79,7 +79,8 @@ void main() {
       
       // Tap the ListTile to trigger navigation
       await tester.tap(apiKeysTile);
-      await tester.pumpAndSettle();
+      await tester.pump(); // Trigger navigation
+      await tester.pump(const Duration(seconds: 1)); // Allow async operations to progress
       
       // Verify navigation to APIKeysSettings occurred (this will FAIL in RED phase)
       expect(mockObserver.pushedRoutes.length, greaterThan(0), reason: 'At least one route should be pushed');
